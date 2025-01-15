@@ -13,15 +13,14 @@ using RS.Widgets.Common.Commands;
 
 namespace RS.Widgets.Controls
 {
-    public static class ControlsCommand
+    public static class RSCommands
     {
-
      
         public static RoutedCommand CleanTextCommand { get; private set; }
 
-        static ControlsCommand()
+        static RSCommands()
         {
-            CleanTextCommand = new RoutedCommand("CleanText", typeof(ControlsCommand));
+            CleanTextCommand = new RoutedCommand("CleanText", typeof(RSCommands));
         }
 
         public static void CleanText(object source)
@@ -29,6 +28,10 @@ namespace RS.Widgets.Controls
             if (source is TextBox textBox)
             {
                 textBox.Text = string.Empty;
+            }
+            else if (source is PasswordBox passwordBox)
+            {
+                passwordBox.Password = string.Empty;
             }
         }
     }

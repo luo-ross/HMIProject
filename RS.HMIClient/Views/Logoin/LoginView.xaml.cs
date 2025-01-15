@@ -1,6 +1,7 @@
 ﻿using RS.Widgets.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,13 @@ namespace RS.HMIClient.Views.Logoin
         public LoginView()
         {
             InitializeComponent();
+        }
+
+      
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start("explorer.exe",e.Uri.ToString());
         }
     }
 }

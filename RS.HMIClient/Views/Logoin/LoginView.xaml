@@ -8,13 +8,226 @@
     xmlns:rs="https://github.com/luo-ross/HMIProject/2025/xaml"
     Title="LoginView"
     Width="800"
-    Height="450"
+    Height="495"
+    BorderCornerRadius="10"
     IsFitSystem="True"
     ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="/Assets/login-bg.jpg" />
-        </Grid.Background>
+    <rs:RSWindow.Resources>
+        <ResourceDictionary>
+
+
+            <Style x:Key="RS.LoginView.HyperlinkStyle" TargetType="{x:Type Hyperlink}">
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="TextDecorations" Value="None" />
+                <Setter Property="Foreground" Value="#b3b3b3" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
+            <Style
+                x:Key="RS.LoginView.ButtonStyle"
+                BasedOn="{StaticResource RS.Styles.ButtonBase}"
+                TargetType="{x:Type Button}">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Background" Value="#198cff" />
+                <Setter Property="Foreground" Value="#fff" />
+                <Setter Property="Margin" Value="0,5,0,5" />
+                <Setter Property="Padding" Value="15,10,15,10" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                                <Grid>
+                                    <ContentControl
+                                        x:Name="PART_Content"
+                                        Grid.Column="1"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Content="{TemplateBinding Content}"
+                                        FontSize="{TemplateBinding FontSize}" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand" />
+                                    <Setter Property="Background" Value="#2d96ff" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#0072ef" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Storyboard x:Key="FadeInOutAnimation">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_ContentHost" Storyboard.TargetProperty="Visibility">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Hidden}" />
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Visible}" />
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+        </ResourceDictionary>
+    </rs:RSWindow.Resources>
+    <Grid Background="#fff">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="AdvertisingPageHost" CornerRadius="10,0,0,10">
+                <Border.Background>
+                    <ImageBrush ImageSource="/Assets/login-left.jpg" />
+                </Border.Background>
+            </Border>
+            <Border Grid.Column="1" Padding="28,20,28,50">
+                <Grid VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <RadioButton
+                            x:Name="RadBtnLogin"
+                            Margin="0,3,14,3"
+                            HorizontalAlignment="Left"
+                            Content="登录账号"
+                            IsChecked="True"
+                            Style="{StaticResource RS.Styles.TabButtonStyle}">
+                            <RadioButton.Triggers>
+                                <EventTrigger RoutedEvent="RadioButton.Checked">
+                                    <BeginStoryboard Storyboard="{StaticResource FadeInOutAnimation}" />
+                                </EventTrigger>
+                            </RadioButton.Triggers>
+                        </RadioButton>
+                        <RadioButton
+                            x:Name="RadBtnSignUp"
+                            Margin="14,3,14,3"
+                            Content="注册新用户"
+                            Style="{StaticResource RS.Styles.TabButtonStyle}">
+                            <RadioButton.Triggers>
+                                <EventTrigger RoutedEvent="RadioButton.Checked">
+                                    <BeginStoryboard Storyboard="{StaticResource FadeInOutAnimation}" />
+                                </EventTrigger>
+                            </RadioButton.Triggers>
+                        </RadioButton>
+                    </StackPanel>
+                    <Grid x:Name="PART_ContentHost" Grid.Row="1">
+                        <Grid x:Name="PART_LoginHost" Visibility="{Binding ElementName=RadBtnLogin, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Vertical">
+                                <TextBox
+                                    Margin="0,35,0,5"
+                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                    rs:TextBoxHelper.Watermark="请输入用户名"
+                                    MaxLength="30"
+                                    Style="{StaticResource RS.Styles.IconTextBox}" />
+                                <PasswordBox
+                                    Margin="0,5,0,5"
+                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                    rs:TextBoxHelper.Watermark="请输入密码"
+                                    MaxLength="30"
+                                    Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                <Grid Margin="0,5,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        Grid.Column="0"
+                                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.Verify}"
+                                        rs:TextBoxHelper.Watermark="请输入验证码"
+                                        MaxLength="11"
+                                        Style="{StaticResource RS.Styles.IconTextBox}" />
+                                    <Image
+                                        Grid.Column="1"
+                                        Width="100"
+                                        Source="/Assets/verify.jpg"
+                                        Stretch="Uniform" />
+                                </Grid>
+                                <Grid Margin="0,10,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0" Content="记住密码" />
+
+
+                                    <TextBlock Grid.Column="2" VerticalAlignment="Center">
+                                        <Hyperlink
+                                            Foreground="#b3b3b3"
+                                            NavigateUri="https://github.com/luo-ross/HMIProject"
+                                            RequestNavigate="Hyperlink_RequestNavigate"
+                                            Style="{StaticResource RS.LoginView.HyperlinkStyle}">
+                                            忘记了密码?
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </Grid>
+
+                                <Button Content="登录" Style="{StaticResource RS.LoginView.ButtonStyle}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid x:Name="PART_SignUpHost" Visibility="{Binding ElementName=RadBtnSignUp, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Vertical">
+                                <TextBox
+                                    Margin="0,35,0,5"
+                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                    rs:TextBoxHelper.Watermark="请输入用户名"
+                                    MaxLength="30"
+                                    Style="{StaticResource RS.Styles.IconTextBox}" />
+                                <PasswordBox
+                                    Margin="0,5,0,5"
+                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                    rs:TextBoxHelper.Watermark="请输入密码"
+                                    MaxLength="30"
+                                    Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                <Grid Margin="0,5,0,5">
+                                    <PasswordBox
+                                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                        rs:TextBoxHelper.IsShowClearButton="True"
+                                        rs:TextBoxHelper.Watermark="请输入确认密码"
+                                        MaxLength="30"
+                                        Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                </Grid>
+                                <Grid Margin="0,10,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox
+                                        Grid.Column="0"
+                                        Content="注册成功后立即登录"
+                                        IsChecked="True" />
+                                </Grid>
+
+                                <Button Content="注册" Style="{StaticResource RS.LoginView.ButtonStyle}" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+
     </Grid>
+
+
 </rs:RSWindow>

@@ -39,8 +39,16 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
             this.CommandBindings.Add(new CommandBinding(WindowMaxRestoreCommand, WindowMaxRestore, CanWindowMaxRestore));
             this.CommandBindings.Add(new CommandBinding(WindowMoveCommand, WindowMove, CanWindowMove));
+            // 添加命令绑定
+            this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
+           
             this.SizeChanged += RSWindow_SizeChanged;
             this.StateChanged += RSWindow_StateChanged;
+        }
+
+        private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
+        {
+            RSCommands.CleanText(e.Source);
         }
 
         private void CanWindowMove(object sender, CanExecuteRoutedEventArgs e)
@@ -65,7 +73,10 @@ namespace RS.Widgets.Controls
         {
             if (this.PART_BtnMaxRestore.Command != null && this.PART_BtnMaxRestore.Command.CanExecute(null))
             {
-                this.PART_BtnMaxRestore.Command.Execute(null);
+                if (!(this.ResizeMode==ResizeMode.NoResize))
+                {
+                    this.PART_BtnMaxRestore.Command.Execute(null);
+                }
             }
         }
 

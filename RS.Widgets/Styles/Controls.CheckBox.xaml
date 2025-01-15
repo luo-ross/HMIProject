@@ -1,0 +1,110 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="RS.Styles.CheckBoxStyle" TargetType="{x:Type CheckBox}">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#333333" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,3,0,3" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="rs:ControlsHelper.IconWidth" Value="18" />
+        <Setter Property="rs:ControlsHelper.IconHeight" Value="18" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                x:Name="PART_CheckBorder"
+                                Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                                Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                                Background="#fff"
+                                BorderBrush="#e0e0e0"
+                                BorderThickness="1"
+                                CornerRadius="3">
+                                <Path
+                                    Grid.Column="0"
+                                    Width="8"
+                                    Height="8"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{StaticResource RS.Icons.CheckMark}"
+                                    Fill="#fff"
+                                    Stretch="Fill" />
+                            </Border>
+
+                            <ContentPresenter
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="Foreground" Value="#198cff" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="#198cff" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="RS.Styles.PasswordShowHideStyle" TargetType="{x:Type CheckBox}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Padding" Value="8,5,8,5" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                        <Path
+                            x:Name="PART_Icon"
+                            Width="16"
+                            Height="12"
+                            Fill="#757575"
+                            Stretch="Fill" />
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="PART_Icon" Property="Data" Value="M500.662857 219.428571a407.405714 407.405714 0 0 1 164.937143 36.571429 595.748571 595.748571 0 0 1 159.451429 103.862857 964.022857 964.022857 0 0 1 109.714285 117.394286 29.257143 29.257143 0 0 1 0 39.862857 758.125714 758.125714 0 0 1-84.114285 102.765714 611.474286 611.474286 0 0 1-141.531429 109.714286 416.914286 416.914286 0 0 1-144.091429 49.737143 379.611429 379.611429 0 0 1-185.051428-20.48 565.028571 565.028571 0 0 1-167.131429-104.228572 957.074286 957.074286 0 0 1-131.657143-140.434285 25.234286 25.234286 0 0 1 0-36.571429A721.188571 721.188571 0 0 1 245.028571 310.125714a491.154286 491.154286 0 0 1 138.24-71.314285A381.074286 381.074286 0 0 1 500.662857 219.428571zM694.857143 329.142857a216.137143 216.137143 0 0 1-47.542857 268.068572 212.845714 212.845714 0 0 1-256 16.091428 208.091429 208.091429 0 0 1-90.697143-131.657143 214.674286 214.674286 0 0 1 25.234286-157.622857 632.685714 632.685714 0 0 0-190.537143 170.057143 1080.32 1080.32 0 0 0 76.8 85.942857A651.337143 651.337143 0 0 0 292.571429 647.68a402.285714 402.285714 0 0 0 167.131428 73.142857 320.731429 320.731429 0 0 0 118.125714 0 409.234286 409.234286 0 0 0 157.988572-73.142857 670.354286 670.354286 0 0 0 146.285714-146.285714 4.754286 4.754286 0 0 0 0-6.948572c-15.36-17.188571-30.72-36.571429-46.445714-51.931428a640.365714 640.365714 0 0 0-117.76-99.84L694.857143 329.142857z m-334.262857 115.2a73.142857 73.142857 0 0 0 4.022857 12.8 22.674286 22.674286 0 0 0 41.325714-11.337143 238.445714 238.445714 0 0 1 6.948572-36.571428 101.668571 101.668571 0 0 1 90.697142-73.142857 24.137143 24.137143 0 0 0 22.308572-25.234286 18.651429 18.651429 0 0 0-20.48-18.285714h-14.262857a157.622857 157.622857 0 0 0-73.142857 32.548571 168.96 168.96 0 0 0-55.954286 119.222857z" />
+                            <Setter Property="ToolTip" Value="显示密码" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_Icon" Property="Fill" Value="#06b025" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter Property="ToolTip" Value="隐藏密码" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="M511.705 213.218c-68.992 0-140.86 15.458-207.43 45.891l73.324 73.324c37.38-28.01 83.811-44.603 134.125-44.603 123.628 0 223.844 100.235 223.844 223.871 0 50.3-16.59 96.726-44.594 134.107l83.162 83.162c82.892-52.632 151.9-127.882 185.295-217.268-66.842-177.772-261.557-298.484-447.726-298.484z m266 582.319L203.567 221.416c-10.913-10.931-28.638-10.931-39.57 0-10.93 10.912-10.912 28.648 0.019 39.56l50.908 50.91C149.988 360.517 96.068 427.095 63.981 511.7c92.347 201.618 263.122 298.483 447.724 298.483 54.986 0 112.618-11.931 167.973-33.536l58.458 58.459c5.465 5.466 12.606 8.19 19.784 8.19a27.842 27.842 0 0 0 19.785-8.2c10.931-10.913 10.931-28.639 0-39.56z m-265.982-59.964c-123.664 0-223.88-100.235-223.88-223.87 0-36.834 8.906-71.582 24.67-102.226l57.003 57.004a147.904 147.904 0 0 0-7.052 45.221c0 82.418 66.804 149.251 149.26 149.251a147.76 147.76 0 0 0 45.208-7.053l57.003 57.003c-30.64 15.762-65.383 24.67-102.212 24.67z M642.058 438.99a46.426 46.426 0 0 1-27.768 9.167c-25.76 0-46.637-20.878-46.637-46.646a46.386 46.386 0 0 1 7.295-25.027c-19.198-8.997-40.62-14.033-63.224-14.033-29.658 0-57.205 8.754-80.45 23.656L637.3 592.125c14.903-23.228 23.647-50.784 23.647-80.424 0-26.4-6.863-51.194-18.89-72.71z" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+</ResourceDictionary>
