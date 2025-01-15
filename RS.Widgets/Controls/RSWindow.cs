@@ -20,7 +20,7 @@ namespace RS.Widgets.Controls
     {
         private RSBorder PART_Caption;
         private Button PART_Minimize;
-        private Button PART_BtnMaxNormal;
+        private Button PART_BtnMaxRestore;
         private Button PART_BtnClose;
         private Border PART_Border;
 
@@ -63,9 +63,9 @@ namespace RS.Widgets.Controls
 
         private void WindowMaxRestore(object sender, ExecutedRoutedEventArgs e)
         {
-            if (this.PART_BtnMaxNormal.Command != null && this.PART_BtnMaxNormal.Command.CanExecute(null))
+            if (this.PART_BtnMaxRestore.Command != null && this.PART_BtnMaxRestore.Command.CanExecute(null))
             {
-                this.PART_BtnMaxNormal.Command.Execute(null);
+                this.PART_BtnMaxRestore.Command.Execute(null);
             }
         }
 
@@ -148,7 +148,7 @@ namespace RS.Widgets.Controls
             this.PART_Border = this.GetTemplateChild(nameof(PART_Border)) as Border;
             this.PART_Caption = this.GetTemplateChild(nameof(PART_Caption)) as RSBorder;
             this.PART_Minimize = this.GetTemplateChild(nameof(PART_Minimize)) as Button;
-            this.PART_BtnMaxNormal = this.GetTemplateChild(nameof(PART_BtnMaxNormal)) as Button;
+            this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(PART_BtnMaxRestore)) as Button;
             this.PART_BtnClose = this.GetTemplateChild(nameof(PART_BtnClose)) as Button;
         }
 

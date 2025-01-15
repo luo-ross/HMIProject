@@ -40,7 +40,11 @@
                                     <AdornerDecorator>
                                         <Grid>
                                             <ContentPresenter />
-                                            <ResizeGrip HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+                                            <ResizeGrip
+                                                x:Name="PART_BtnResize"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Visibility="Collapsed" />
                                         </Grid>
                                     </AdornerDecorator>
                                 </rs:RSBorder>
@@ -87,7 +91,7 @@
                                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                 Content="最小化"
                                                 Style="{StaticResource RS.Styles.IconButton}" />
-                                            <Button x:Name="PART_BtnMaxNormal" Style="{StaticResource RS.Styles.IconButton}" />
+                                            <Button x:Name="PART_BtnMaxRestore" Style="{StaticResource RS.Styles.IconButton}" />
                                             <Button
                                                 x:Name="PART_BtnClose"
                                                 rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
@@ -104,27 +108,35 @@
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
-                            <Setter TargetName="PART_BtnMaxNormal" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxNormal" Property="Content" Value="恢复" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Content" Value="恢复" />
                             <Setter TargetName="PART_Border" Property="Margin" Value="0" />
                             <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
-                            <Setter TargetName="PART_BtnMaxNormal" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Restore}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Restore}" />
                         </Trigger>
                         <Trigger Property="WindowState" Value="Normal">
-                            <Setter TargetName="PART_BtnMaxNormal" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxNormal" Property="Content" Value="最大化" />
-                            <Setter TargetName="PART_BtnMaxNormal" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Maxsize}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Content" Value="最大化" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Maxsize}" />
                         </Trigger>
                         <Trigger Property="IsFitSystem" Value="True">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
-                            <Setter TargetName="PART_Caption" Property="HorizontalAlignment" Value="Right" />
                         </Trigger>
 
                         <Trigger Property="IsFitSystem" Value="False">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="1" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="1" />
-                            <Setter TargetName="PART_Caption" Property="HorizontalAlignment" Value="Stretch" />
+                        </Trigger>
+
+                        <Trigger Property="ResizeMode" Value="NoResize">
+                            <Setter TargetName="PART_Minimize" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+
+                        <Trigger Property="ResizeMode" Value="CanResizeWithGrip">
+                            <Setter TargetName="PART_BtnResize" Property="Visibility" Value="Visible" />
                         </Trigger>
 
                         <Trigger Property="Icon" Value="{x:Null}">

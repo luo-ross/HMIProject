@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:RS.BorderWindowDemo.Views.Home"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:rs="clr-namespace:RS.Widgets.Controls;assembly=RS.Widgets"
+    xmlns:rs="https://github.com/luo-ross/HMIProject/2025/xaml"
     Title="HomeView"
     Width="800"
     Height="450"

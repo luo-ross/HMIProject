@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RS.HMI.DAL\RS.HMI.DAL.csproj" />
+    <ProjectReference Include="..\RS.HMI.IDAL\RS.HMI.IDAL.csproj" />
+  </ItemGroup>
+
+</Project>
