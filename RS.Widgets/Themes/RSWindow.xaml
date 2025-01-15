@@ -1,0 +1,141 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <Style TargetType="{x:Type rs:RSWindow}">
+        <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="Background" Value="#FFF" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type rs:RSWindow}">
+                    <Border>
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="25"
+                                Direction="315"
+                                Opacity="0.5"
+                                ShadowDepth="-1"
+                                Color="Black" />
+                        </Border.Effect>
+                        <Border
+                            x:Name="PART_Border"
+                            Margin="20"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Clip="{TemplateBinding BorderClipRect}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="{TemplateBinding CaptionHeight}" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <rs:RSBorder x:Name="PART_Client" Grid.Row="1">
+                                    <AdornerDecorator>
+                                        <Grid>
+                                            <ContentPresenter />
+                                            <ResizeGrip HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+                                        </Grid>
+                                    </AdornerDecorator>
+                                </rs:RSBorder>
+
+                                <rs:RSBorder
+                                    x:Name="PART_Caption"
+                                    Grid.Row="0"
+                                    Background="Transparent"
+                                    DoubleClickCommand="{x:Static rs:RSWindow.WindowMaxRestoreCommand}"
+                                    MouseMoveCommand="{x:Static rs:RSWindow.WindowMoveCommand}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button
+                                            x:Name="PART_Icon"
+                                            Width="20"
+                                            Height="20"
+                                            Margin="5,0,5,0"
+                                            Command="{x:Static SystemCommands.ShowSystemMenuCommand}">
+                                            <Button.Style>
+                                                <Style TargetType="{x:Type Button}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                                <Grid>
+                                                                    <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Icon}" />
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+
+                                        <ContentControl Grid.Column="1" Content="{TemplateBinding CaptionContent}" />
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Button
+                                                x:Name="PART_Minimize"
+                                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Minus}"
+                                                rs:ControlsHelper.IconHeight="2"
+                                                Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                                                Content="最小化"
+                                                Style="{StaticResource RS.Styles.IconButton}" />
+                                            <Button x:Name="PART_BtnMaxNormal" Style="{StaticResource RS.Styles.IconButton}" />
+                                            <Button
+                                                x:Name="PART_BtnClose"
+                                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
+                                                Command="{x:Static SystemCommands.CloseWindowCommand}"
+                                                Content="关闭"
+                                                Style="{StaticResource RS.Styles.IconButton}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </rs:RSBorder>
+
+                            </Grid>
+                        </Border>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="PART_BtnMaxNormal" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxNormal" Property="Content" Value="恢复" />
+                            <Setter TargetName="PART_Border" Property="Margin" Value="0" />
+                            <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
+                            <Setter TargetName="PART_BtnMaxNormal" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Restore}" />
+                        </Trigger>
+                        <Trigger Property="WindowState" Value="Normal">
+                            <Setter TargetName="PART_BtnMaxNormal" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxNormal" Property="Content" Value="最大化" />
+                            <Setter TargetName="PART_BtnMaxNormal" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Maxsize}" />
+                        </Trigger>
+                        <Trigger Property="IsFitSystem" Value="True">
+                            <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
+                            <Setter TargetName="PART_Caption" Property="HorizontalAlignment" Value="Right" />
+                        </Trigger>
+
+                        <Trigger Property="IsFitSystem" Value="False">
+                            <Setter TargetName="PART_Client" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="1" />
+                            <Setter TargetName="PART_Caption" Property="HorizontalAlignment" Value="Stretch" />
+                        </Trigger>
+
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+
+</ResourceDictionary>

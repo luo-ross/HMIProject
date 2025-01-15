@@ -1,0 +1,85 @@
+﻿{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "$id": "https://example.com/object1606572004.json",
+  "type": "object",
+  "additionalProperties": false,
+  "public": true,
+  "className": "Ross",
+  "properties": {
+    "$schema": {
+      "description": "The URL for the schema used by this document.",
+      "type": "string",
+      "examples": [
+        "https://aka.ms/CsWin32.schema.json"
+      ]
+    },
+    "comInterop": {
+      "description": "Details around code generation for COM interop",
+      "type": "object",
+      "properties": {
+        "preserveSigMethods": {
+          "description": "Identifies methods or interfaces that should be generated as [PreserveSig]. Use * to always generate PreserveSig methods.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "uniqueItems": true,
+            "pattern": "^[\\w_]+(?:\\.[\\w_]+)?$|^\\*$"
+          }
+        },
+        "useIntPtrForComOutPointers": {
+          "description": "Emits methods that return COM objects via output parameters using IntPtr as the parameter type instead of the COM interface. This may be useful on .NET when using ComWrappers. See https://github.com/microsoft/CsWin32/issues/328 for more details.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "allowMarshaling": {
+      "description": "Emit COM interfaces instead of structs, and allow generation of non-blittable structs for the sake of an easier to use API.",
+      "type": "boolean",
+      "default": true
+    },
+    "friendlyOverloads": {
+      "description": "An object with properties that control generation of friendly overloads.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "A value indicating whether to generate method overloads that may be easier to consume or be more idiomatic C#. These may use fewer pointers, accept or return SafeHandles, etc.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "multiTargetingFriendlyAPIs": {
+      "description": "A value indicating whether to generate APIs judged to be unnecessary or redundant given the target framework. This is useful for multi-targeting projects that need a consistent set of APIs across target frameworks to avoid too many conditional compilation regions.",
+      "type": "boolean",
+      "default": false
+    },
+    "useSafeHandles": {
+      "description": "A value indicating whether friendly overloads should use safe handles.",
+      "type": "boolean",
+      "default": true
+    },
+    "wideCharOnly": {
+      "description": "Omit ANSI functions and remove `W` suffix from UTF-16 functions.",
+      "type": "boolean",
+      "default": true
+    },
+    "emitSingleFile": {
+      "description": "A value indicating whether to emit a single source file as opposed to types spread across many files.",
+      "type": "boolean",
+      "default": false
+    },
+    "className": {
+      "description": "The name of a single class under which all p/invoke methods and constants are generated, regardless of imported module.",
+      "type": "string",
+      "default": "PInvoke",
+      "pattern": "^\\w+$"
+    },
+    "public": {
+      "description": "A value indicating whether to expose the generated APIs publicly (as opposed to internally).",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

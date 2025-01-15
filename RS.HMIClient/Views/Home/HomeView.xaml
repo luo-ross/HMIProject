@@ -1,0 +1,70 @@
+﻿<rs:RSWindow
+    x:Class="RS.BorderWindowDemo.Views.Home.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.BorderWindowDemo.Views.Home"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls;assembly=RS.Widgets"
+    Title="HomeView"
+    Width="800"
+    Height="450"
+    BorderCornerRadius="10"
+    IsFitSystem="True"
+    IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
+    mc:Ignorable="d">
+    <rs:RSWindow.DataContext>
+        <local:HomeViewModel />
+    </rs:RSWindow.DataContext>
+    <!--<rs:RSWindow.CaptionContent>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Text="这是Ross创建的第一个无边带阴影的窗口示例" />
+
+            <Grid Grid.Column="1">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="这是中间的内容，想咋搞咋搞" />
+            </Grid>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+
+                <Button Content="按钮1" />
+                <Button Content="按钮2" />
+                <Button Content="按钮3" />
+            </StackPanel>
+        </Grid>
+
+    </rs:RSWindow.CaptionContent>-->
+    <Grid Background="#eee">
+        <rs:RSBorder
+            Height="30"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            DoubleClickCommand="{x:Static rs:RSWindow.WindowMaxRestoreCommand}"
+            MouseMoveCommand="{x:Static rs:RSWindow.WindowMoveCommand}" />
+        <StackPanel>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="Hello World" />
+            <CheckBox
+                x:Name="CkIsFullScreen"
+                HorizontalAlignment="Left"
+                Content="窗口状态切换"
+                IsChecked="{Binding IsFullScreen, Mode=TwoWay}"
+                IsHitTestVisible="True" />
+
+            <Button Click="Button_Click" Content="点击事件" />
+
+            <Button Command="{Binding BtnClickCommand}" Content="Command事件" />
+        </StackPanel>
+    </Grid>
+</rs:RSWindow>
