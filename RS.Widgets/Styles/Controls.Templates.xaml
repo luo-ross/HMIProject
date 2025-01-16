@@ -1,0 +1,26 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ControlTemplate x:Key="RS.Styles.DataErrorTemplates">
+        <AdornedElementPlaceholder x:Name="PART_Adorned">
+            <Border>
+                <Grid>
+                    <Popup
+                        x:Name="PART_ErrorPopup"
+                        AllowsTransparency="True"
+                        HorizontalOffset="2"
+                        IsOpen="True"
+                        Placement="Right"
+                        PlacementTarget="{Binding ElementName=PART_Adorned}"
+                        StaysOpen="True"
+                        VerticalOffset="5">
+                        <Border Padding="10,5,10,5" Background="#ff5b5b">
+                            <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+        </AdornedElementPlaceholder>
+    </ControlTemplate>
+</ResourceDictionary>

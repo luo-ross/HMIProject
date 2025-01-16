@@ -15,4 +15,10 @@
     <ProjectReference Include="..\RS.Win32API\RS.Win32API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Styles\Controls.Border.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

@@ -5,3 +5,4 @@ using System.Windows.Markup;
 [assembly: XmlnsPrefix("https://github.com/luo-ross/HMIProject/2025/xaml", "rs")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject/2025/xaml", "RS.Widgets")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject/2025/xaml", "RS.Widgets.Controls")]
+[assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject/2025/xaml", "RS.Widgets.Behaviors")]
