@@ -12,6 +12,7 @@
     BorderCornerRadius="10"
     IsFitSystem="True"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <rs:RSWindow.DataContext>
         <local:HomeViewModel />
@@ -43,7 +44,7 @@
         </Grid>
 
     </rs:RSWindow.CaptionContent>-->
-    <Grid Background="#eee">
+    <Grid Background="#fff">
         <rs:RSBorder
             Height="30"
             VerticalAlignment="Top"

@@ -1,4 +1,5 @@
 ﻿using RS.Widgets.Common.Commands;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,7 +24,7 @@ namespace RS.Widgets.Controls
         private Button PART_BtnMaxRestore;
         private Button PART_BtnClose;
         private Border PART_Border;
-
+        private RSUserControl PART_WinContentHost;
         static RSWindow()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWindow), new FrameworkPropertyMetadata(typeof(RSWindow)));
@@ -41,9 +42,14 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(WindowMoveCommand, WindowMove, CanWindowMove));
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
-           
+
             this.SizeChanged += RSWindow_SizeChanged;
             this.StateChanged += RSWindow_StateChanged;
+        }
+
+        public async Task<bool> InvokeLoadingActionAsync(Func<Task<bool>> func, LoadingConfig loadingConfig = null)
+        {
+            return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig);
         }
 
         private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
@@ -53,7 +59,7 @@ namespace RS.Widgets.Controls
 
         private void CanWindowMove(object sender, CanExecuteRoutedEventArgs e)
         {
-           e.CanExecute = true;
+            e.CanExecute = true;
         }
 
         private void WindowMove(object sender, ExecutedRoutedEventArgs e)
@@ -73,7 +79,7 @@ namespace RS.Widgets.Controls
         {
             if (this.PART_BtnMaxRestore.Command != null && this.PART_BtnMaxRestore.Command.CanExecute(null))
             {
-                if (!(this.ResizeMode==ResizeMode.NoResize))
+                if (!(this.ResizeMode == ResizeMode.NoResize))
                 {
                     this.PART_BtnMaxRestore.Command.Execute(null);
                 }
@@ -156,13 +162,14 @@ namespace RS.Widgets.Controls
 
         public override void OnApplyTemplate()
         {
-            this.PART_Border = this.GetTemplateChild(nameof(PART_Border)) as Border;
-            this.PART_Caption = this.GetTemplateChild(nameof(PART_Caption)) as RSBorder;
-            this.PART_Minimize = this.GetTemplateChild(nameof(PART_Minimize)) as Button;
-            this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(PART_BtnMaxRestore)) as Button;
-            this.PART_BtnClose = this.GetTemplateChild(nameof(PART_BtnClose)) as Button;
+            base.OnApplyTemplate();
+            this.PART_Border = this.GetTemplateChild(nameof(this.PART_Border)) as Border;
+            this.PART_Caption = this.GetTemplateChild(nameof(this.PART_Caption)) as RSBorder;
+            this.PART_Minimize = this.GetTemplateChild(nameof(this.PART_Minimize)) as Button;
+            this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(this.PART_BtnMaxRestore)) as Button;
+            this.PART_BtnClose = this.GetTemplateChild(nameof(this.PART_BtnClose)) as Button;
+            this.PART_WinContentHost = this.GetTemplateChild(nameof(this.PART_WinContentHost)) as RSUserControl;
         }
-
 
 
 
@@ -205,8 +212,8 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("IsMaxsizedFullScreen", typeof(bool), typeof(RSWindow), new PropertyMetadata(false));
 
 
-
-
+        [Description("自定义标题栏内容")]
+        [Browsable(false)]
         public object CaptionContent
         {
             get { return (object)GetValue(CaptionContentProperty); }
@@ -217,18 +224,24 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("CaptionContent", typeof(object), typeof(RSWindow), new PropertyMetadata(null));
 
 
-        public GridLength CaptionHeight
+
+        [Description("标题栏高度设置")]
+        [Browsable(true)]
+        [Category("自定义窗口样式")]
+        public double CaptionHeight
         {
-            get { return (GridLength)GetValue(CaptionHeightProperty); }
+            get { return (double)GetValue(CaptionHeightProperty); }
             set { SetValue(CaptionHeightProperty, value); }
         }
 
         public static readonly DependencyProperty CaptionHeightProperty =
-            DependencyProperty.Register("CaptionHeight", typeof(GridLength), typeof(RSWindow), new PropertyMetadata(new GridLength(30D)));
+            DependencyProperty.Register("CaptionHeight", typeof(double), typeof(RSWindow), new PropertyMetadata(30D));
 
 
 
-
+        [Description("是否沉浸式")]
+        [Browsable(true)]
+        [Category("自定义窗口样式")]
         public bool IsFitSystem
         {
             get { return (bool)GetValue(IsFitSystemProperty); }
@@ -236,9 +249,6 @@ namespace RS.Widgets.Controls
         }
         public static readonly DependencyProperty IsFitSystemProperty =
             DependencyProperty.Register("IsFitSystem", typeof(bool), typeof(RSWindow), new PropertyMetadata(false));
-
-
-
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {

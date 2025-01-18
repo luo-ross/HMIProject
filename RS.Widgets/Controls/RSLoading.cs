@@ -1,0 +1,77 @@
+﻿using RS.Widgets.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace RS.Widgets.Controls
+{
+    public class RSLoading : ContentControl
+    {
+        private ProgressBar PART_Loading;
+        static RSLoading()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSLoading), new FrameworkPropertyMetadata(typeof(RSLoading)));
+        }
+
+
+
+        /// <summary>
+        /// 加载配置
+        /// </summary>
+        public LoadingConfig LoadingConfig
+        {
+            get { return (LoadingConfig)GetValue(LoadingConfigProperty); }
+            set { SetValue(LoadingConfigProperty, value); }
+        }
+
+        public static readonly DependencyProperty LoadingConfigProperty =
+            DependencyProperty.Register("LoadingConfig", typeof(LoadingConfig), typeof(RSLoading), new PropertyMetadata(new LoadingConfig(), OnLoadingConfigPropertyChanged));
+
+        private static void OnLoadingConfigPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var rsLoading = d as RSLoading;
+
+            var loadingConfig = e.NewValue as LoadingConfig;
+        }
+
+        public async Task<bool> InvokeLoadingActionAsync(Func<Task<bool>> func, LoadingConfig loadingConfig)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Visibility = Visibility.Visible;
+                this.LoadingConfig = loadingConfig == null ? new LoadingConfig() : loadingConfig;
+            });
+            return await await Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    await func?.Invoke();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                finally
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.Visibility = Visibility.Collapsed;
+                    });
+                }
+            });
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as ProgressBar;
+        }
+    }
+}

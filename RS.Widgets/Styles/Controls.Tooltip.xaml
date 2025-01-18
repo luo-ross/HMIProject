@@ -8,12 +8,12 @@
 
     <Style TargetType="{x:Type ToolTip}">
         <Setter Property="Padding" Value="10" />
-        <Setter Property="Background" Value="#595959" />
+        <Setter Property="Background" Value="#FFF" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Foreground" Value="#ffffff" />
+        <Setter Property="Foreground" Value="#333333" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalOffset" Value="2" />
-        <Setter Property="VerticalOffset" Value="-5" />
+        <Setter Property="VerticalOffset" Value="-12" />
         <Setter Property="Placement" Value="Right" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="Template">
@@ -22,7 +22,7 @@
                     <Grid>
                         <Border
                             x:Name="PART_Border"
-                            Margin="8,0,0,0"
+                            Margin="8"
                             Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -36,8 +36,8 @@
                                 <DropShadowEffect
                                     BlurRadius="15"
                                     Direction="315"
-                                    Opacity="0.2"
-                                    ShadowDepth="0"
+                                    Opacity="0.4"
+                                    ShadowDepth="-1"
                                     Color="#000000" />
                             </Border.Effect>
                         </Border>
@@ -45,7 +45,7 @@
                         <Path
                             Width="15"
                             Height="15"
-                            Margin="0,8,0,0"
+                            Margin="0,15,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Data="{StaticResource RS.Icons.LeftTriangle}"

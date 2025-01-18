@@ -20,7 +20,6 @@ namespace RS.Widgets.Controls
                 typeof(Geometry),
                 typeof(ControlsHelper),
                 new PropertyMetadata(null));
-
         public static Geometry GetIconData(DependencyObject obj)
         {
             return (Geometry)obj.GetValue(IconDataProperty);

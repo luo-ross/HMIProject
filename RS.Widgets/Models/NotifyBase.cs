@@ -113,6 +113,10 @@ namespace RS.Widgets.Models
             {
                 foreach (var validationResult in validationResults)
                 {
+                    if (validationResult.MemberNames.Count()==0)
+                    {
+                        continue;
+                    }
                     string propertyName = validationResult.MemberNames.First();
                     AddErrors(propertyName, new List<ValidationResult> { validationResult });
                     OnErrorsChanged(propertyName);

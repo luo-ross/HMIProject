@@ -94,7 +94,7 @@
                             <Setter Property="ToolTip" Value="显示密码" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Icon" Property="Fill" Value="#06b025" />
+                            <Setter TargetName="PART_Icon" Property="Fill" Value="#198cff" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="False">
                             <Setter Property="ToolTip" Value="隐藏密码" />
