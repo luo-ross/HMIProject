@@ -29,7 +29,7 @@ namespace RS.BorderWindowDemo.Views.Home
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("这是自带点击事件");
+            MessageBox.ShowAsync("这是自带点击事件");
         }
     }
 }

@@ -25,6 +25,13 @@ namespace RS.Widgets.Controls
         private Button PART_BtnClose;
         private Border PART_Border;
         private RSUserControl PART_WinContentHost;
+        public RSMessageBox MessageBox
+        {
+            get
+            {
+                return this.PART_WinContentHost.MessageBox;
+            }
+        }
         static RSWindow()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWindow), new FrameworkPropertyMetadata(typeof(RSWindow)));
@@ -47,7 +54,7 @@ namespace RS.Widgets.Controls
             this.StateChanged += RSWindow_StateChanged;
         }
 
-        public async Task<bool> InvokeLoadingActionAsync(Func<Task<bool>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {
             return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig);
         }

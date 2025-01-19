@@ -269,18 +269,11 @@
                                         Content="注册"
                                         Style="{StaticResource RS.LoginView.ButtonStyle}" />
                                 </StackPanel>
-
-
                             </Grid>
                         </Grid>
-
                     </Grid>
                 </Border>
             </rs:RSUserControl>
-
-
         </Grid>
-
-
     </Grid>
 </rs:RSWindow>

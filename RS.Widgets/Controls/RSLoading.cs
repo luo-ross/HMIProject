@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Models;
+﻿using RS.Widgets.Exceptions;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,7 +41,7 @@ namespace RS.Widgets.Controls
             var loadingConfig = e.NewValue as LoadingConfig;
         }
 
-        public async Task<bool> InvokeLoadingActionAsync(Func<Task<bool>> func, LoadingConfig loadingConfig)
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -51,12 +52,11 @@ namespace RS.Widgets.Controls
             {
                 try
                 {
-                    await func?.Invoke();
-                    return true;
+                    return await func?.Invoke();
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    return OperateResult.CreateErrorResult(0, "出现异常了", ex);
                 }
                 finally
                 {

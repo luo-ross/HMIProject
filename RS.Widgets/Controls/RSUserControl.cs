@@ -11,16 +11,16 @@ using System.Windows.Input;
 
 namespace RS.Widgets.Controls
 {
-    public class RSUserControl : UserControl
+    public class RSUserControl : ContentControl
     {
         private RSLoading PART_Loading;
+        public RSMessageBox MessageBox;
         static RSUserControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSUserControl), new FrameworkPropertyMetadata(typeof(RSUserControl)));
         }
 
-
-        public async Task<bool> InvokeLoadingActionAsync(Func<Task<bool>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {
             return await this.PART_Loading.InvokeLoadingActionAsync(func, loadingConfig);
         }
@@ -61,7 +61,8 @@ namespace RS.Widgets.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.PART_Loading = (RSLoading)this.GetTemplateChild(nameof(this.PART_Loading));
+            this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as RSLoading ;
+            this.MessageBox = this.GetTemplateChild(nameof(this.MessageBox)) as RSMessageBox;
         }
 
 

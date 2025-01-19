@@ -93,6 +93,7 @@
                                 rs:ControlsHelper.IconHeight="12"
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
+                                CommandParameter="{Binding}"
                                 Style="{StaticResource RS.Styles.IconButton}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />

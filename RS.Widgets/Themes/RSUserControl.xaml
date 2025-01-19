@@ -14,12 +14,13 @@
                         <Grid>
                             <ContentPresenter />
                             <rs:RSLoading x:Name="PART_Loading" />
+                            <rs:RSMessageBox x:Name="MessageBox" />
                             <rs:RSBorder
                                 x:Name="PART_LoadingBorder"
                                 Height="{TemplateBinding CaptionHeight}"
                                 VerticalAlignment="Top"
                                 Background="Transparent"
-                                Visibility="{Binding ElementName=PART_Loading, Path=Visibility}" />
+                                Visibility="Collapsed" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -28,6 +29,12 @@
                         </Trigger>
                         <Trigger Property="IsAllowWindowMaxRestoreCommand" Value="True">
                             <Setter TargetName="PART_LoadingBorder" Property="DoubleClickCommand" Value="{x:Static rs:RSWindow.WindowMaxRestoreCommand}" />
+                        </Trigger>
+                        <Trigger SourceName="PART_Loading" Property="Visibility" Value="Visible">
+                            <Setter TargetName="PART_LoadingBorder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="MessageBox" Property="Visibility" Value="Visible">
+                            <Setter TargetName="PART_LoadingBorder" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
