@@ -63,7 +63,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Data="{TemplateBinding rs:ControlsHelper.IconData}"
-                                Fill="#FFFFFF"
+                                Fill="{TemplateBinding Foreground}"
                                 Stretch="Fill" />
                             <ContentControl
                                 x:Name="PART_Content"
@@ -339,5 +339,9 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+
+
+   
 
 </ResourceDictionary>

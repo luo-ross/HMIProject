@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -83,4 +84,64 @@
     </Style>
 
 
+
+    <Style
+        x:Key="RS.Styles.NavButton"
+        BasedOn="{StaticResource RS.Styles.ButtonBase}"
+        TargetType="{x:Type RadioButton}">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
+        <Setter Property="Padding" Value="15,8,15,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Path
+                                x:Name="PART_Icon"
+                                Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                                Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                                Fill="{TemplateBinding Foreground}"
+                                Stretch="Fill" />
+                            <ContentControl
+                                x:Name="PART_Content"
+                                Grid.Column="1"
+                                Margin="15,0,0,0"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                FontSize="{TemplateBinding FontSize}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="Background" Value="#EAEAEA" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#18EEEEEE" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Background" Value="#EAEAEA" />
+                        </Trigger>
+                        <Trigger SourceName="PART_Icon" Property="Data" Value="{x:Null}">
+                            <Setter TargetName="PART_Content" Property="Margin" Value="0,0,0,0" />
+                            <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

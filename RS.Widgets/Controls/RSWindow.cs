@@ -15,6 +15,7 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
 
+
 namespace RS.Widgets.Controls
 {
     public class RSWindow : Window
@@ -53,6 +54,7 @@ namespace RS.Widgets.Controls
             this.SizeChanged += RSWindow_SizeChanged;
             this.StateChanged += RSWindow_StateChanged;
         }
+
 
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {

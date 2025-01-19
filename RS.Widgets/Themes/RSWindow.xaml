@@ -17,7 +17,7 @@
                     <Border>
                         <Border.Effect>
                             <DropShadowEffect
-                                BlurRadius="25"
+                                BlurRadius="15"
                                 Direction="315"
                                 Opacity="0.5"
                                 ShadowDepth="-1"
@@ -25,7 +25,7 @@
                         </Border.Effect>
                         <Border
                             x:Name="PART_Border"
-                            Margin="20"
+                            Margin="15"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"

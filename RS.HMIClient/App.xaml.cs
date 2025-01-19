@@ -17,8 +17,8 @@ namespace RS.BorderWindowDemo
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            LoginView login = new LoginView();
-            login.Show();
+            HomeView view = new HomeView();
+            view.Show();
         }
     }
 

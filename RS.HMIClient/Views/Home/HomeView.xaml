@@ -7,45 +7,92 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/HMIProject/2025/xaml"
     Title="HomeView"
-    Width="800"
-    Height="450"
-    BorderCornerRadius="10"
-    IsFitSystem="True"
+    MinWidth="1024"
+    MinHeight="600"
+    Background="#fafafa"
+    BorderCornerRadius="5"
+    CaptionHeight="36"
+    IsFitSystem="False"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <rs:RSWindow.DataContext>
         <local:HomeViewModel />
     </rs:RSWindow.DataContext>
-    <!--<rs:RSWindow.CaptionContent>
+
+    <rs:RSWindow.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="RS.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
+        </ResourceDictionary>
+    </rs:RSWindow.Resources>
+    <rs:RSWindow.CaptionContent>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Text="这是Ross创建的第一个无边带阴影的窗口示例" />
+
+            <StackPanel Orientation="Horizontal">
+                <Button rs:ControlsHelper.IconData="M924.1 471.3H175.5l295.7-295.7c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L77.8 478.4c-12.5 12.5-12.5 32.8 0 45.3l361.4 361.4c6.2 6.2 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3L180 535.3h744.1c17.7 0 32-14.3 32-32s-14.4-32-32-32z" Style="{StaticResource RS.Styles.IconButton}" />
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="上位机客户端" />
+            </StackPanel>
+
+
 
             <Grid Grid.Column="1">
-                <TextBlock
+                <!--<TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Text="这是中间的内容，想咋搞咋搞" />
+                    Text="这是中间的内容，想咋搞咋搞" />-->
             </Grid>
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-
-                <Button Content="按钮1" />
-                <Button Content="按钮2" />
-                <Button Content="按钮3" />
+                <Button
+                    Padding="0"
+                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Setting}"
+                    Style="{StaticResource RS.Styles.IconButton}" />
             </StackPanel>
         </Grid>
+    </rs:RSWindow.CaptionContent>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" />
+            <Border Grid.Row="1">
+                <ScrollViewer />
+            </Border>
+            <Border
+                Grid.Row="2"
+                Padding="0,8,0,8"
+                BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
+                BorderThickness="0,1,0,0">
+                <RadioButton
+                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Setting}"
+                    Content="Setting"
+                    Style="{StaticResource RS.Styles.NavButton}" />
+            </Border>
+        </Grid>
 
-    </rs:RSWindow.CaptionContent>-->
-    <Grid Background="#fff">
-        <rs:RSBorder
+        <Grid Grid.Column="1">
+            <Border
+                Margin="0,20,0,0"
+                Background="#FDFDFD"
+                BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
+                BorderThickness="1"
+                CornerRadius="10,0,0,0" />
+        </Grid>
+        <!--<rs:RSBorder
             Height="30"
             VerticalAlignment="Top"
             Background="Transparent"
@@ -66,6 +113,6 @@
             <Button Click="Button_Click" Content="点击事件" />
 
             <Button Command="{Binding BtnClickCommand}" Content="Command事件" />
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </rs:RSWindow>
