@@ -29,7 +29,12 @@ namespace RS.BorderWindowDemo.Views.Home
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.ShowAsync("这是自带点击事件");
+           
+        }
+
+        private async void BtnSearch_OnBtnSearchCallBack(string obj)
+        {
+           await this.MessageBox.ShowAsync($@"搜索事件触发, 查询条件{this.ViewModel.Test}");
         }
     }
 }

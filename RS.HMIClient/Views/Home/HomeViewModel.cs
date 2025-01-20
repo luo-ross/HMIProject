@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Models;
+﻿using RS.HMIClient.Models;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +28,19 @@ namespace RS.BorderWindowDemo.Views.Home
         }
 
 
+        private string test;
+        /// <summary>
+        /// 搜索内容
+        /// </summary>
+        public string Test
+        {
+            get { return test; }
+            set
+            {
+                this.OnPropertyChanged(ref test, value);
+            }
+        }
 
-      
 
         private bool isFullScreen;
 

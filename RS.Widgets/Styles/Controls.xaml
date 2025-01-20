@@ -18,4 +18,5 @@
     </ResourceDictionary.MergedDictionaries>
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <Style BasedOn="{StaticResource RS.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}" />
+    <Style BasedOn="{StaticResource RS.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}" />
 </ResourceDictionary>

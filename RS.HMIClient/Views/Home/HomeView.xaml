@@ -62,36 +62,44 @@
             <ColumnDefinition Width="200" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0" />
-            <Border Grid.Row="1">
-                <ScrollViewer />
-            </Border>
-            <Border
-                Grid.Row="2"
-                Padding="0,8,0,8"
-                BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
-                BorderThickness="0,1,0,0">
-                <RadioButton
-                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Setting}"
-                    Content="Setting"
-                    Style="{StaticResource RS.Styles.NavButton}" />
-            </Border>
-        </Grid>
+        <Border Grid.Column="0" Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <rs:RSSearch
+                        x:Name="BtnSearch"
+                        OnBtnSearchCallBack="BtnSearch_OnBtnSearchCallBack"
+                        SearchContent="{Binding Test, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <Border Grid.Row="1">
+                    <ScrollViewer />
+                </Border>
+                <Border
+                    Grid.Row="2"
+                    Padding="0,8,0,8"
+                    BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
+                    BorderThickness="0,1,0,0">
+                    <RadioButton
+                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.Setting}"
+                        Content="设置"
+                        Style="{StaticResource RS.Styles.NavButton}" />
+                </Border>
+            </Grid>
+        </Border>
 
         <Grid Grid.Column="1">
             <Border
-                Margin="0,20,0,0"
+                Margin="0,2,0,2"
                 Background="#FDFDFD"
                 BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
                 BorderThickness="1"
                 CornerRadius="10,0,0,0" />
         </Grid>
+
         <!--<rs:RSBorder
             Height="30"
             VerticalAlignment="Top"

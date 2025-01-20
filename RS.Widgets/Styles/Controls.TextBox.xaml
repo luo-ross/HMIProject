@@ -12,7 +12,7 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <Style x:Key="RS.Styles.IconTextBox" TargetType="{x:Type TextBox}">
+    <Style x:Key="RS.Styles.TextBoxStyle" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="#e0e0e0" />
         <Setter Property="Foreground" Value="#333" />
@@ -26,7 +26,7 @@
         <Setter Property="Margin" Value="0,3,0,3" />
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="Padding" Value="5,4,5,4" />
+        <Setter Property="Padding" Value="3" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="TextWrapping" Value="WrapWithOverflow" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
@@ -35,6 +35,102 @@
         <Setter Property="rs:TextBoxHelper.IsMonitoring" Value="True" />
         <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="False" />
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border
+                        x:Name="border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                x:Name="PART_Watermark"
+                                Grid.Column="0"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                Foreground="#969091"
+                                Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                Visibility="Collapsed" />
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Grid.Column="0"
+                                HorizontalAlignment="Left"
+                                HorizontalContentAlignment="Left"
+                                Focusable="false"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                            <Border
+                                x:Name="PART_ValidErrorTip"
+                                Grid.Column="1"
+                                Background="Transparent"
+                                Style="{StaticResource RS.Styles.ValidErrorTipBorderStyle}">
+                                <Path Style="{StaticResource RS.Styles.ValidErrorTipPathStyle}" />
+                            </Border>
+                            <Button
+                                x:Name="PART_BtnClear"
+                                Grid.Column="2"
+                                Margin="0"
+                                HorizontalAlignment="Right"
+                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
+                                rs:ControlsHelper.IconHeight="12"
+                                rs:ControlsHelper.IconWidth="12"
+                                Command="{x:Static rs:RSCommands.CleanTextCommand}"
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource RS.Styles.IconButton}"
+                                ToolTip="清除输入框内容"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="True">
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+
+                        <Trigger Property="rs:TextBoxHelper.HasText" Value="True">
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="rs:TextBoxHelper.HasText" Value="False">
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter Property="BorderBrush" Value="#ff5b5b" />
+                            <Setter TargetName="PART_ValidErrorTip" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
+                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.Styles.DataErrorTemplates}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true" />
+                    <Condition Property="IsSelectionActive" Value="false" />
+                </MultiTrigger.Conditions>
+                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}" />
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <Style
+        x:Key="RS.Styles.IconTextBox"
+        BasedOn="{StaticResource RS.Styles.TextBoxStyle}"
+        TargetType="{x:Type TextBox}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -124,15 +220,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true" />
-                    <Condition Property="IsSelectionActive" Value="false" />
-                </MultiTrigger.Conditions>
-                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}" />
-            </MultiTrigger>
-        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
