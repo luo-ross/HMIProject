@@ -11,7 +11,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Foreground" Value="#333" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="#fff" />
         <Setter Property="Padding" Value="5" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="Template">
@@ -19,6 +19,7 @@
                 <ControlTemplate TargetType="{x:Type rs:RSSearch}">
                     <Border
                         Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">

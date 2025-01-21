@@ -26,12 +26,6 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!--<Trigger Property="IsAllowWindowDragCommand" Value="True">
-                            <Setter TargetName="PART_LoadingBorder" Property="MouseMoveCommand" Value="{x:Static rs:RSWindow.WindowMoveCommand}" />
-                        </Trigger>
-                        <Trigger Property="IsAllowWindowMaxRestoreCommand" Value="True">
-                            <Setter TargetName="PART_LoadingBorder" Property="DoubleClickCommand" Value="{x:Static rs:RSWindow.WindowMaxRestoreCommand}" />
-                        </Trigger>-->
                         <Trigger SourceName="PART_Loading" Property="Visibility" Value="Visible">
                             <Setter TargetName="PART_LoadingBorder" Property="Visibility" Value="Visible" />
                         </Trigger>

@@ -40,11 +40,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Clip="{TemplateBinding BorderClipRect}">
-                            <rs:RSUserControl
-                                x:Name="PART_WinContentHost"
-                                CaptionHeight="{TemplateBinding CaptionHeight}"
-                                IsAllowWindowDragCommand="True"
-                                IsAllowWindowMaxRestoreCommand="True">
+                            <rs:RSUserControl x:Name="PART_WinContentHost" CaptionHeight="{TemplateBinding CaptionHeight}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />

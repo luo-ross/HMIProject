@@ -90,8 +90,6 @@ namespace RS.BorderWindowDemo.Views.Home
                     {
                         serialPortNameList.Add($@"Com{i + 1}");
                     }
-
-
                 }
                 return serialPortNameList;
             }

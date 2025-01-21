@@ -39,8 +39,6 @@ namespace RS.Widgets.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWindow), new FrameworkPropertyMetadata(typeof(RSWindow)));
         }
-        public static readonly RoutedCommand WindowMaxRestoreCommand = new RoutedCommand(nameof(WindowMaxRestoreCommand), typeof(RSWindow));
-        public static readonly RoutedCommand WindowMoveCommand = new RoutedCommand(nameof(WindowMoveCommand), typeof(RSWindow));
         public RSWindow()
         {
             this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow, CanCloseWindow));
@@ -48,8 +46,6 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeRestoreWindow, CanMaximizeWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, MaximizeRestoreWindow, CanRestoreWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
-            //this.CommandBindings.Add(new CommandBinding(WindowMaxRestoreCommand, WindowMaxRestore, CanWindowMaxRestore));
-            //this.CommandBindings.Add(new CommandBinding(WindowMoveCommand, WindowMove, CanWindowMove));
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
 
@@ -73,19 +69,6 @@ namespace RS.Widgets.Controls
             e.CanExecute = true;
         }
 
-        private void WindowMove(object sender, ExecutedRoutedEventArgs e)
-        {
-            var hWnd = new WindowInteropHelper(this).Handle;
-            if (Mouse.LeftButton==MouseButtonState.Pressed)
-            {
-                this.DragMove();
-           }
-        }
-
-        private void CanWindowMaxRestore(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
 
         private void WindowMaxRestore(object sender, ExecutedRoutedEventArgs e)
         {
