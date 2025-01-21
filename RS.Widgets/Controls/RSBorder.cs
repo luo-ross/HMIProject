@@ -18,10 +18,14 @@ namespace RS.Widgets.Controls
     {
         static RSBorder()
         {
-            EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
+            //EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
             EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
-            EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.PreviewMouseRightButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
+            //EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.PreviewMouseRightButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
             EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
+        }
+        public RSBorder()
+        {
+          
         }
 
         protected override void OnMouseMove(MouseEventArgs e)

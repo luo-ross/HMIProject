@@ -1,2 +1,4 @@
 ﻿FindWindow
 SetWindowPos
+SendMessage
+SetFocus

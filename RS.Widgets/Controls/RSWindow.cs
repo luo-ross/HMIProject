@@ -1,9 +1,11 @@
 ﻿using RS.Widgets.Common.Commands;
 using RS.Widgets.Models;
+using RS.Win32API;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,8 +48,8 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeRestoreWindow, CanMaximizeWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, MaximizeRestoreWindow, CanRestoreWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
-            this.CommandBindings.Add(new CommandBinding(WindowMaxRestoreCommand, WindowMaxRestore, CanWindowMaxRestore));
-            this.CommandBindings.Add(new CommandBinding(WindowMoveCommand, WindowMove, CanWindowMove));
+            //this.CommandBindings.Add(new CommandBinding(WindowMaxRestoreCommand, WindowMaxRestore, CanWindowMaxRestore));
+            //this.CommandBindings.Add(new CommandBinding(WindowMoveCommand, WindowMove, CanWindowMove));
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
 
@@ -73,10 +75,11 @@ namespace RS.Widgets.Controls
 
         private void WindowMove(object sender, ExecutedRoutedEventArgs e)
         {
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            var hWnd = new WindowInteropHelper(this).Handle;
+            if (Mouse.LeftButton==MouseButtonState.Pressed)
             {
                 this.DragMove();
-            }
+           }
         }
 
         private void CanWindowMaxRestore(object sender, CanExecuteRoutedEventArgs e)

@@ -91,7 +91,9 @@
         TargetType="{x:Type RadioButton}">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
-        <Setter Property="Padding" Value="15,8,15,8" />
+        <Setter Property="rs:ControlsHelper.IconWidth" Value="20" />
+        <Setter Property="rs:ControlsHelper.IconHeight" Value="20" />
+        <Setter Property="Padding" Value="10,8,10,8" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RadioButton}">

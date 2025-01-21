@@ -8,9 +8,19 @@
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSWindow}">
         <Setter Property="WindowStyle" Value="None" />
-        <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="ResizeMode" Value="CanResize" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="AllowsTransparency" Value="True" />
-        <Setter Property="Background" Value="#FFF" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome
+                    CaptionHeight="50"
+                    GlassFrameThickness="-1"
+                    ResizeBorderThickness="7"
+                    UseAeroCaptionButtons="False" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWindow}">
@@ -58,9 +68,7 @@
                                         x:Name="PART_Caption"
                                         Grid.Row="0"
                                         Height="{TemplateBinding CaptionHeight}"
-                                        Background="Transparent"
-                                        DoubleClickCommand="{x:Static rs:RSWindow.WindowMaxRestoreCommand}"
-                                        MouseMoveCommand="{x:Static rs:RSWindow.WindowMoveCommand}">
+                                        Background="Transparent">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto" />
