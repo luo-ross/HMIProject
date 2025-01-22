@@ -74,9 +74,8 @@ namespace RS.Widgets.Controls
         }
 
 
-
         /// <summary>
-        /// 设置空间圆角
+        /// 设置控件圆角
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
           DependencyProperty.RegisterAttached(
@@ -97,6 +96,24 @@ namespace RS.Widgets.Controls
 
 
 
-       
+        /// <summary>
+        /// 空数据描述
+        /// </summary>
+        public static readonly DependencyProperty EmptyDataDesProperty =
+          DependencyProperty.RegisterAttached(
+              "EmptyDataDes",
+              typeof(string),
+              typeof(ControlsHelper),
+              new PropertyMetadata("空空如也..."));
+
+        public static string GetEmptyDataDes(DependencyObject obj)
+        {
+            return (string)obj.GetValue(EmptyDataDesProperty);
+        }
+
+        public static void SetEmptyDataDes(DependencyObject obj, string value)
+        {
+            obj.SetValue(EmptyDataDesProperty, value);
+        }
     }
 }

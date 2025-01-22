@@ -4,6 +4,7 @@
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSWindow}">
@@ -24,15 +25,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWindow}">
-                    <Border>
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="15"
-                                Direction="315"
-                                Opacity="0.5"
-                                ShadowDepth="-1"
-                                Color="Black" />
-                        </Border.Effect>
+                    <Border Effect="{StaticResource RS.Styles.DefaultDropShadowEffect}">
                         <Border
                             x:Name="PART_Border"
                             Margin="15"
@@ -96,14 +89,19 @@
                                             <StackPanel Grid.Column="2" Orientation="Horizontal">
                                                 <Button
                                                     x:Name="PART_Minimize"
+                                                    Margin="8,0,8,0"
                                                     rs:ControlsHelper.IconData="{StaticResource RS.Icons.Minus}"
                                                     rs:ControlsHelper.IconHeight="2"
                                                     Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                     Content="最小化"
                                                     Style="{StaticResource RS.Styles.IconButton}" />
-                                                <Button x:Name="PART_BtnMaxRestore" Style="{StaticResource RS.Styles.IconButton}" />
+                                                <Button
+                                                    x:Name="PART_BtnMaxRestore"
+                                                    Margin="8,0,8,0"
+                                                    Style="{StaticResource RS.Styles.IconButton}" />
                                                 <Button
                                                     x:Name="PART_BtnClose"
+                                                    Margin="8,0,15,0"
                                                     rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
                                                     Command="{x:Static SystemCommands.CloseWindowCommand}"
                                                     Content="关闭"

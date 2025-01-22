@@ -23,18 +23,29 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="AllowDrop" Value="true" />
-        <Setter Property="Margin" Value="3,3,3,3" />
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="Padding" Value="3" />
+        <Setter Property="Margin" Value="3,3,3,3" />
+        <Setter Property="Padding" Value="2,3,2,3" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-        <Setter Property="TextWrapping" Value="WrapWithOverflow" />
-        <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="15" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
         <Setter Property="rs:TextBoxHelper.IsMonitoring" Value="True" />
         <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="False" />
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Command="{x:Static ApplicationCommands.Copy}" Header="复制" />
+                    <MenuItem Command="{x:Static ApplicationCommands.Cut}" Header="剪切" />
+                    <MenuItem Command="{x:Static ApplicationCommands.Paste}" Header="粘贴" />
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -56,18 +67,19 @@
                                 x:Name="PART_Watermark"
                                 Grid.Column="0"
                                 Padding="{TemplateBinding Padding}"
-                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontSize="{TemplateBinding FontSize}"
                                 Foreground="#969091"
                                 Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                 Visibility="Collapsed" />
                             <ScrollViewer
                                 x:Name="PART_ContentHost"
                                 Grid.Column="0"
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Focusable="false"
-                                HorizontalScrollBarVisibility="Hidden"
-                                VerticalScrollBarVisibility="Hidden" />
+                                HorizontalScrollBarVisibility="Auto"
+                                VerticalScrollBarVisibility="Auto" />
                             <Border
                                 x:Name="PART_ValidErrorTip"
                                 Grid.Column="1"
@@ -91,8 +103,12 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="True">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="False">
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
 
                         <Trigger Property="rs:TextBoxHelper.HasText" Value="True">
@@ -103,6 +119,7 @@
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+
 
                         <Trigger Property="Validation.HasError" Value="True">
                             <Setter Property="BorderBrush" Value="#ff5b5b" />
@@ -131,6 +148,8 @@
         x:Key="RS.Styles.IconTextBox"
         BasedOn="{StaticResource RS.Styles.TextBoxStyle}"
         TargetType="{x:Type TextBox}">
+        <Setter Property="Margin" Value="3,3,3,3" />
+        <Setter Property="Padding" Value="5,4,5,4" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -163,11 +182,11 @@
                                 VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                 Foreground="#969091"
                                 Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
-                                Visibility="Collapsed" />
+                                Visibility="Visible" />
                             <ScrollViewer
                                 x:Name="PART_ContentHost"
                                 Grid.Column="1"
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Focusable="false"
                                 HorizontalScrollBarVisibility="Hidden"
@@ -199,15 +218,9 @@
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="True">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
                         </DataTrigger>
-
-                        <Trigger Property="rs:TextBoxHelper.HasText" Value="True">
-                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-
-                        <Trigger Property="rs:TextBoxHelper.HasText" Value="False">
-                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="False">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
+                        </DataTrigger>
 
                         <Trigger Property="Validation.HasError" Value="True">
                             <Setter Property="BorderBrush" Value="#ff5b5b" />
@@ -216,6 +229,15 @@
                         <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
                             <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.Styles.DataErrorTemplates}" />
                         </Trigger>
+                        <Trigger Property="rs:TextBoxHelper.HasText" Value="True">
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Hidden" />
+                        </Trigger>
+
+                        <Trigger Property="rs:TextBoxHelper.HasText" Value="False">
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

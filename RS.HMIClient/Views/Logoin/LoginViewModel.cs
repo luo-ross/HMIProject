@@ -33,7 +33,7 @@ namespace RS.HMIClient.Views.Logoin
 
         private SignUpModel signUpModel;
         /// <summary>
-        /// 注册提提
+        /// 注册
         /// </summary>
         public SignUpModel SignUpModel
         {

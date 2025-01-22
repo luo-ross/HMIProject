@@ -2,6 +2,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
     <ControlTemplate x:Key="RS.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
         <Border
@@ -32,4 +35,27 @@
     </ControlTemplate>
 
 
+
+    <ControlTemplate x:Key="RS.ControlTemplate.EmptyDataTemplate" TargetType="{x:Type ContentControl}">
+        <Border>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Path
+                    x:Name="PART_EmptyDataIcon"
+                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                    Fill="#949494"
+                    Stretch="Fill" />
+                <TextBlock
+                    Margin="0,3,0,0"
+                    Foreground="#949494"
+                    Text="{TemplateBinding rs:ControlsHelper.EmptyDataDes}" />
+            </StackPanel>
+        </Border>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
+                <Setter TargetName="PART_EmptyDataIcon" Property="Data" Value="{StaticResource RS.Icons.EmptyData}" />
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
 </ResourceDictionary>

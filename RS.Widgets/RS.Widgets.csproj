@@ -16,12 +16,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Styles\Controls.GroupBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Styles\Controls.DataGrid.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\Controls.Border.xaml">
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,7 @@
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -16,7 +17,8 @@
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Effect="{StaticResource RS.Styles.DefaultDropShadowEffect}">
 
                         <Border
                             MinWidth="300"
@@ -101,14 +103,7 @@
                                 </Border>
                             </Grid>
                         </Border>
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="15"
-                                Direction="315"
-                                Opacity="0.2"
-                                ShadowDepth="-1"
-                                Color="#000" />
-                        </Border.Effect>
+
                     </Border>
 
                     <ControlTemplate.Triggers>

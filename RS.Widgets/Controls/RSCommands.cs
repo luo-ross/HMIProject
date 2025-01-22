@@ -33,6 +33,11 @@ namespace RS.Widgets.Controls
             {
                 passwordBox.Password = string.Empty;
             }
+            else if (source is ComboBox comboBox)
+            {
+                comboBox.SelectedValue = null;
+                comboBox.SelectedItem = null;
+            }
         }
     }
 }

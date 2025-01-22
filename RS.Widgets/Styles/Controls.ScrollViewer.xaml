@@ -40,10 +40,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PART_VerticalScrollBar" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_VerticalScrollBar" Property="Width" Value="8" />
+                            <Setter TargetName="PART_VerticalScrollBar" Property="Width" Value="5" />
                         </Trigger>
                         <Trigger SourceName="PART_HorizontalScrollBar" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_HorizontalScrollBar" Property="Height" Value="8" />
+                            <Setter TargetName="PART_HorizontalScrollBar" Property="Height" Value="5" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">

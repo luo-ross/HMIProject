@@ -13,7 +13,7 @@
         <Setter Property="Foreground" Value="#333333" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Margin" Value="0,3,0,3" />
+        <Setter Property="Margin" Value="3" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="18" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="18" />

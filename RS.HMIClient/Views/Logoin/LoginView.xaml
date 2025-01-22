@@ -104,7 +104,10 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <StackPanel
+                            Grid.Row="0"
+                            Margin="0,0,0,35"
+                            Orientation="Horizontal">
                             <RadioButton
                                 x:Name="RadBtnLogin"
                                 Margin="0,3,14,3"
@@ -133,22 +136,26 @@
                         <Grid x:Name="PART_ContentHost" Grid.Row="1">
                             <Grid x:Name="PART_LoginHost" Visibility="{Binding ElementName=RadBtnLogin, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBox
-                                        Margin="0,35,0,5"
-                                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
-                                        rs:TextBoxHelper.IsShowClearButton="True"
-                                        rs:TextBoxHelper.Watermark="请输入用户名"
-                                        MaxLength="30"
-                                        Style="{StaticResource RS.Styles.IconTextBox}"
-                                        Text="{Binding LoginModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
-                                    <PasswordBox
-                                        Margin="0,5,0,5"
-                                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
-                                        rs:PasswordBoxBindBehavior.Password="{Binding LoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
-                                        rs:TextBoxHelper.IsShowClearButton="True"
-                                        rs:TextBoxHelper.Watermark="请输入密码"
-                                        MaxLength="30"
-                                        Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                    <Grid Margin="0,5,0,5">
+                                        <TextBox
+                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
+                                            rs:TextBoxHelper.IsShowClearButton="True"
+                                            rs:TextBoxHelper.Watermark="请输入用户名"
+                                            MaxLength="30"
+                                            Style="{StaticResource RS.Styles.IconTextBox}"
+                                            Text="{Binding LoginModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                                    </Grid>
+
+                                    <Grid Margin="0,5,0,5">
+                                        <PasswordBox
+                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                            rs:PasswordBoxBindBehavior.Password="{Binding LoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                            rs:TextBoxHelper.IsShowClearButton="True"
+                                            rs:TextBoxHelper.Watermark="请输入密码"
+                                            MaxLength="30"
+                                            Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                    </Grid>
+
                                     <Grid Margin="0,5,0,5">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
@@ -227,22 +234,24 @@
 
                             <Grid x:Name="PART_SignUpHost" Visibility="{Binding ElementName=RadBtnSignUp, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBox
-                                        Margin="0,35,0,5"
-                                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
-                                        rs:TextBoxHelper.IsShowClearButton="True"
-                                        rs:TextBoxHelper.Watermark="请输入用户名"
-                                        MaxLength="30"
-                                        Style="{StaticResource RS.Styles.IconTextBox}"
-                                        Text="{Binding SignUpModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
-                                    <PasswordBox
-                                        Margin="0,5,0,5"
-                                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
-                                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
-                                        rs:TextBoxHelper.IsShowClearButton="True"
-                                        rs:TextBoxHelper.Watermark="请输入密码"
-                                        MaxLength="30"
-                                        Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                    <Grid>
+                                        <TextBox
+                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
+                                            rs:TextBoxHelper.IsShowClearButton="True"
+                                            rs:TextBoxHelper.Watermark="请输入用户名"
+                                            MaxLength="30"
+                                            Style="{StaticResource RS.Styles.IconTextBox}"
+                                            Text="{Binding SignUpModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                                    </Grid>
+                                    <Grid Margin="0,5,0,5">
+                                        <PasswordBox
+                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                            rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                            rs:TextBoxHelper.IsShowClearButton="True"
+                                            rs:TextBoxHelper.Watermark="请输入密码"
+                                            MaxLength="30"
+                                            Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                    </Grid>
                                     <Grid Margin="0,5,0,5">
                                         <PasswordBox
                                             rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"

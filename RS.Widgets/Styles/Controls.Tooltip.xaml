@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -27,19 +28,13 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                            Effect="{StaticResource RS.Styles.DefaultDropShadowEffect}">
                             <Grid>
                                 <ContentControl Content="{TemplateBinding Content}" />
                             </Grid>
 
-                            <Border.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="15"
-                                    Direction="315"
-                                    Opacity="0.4"
-                                    ShadowDepth="-1"
-                                    Color="#000000" />
-                            </Border.Effect>
+
                         </Border>
 
                         <Path

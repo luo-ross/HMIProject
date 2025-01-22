@@ -6,6 +6,7 @@
     <Style x:Key="RS.Styles.TextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
     </Style>
 
 </ResourceDictionary>
