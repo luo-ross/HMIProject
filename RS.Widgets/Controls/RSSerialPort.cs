@@ -594,6 +594,14 @@ namespace RS.Widgets.Controls
 
         private async void DeleteDeviceDataModel(object parameter)
         {
+            //这里防老年痴呆，得问一问是否删除
+            string msg = parameter == "0" ? "你确定要删除该行数据吗" : "你确定要删除所有数据吗?";
+            var result = await this.PART_RSUserControl.MessageBox.ShowAsync(msg, null, MessageBoxButton.OKCancel);
+            if (result == MessageBoxResult.Cancel)
+            {
+                return;
+            }
+
             await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
             {
                 if (parameter == "0")
