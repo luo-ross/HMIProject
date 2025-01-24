@@ -62,7 +62,7 @@
                                         Stretch="Fill" />
                                     <TextBox
                                         Grid.Column="1"
-                                        Padding="10"
+                                        Padding="2,10,10,10"
                                         BorderThickness="0"
                                         IsReadOnly="True"
                                         Text="{TemplateBinding MessageBoxText}"

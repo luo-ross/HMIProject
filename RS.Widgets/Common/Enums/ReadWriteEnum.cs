@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.HMIClient.Models
+namespace RS.Widgets.Common.Enums
 {
     public enum ReadWriteEnum
     {
-        None = 0,
-        Read = 1,
-        Write = 2,
-        ReadWrite = 3,
+        Read = 0,
+        Write = 1,
+        ReadWrite = 2,
     }
 }

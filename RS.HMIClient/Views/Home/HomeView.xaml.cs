@@ -26,7 +26,15 @@ namespace RS.BorderWindowDemo.Views.Home
         public HomeView()
         {
             InitializeComponent();
-            this.ViewModel=this.DataContext as HomeViewModel;   
+            this.ViewModel=this.DataContext as HomeViewModel;
+            this.SizeChanged += HomeView_SizeChanged;
+        }
+
+        private void HomeView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var width = this.PART_ContentHost.ActualWidth;
+            var height = this.PART_ContentHost.ActualHeight;
+            this.PART_ContentHost.Clip = this.GetBorderClipRect(new CornerRadius(10), width, height);
         }
 
         private unsafe void Button_Click(object sender, RoutedEventArgs e)

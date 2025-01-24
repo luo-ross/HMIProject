@@ -61,7 +61,7 @@ namespace RS.Widgets.Controls
 
         private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
         {
-            RSCommands.CleanText(e.Source);
+            RSCommands.CleanText(e.Parameter);
         }
 
         private void CanWindowMove(object sender, CanExecuteRoutedEventArgs e)
@@ -110,7 +110,9 @@ namespace RS.Widgets.Controls
 
         private void RSWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.BorderClipRect = this.GetBorderClipRect(this.BorderCornerRadius);
+            var width = this.PART_Border.ActualWidth;
+            var height = this.PART_Border.ActualHeight;
+            this.BorderClipRect = this.GetBorderClipRect(this.BorderCornerRadius, width, height);
         }
 
         private void CanRestoreWindow(object sender, CanExecuteRoutedEventArgs e)
@@ -263,12 +265,16 @@ namespace RS.Widgets.Controls
 
         }
 
-
-        private Geometry GetBorderClipRect(CornerRadius borderCornerRadius)
+        /// <summary>
+        /// 获取裁剪边框
+        /// </summary>
+        /// <param name="borderCornerRadius">边框圆角大小</param>
+        /// <param name="width">高度</param>
+        /// <param name="height">宽度</param>
+        /// <returns></returns>
+        public Geometry GetBorderClipRect(CornerRadius borderCornerRadius,double width,double height)
         {
-
-            var width = this.PART_Border.ActualWidth;
-            var height = this.PART_Border.ActualHeight;
+            
             // 创建 PathGeometry
             PathGeometry pathGeometry = new PathGeometry();
 

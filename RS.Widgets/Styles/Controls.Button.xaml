@@ -1,12 +1,12 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ControlTemplate.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
     <Style x:Key="RS.Styles.ButtonBase" TargetType="{x:Type ButtonBase}">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
@@ -296,11 +296,11 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#dbdbdb" />
+                <Setter Property="Opacity" Value="0.9" />
                 <Setter Property="Cursor" Value="Hand" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Opacity" Value="0.6" />
+                <Setter Property="Opacity" Value="0.8" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -315,10 +315,11 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Cursor" Value="Hand" />
-                <Setter Property="Background" Value="#AA198cff" />
+                <Setter Property="Background" Value="#198cff" />
+                <Setter Property="Opacity" Value="0.9" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Opacity" Value="0.6" />
+                <Setter Property="Opacity" Value="0.8" />
             </Trigger>
         </Style.Triggers>
     </Style>

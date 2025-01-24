@@ -25,7 +25,6 @@ namespace RS.Widgets.Controls
             return await this.PART_Loading.InvokeLoadingActionAsync(func, loadingConfig);
         }
 
-
         public double CaptionHeight
         {
             get { return (double)GetValue(CaptionHeightProperty); }

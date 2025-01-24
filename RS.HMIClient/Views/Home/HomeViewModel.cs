@@ -104,151 +104,29 @@ namespace RS.BorderWindowDemo.Views.Home
 
 
 
-        private ObservableCollection<DataModel> dataModelList;
+       
 
+        private ObservableCollection< CommuStation> commuStationList;
         /// <summary>
-        /// DataGrid测试数据
+        /// 通讯站列表
         /// </summary>
-        public ObservableCollection<DataModel> DataModelList
+        public ObservableCollection<CommuStation> CommuStationList
         {
             get
             {
-                if (dataModelList == null)
+                if (commuStationList == null)
                 {
-                    dataModelList = new ObservableCollection<DataModel>();
-                    Random random = new Random();
-                    for (int i = 0; i < 5; i++)
-                    {
-                        dataModelList.Add(new DataModel()
-                        {
-                            DataId = i,
-                            Address = (ushort)i,
-                            DataDescription = @$"测试数据{i}",
-                            DataValue = i * random.NextDouble() * 100,
-                            DataGroup = 0,
-                            DataType = DataType.String,
-                            FunctionCode = 0x03,
-                            StationNumber = 0,
-                            ReadWritePermission = ReadWriteEnum.ReadWrite,
-                            CharacterLength = 0,
-                        });
-                    }
+                    commuStationList = new ObservableCollection<CommuStation>();
                 }
-                return dataModelList;
+                return commuStationList;
             }
             set
             {
-                this.OnPropertyChanged(ref dataModelList, value);
+                this.OnPropertyChanged(ref commuStationList, value);
             }
         }
 
 
-
-        private ObservableCollection<ComboBoxItemModel<byte>> functionCodeList;
-        /// <summary>
-        /// 功能码
-        /// </summary>
-        public ObservableCollection<ComboBoxItemModel<byte>> FunctionCodeList
-        {
-            get
-            {
-                if (functionCodeList == null)
-                {
-                    functionCodeList = new ObservableCollection<ComboBoxItemModel<byte>>();
-                    functionCodeList.Add(new ComboBoxItemModel<byte>()
-                    {
-                        Key = 0x01,
-                        KeyDes = "0x01 读取线圈状态",
-                    });
-                    functionCodeList.Add(new ComboBoxItemModel<byte>()
-                    {
-                        Key = 0x02,
-                        KeyDes = "0x02 读取离散输入状态",
-                    });
-                    functionCodeList.Add(new ComboBoxItemModel<byte>()
-                    {
-                        Key = 0x03,
-                        KeyDes = "0x03 读取保持寄存器",
-                    });
-                    functionCodeList.Add(new ComboBoxItemModel<byte>()
-                    {
-                        Key = 0x04,
-                        KeyDes = "0x04 读取输入寄存器",
-                    });
-                }
-                return functionCodeList;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref functionCodeList, value);
-            }
-        }
-
-
-        private ObservableCollection<DataType> dataTypeList;
-        /// <summary>
-        /// 数据类型
-        /// </summary>
-        public ObservableCollection<DataType> DataTypeList
-        {
-            get
-            {
-                if (dataTypeList == null)
-                {
-                    var dataList = Enum.GetValues<DataType>().ToList();
-                    
-                    dataTypeList = new ObservableCollection<DataType>(dataList);
-                }
-                return dataTypeList;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref dataTypeList, value);
-            }
-        }
-
-
-        private ObservableCollection<ReadWriteEnum> readWritePermissionList;
-        /// <summary>
-        /// 读取权限
-        /// </summary>
-        public ObservableCollection<ReadWriteEnum> ReadWritePermissionList
-        {
-            get
-            {
-                if (readWritePermissionList == null)
-                {
-                    var dataList = Enum.GetValues<ReadWriteEnum>().ToList();
-                    readWritePermissionList = new ObservableCollection<ReadWriteEnum>(dataList);
-                }
-                return readWritePermissionList;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref readWritePermissionList, value);
-            }
-        }
-
-
-        private ObservableCollection<ByteOrderEnum> byteOrderList;
-        /// <summary>
-        /// 字节序
-        /// </summary>
-        public ObservableCollection<ByteOrderEnum> ByteOrderList
-        {
-            get
-            {
-                if (byteOrderList == null)
-                {
-                    var dataList = Enum.GetValues<ByteOrderEnum>().ToList();
-                    byteOrderList = new ObservableCollection<ByteOrderEnum>(dataList);
-                }
-                return byteOrderList;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref byteOrderList, value);
-            }
-        }
+     
     }
 }

@@ -9,7 +9,7 @@
     Title="HomeView"
     MinWidth="1024"
     MinHeight="600"
-    Background="#fafafa"
+    Background="#eee"
     BorderCornerRadius="5"
     CaptionHeight="36"
     IsFitSystem="False"
@@ -34,9 +34,10 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Margin="5,0,0,0" Orientation="Horizontal">
                 <Button rs:ControlsHelper.IconData="M924.1 471.3H175.5l295.7-295.7c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L77.8 478.4c-12.5 12.5-12.5 32.8 0 45.3l361.4 361.4c6.2 6.2 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3L180 535.3h744.1c17.7 0 32-14.3 32-32s-14.4-32-32-32z" Style="{StaticResource RS.Styles.IconButton}" />
                 <TextBlock
+                    Margin="5,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Text="上位机客户端" />
@@ -60,7 +61,7 @@
     </rs:RSWindow.CaptionContent>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0">
@@ -121,317 +122,25 @@
                 </Border>
             </Grid>
         </Border>
-
         <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
             <Border
-                Margin="0,2,0,2"
-                Padding="10"
-                Background="#FDFDFD"
-                BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
-                BorderThickness="1,1,0,0"
-                CornerRadius="10,0,0,0">
+                x:Name="PART_ContentHost"
+                Margin="10,10,10,0"
+                Background="#fff">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <GroupBox>
-                        <GroupBox.Header>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="ModbusRTU 通讯配置 " />
-
-                                <TextBlock
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    Foreground="#06b025"
-                                    Text="连接成功 2025-01-23 01:28:00" />
-                                <Border Grid.Column="2">
-                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                        <Button Content="连接" Style="{StaticResource RS.Styles.DefaultButton}" />
-                                        <Button Content="断开连接" Style="{StaticResource RS.Styles.DefaultButton}" />
-                                        <Button Content="保存配置" Style="{StaticResource RS.Styles.DefaultButton}" />
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-                        </GroupBox.Header>
-
-
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <Grid Margin="5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Margin="3,0,3,0"
-                                    Text="Com口" />
-                                <ComboBox
-                                    Grid.Column="1"
-                                    rs:TextBoxHelper.IsShowClearButton="True"
-                                    ItemsSource="{Binding SerialPortNameList}" />
-                                <TextBlock
-                                    Grid.Column="2"
-                                    Margin="10,0,3,0"
-                                    Text="波特率" />
-                                <ComboBox Grid.Column="3" rs:TextBoxHelper.IsShowClearButton="True" />
-                                <TextBlock
-                                    Grid.Column="4"
-                                    Margin="10,0,3,0"
-                                    Text="数据位" />
-                                <TextBox Grid.Column="5" rs:TextBoxHelper.IsShowClearButton="True" />
-                                <TextBlock
-                                    Grid.Column="6"
-                                    Margin="10,0,3,0"
-                                    Text="停止位" />
-                                <TextBox Grid.Column="7" rs:TextBoxHelper.IsShowClearButton="True" />
-                                <TextBlock
-                                    Grid.Column="8"
-                                    Margin="10,0,3,0"
-                                    Text="奇偶校验" />
-                                <ComboBox Grid.Column="9" rs:TextBoxHelper.IsShowClearButton="True" />
-
-                                <CheckBox
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    Content="首地址是否从0开始" />
-
-
-                                <CheckBox
-                                    Grid.Row="1"
-                                    Grid.Column="2"
-                                    Grid.ColumnSpan="2"
-                                    Content="是否CRC16校验" />
-
-                                <CheckBox
-                                    Grid.Row="1"
-                                    Grid.Column="4"
-                                    Grid.ColumnSpan="2"
-                                    Content="是否字符串颠倒" />
-
-                                <CheckBox
-                                    Grid.Row="1"
-                                    Grid.Column="6"
-                                    Grid.ColumnSpan="2"
-                                    Content="是否自动连接" />
-                            </Grid>
-
-                            <DataGrid
-                                Grid.Row="1"
-                                rs:ControlsHelper.EmptyDataDes="没有通讯配置..."
-                                IsReadOnly="False"
-                                ItemsSource="{Binding DataModelList}"
-                                RowHeight="32">
-                                <DataGrid.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="新增数据" />
-                                        <MenuItem Header="删除选中" />
-                                        <MenuItem Header="批量导入" />
-                                        <Separator />
-                                        <MenuItem Header="模版下载" />
-                                    </ContextMenu>
-                                </DataGrid.ContextMenu>
-                                <DataGrid.Columns>
-                                    <DataGridTemplateColumn Width="*" Header="通讯站号">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding StationNumber}" ToolTip="{Binding StationNumber}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <TextBox
-                                                    Margin="0"
-                                                    Padding="2"
-                                                    Text="{Binding StationNumber}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn Width="*" Header="功能码">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding FunctionCode}" ToolTip="{Binding FunctionCode}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox
-                                                    DisplayMemberPath="KeyDes"
-                                                    ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:HomeView}}, Path=ViewModel.FunctionCodeList}"
-                                                    SelectedValue="{Binding FunctionCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    SelectedValuePath="Key" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn Width="*" Header="读取地址">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Address}" ToolTip="{Binding Address}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <TextBox
-                                                    Margin="0"
-                                                    Padding="2"
-                                                    Text="{Binding Address}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-
-                                    <DataGridTemplateColumn Width="*" Header="数据类型">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding DataType}" ToolTip="{Binding DataType}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:HomeView}}, Path=ViewModel.DataTypeList}" SelectedValue="{Binding DataType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-
-                                    <DataGridTemplateColumn Width="*" Header="字符长度">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding CharacterLength}" ToolTip="{Binding CharacterLength}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <TextBox
-                                                    Margin="0"
-                                                    Padding="2"
-                                                    Text="{Binding CharacterLength}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn Width="*" Header="读写权限">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding ReadWritePermission}" ToolTip="{Binding ReadWritePermission}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:HomeView}}, Path=ViewModel.ReadWritePermissionList}" SelectedValue="{Binding ReadWritePermission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn Width="*" Header="字节序">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding ByteOrder}" ToolTip="{Binding ByteOrder}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:HomeView}}, Path=ViewModel.ByteOrderList}" SelectedValue="{Binding ByteOrder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-
-                                    <DataGridTemplateColumn Width="*" Header="数据分组">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding DataGroup}" ToolTip="{Binding DataGroup}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <TextBox
-                                                    Margin="0"
-                                                    Padding="2"
-                                                    Text="{Binding DataGroup}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn Width="*" Header="数据描述">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding DataDescription}" ToolTip="{Binding DataDescription}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <TextBox
-                                                    Margin="0"
-                                                    Padding="2"
-                                                    Text="{Binding DataDescription}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTemplateColumn
-                                        Width="*"
-                                        Header="数据值"
-                                        IsReadOnly="True">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding DataValue, StringFormat='{}{0:N2}'}" ToolTip="{Binding DataValue}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-
-                            <TextBox
-                                Grid.Row="2"
-                                Height="200"
-                                Margin="0"
-                                VerticalContentAlignment="Top"
-                                rs:ControlsHelper.CornerRadius="0"
-                                rs:TextBoxHelper.Watermark="通讯日志信息"
-                                BorderThickness="0,1,0,0"
-                                IsReadOnly="True" />
-                        </Grid>
-
-                    </GroupBox>
-
-                    <Border Grid.Row="1" Padding="0,10,0,0">
-                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                            <TextBlock Text="版本：1.0.0.0" />
-                        </StackPanel>
-                    </Border>
+                    <rs:RSSerialPort Margin="0" rs:ControlsHelper.CornerRadius="0" />
                 </Grid>
-
+            </Border>
+            <Border Grid.Row="1" Padding="10">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <TextBlock Text="版本：1.0.0.0" />
+                </StackPanel>
             </Border>
         </Grid>
-
 
     </Grid>
 </rs:RSWindow>

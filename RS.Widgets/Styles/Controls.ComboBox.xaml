@@ -9,7 +9,6 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 
@@ -68,7 +67,7 @@
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="40" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="50" />
-        <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.ControlTemplate.DefaultDataError}" />
         <Setter Property="rs:TextBoxHelper.Watermark" Value="请选择内容" />
         <Setter Property="Template">
             <Setter.Value>
@@ -101,6 +100,7 @@
                                 <ScrollViewer x:Name="PART_ContentScrollViewer">
                                     <ContentPresenter
                                         x:Name="ContentSite"
+                                        Margin="3,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Stretch"
                                         Content="{TemplateBinding SelectionBoxItem}"
@@ -117,24 +117,17 @@
                                     Foreground="#949494"
                                     Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                     Visibility="Hidden" />
-                                <Border
-                                    x:Name="PART_ValidErrorTip"
-                                    Grid.Column="1"
-                                    Margin="3,0,3,0"
-                                    Background="Transparent"
-                                    Style="{StaticResource RS.Styles.ValidErrorTipBorderStyle}">
-                                    <Path Style="{StaticResource RS.Styles.ValidErrorTipPathStyle}" />
-                                </Border>
+
                                 <Button
                                     x:Name="PART_BtnClear"
                                     Grid.Column="2"
-                                    Margin="0"
+                                    Margin="3,0,3,0"
                                     HorizontalAlignment="Right"
                                     rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
                                     rs:ControlsHelper.IconHeight="12"
                                     rs:ControlsHelper.IconWidth="12"
                                     Command="{x:Static rs:RSCommands.CleanTextCommand}"
-                                    CommandParameter="{Binding}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                     Style="{StaticResource RS.Styles.IconButton}"
                                     ToolTip="清除输入框内容"
                                     Visibility="Visible" />
@@ -156,7 +149,7 @@
                                 x:Name="Popup"
                                 AllowsTransparency="True"
                                 Focusable="False"
-                                HorizontalOffset="-5"
+                                HorizontalOffset="-2"
                                 IsOpen="{TemplateBinding IsDropDownOpen}"
                                 Placement="Bottom"
                                 PopupAnimation="Slide"
@@ -212,19 +205,15 @@
                         </Trigger>
 
                         <Trigger Property="Validation.HasError" Value="True">
-                            <Setter Property="BorderBrush" Value="#ff5b5b" />
-                            <Setter TargetName="PART_ValidErrorTip" Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
                         </Trigger>
-                        <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
-                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.Styles.DataErrorTemplates}" />
-                        </Trigger>
-
                         <Trigger Property="SelectedValue" Value="{x:Null}">
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-
-
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -95,7 +95,7 @@ namespace RS.HMIClient.Views.Logoin
                   //模拟登录
                   await Task.Delay(2000);
 
-                  return OperateResult.CreateSuccessResult();
+                  return OperateResult.CreateResult();
               }, loadingConfig);
 
             if (operateResult.IsSuccess)

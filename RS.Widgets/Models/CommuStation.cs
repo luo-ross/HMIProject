@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.HMIClient.Models
+namespace RS.Widgets.Models
 {
-    public enum ByteOrderEnum
+    public class CommuStation
     {
-        ABCD = 0,
-        BADC = 1,
-        CDAB = 2,
-        DCBA = 3,
+
     }
 }

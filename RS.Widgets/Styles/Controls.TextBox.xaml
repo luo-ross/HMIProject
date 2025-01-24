@@ -8,7 +8,6 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ControlTemplate.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 
@@ -36,7 +35,7 @@
         <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
         <Setter Property="rs:TextBoxHelper.IsMonitoring" Value="True" />
         <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="False" />
-        <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.ControlTemplate.DefaultDataError}" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -80,23 +79,17 @@
                                 Focusable="false"
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Auto" />
-                            <Border
-                                x:Name="PART_ValidErrorTip"
-                                Grid.Column="1"
-                                Background="Transparent"
-                                Style="{StaticResource RS.Styles.ValidErrorTipBorderStyle}">
-                                <Path Style="{StaticResource RS.Styles.ValidErrorTipPathStyle}" />
-                            </Border>
+
                             <Button
                                 x:Name="PART_BtnClear"
                                 Grid.Column="2"
-                                Margin="0"
+                                Margin="3,0,3,0"
                                 HorizontalAlignment="Right"
                                 rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
                                 rs:ControlsHelper.IconHeight="12"
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
-                                CommandParameter="{Binding}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 Style="{StaticResource RS.Styles.IconButton}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
@@ -119,14 +112,12 @@
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-
-
                         <Trigger Property="Validation.HasError" Value="True">
-                            <Setter Property="BorderBrush" Value="#ff5b5b" />
-                            <Setter TargetName="PART_ValidErrorTip" Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
                         </Trigger>
-                        <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
-                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.Styles.DataErrorTemplates}" />
+
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -191,14 +182,6 @@
                                 Focusable="false"
                                 HorizontalScrollBarVisibility="Hidden"
                                 VerticalScrollBarVisibility="Hidden" />
-
-                            <Border
-                                x:Name="PART_ValidErrorTip"
-                                Grid.Column="2"
-                                Background="Transparent"
-                                Style="{StaticResource RS.Styles.ValidErrorTipBorderStyle}">
-                                <Path Style="{StaticResource RS.Styles.ValidErrorTipPathStyle}" />
-                            </Border>
                             <Button
                                 x:Name="PART_BtnClear"
                                 Grid.Column="3"
@@ -208,7 +191,7 @@
                                 rs:ControlsHelper.IconHeight="12"
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
-                                CommandParameter="{Binding}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 Style="{StaticResource RS.Styles.IconButton}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
@@ -223,11 +206,7 @@
                         </DataTrigger>
 
                         <Trigger Property="Validation.HasError" Value="True">
-                            <Setter Property="BorderBrush" Value="#ff5b5b" />
-                            <Setter TargetName="PART_ValidErrorTip" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
-                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.Styles.DataErrorTemplates}" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
                         </Trigger>
                         <Trigger Property="rs:TextBoxHelper.HasText" Value="True">
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Hidden" />

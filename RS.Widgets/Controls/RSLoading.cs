@@ -20,8 +20,6 @@ namespace RS.Widgets.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSLoading), new FrameworkPropertyMetadata(typeof(RSLoading)));
         }
 
-
-
         /// <summary>
         /// 加载配置
         /// </summary>
@@ -56,7 +54,7 @@ namespace RS.Widgets.Controls
                 }
                 catch (Exception ex)
                 {
-                    return OperateResult.CreateErrorResult(0, "出现异常了", ex);
+                    return ErrorOperateResult.CreateResult(0, "出现异常了", ex);
                 }
                 finally
                 {

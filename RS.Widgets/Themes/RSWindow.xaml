@@ -93,8 +93,8 @@
                                                     rs:ControlsHelper.IconData="{StaticResource RS.Icons.Minus}"
                                                     rs:ControlsHelper.IconHeight="2"
                                                     Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-                                                    Content="最小化"
-                                                    Style="{StaticResource RS.Styles.IconButton}" />
+                                                    Style="{StaticResource RS.Styles.IconButton}"
+                                                    ToolTip="最小化" />
                                                 <Button
                                                     x:Name="PART_BtnMaxRestore"
                                                     Margin="8,0,8,0"
@@ -104,8 +104,8 @@
                                                     Margin="8,0,15,0"
                                                     rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
                                                     Command="{x:Static SystemCommands.CloseWindowCommand}"
-                                                    Content="关闭"
-                                                    Style="{StaticResource RS.Styles.IconButton}" />
+                                                    Style="{StaticResource RS.Styles.IconButton}"
+                                                    ToolTip="关闭" />
                                             </StackPanel>
                                         </Grid>
                                     </rs:RSBorder>
@@ -118,14 +118,14 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="Content" Value="恢复" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="恢复" />
                             <Setter TargetName="PART_Border" Property="Margin" Value="0" />
                             <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Restore}" />
                         </Trigger>
                         <Trigger Property="WindowState" Value="Normal">
                             <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="Content" Value="最大化" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="最大化" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Maxsize}" />
                         </Trigger>
                         <Trigger Property="IsFitSystem" Value="True">

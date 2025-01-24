@@ -9,9 +9,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="System.IO.Ports" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
     <ProjectReference Include="..\RS.Win32API\RS.Win32API.csproj" />
   </ItemGroup>
 
@@ -25,10 +27,6 @@
     <Page Update="Styles\Controls.Border.xaml">
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Converters\" />
   </ItemGroup>
 
 </Project>

@@ -18,6 +18,7 @@ namespace RS.BorderWindowDemo
         {
             base.OnStartup(e);
             HomeView view = new HomeView();
+            //LoginView view = new LoginView();
             view.Show();
         }
     }

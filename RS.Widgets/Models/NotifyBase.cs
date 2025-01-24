@@ -58,8 +58,12 @@ namespace RS.Widgets.Models
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName)); ;
         }
 
-        public IEnumerable GetErrors(string? propertyName)
+        public IEnumerable GetErrors(string? propertyName=null)
         {
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                yield break;
+            }
             if (ErrorsDic.ContainsKey(propertyName))
             {
                 var errorList = ErrorsDic[propertyName];

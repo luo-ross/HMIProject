@@ -9,6 +9,7 @@ namespace RS.HMIClient.Models
 {
     public class LoginModel : UserModel
     {
+
         private bool isRememberPassword;
         /// <summary>
         /// 是否记住密码
@@ -21,6 +22,7 @@ namespace RS.HMIClient.Models
                 this.OnPropertyChanged(ref isRememberPassword, value);
             }
         }
+
 
         private string verify;
         /// <summary>

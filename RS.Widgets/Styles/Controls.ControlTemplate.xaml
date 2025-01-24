@@ -3,7 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <ControlTemplate x:Key="RS.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
@@ -35,7 +37,6 @@
     </ControlTemplate>
 
 
-
     <ControlTemplate x:Key="RS.ControlTemplate.EmptyDataTemplate" TargetType="{x:Type ContentControl}">
         <Border>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -56,6 +57,57 @@
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
                 <Setter TargetName="PART_EmptyDataIcon" Property="Data" Value="{StaticResource RS.Icons.EmptyData}" />
             </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="RS.ControlTemplate.DefaultDataError">
+        <Border
+            BorderBrush="#ff5b5b"
+            BorderThickness="1"
+            CornerRadius="3">
+            <Grid>
+                <AdornedElementPlaceholder>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            x:Name="PART_ValidErrorTipHost"
+                            Grid.Column="1"
+                            VerticalAlignment="Stretch"
+                            Visibility="Visible">
+                            <TextBlock
+                                x:Name="PART_ValidErrorTip"
+                                Margin="2,0,2,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="Red"
+                                Text="❋" />
+                        </Border>
+                    </Grid>
+                </AdornedElementPlaceholder>
+                <Popup
+                    x:Name="PART_ErrorPopup"
+                    AllowsTransparency="True"
+                    HorizontalOffset="5"
+                    IsOpen="False"
+                    Placement="Right"
+                    PlacementTarget="{Binding ElementName=PART_ValidErrorTip}"
+                    StaysOpen="True"
+                    VerticalOffset="-5">
+                    <Border Padding="10,5,10,5" Background="#ff5b5b">
+                        <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
+                    </Border>
+                </Popup>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <Trigger SourceName="PART_ValidErrorTipHost" Property="IsMouseOver" Value="True">
+                <Setter TargetName="PART_ErrorPopup" Property="IsOpen" Value="True" />
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 </ResourceDictionary>
