@@ -2,7 +2,8 @@
 
 这是登录界面
 
-![QQ20250116-215045](https://github.com/user-attachments/assets/7c94fc9a-b9e4-4412-937f-8bc119baa52e)
+![image](https://github.com/user-attachments/assets/ffb48386-e60b-4e45-94d1-f346eb0682b8)
+
 
 这是Home页面
 
