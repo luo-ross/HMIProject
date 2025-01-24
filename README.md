@@ -2,7 +2,7 @@
 
 这是登录界面
 
-![image](https://github.com/user-attachments/assets/ffb48386-e60b-4e45-94d1-f346eb0682b8)
+![image](https://github.com/user-attachments/assets/24d9a6dd-c1ef-49d4-b0c7-b1e9d625a7d0)
 
 
 这是Home页面
