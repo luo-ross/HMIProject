@@ -16,6 +16,12 @@ using RS.Widgets.Common.Enums;
 using System.Windows.Input;
 using RS.Commons.Extensions;
 using RS.Commons.Compares;
+using Microsoft.Win32;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.IO;
+using RS.Widgets.Common.Excels;
 
 namespace RS.Widgets.Controls
 {
@@ -34,10 +40,160 @@ namespace RS.Widgets.Controls
         {
             // 初始化命令
             AddDataCommand = new RelayCommand(AddData);
-            DeleteCommand = new RelayCommand(DeleteDeviceDataModel);
+            DeleteCommand = new RelayCommand<string>(DeleteDeviceDataModel);
             BatchImportCommand = new RelayCommand(BatchImport);
             TemplateDownloadCommand = new RelayCommand(TemplateDownload);
+
+            //DataId更改事件
+            CellValueEditChangedCommand = new RelayCommand<string>(CellValueEditChanged);
+
             this.Loaded += RSSerialPort_Loaded;
+            this.DeviceDataModelList = new ObservableCollection<DeviceDataModel>();
+        }
+
+        /// <summary>
+        /// 单元格数据编辑更改事件
+        /// </summary>
+        /// <param name="property">编辑属性名称</param>
+        private void CellValueEditChanged(string property)
+        {
+            var deviceDataModelList = this.DeviceDataModelList.ToList();
+            switch (property)
+            {
+                //数据标签
+                case nameof(DeviceDataModel.DataId):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var dataId = item.DataId;
+                            //判断DataId是否重复  
+                            if (this.DeviceDataModelList.Count(t => t.DataId == dataId) > 1)
+                            {
+                                ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+                                validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据编号重复"));
+                                item.AddErrors(nameof(DeviceDataModel.DataId), validationResults);
+                            }
+                            else
+                            {
+                                item.RemoveErrors(nameof(DeviceDataModel.DataId));
+                            }
+                        }
+                    }
+                    break;
+
+                //通讯站号
+                case nameof(DeviceDataModel.StationNumber):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var stationNumber = item.StationNumber;
+                        }
+                    }
+                    break;
+
+                //功能码
+                case nameof(DeviceDataModel.FunctionCode):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var functionCode = item.FunctionCode;
+                        }
+                    }
+                    break;
+
+                //读取地址
+                case nameof(DeviceDataModel.Address):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var address = item.Address;
+                        }
+                    }
+                    break;
+
+                //数据类型
+                case nameof(DeviceDataModel.DataType):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var dataType = item.DataType;
+                        }
+                    }
+                    break;
+
+                //字符长度
+                case nameof(DeviceDataModel.CharacterLength):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var characterLength = item.CharacterLength;
+                            //判断字符串长度 
+                            if (characterLength < 0)
+                            {
+                                ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+                                validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("长度不能小于0"));
+                                item.AddErrors(nameof(DeviceDataModel.CharacterLength), validationResults);
+                            }
+                            else
+                            {
+                                item.RemoveErrors(nameof(DeviceDataModel.CharacterLength));
+                            }
+                        }
+                    }
+                    break;
+
+                //读写权限
+                case nameof(DeviceDataModel.ReadWritePermission):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var readWritePermission = item.ReadWritePermission;
+                        }
+                    }
+                    break;
+
+                //字节序
+                case nameof(DeviceDataModel.ByteOrder):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var byteOrder = item.ByteOrder;
+                        }
+                    }
+                    break;
+
+                //数据分组
+                case nameof(DeviceDataModel.DataGroup):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var dataGroup = item.DataGroup;
+                        }
+                    }
+                    break;
+
+                //数据描述
+                case nameof(DeviceDataModel.DataDescription):
+                    {
+                        foreach (var item in deviceDataModelList)
+                        {
+                            var dataDescription = item.DataDescription;
+
+                            //判断DataDescription是否重复  
+                            if (this.DeviceDataModelList.Count(t => t.DataDescription.Trim() == dataDescription.Trim()) > 1)
+                            {
+                                ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+                                validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据描述重复"));
+                                item.AddErrors(nameof(DeviceDataModel.DataDescription), validationResults);
+                            }
+                            else
+                            {
+                                item.RemoveErrors(nameof(DeviceDataModel.DataDescription));
+                            }
+                        }
+                    }
+                    break;
+            }
         }
 
         private void RSSerialPort_Loaded(object sender, RoutedEventArgs e)
@@ -46,6 +202,17 @@ namespace RS.Widgets.Controls
         }
 
         #region Command事件
+        //DataId更改事件
+        public static readonly DependencyProperty CellValueEditChangedCommandProperty =
+            DependencyProperty.Register(nameof(CellValueEditChangedCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+
+        public ICommand CellValueEditChangedCommand
+        {
+            get { return (ICommand)GetValue(CellValueEditChangedCommandProperty); }
+            set { SetValue(CellValueEditChangedCommandProperty, value); }
+        }
+
+
         // 新增数据命令依赖属性
         public static readonly DependencyProperty AddDataCommandProperty =
             DependencyProperty.Register(nameof(AddDataCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
@@ -514,6 +681,7 @@ namespace RS.Widgets.Controls
                     //我们就获取列表最后一个数据
                     seviceDataModelSelected = deviceDataModelList.LastOrDefault();
                 }
+
                 DeviceDataModel deviceDataModel = null;
                 if (seviceDataModelSelected != null)
                 {
@@ -557,6 +725,7 @@ namespace RS.Widgets.Controls
             {
                 return OperateResult.CreateResult();
             }
+
             //添加之前验证我们的数据是否都符合规定
             foreach (var item in dataList)
             {
@@ -592,10 +761,14 @@ namespace RS.Widgets.Controls
             this.PART_DataGrid?.ScrollIntoView(deviceDataModel);
         }
 
-        private async void DeleteDeviceDataModel(object parameter)
+        /// <summary>
+        /// 删除数据配置
+        /// </summary>
+        /// <param name="parameter">0 删除单行 1删除全部</param>
+        private async void DeleteDeviceDataModel(string parameter)
         {
             //这里防老年痴呆，得问一问是否删除
-            string msg = parameter == "0" ? "你确定要删除该行数据吗" : "你确定要删除所有数据吗?";
+            string msg = parameter.Equals("0") ? "你确定要删除该行数据吗" : "你确定要删除所有数据吗?";
             var result = await this.PART_RSUserControl.MessageBox.ShowAsync(msg, null, MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.Cancel)
             {
@@ -604,7 +777,7 @@ namespace RS.Widgets.Controls
 
             await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
             {
-                if (parameter == "0")
+                if (parameter.Equals("0"))
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -625,11 +798,138 @@ namespace RS.Widgets.Controls
 
         }
 
-        private void BatchImport(object parameter)
+        /// <summary>
+        /// 批量导入参数配置
+        /// </summary>
+        /// <param name="parameter"></param>
+        private async void BatchImport(object parameter)
         {
+            //这里我们需要打开一个文件选择框
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            // 设置Excel文件的过滤器
+            openFileDialog.Filter = "Excel 文件 (*.xls;*.xlsx)|*.xls;*.xlsx";
+            // 显示对话框并检查用户是否点击了确定
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // 获取选定的文件路径
+                string filePath = openFileDialog.FileName;
+
+                //获取数据副本
+                var deviceDataModelList = this.DeviceDataModelList.ToList();
+                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+                  {
+                      var dataList = GetDeviceDataModelConfig(filePath);
+                      deviceDataModelList = deviceDataModelList.Concat(dataList).ToList();
+                      //还需要验证数据配置是否有重复
+                      var duplicateData = deviceDataModelList.FindDuplicates().ToList();
+
+                      //获取数据的差集
+                      dataList = dataList.Except(duplicateData).ToList();
+
+                      foreach (var item in dataList)
+                      {
+                          this.Dispatcher.Invoke(() =>
+                          {
+                              //自动获取DataId
+                              if (deviceDataModelList.Count > 0)
+                              {
+                                  item.DataId = deviceDataModelList.Max(t => t.DataId) + 1;
+                              }
+                              this.DeviceDataModelList.Add(item);
+                          });
+                      }
+                      return OperateResult.CreateResult();
+                  });
+
+                if (!operateResult.IsSuccess)
+                {
+                    await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
+                }
+
+            }
 
         }
 
+        /// <summary>
+        /// 获取数据配置
+        /// </summary>
+        /// <param name="filePath">配置文件绝对路径</param>
+        /// <returns></returns>
+        private List<DeviceDataModel> GetDeviceDataModelConfig(string filePath)
+        {
+            IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
+            // 读取数据配置表
+            ISheet sheet = workbook.GetSheet("DataConfig");
+            List<DeviceDataModel> deviceDataModelList = new List<DeviceDataModel>();
+            // 遍历行和单元格并读取数据
+            for (int row = 4; row <= sheet.LastRowNum; row++)
+            {
+                DeviceDataModel deviceDataModel = new DeviceDataModel();
+                IRow currentRow = sheet.GetRow(row);
+                if (currentRow != null)
+                {
+                    //读取通讯站号
+                    if (Byte.TryParse(currentRow.GetCell(0)?.ToString(), out byte stationNumber))
+                    {
+                        deviceDataModel.StationNumber = stationNumber;
+                    }
+
+                    //读取功能码 
+                    if (Enum.TryParse(currentRow.GetCell(1)?.ToString(), out FunctionCodeEnum functionCode))
+                    {
+                        deviceDataModel.FunctionCode = functionCode;
+                    }
+
+                    //读取地址
+                    deviceDataModel.Address = currentRow.GetCell(2)?.ToString();
+
+                    //读取数据类型
+                    if (Enum.TryParse(currentRow.GetCell(3)?.ToString(), out DataTypeEnum dataType))
+                    {
+                        deviceDataModel.DataType = dataType;
+                    }
+
+                    //只有数据类型为字符串时才读取字符长度
+                    if (deviceDataModel.DataType == DataTypeEnum.String)
+                    {
+                        //读取字符长度
+                        if (int.TryParse(currentRow.GetCell(4)?.ToString(), out int characterLength))
+                        {
+                            deviceDataModel.CharacterLength = characterLength;
+                        }
+                    }
+
+                    //读取读取权限
+                    if (Enum.TryParse(currentRow.GetCell(5)?.ToString(), out ReadWriteEnum readWritePermission))
+                    {
+                        deviceDataModel.ReadWritePermission = readWritePermission;
+                    }
+
+                    //读取字节顺序
+                    if (Enum.TryParse(currentRow.GetCell(6)?.ToString(), out ByteOrderEnum byteOrder))
+                    {
+                        deviceDataModel.ByteOrder = byteOrder;
+                    }
+
+                    //读取数据分组
+                    if (byte.TryParse(currentRow.GetCell(7)?.ToString(), out byte dataGroup))
+                    {
+                        deviceDataModel.DataGroup = dataGroup;
+                    }
+
+                    //读取数据描述
+                    deviceDataModel.DataDescription = currentRow.GetCell(8)?.ToString();
+                    deviceDataModelList.Add(deviceDataModel);
+                }
+            }
+
+            return deviceDataModelList;
+        }
+
+        /// <summary>
+        /// 模板下载
+        /// </summary>
+        /// <param name="parameter"></param>
         private void TemplateDownload(object parameter)
         {
 
@@ -842,7 +1142,6 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_RSUserControl = this.GetTemplateChild(nameof(this.PART_RSUserControl)) as RSUserControl;
-
             this.PART_DataGrid = this.GetTemplateChild(nameof(this.PART_DataGrid)) as DataGrid;
         }
     }

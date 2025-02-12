@@ -25,7 +25,7 @@ namespace RS.Widgets.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); ;
         }
 
-        public bool OnPropertyChanged<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        public  bool OnPropertyChanged<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (!Equals(field, newValue))
             {
@@ -129,17 +129,18 @@ namespace RS.Widgets.Models
             return !HasErrors;
         }
 
-        private void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults)
+        public void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults)
         {
             RemoveErrors(propertyName);
             ErrorsDic.TryAdd(propertyName, validationResults.Select(t => t.ErrorMessage));
         }
 
-        private void RemoveErrors(string? propertyName)
+        public void RemoveErrors(string? propertyName)
         {
             if (ErrorsDic.ContainsKey(propertyName))
             {
                 ErrorsDic.Remove(propertyName);
+                OnErrorsChanged(propertyName);
             }
         }
         #endregion

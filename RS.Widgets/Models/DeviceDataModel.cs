@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public  class DeviceDataModel : NotifyBase
+    public class DeviceDataModel : NotifyBase
     {
 
         private int dataId;
@@ -24,9 +25,14 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref dataId, value);
+                if (OnPropertyChanged(ref dataId, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
+
+
 
 
         private byte stationNumber;
@@ -41,11 +47,14 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref stationNumber, value);
+                if (OnPropertyChanged(ref stationNumber, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
 
-        private FunctionCodeEnum functionCode= FunctionCodeEnum.ReadHoldingRegisters_0x03;
+        private FunctionCodeEnum functionCode = FunctionCodeEnum.ReadHoldingRegisters_0x03;
         /// <summary>
         /// 功能码，定义主站请求从站执行的操作类型，不同的功能码对应不同的操作
         /// </summary>
@@ -57,7 +66,10 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref functionCode, value);
+                if (OnPropertyChanged(ref functionCode, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
 
@@ -74,7 +86,10 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref address, value);
+                if (OnPropertyChanged(ref address, value))
+                {
+                    this.IsSaved = false;
+                }
                 this.ValidProperty(value);
             }
         }
@@ -91,7 +106,10 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref dataType, value);
+                if (OnPropertyChanged(ref dataType, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
 
@@ -99,6 +117,7 @@ namespace RS.Widgets.Models
         /// <summary>
         /// 字符长度，对于不同的数据类型，其表示字符长度可能不同，如对于 ushort 是 2 字节
         /// </summary>
+
         public int? CharacterLength
         {
             get
@@ -107,9 +126,17 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref characterLength, value);
+                if (OnPropertyChanged(ref characterLength, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
+
+
+       
+
+
 
         private ReadWriteEnum readWritePermission = ReadWriteEnum.ReadWrite;
         /// <summary>
@@ -123,7 +150,10 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref readWritePermission, value);
+                if (OnPropertyChanged(ref readWritePermission, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
 
@@ -139,7 +169,10 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref dataGroup, value);
+                if (OnPropertyChanged(ref dataGroup, value))
+                {
+                    this.IsSaved = false;
+                }
             }
         }
 
@@ -156,7 +189,10 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref dataDescription, value);
+                if (OnPropertyChanged(ref dataDescription, value))
+                {
+                    this.IsSaved = false;
+                }
                 this.ValidProperty(value);
             }
         }
@@ -178,6 +214,8 @@ namespace RS.Widgets.Models
         }
 
 
+
+
         private double? dataValue;
         /// <summary>
         /// 数据值
@@ -193,6 +231,31 @@ namespace RS.Widgets.Models
                 this.OnPropertyChanged(ref dataValue, value);
             }
         }
+
+        /// <summary>
+        /// 记录当前数据是否保存
+        /// </summary>
+        public bool IsSaved { get; set; }
+
+
+
+        private bool isValid;
+        /// <summary>
+        /// 是否验证通过
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                return isValid;
+            }
+            set
+            {
+                this.OnPropertyChanged(ref isValid, value);
+            }
+        }
+
+
 
         /// <summary>
         /// 这里是手动克隆不叨叨了肯定是最快的
@@ -214,6 +277,8 @@ namespace RS.Widgets.Models
                 FunctionCode = this.FunctionCode,
                 ReadWritePermission = this.ReadWritePermission,
                 StationNumber = this.StationNumber,
+                IsSaved = this.IsSaved,
+                IsValid = this.IsValid
             };
         }
 

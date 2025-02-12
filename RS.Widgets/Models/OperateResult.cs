@@ -27,13 +27,32 @@ namespace RS.Widgets.Models
         {
             return new OperateResult()
             {
-                IsSuccess=true,
+                IsSuccess = true,
                 Message = "成功",
                 Data = null,
             };
         }
 
-        public static OperateResult CreateResult(object data )
+        public static OperateResult CreateResult(object data)
+        {
+            return new OperateResult()
+            {
+                IsSuccess = true,
+                Message = "成功",
+                Data = data,
+            };
+        }
+    }
+
+
+    public class OperateResult<T> : OperateResult
+    {
+        /// <summary>
+        /// 返回的数据
+        /// </summary>
+        public new T Data { get; set; }
+
+        public static OperateResult CreateResult(T data)
         {
             return new OperateResult()
             {
