@@ -76,6 +76,7 @@
                             x:Name="PART_ValidErrorTipHost"
                             Grid.Column="1"
                             VerticalAlignment="Stretch"
+                            Background="Transparent"
                             Visibility="Visible">
                             <TextBlock
                                 x:Name="PART_ValidErrorTip"
@@ -91,12 +92,12 @@
                 <Popup
                     x:Name="PART_ErrorPopup"
                     AllowsTransparency="True"
-                    HorizontalOffset="5"
+                    HorizontalOffset="3"
                     IsOpen="False"
                     Placement="Right"
-                    PlacementTarget="{Binding ElementName=PART_ValidErrorTip}"
+                    PlacementTarget="{Binding ElementName=PART_ValidErrorTipHost}"
                     StaysOpen="True"
-                    VerticalOffset="-5">
+                    VerticalOffset="-1">
                     <Border Padding="10,5,10,5" Background="#ff5b5b">
                         <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
                     </Border>

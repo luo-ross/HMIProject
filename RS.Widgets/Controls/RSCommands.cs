@@ -9,13 +9,11 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Controls;
-using RS.Widgets.Common.Commands;
 
 namespace RS.Widgets.Controls
 {
     public static class RSCommands
     {
-     
         public static RoutedCommand CleanTextCommand { get; private set; }
 
         static RSCommands()

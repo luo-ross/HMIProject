@@ -13,7 +13,7 @@ namespace RS.Widgets.Models
     public class DeviceDataModel : NotifyBase
     {
 
-        private int dataId;
+        private int dataId = -1;
         /// <summary>
         /// 数据标签 上位机使用
         /// </summary>
@@ -31,8 +31,6 @@ namespace RS.Widgets.Models
                 }
             }
         }
-
-
 
 
         private byte stationNumber;
@@ -73,12 +71,11 @@ namespace RS.Widgets.Models
             }
         }
 
-        private string address;
+        private int address;
         /// <summary>
         /// 地址，表示要操作的数据或设备内部存储单元的位置，例如在 Modbus 协议中可以是寄存器或线圈的地址
         /// </summary>
-        [Required(ErrorMessage = "读取地址不能为空")]
-        public string Address
+        public int Address
         {
             get
             {
@@ -109,6 +106,15 @@ namespace RS.Widgets.Models
                 if (OnPropertyChanged(ref dataType, value))
                 {
                     this.IsSaved = false;
+                    //判断数据类型是否是String类型
+                    if (dataType != DataTypeEnum.String)
+                    {
+                        this.CharacterLength = null;
+                    }
+                    else
+                    {
+                        this.CharacterLength = 10;
+                    }
                 }
             }
         }
@@ -134,13 +140,13 @@ namespace RS.Widgets.Models
         }
 
 
-       
 
 
 
-        private ReadWriteEnum readWritePermission = ReadWriteEnum.ReadWrite;
+
+        private ReadWriteEnum readWritePermission = ReadWriteEnum.Read;
         /// <summary>
-        /// 读写权限，使用枚举表示，可根据实际需求自定义枚举，如 Read、Write、ReadWrite
+        /// 读写权限，使用枚举表示，可根据实际需求自定义枚举，如 Read、ReadWrite
         /// </summary>
         public ReadWriteEnum ReadWritePermission
         {

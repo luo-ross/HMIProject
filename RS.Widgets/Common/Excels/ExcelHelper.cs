@@ -25,14 +25,14 @@ namespace RS.Widgets.Common.Excels
         {
             IWorkbook workbook;
             // 根据文件扩展名选择合适的工作簿类型
-            if (filePath.EndsWith(".xlsx"))
+            if (Path.GetExtension(filePath).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
             {
                 using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read,FileShare.ReadWrite))
                 {
                     return new XSSFWorkbook(file);
                 }
             }
-            else if (filePath.EndsWith(".xls"))
+            else if (Path.GetExtension(filePath).Equals(".xls", StringComparison.OrdinalIgnoreCase))
             {
                 using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
@@ -43,6 +43,32 @@ namespace RS.Widgets.Common.Excels
             {
                 throw new NotSupportedException("不支持的文件格式");
             }
+        }
+
+        /// <summary>
+        /// 创建Excel工作簿
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
+        public static IWorkbook CreateWorkbook(string filePath)
+        {
+            IWorkbook workbook;
+            // 根据文件扩展名选择合适的工作簿类型
+            if (Path.GetExtension(filePath).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                workbook = new XSSFWorkbook();
+            }
+            else if (Path.GetExtension(filePath).Equals(".xls", StringComparison.OrdinalIgnoreCase))
+            {
+                workbook = new HSSFWorkbook();
+            }
+            else
+            {
+                throw new NotSupportedException("不支持的文件格式");
+            }
+
+            return workbook;
         }
 
 

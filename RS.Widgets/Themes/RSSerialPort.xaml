@@ -336,9 +336,13 @@
                                                 CommandParameter="1"
                                                 Header="全部删除" />
                                             <MenuItem
-                                                x:Name="PART_BtnBatchImport"
-                                                Command="{TemplateBinding BatchImportCommand}"
-                                                Header="批量导入" />
+                                                x:Name="PART_BtnImportConfig"
+                                                Command="{TemplateBinding ImportConfigCommand}"
+                                                Header="导入配置" />
+                                            <MenuItem
+                                                x:Name="PART_BtnExportConfig"
+                                                Command="{TemplateBinding ExportConfigCommand}"
+                                                Header="导出配置" />
                                             <Separator />
                                             <MenuItem
                                                 x:Name="PART_BtnTemplateDownload"
@@ -347,7 +351,16 @@
                                         </ContextMenu>
                                     </DataGrid.ContextMenu>
                                     <DataGrid.Columns>
-                                        <DataGridTemplateColumn Width="*" Header="数据标签">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="数据标签">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="上位机专用，主要用于数据绑定" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -372,7 +385,30 @@
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="*" Header="通讯站号">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="通讯站号">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock Width="400" TextWrapping="Wrap">
+                                                            <Run Text="1. 定义：Modbus通讯站号是在Modbus网络中，赋予每个设备的唯一标识编号。它就像是设备在网络中的“门牌号”，用于区分不同的设备，确保通信的准确性和针对性。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="2. 作用" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 通信寻址：主站利用站号来精准定位目标从站设备。例如，在一个工业自动化系统中，主站需要与多个传感器、执行器等从站设备进行通信，通过站号就能准确地将数据发送给指定的从站，或从特定从站获取数据。" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 数据识别：从站接收到数据帧后，通过检查站号判断该数据是否是发送给自己的。如果站号匹配，从站就会对数据进行处理；若不匹配，则会忽略该数据。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="3. 取值范围：在标准的Modbus RTU和ASCII模式下，站号取值范围通常是0 - 255。其中，0号站一般保留用于广播通信。例如，主站向所有从站发送统一的时间同步指令时，就可以使用站号0。1 - 255号站用于标识各个具体的从站设备。不过，不同设备厂商对站号的使用可能有特殊规定，实际应用时需参考设备手册。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="4. 设置方法：通常可通过设备的硬件拨码开关、软件配置界面或编程方式设置站号。比如，一些智能仪表可通过面板上的按键进入设置菜单，在菜单中选择站号设置选项，输入对应的数字来设置站号；而一些可编程逻辑控制器（PLC），可以通过编程软件在项目配置中设定站号。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="5. 站号冲突处理：如果网络中出现两个或多个设备站号相同的情况，会导致通信错误。此时，需要重新检查并修改冲突设备的站号，使其唯一。例如，在新设备接入网络时，要提前规划好站号，避免站号冲突；对于已出现冲突的情况，可借助设备的诊断工具找出冲突设备，然后逐一修改站号。" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
+
+
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -397,7 +433,32 @@
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="*" Header="功能码">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="功能码">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="以下是常见Modbus功能码的说明： " />
+                                                            <LineBreak />
+                                                            <Run Text="01（0x01） - 读取线圈状态 " />
+                                                            <LineBreak />
+                                                            <Run Text="02（0x02） - 读取离散输入 " />
+                                                            <LineBreak />
+                                                            <Run Text="03（0x03） - 读取保持寄存器 " />
+                                                            <LineBreak />
+                                                            <Run Text="04（0x04） - 读取输入寄存器 " />
+                                                            <LineBreak />
+                                                            <Run Text="05（0x05） - 强制单个线圈 " />
+                                                            <LineBreak />
+                                                            <Run Text="06（0x06） - 预置单个寄存器 " />
+                                                            <LineBreak />
+                                                            <Run Text="15（0x0F） - 强制多个线圈 " />
+                                                            <LineBreak />
+                                                            <Run Text="16（0x10） - 预置多个寄存器 " />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -408,7 +469,11 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                             <DataGridTemplateColumn.CellEditingTemplate>
                                                 <DataTemplate>
-                                                    <ComboBox ItemsSource="{Binding Source={x:Static rs:RSSerialPort.FunctionCodeList}}" SelectedValue="{Binding FunctionCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}">
+                                                    <ComboBox
+                                                        DisplayMemberPath="KeyDes"
+                                                        ItemsSource="{Binding Source={x:Static rs:RSSerialPort.FunctionCodeList}}"
+                                                        SelectedValue="{Binding FunctionCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                        SelectedValuePath="Key">
                                                         <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="SelectionChanged">
                                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSSerialPort}}, Path=CellValueEditChangedCommand}" CommandParameter="FunctionCode" />
@@ -419,7 +484,36 @@
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="*" Header="读取地址">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="读取地址">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock Width="400" TextWrapping="Wrap">
+                                                            <Run Text="1. 定义：Modbus通讯地址是设备内部用于定位具体数据存储位置的编号。在Modbus网络中，站号确定了通信对象，而通讯地址则确定了在该设备中访问的数据位置，类似于在一个大型图书馆中，站号确定了具体的书架，而通讯地址确定了书架上某本书的具体位置。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="2. 地址类型" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 线圈地址：用于访问离散输出点，每个线圈地址对应一个二进制状态（0或1），代表设备的输出开关状态，如控制电机的启动与停止、指示灯的亮灭等。例如，在一个自动化生产线中，通过向特定的线圈地址写入指令，可控制某个气缸的伸出与缩回。地址范围通常为0 - 65535。" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 离散输入地址：用于读取离散输入点的状态，同样以二进制值表示，反映外部设备的输入状态，如检测按钮是否按下、限位开关是否触发等。比如，在电梯控制系统中，离散输入地址可用于获取电梯门的开关状态信息。地址范围一般也是0 - 65535。" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 保持寄存器地址：用于读写存储在设备中的可修改的数值型数据，像设备的设定值、参数等都存储在此。例如，在温度控制系统中，可通过保持寄存器地址设置目标温度值。每个保持寄存器通常占用16位（2个字节），地址范围常见为0 - 65535。" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 输入寄存器地址：用于读取设备中的只读数值型数据，一般用于获取传感器测量值等。比如在智能电表中，通过输入寄存器地址可读取实时的电压、电流测量值。与保持寄存器类似，每个输入寄存器占用16位，地址范围0 - 65535。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="3. 作用：在Modbus通信中，主站与从站进行数据交互时，必须同时指定正确的站号和通讯地址，才能准确地读取或写入数据。例如，主站想要获取某个压力传感器的测量值，先通过站号找到对应的传感器设备，再依据输入寄存器地址定位到存储压力数据的位置，从而完成数据读取。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="4. 地址映射：不同设备对地址的映射方式存在差异。有些设备会将地址进行分区，如将线圈地址、寄存器地址分别划分在不同的区域；有些设备则可能会有特殊的地址偏移规则，例如实际地址需在原始地址基础上加某个固定值。在实际应用中，必须依据设备的说明书来正确理解和使用地址映射关系，确保通信的准确性。" />
+                                                            <LineBreak /><LineBreak />
+                                                            <Run Text="5. 注意事项" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 地址连续性：在读取或写入多个连续地址的数据时，要确保地址的连续性，否则可能导致数据读取错误或写入失败。" />
+                                                            <LineBreak />
+                                                            <Run Text="    - 地址重叠：避免不同类型的数据地址出现重叠，否则会引发数据冲突和错误。" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -445,7 +539,16 @@
                                         </DataGridTemplateColumn>
 
 
-                                        <DataGridTemplateColumn Width="*" Header="数据类型">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="数据类型">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="请注意，这里的数据类型是指C#里的数据类型，并不是通用的" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -468,7 +571,16 @@
                                         </DataGridTemplateColumn>
 
 
-                                        <DataGridTemplateColumn Width="*" Header="字符长度">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="字符长度">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="请注意，仅在数据类型是String时，字符长度设置才有效" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -500,7 +612,18 @@
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="*" Header="读写权限">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="读写权限">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="0 代表只读" />
+                                                            <LineBreak />
+                                                            <Run Text="1 代表只读写" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -522,7 +645,40 @@
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="*" Header="字节序">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="字节序">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock Width="400" TextWrapping="Wrap">
+                                                            <Run Text="在Modbus通讯中，高低字节序通常有以下四种情况，以32位数据ABCD（每个字母代表一个字节）为例： " />
+                                                            <LineBreak />
+                                                            <Run Text="1. Big - endian（大端序） " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 字节顺序：ABCD " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 说明：高位字节存于低地址，低位字节存于高地址。符合人类正常思维习惯，数据高位在前低位在后，如对于32位整数0x12345678，按此顺序内存中地址由低到高存储为0x12、0x34、0x56、0x78。 " />
+                                                            <LineBreak />
+                                                            <Run Text="2. Big - endian byte swap（大端序字节交换） " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 字节顺序：BADC " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 说明：先按大端序排列为ABCD，再将每个字内的字节进行交换，即AB交换为BA，CD交换为DC，得到BADC。 " />
+                                                            <LineBreak />
+                                                            <Run Text="3. Little - endian byte swap（小端序字节交换） " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 字节顺序：CDAB " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 说明：先将32位数据按小端序排列为DCBA，再将每个字内的字节进行交换，即DC交换为CD，BA交换为AB，最终为CDAB。 " />
+                                                            <LineBreak />
+                                                            <Run Text="4. Little - endian（小端序） " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 字节顺序：DCBA " />
+                                                            <LineBreak />
+                                                            <Run Text="   - 说明：与大端序相反，低位字节存于低地址，高位字节存于高地址。对于0x12345678，在小端模式下内存中地址由低到高存储为0x78、0x56、0x34、0x12。 " />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -545,7 +701,16 @@
                                         </DataGridTemplateColumn>
 
 
-                                        <DataGridTemplateColumn Width="*" Header="数据分组">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="数据分组">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="同一个数据分组，在数据采集时会进行连续读取" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock
@@ -570,7 +735,16 @@
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="*" Header="数据描述">
+                                        <DataGridTemplateColumn Width="*">
+                                            <DataGridTemplateColumn.Header>
+                                                <TextBlock Text="数据描述">
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap">
+                                                            <Run Text="就是对数据标签的备注说明，这个数据标签在做什么用的" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </DataGridTemplateColumn.Header>
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock

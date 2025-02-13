@@ -15,16 +15,18 @@ namespace RS.Commons.Extensions
             return dataList.Distinct(new ReflectionComparer<T>()).ToList();
         }
 
-        public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> collection)
+        public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> collection, List<string> propertyList = null)
         {
             // 分组查找重复项
             return collection
-               .GroupBy(item => item.GetHashCode<T>())
+               .GroupBy(item => item.GetHashCode<T>(propertyList))
                .Where(group => group.Count() > 1)
                .SelectMany(group => group);
         }
 
-        public static int GetHashCode<T>(this T obj)
+
+
+        public static int GetHashCode<T>(this T obj, List<string> propertyList = null)
         {
             if (obj == null)
             {
@@ -32,10 +34,14 @@ namespace RS.Commons.Extensions
             }
             int hash = 17;
             var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var property in properties)
+            properties = properties?.Join(propertyList, a => a.Name, b => b, (a, b) => a)?.ToArray();
+            if (properties != null)
             {
-                var value = property.GetValue(obj);
-                hash = hash * 23 + (value?.GetHashCode() ?? 0);
+                foreach (var property in properties)
+                {
+                    var value = property.GetValue(obj);
+                    hash = hash * 23 + (value?.GetHashCode() ?? 0);
+                }
             }
             return hash;
         }

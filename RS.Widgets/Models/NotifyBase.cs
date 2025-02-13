@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,7 @@ namespace RS.Widgets.Models
     {
         public NotifyBase()
         {
-            ErrorsDic = new Dictionary<string, IEnumerable<string>>();
+            ErrorsDic = new Dictionary<string, IEnumerable<ValidErrorModel>>();
         }
 
 
@@ -25,7 +26,7 @@ namespace RS.Widgets.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); ;
         }
 
-        public  bool OnPropertyChanged<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
+        public bool OnPropertyChanged<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
         {
             if (!Equals(field, newValue))
             {
@@ -42,7 +43,7 @@ namespace RS.Widgets.Models
         /// <summary>
         /// 错误字典Key 就是PropertyName 键值就是错误信息列表
         /// </summary>
-        public Dictionary<string, IEnumerable<string>> ErrorsDic;
+        public Dictionary<string, IEnumerable<ValidErrorModel>> ErrorsDic;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public bool HasErrors
@@ -58,7 +59,7 @@ namespace RS.Widgets.Models
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName)); ;
         }
 
-        public IEnumerable GetErrors(string? propertyName=null)
+        public IEnumerable GetErrors(string? propertyName = null)
         {
             if (string.IsNullOrEmpty(propertyName))
             {
@@ -69,7 +70,7 @@ namespace RS.Widgets.Models
                 var errorList = ErrorsDic[propertyName];
                 foreach (var error in errorList)
                 {
-                    yield return error;
+                    yield return error.ErrorMsg;
                 }
             }
             yield break;
@@ -117,29 +118,67 @@ namespace RS.Widgets.Models
             {
                 foreach (var validationResult in validationResults)
                 {
-                    if (validationResult.MemberNames.Count()==0)
+                    if (validationResult.MemberNames.Count() == 0)
                     {
                         continue;
                     }
                     string propertyName = validationResult.MemberNames.First();
                     AddErrors(propertyName, new List<ValidationResult> { validationResult });
-                    OnErrorsChanged(propertyName);
                 }
             }
             return !HasErrors;
         }
 
-        public void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults)
+        public void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults, string validErrorKey = null)
         {
+            string errorKey = GetErrorKey(validErrorKey);
             RemoveErrors(propertyName);
-            ErrorsDic.TryAdd(propertyName, validationResults.Select(t => t.ErrorMessage));
-        }
 
-        public void RemoveErrors(string? propertyName)
-        {
+            //获取已有错误
+            List<ValidErrorModel> validErrorModels = new List<ValidErrorModel>();
             if (ErrorsDic.ContainsKey(propertyName))
             {
-                ErrorsDic.Remove(propertyName);
+                validErrorModels = ErrorsDic[propertyName].ToList();
+            }
+            //创建新错误
+            var newValidErrors = validationResults.Select(t => new ValidErrorModel()
+            {
+                ErrorKey = errorKey,
+                ErrorMsg = t.ErrorMessage
+            });
+            //合并新错误
+            validErrorModels = validErrorModels.Concat(newValidErrors).ToList();
+            //添加错误
+            ErrorsDic.TryAdd(propertyName, validErrorModels);
+            //触发错误通知
+            OnErrorsChanged(propertyName);
+        }
+
+        public string GetErrorKey(string validErrorKey)
+        {
+            if (validErrorKey == null)
+            {
+                validErrorKey = DefaultErrorKey;
+            }
+            return validErrorKey;
+        }
+
+        public static readonly string DefaultErrorKey = "708819A8240246268C14CF142FF5B4A6";
+
+        public void RemoveErrors(string? propertyName, string validErrorKey = null)
+        {
+            string errorKey = GetErrorKey(validErrorKey);
+            if (ErrorsDic.ContainsKey(propertyName))
+            {
+                var validErrorModels = ErrorsDic[propertyName].ToList();
+                if (validErrorModels != null)
+                {
+                    validErrorModels.RemoveAll(t => t.ErrorKey == errorKey);
+                }
+                if (validErrorModels.Count == 0)
+                {
+                    ErrorsDic.Remove(propertyName);
+                }
                 OnErrorsChanged(propertyName);
             }
         }

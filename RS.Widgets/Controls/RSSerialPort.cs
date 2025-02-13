@@ -22,11 +22,19 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
 using RS.Widgets.Common.Excels;
+using NPOI.SS.Formula.Functions;
+using MathNet.Numerics.Distributions;
+using System.Data;
+using NPOI.HSSF.Util;
+using NPOI.SS.Util;
+using System.Reflection.PortableExecutable;
 
 namespace RS.Widgets.Controls
 {
     public class RSSerialPort : ContentControl
     {
+        public static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
+
         private SerialPort serialPort;
         private RSUserControl PART_RSUserControl;
         private DataGrid? PART_DataGrid { get; set; }
@@ -38,10 +46,19 @@ namespace RS.Widgets.Controls
 
         public RSSerialPort()
         {
-            // 初始化命令
+            // 添加数据命令
             AddDataCommand = new RelayCommand(AddData);
+
+            //删除配置命令
             DeleteCommand = new RelayCommand<string>(DeleteDeviceDataModel);
-            BatchImportCommand = new RelayCommand(BatchImport);
+
+            //导入配置命令
+            ImportConfigCommand = new RelayCommand(ImportConfig);
+
+            //导入配置命令
+            ExportConfigCommand = new RelayCommand(ExportConfig);
+
+            //模版下载命令
             TemplateDownloadCommand = new RelayCommand(TemplateDownload);
 
             //DataId更改事件
@@ -51,13 +68,19 @@ namespace RS.Widgets.Controls
             this.DeviceDataModelList = new ObservableCollection<DeviceDataModel>();
         }
 
+
+
         /// <summary>
         /// 单元格数据编辑更改事件
         /// </summary>
         /// <param name="property">编辑属性名称</param>
         private void CellValueEditChanged(string property)
         {
-            var deviceDataModelList = this.DeviceDataModelList.ToList();
+            List<DeviceDataModel> deviceDataModelList = new List<DeviceDataModel>();
+            this.Dispatcher.Invoke(() =>
+            {
+                deviceDataModelList = this.DeviceDataModelList.ToList();
+            });
             switch (property)
             {
                 //数据标签
@@ -67,15 +90,15 @@ namespace RS.Widgets.Controls
                         {
                             var dataId = item.DataId;
                             //判断DataId是否重复  
-                            if (this.DeviceDataModelList.Count(t => t.DataId == dataId) > 1)
+                            if (deviceDataModelList.Count(t => t.DataId == dataId) > 1)
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据编号重复"));
-                                item.AddErrors(nameof(DeviceDataModel.DataId), validationResults);
+                                item.AddErrors(nameof(DeviceDataModel.DataId), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.DataId));
+                                item.RemoveErrors(nameof(DeviceDataModel.DataId), CellValueEditErrorKey);
                             }
                         }
                     }
@@ -132,11 +155,11 @@ namespace RS.Widgets.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("长度不能小于0"));
-                                item.AddErrors(nameof(DeviceDataModel.CharacterLength), validationResults);
+                                item.AddErrors(nameof(DeviceDataModel.CharacterLength), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.CharacterLength));
+                                item.RemoveErrors(nameof(DeviceDataModel.CharacterLength), CellValueEditErrorKey);
                             }
                         }
                     }
@@ -179,16 +202,16 @@ namespace RS.Widgets.Controls
                         {
                             var dataDescription = item.DataDescription;
 
-                            //判断DataDescription是否重复  
-                            if (this.DeviceDataModelList.Count(t => t.DataDescription.Trim() == dataDescription.Trim()) > 1)
+                            //判断DataDescription是否重复
+                            if (deviceDataModelList.Count(t => !string.IsNullOrWhiteSpace(t.DataDescription) && t.DataDescription?.Trim() == dataDescription?.Trim()) > 1)
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据描述重复"));
-                                item.AddErrors(nameof(DeviceDataModel.DataDescription), validationResults);
+                                item.AddErrors(nameof(DeviceDataModel.DataDescription), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.DataDescription));
+                                item.RemoveErrors(nameof(DeviceDataModel.DataDescription), CellValueEditErrorKey);
                             }
                         }
                     }
@@ -233,14 +256,25 @@ namespace RS.Widgets.Controls
             set { SetValue(DeleteCommandProperty, value); }
         }
 
-        // 批量导入命令依赖属性
-        public static readonly DependencyProperty BatchImportCommandProperty =
-            DependencyProperty.Register(nameof(BatchImportCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        // 导入配置命令依赖属性
+        public static readonly DependencyProperty ImportConfigCommandProperty =
+            DependencyProperty.Register(nameof(ImportConfigCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
 
-        public ICommand BatchImportCommand
+        public ICommand ImportConfigCommand
         {
-            get { return (ICommand)GetValue(BatchImportCommandProperty); }
-            set { SetValue(BatchImportCommandProperty, value); }
+            get { return (ICommand)GetValue(ImportConfigCommandProperty); }
+            set { SetValue(ImportConfigCommandProperty, value); }
+        }
+
+
+        // 导出配置命令依赖属性
+        public static readonly DependencyProperty ExportConfigCommandProperty =
+            DependencyProperty.Register(nameof(ExportConfigCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+
+        public ICommand ExportConfigCommand
+        {
+            get { return (ICommand)GetValue(ExportConfigCommandProperty); }
+            set { SetValue(ExportConfigCommandProperty, value); }
         }
 
         // 模版下载命令依赖属性
@@ -477,17 +511,37 @@ namespace RS.Widgets.Controls
 
 
         #region 通用数据
-        private static List<FunctionCodeEnum> functionCodeList;
+        private static List<ComboBoxItemModel<FunctionCodeEnum>> functionCodeList;
         /// <summary>
         /// 功能码
         /// </summary>
-        public static List<FunctionCodeEnum> FunctionCodeList
+        public static List<ComboBoxItemModel<FunctionCodeEnum>> FunctionCodeList
         {
             get
             {
                 if (functionCodeList == null)
                 {
-                    functionCodeList = Enum.GetValues<FunctionCodeEnum>().Where(t => t <= FunctionCodeEnum.ReadInputRegisters_0x04).ToList();
+                    functionCodeList = new List<ComboBoxItemModel<FunctionCodeEnum>>();
+                    functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+                    {
+                        Key = FunctionCodeEnum.ReadCoils_0x01,
+                        KeyDes = "01(0x01)- 读取线圈状态"
+                    });
+                    functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+                    {
+                        Key = FunctionCodeEnum.ReadDiscreteInputs_0x02,
+                        KeyDes = "02(0x02)-读取离散输入 "
+                    });
+                    functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+                    {
+                        Key = FunctionCodeEnum.ReadHoldingRegisters_0x03,
+                        KeyDes = "03(0x03)-读取保持寄存器 "
+                    });
+                    functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+                    {
+                        Key = FunctionCodeEnum.ReadInputRegisters_0x04,
+                        KeyDes = "04(0x04)-读取输入寄存器 "
+                    });
                 }
                 return functionCodeList;
             }
@@ -695,7 +749,6 @@ namespace RS.Widgets.Controls
                 }
 
                 deviceDataModel.DataDescription = null;
-                deviceDataModel.Address = null;
 
                 if (deviceDataModelList.Count > 0)
                 {
@@ -741,9 +794,8 @@ namespace RS.Widgets.Controls
                     return WarningOperateResult.CreateResult("数据验证不通过，不能继续新增数据！");
                 }
             }
-
             //还需要验证数据配置是否有重复
-            var duplicateData = dataList.FindDuplicates().ToList();
+            var duplicateData = GetDuplicateData(dataList);
             if (duplicateData.Count > 0)
             {
                 this.Dispatcher.Invoke(() =>
@@ -798,11 +850,34 @@ namespace RS.Widgets.Controls
 
         }
 
+        private List<DeviceDataModel> GetDuplicateData(List<DeviceDataModel> dataList, List<string> exceptPropertyList = null)
+        {
+            var validPropertyList = new List<string>()
+            {
+                nameof(DeviceDataModel.DataId),
+                nameof(DeviceDataModel.StationNumber),
+                nameof(DeviceDataModel.FunctionCode),
+                nameof(DeviceDataModel.Address),
+                nameof(DeviceDataModel.DataType),
+                nameof(DeviceDataModel.CharacterLength),
+                nameof(DeviceDataModel.ReadWritePermission),
+                nameof(DeviceDataModel.ByteOrder),
+                nameof(DeviceDataModel.DataGroup),
+                nameof(DeviceDataModel.DataDescription),
+            };
+
+            if (exceptPropertyList != null)
+            {
+                validPropertyList = validPropertyList.Except(exceptPropertyList).ToList();
+            }
+            return dataList.FindDuplicates(validPropertyList).ToList();
+        }
+
         /// <summary>
-        /// 批量导入参数配置
+        /// 导入参数配置
         /// </summary>
         /// <param name="parameter"></param>
-        private async void BatchImport(object parameter)
+        private async void ImportConfig(object parameter)
         {
             //这里我们需要打开一个文件选择框
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -818,10 +893,22 @@ namespace RS.Widgets.Controls
                 var deviceDataModelList = this.DeviceDataModelList.ToList();
                 var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
                   {
-                      var dataList = GetDeviceDataModelConfig(filePath);
+                      //获取Excel工作簿
+                      IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
+
+                      // 读取数据配置表
+                      ISheet sheet = workbook.GetSheet("DataConfig");
+
+                      //读取串口通讯配置
+                      this.GetSerialPortConfig(sheet);
+
+                      //读取数据配置
+                      var dataList = this.GetDeviceDataModelConfig(workbook, sheet);
+
                       deviceDataModelList = deviceDataModelList.Concat(dataList).ToList();
+
                       //还需要验证数据配置是否有重复
-                      var duplicateData = deviceDataModelList.FindDuplicates().ToList();
+                      var duplicateData = GetDuplicateData(deviceDataModelList);
 
                       //获取数据的差集
                       dataList = dataList.Except(duplicateData).ToList();
@@ -831,13 +918,25 @@ namespace RS.Widgets.Controls
                           this.Dispatcher.Invoke(() =>
                           {
                               //自动获取DataId
-                              if (deviceDataModelList.Count > 0)
+                              if (item.DataId == -1 && deviceDataModelList.Count > 0)
                               {
                                   item.DataId = deviceDataModelList.Max(t => t.DataId) + 1;
                               }
                               this.DeviceDataModelList.Add(item);
                           });
                       }
+
+                      //触发数据验证
+                      CellValueEditChanged(nameof(DeviceDataModel.DataId));
+                      CellValueEditChanged(nameof(DeviceDataModel.StationNumber));
+                      CellValueEditChanged(nameof(DeviceDataModel.FunctionCode));
+                      CellValueEditChanged(nameof(DeviceDataModel.Address));
+                      CellValueEditChanged(nameof(DeviceDataModel.DataType));
+                      CellValueEditChanged(nameof(DeviceDataModel.CharacterLength));
+                      CellValueEditChanged(nameof(DeviceDataModel.ReadWritePermission));
+                      CellValueEditChanged(nameof(DeviceDataModel.ByteOrder));
+                      CellValueEditChanged(nameof(DeviceDataModel.DataGroup));
+                      CellValueEditChanged(nameof(DeviceDataModel.DataDescription));
                       return OperateResult.CreateResult();
                   });
 
@@ -845,7 +944,436 @@ namespace RS.Widgets.Controls
                 {
                     await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
                 }
+            }
+        }
 
+
+        /// <summary>
+        /// 导出配置
+        /// </summary>
+        /// <param name="parameter"></param>
+        private async void ExportConfig(object parameter)
+        {
+            //这里我们需要打开一个文件选择框
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            // 设置Excel文件的过滤器
+            saveFileDialog.Filter = "Excel 文件 (*.xlsx;*.xls)|*.xlsx;*.xls";
+            saveFileDialog.Title = "导出通讯配置";
+            // 显示对话框并检查用户是否点击了确定
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                // 获取选定的文件路径
+                string filePath = saveFileDialog.FileName;
+
+                //获取数据副本
+                var deviceDataModelList = this.DeviceDataModelList.ToList();
+                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+                {
+                    //获取Excel工作簿
+                    IWorkbook workbook = ExcelHelper.CreateWorkbook(filePath);
+
+                    // 创建一个工作表
+                    ISheet sheet = workbook.CreateSheet("DataConfig");
+
+                    var style1 = workbook.CreateCellStyle();
+                    style1.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Left;
+                    style1.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+                    style1.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Grey25Percent.Index;
+                    style1.FillPattern = FillPattern.SolidForeground;
+
+                    var style2 = workbook.CreateCellStyle();
+                    style2.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Left;
+                    style2.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+
+
+
+
+                    //导出第一行配置
+                    IRow currentRow = sheet.CreateRow(0);
+
+                    //Com口
+                    var cell = currentRow.CreateCell(0);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("Com口");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(1);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.PortName);
+                    });
+
+                    //波特率
+                    cell = currentRow.CreateCell(2);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("波特率");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(3);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.BaudRate);
+                    });
+
+                    //数据位
+                    cell = currentRow.CreateCell(4);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("数据位");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(5);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.DataBits);
+                    });
+
+                    //停止位
+                    cell = currentRow.CreateCell(6);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("停止位");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(7);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue((int)this.StopBits);
+                    });
+
+                    //奇偶校验位
+                    cell = currentRow.CreateCell(8);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("奇偶校验位");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(9);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue((int)this.Parity);
+                    });
+
+
+                    //第2行配置
+                    currentRow = sheet.CreateRow(1);
+
+                    //地址是否从0开始
+                    cell = currentRow.CreateCell(0);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("是否从0开始");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(1);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.IsAddressStartZero);
+                    });
+
+                    //是否进行Crc16校验
+                    cell = currentRow.CreateCell(2);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("是否CRC校验");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(3);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.IsCrc16Checked);
+                    });
+
+                    //是否字符串颠倒
+                    cell = currentRow.CreateCell(4);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("是否字符串颠倒");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(5);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.IsStringInverse);
+                    });
+
+                    //是否自动连接
+                    cell = currentRow.CreateCell(6);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("是否自动连接");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        cell = currentRow.CreateCell(7);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(this.IsAutoConnect);
+                    });
+
+                    //第3行配置
+                    currentRow = sheet.CreateRow(2);
+
+                    //第4行配置
+                    currentRow = sheet.CreateRow(3);
+                    cell = currentRow.CreateCell(0);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("数据编号");
+
+                    cell = currentRow.CreateCell(1);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("通讯站号");
+
+                    cell = currentRow.CreateCell(2);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("功能码");
+
+                    cell = currentRow.CreateCell(3);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("地址");
+
+                    cell = currentRow.CreateCell(4);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("数据类型");
+
+                    cell = currentRow.CreateCell(5);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("字符长度");
+
+                    cell = currentRow.CreateCell(6);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("读写权限");
+
+                    cell = currentRow.CreateCell(7);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("字节顺序");
+
+                    cell = currentRow.CreateCell(8);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("数据分组");
+
+                    cell = currentRow.CreateCell(9);
+                    cell.CellStyle = style1;
+                    cell.SetCellValue("数据描述");
+                    //导出数据配置
+                    int totalRow = deviceDataModelList.Count();
+
+                    for (int i = 0; i < totalRow; i++)
+                    {
+                        //获取数据配置
+                        var dataConfig = deviceDataModelList[i];
+                        //数据配置从第4行开始
+                        currentRow = sheet.CreateRow(i + 4);
+                        cell = currentRow.CreateCell(0);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.DataId);
+
+                        cell = currentRow.CreateCell(1);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.StationNumber);
+
+                        cell = currentRow.CreateCell(2);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue((int)dataConfig.FunctionCode);
+
+                        cell = currentRow.CreateCell(3);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.Address);
+
+                        cell = currentRow.CreateCell(4);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.DataType.ToString());
+
+                        cell = currentRow.CreateCell(5);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.CharacterLength.HasValue ? dataConfig.CharacterLength.ToString() : null);
+
+                        cell = currentRow.CreateCell(6);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.ReadWritePermission.ToString());
+
+                        cell = currentRow.CreateCell(7);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.ByteOrder.ToString());
+
+                        cell = currentRow.CreateCell(8);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.DataGroup.ToString());
+
+                        cell = currentRow.CreateCell(9);
+                        cell.CellStyle = style2;
+                        cell.SetCellValue(dataConfig.DataDescription);
+                    }
+
+                    int totalCol = 10;
+                    //动态设置列的宽度
+                    for (int col = 0; col < totalCol; col++)
+                    {
+                        //获取最大列
+                        int maxByteLength = 0;
+                        for (int row = 0; row < totalRow + 4; row++)
+                        {
+                            var cellValue = sheet.GetRow(row).GetCell(col)?.ToString();
+                            var currentByteLength = GetByteLength(cellValue);
+                            if (currentByteLength > maxByteLength)
+                            {
+                                maxByteLength = currentByteLength;
+                            }
+                        }
+                        sheet.SetColumnWidth(col, 256 * (maxByteLength + 1));
+                    }
+
+                    // 设置表头固定（冻结第4行）
+                    sheet.CreateFreezePane(0, 4);
+
+                    // 设置表头筛选 行列是从0开始
+                    int firstRow = 3; // 表头所在行
+                    int lastRow = totalRow + 4 - 1;  // 数据最后一行
+                    int firstCol = 0; // 第一列
+                    int lastCol = totalCol - 1; // 最后一列
+                    CellRangeAddress cellRangeAddress = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+                    sheet.SetAutoFilter(cellRangeAddress);
+
+                    // 保存文件
+                    using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                    {
+                        workbook.Write(fs);
+                    }
+                    return OperateResult.CreateResult();
+                });
+
+                if (!operateResult.IsSuccess)
+                {
+                    await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 计算字符串的字节长度，汉字按 2 个字节，英语大写字母按 2 个字节，英语小写字母和其他单字节字符按 1 个字节
+        /// </summary>
+        /// <param name="input">输入的字符串</param>
+        /// <returns>字符串的字节长度</returns>
+        public static int GetByteLength(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return 0;
+            }
+
+            int length = 0;
+            foreach (char c in input)
+            {
+                // 判断字符是否为高代理项（处理代理对，如表情符号等）
+                if (char.IsHighSurrogate(c))
+                {
+                    // 处理代理对，跳过下一个低代理字符
+                    length += 4;
+                    continue;
+                }
+                if (IsChineseCharacter(c) || char.IsUpper(c))
+                {
+                    length += 2;
+                }
+                else
+                {
+                    length += 1;
+                }
+            }
+            return length;
+        }
+
+
+        /// <summary>
+        /// 判断字符是否为中文字符
+        /// </summary>
+        /// <param name="c">要判断的字符</param>
+        /// <returns>如果是中文字符返回 true，否则返回 false</returns>
+        private static bool IsChineseCharacter(char c)
+        {
+            // 中文字符的 Unicode 范围
+            return c >= '\u4e00' && c <= '\u9fff';
+        }
+
+
+
+        /// <summary>
+        /// 获取串口通讯配置
+        /// </summary>
+        /// <param name="sheet"></param>
+        private void GetSerialPortConfig(ISheet sheet)
+        {
+            //获取第一行配置
+            IRow currentRow = sheet.GetRow(0);
+            //获取Com口
+            string portName = currentRow.GetCell(1)?.ToString();
+            this.Dispatcher.Invoke(() =>
+            {
+                this.PortName = portName;
+            });
+
+            //获取波特率
+            if (int.TryParse(currentRow.GetCell(3)?.ToString(), out int baudRate))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.BaudRate = baudRate;
+                });
+            }
+
+            //获取数据位
+            if (int.TryParse(currentRow.GetCell(5)?.ToString(), out int dataBits))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.DataBits = dataBits;
+                });
+            }
+
+            //获取停止位
+            if (Enum.TryParse(currentRow.GetCell(7)?.ToString(), true, out StopBits stopBits))
+            {
+                if (stopBits >= StopBits.None && stopBits <= StopBits.OnePointFive)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.StopBits = stopBits;
+                    });
+                }
+            }
+
+            //获取奇偶校验位
+            if (Enum.TryParse(currentRow.GetCell(9)?.ToString(), true, out Parity parity))
+            {
+                if (parity >= Parity.None && parity <= Parity.Space)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.Parity = parity;
+                    });
+                }
+            }
+
+            //获取第2行配置
+            currentRow = sheet.GetRow(1);
+
+            //获取数据地址是否从0开始
+            if (bool.TryParse(currentRow.GetCell(1)?.ToString(), out bool isAddressStartZero))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.IsAddressStartZero = isAddressStartZero;
+                });
+            }
+
+            //获取是否进行Crc16校验
+            if (bool.TryParse(currentRow.GetCell(3)?.ToString(), out bool isCrc16Checked))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.IsCrc16Checked = isCrc16Checked;
+                });
+            }
+
+            //获取字符串读取是否反转
+            if (bool.TryParse(currentRow.GetCell(5)?.ToString(), out bool isStringInverse))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.IsStringInverse = isStringInverse;
+                });
+            }
+
+            //获取通讯是否自动连接
+            if (bool.TryParse(currentRow.GetCell(7)?.ToString(), out bool isAutoConnect))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.IsAutoConnect = isAutoConnect;
+                });
             }
 
         }
@@ -855,11 +1383,8 @@ namespace RS.Widgets.Controls
         /// </summary>
         /// <param name="filePath">配置文件绝对路径</param>
         /// <returns></returns>
-        private List<DeviceDataModel> GetDeviceDataModelConfig(string filePath)
+        private List<DeviceDataModel> GetDeviceDataModelConfig(IWorkbook workbook, ISheet sheet)
         {
-            IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
-            // 读取数据配置表
-            ISheet sheet = workbook.GetSheet("DataConfig");
             List<DeviceDataModel> deviceDataModelList = new List<DeviceDataModel>();
             // 遍历行和单元格并读取数据
             for (int row = 4; row <= sheet.LastRowNum; row++)
@@ -868,23 +1393,32 @@ namespace RS.Widgets.Controls
                 IRow currentRow = sheet.GetRow(row);
                 if (currentRow != null)
                 {
+                    //读取数据标签
+                    if (int.TryParse(currentRow.GetCell(0)?.ToString(), out int dataId))
+                    {
+                        deviceDataModel.DataId = dataId;
+                    }
+
+
                     //读取通讯站号
-                    if (Byte.TryParse(currentRow.GetCell(0)?.ToString(), out byte stationNumber))
+                    if (byte.TryParse(currentRow.GetCell(1)?.ToString(), out byte stationNumber))
                     {
                         deviceDataModel.StationNumber = stationNumber;
                     }
 
                     //读取功能码 
-                    if (Enum.TryParse(currentRow.GetCell(1)?.ToString(), out FunctionCodeEnum functionCode))
+                    if (Enum.TryParse(currentRow.GetCell(2)?.ToString(), true, out FunctionCodeEnum functionCode))
                     {
                         deviceDataModel.FunctionCode = functionCode;
                     }
 
                     //读取地址
-                    deviceDataModel.Address = currentRow.GetCell(2)?.ToString();
-
+                    if (int.TryParse(currentRow.GetCell(3)?.ToString(), out int address))
+                    {
+                        deviceDataModel.Address = address;
+                    }
                     //读取数据类型
-                    if (Enum.TryParse(currentRow.GetCell(3)?.ToString(), out DataTypeEnum dataType))
+                    if (Enum.TryParse(currentRow.GetCell(4)?.ToString(), true, out DataTypeEnum dataType))
                     {
                         deviceDataModel.DataType = dataType;
                     }
@@ -893,32 +1427,35 @@ namespace RS.Widgets.Controls
                     if (deviceDataModel.DataType == DataTypeEnum.String)
                     {
                         //读取字符长度
-                        if (int.TryParse(currentRow.GetCell(4)?.ToString(), out int characterLength))
+                        if (int.TryParse(currentRow.GetCell(5)?.ToString(), out int characterLength))
                         {
                             deviceDataModel.CharacterLength = characterLength;
                         }
                     }
 
                     //读取读取权限
-                    if (Enum.TryParse(currentRow.GetCell(5)?.ToString(), out ReadWriteEnum readWritePermission))
+                    if (Enum.TryParse(currentRow.GetCell(6)?.ToString(), true, out ReadWriteEnum readWritePermission))
                     {
-                        deviceDataModel.ReadWritePermission = readWritePermission;
+                        if (readWritePermission == ReadWriteEnum.Read || readWritePermission == ReadWriteEnum.ReadWrite)
+                        {
+                            deviceDataModel.ReadWritePermission = readWritePermission;
+                        }
                     }
 
                     //读取字节顺序
-                    if (Enum.TryParse(currentRow.GetCell(6)?.ToString(), out ByteOrderEnum byteOrder))
+                    if (Enum.TryParse(currentRow.GetCell(7)?.ToString(), true, out ByteOrderEnum byteOrder))
                     {
                         deviceDataModel.ByteOrder = byteOrder;
                     }
 
                     //读取数据分组
-                    if (byte.TryParse(currentRow.GetCell(7)?.ToString(), out byte dataGroup))
+                    if (byte.TryParse(currentRow.GetCell(8)?.ToString(), out byte dataGroup))
                     {
                         deviceDataModel.DataGroup = dataGroup;
                     }
 
                     //读取数据描述
-                    deviceDataModel.DataDescription = currentRow.GetCell(8)?.ToString();
+                    deviceDataModel.DataDescription = currentRow.GetCell(9)?.ToString();
                     deviceDataModelList.Add(deviceDataModel);
                 }
             }
