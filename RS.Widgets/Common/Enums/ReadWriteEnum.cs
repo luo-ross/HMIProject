@@ -13,8 +13,12 @@ namespace RS.Widgets.Common.Enums
         /// </summary>
         Read = 0,
         /// <summary>
+        /// 只写
+        /// </summary>
+        Write = 1,
+        /// <summary>
         /// 读写
         /// </summary>
-        ReadWrite = 1,
+        ReadWrite = 2,
     }
 }

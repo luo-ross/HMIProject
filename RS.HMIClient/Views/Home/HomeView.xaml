@@ -132,7 +132,10 @@
                 Margin="10,10,10,0"
                 Background="#fff">
                 <Grid>
-                    <rs:RSSerialPort Margin="0" rs:ControlsHelper.CornerRadius="0" />
+                    <rs:RSSerialPort
+                        Title="Modbus RTU通讯"
+                        Margin="0"
+                        rs:ControlsHelper.CornerRadius="0" />
                 </Grid>
             </Border>
             <Border Grid.Row="1" Padding="10">

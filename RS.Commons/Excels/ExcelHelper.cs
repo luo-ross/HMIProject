@@ -1,7 +1,8 @@
 ﻿using NPOI.HSSF.UserModel;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
-using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Widgets.Common.Excels
+namespace RS.Commons.Excels
 {
     public class ExcelHelper
     {
@@ -27,7 +28,7 @@ namespace RS.Widgets.Common.Excels
             // 根据文件扩展名选择合适的工作簿类型
             if (Path.GetExtension(filePath).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
             {
-                using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read,FileShare.ReadWrite))
+                using (FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     return new XSSFWorkbook(file);
                 }
@@ -72,43 +73,25 @@ namespace RS.Widgets.Common.Excels
         }
 
 
-        public static object ConvertCellValue(string cellValue, DataTypeEnum dataType)
+        public static short ConvertHexColorToExcelColor(IWorkbook workbook, string hexColor)
         {
-            switch (dataType)
+            // 去除十六进制颜色代码中的 # 符号（如果有的话）
+            if (hexColor.StartsWith("#"))
             {
-                case DataTypeEnum.Boolean:
-                    return bool.TryParse(cellValue, out bool boolResult) ? boolResult : (object)null;
-
-                case DataTypeEnum.Short:
-                    return short.TryParse(cellValue, out short shortResult) ? shortResult : (object)null;
-
-                case DataTypeEnum.UShort:
-                    return ushort.TryParse(cellValue, out ushort ushortResult) ? ushortResult : (object)null;
-
-                case DataTypeEnum.Int:
-                    return int.TryParse(cellValue, out int intResult) ? intResult : (object)null;
-
-                case DataTypeEnum.UInt:
-                    return uint.TryParse(cellValue, out uint uintResult) ? uintResult : (object)null;
-
-                case DataTypeEnum.Long:
-                    return long.TryParse(cellValue, out long longResult) ? longResult : (object)null;
-
-                case DataTypeEnum.ULong:
-                    return ulong.TryParse(cellValue, out ulong ulongResult) ? ulongResult : (object)null;
-
-                case DataTypeEnum.Float:
-                    return float.TryParse(cellValue, out float floatResult) ? floatResult : (object)null;
-
-                case DataTypeEnum.Double:
-                    return double.TryParse(cellValue, out double doubleResult) ? doubleResult : (object)null;
-
-                case DataTypeEnum.String:
-                    return cellValue; // 直接返回字符串
-
-                default:
-                    return null;
+                hexColor = hexColor.Substring(1);
             }
+
+            // 解析 RGB 值
+            byte red = Convert.ToByte(hexColor.Substring(0, 2), 16);
+            byte green = Convert.ToByte(hexColor.Substring(2, 2), 16);
+            byte blue = Convert.ToByte(hexColor.Substring(4, 2), 16);
+
+            // 获取调色板
+            XSSFColor color = new XSSFColor(new byte[] { red, green, blue });
+
+            // 获取调色板的索引（这里对于 XSSF 不需要手动添加到调色板，直接使用颜色对象）
+            return color.Indexed;
         }
+
     }
 }

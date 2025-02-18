@@ -1,23 +1,28 @@
 ﻿using RS.Widgets.Common.Enums;
+using RS.Widgets.Controls;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace RS.Widgets.Models
 {
     public class DeviceDataModel : NotifyBase
     {
 
-        private int dataId = -1;
+        private int? dataId;
         /// <summary>
         /// 数据标签 上位机使用
         /// </summary>
-        public int DataId
+        [Required(ErrorMessage = "数据标签不能为空")]
+        public int? DataId
         {
             get
             {
@@ -29,6 +34,7 @@ namespace RS.Widgets.Models
                 {
                     this.IsSaved = false;
                 }
+                this.ValidProperty(value);
             }
         }
 
@@ -68,6 +74,7 @@ namespace RS.Widgets.Models
                 {
                     this.IsSaved = false;
                 }
+                this.ValidProperty(value);
             }
         }
 
@@ -91,7 +98,7 @@ namespace RS.Widgets.Models
             }
         }
 
-        private DataTypeEnum dataType = DataTypeEnum.Boolean;
+        private DataTypeEnum dataType = DataTypeEnum.Bool;
         /// <summary>
         /// 数据类型，
         /// </summary>
@@ -116,8 +123,13 @@ namespace RS.Widgets.Models
                         this.CharacterLength = 10;
                     }
                 }
+                this.ValidProperty(value);
             }
         }
+
+
+        #region 字符串读写相关设置
+
 
         private int? characterLength;
         /// <summary>
@@ -136,11 +148,31 @@ namespace RS.Widgets.Models
                 {
                     this.IsSaved = false;
                 }
+                this.ValidProperty(value);
             }
         }
 
+        private bool? isStringInverse;
+        /// <summary>
+        /// 是否字符串颠倒
+        /// </summary>
 
-
+        public bool? IsStringInverse
+        {
+            get
+            {
+                return isStringInverse;
+            }
+            set
+            {
+                if (OnPropertyChanged(ref isStringInverse, value))
+                {
+                    this.IsSaved = false;
+                }
+                this.ValidProperty(value);
+            }
+        }
+        #endregion
 
 
 
@@ -160,6 +192,7 @@ namespace RS.Widgets.Models
                 {
                     this.IsSaved = false;
                 }
+                this.ValidProperty(value);
             }
         }
 
@@ -179,6 +212,7 @@ namespace RS.Widgets.Models
                 {
                     this.IsSaved = false;
                 }
+                this.ValidProperty(value);
             }
         }
 
@@ -216,10 +250,9 @@ namespace RS.Widgets.Models
             set
             {
                 this.OnPropertyChanged(ref byteOrder, value);
+                this.ValidProperty(value);
             }
         }
-
-
 
 
         private double? dataValue;
@@ -235,13 +268,67 @@ namespace RS.Widgets.Models
             private set
             {
                 this.OnPropertyChanged(ref dataValue, value);
+                this.ValidProperty(value);
             }
         }
 
+        private double? minValue;
         /// <summary>
-        /// 记录当前数据是否保存
+        /// 读写最大值
         /// </summary>
-        public bool IsSaved { get; set; }
+        public double? MinValue
+        {
+            get
+            {
+                return minValue;
+            }
+             set
+            {
+                if (OnPropertyChanged(ref minValue, value))
+                {
+                    this.IsSaved = false;
+                }
+                this.ValidProperty(value);
+            }
+        }
+
+
+        private double? maxValue;
+        /// <summary>
+        /// 读写最大值
+        /// </summary>
+        public double? MaxValue
+        {
+            get
+            {
+                return maxValue;
+            }
+             set
+            {
+                if (OnPropertyChanged(ref maxValue, value))
+                {
+                    this.IsSaved = false;
+                }
+                this.ValidProperty(value);
+            }
+        }
+
+        private byte? digitalNumber;
+        /// <summary>
+        /// 如果是浮点数，保留小数点位数
+        /// </summary>
+        public byte? DigitalNumber
+        {
+            get
+            {
+                return digitalNumber;
+            }
+            set
+            {
+                this.OnPropertyChanged(ref digitalNumber, value);
+                this.ValidProperty(value);
+            }
+        }
 
 
 
@@ -262,6 +349,10 @@ namespace RS.Widgets.Models
         }
 
 
+        /// <summary>
+        /// 记录当前数据是否保存
+        /// </summary>
+        public bool IsSaved { get; set; }
 
         /// <summary>
         /// 这里是手动克隆不叨叨了肯定是最快的
@@ -284,7 +375,11 @@ namespace RS.Widgets.Models
                 ReadWritePermission = this.ReadWritePermission,
                 StationNumber = this.StationNumber,
                 IsSaved = this.IsSaved,
-                IsValid = this.IsValid
+                IsValid = this.IsValid,
+                IsStringInverse=this.IsStringInverse,
+                DigitalNumber=this.DigitalNumber,
+                MaxValue=this.MaxValue,
+                MinValue=this.MinValue,
             };
         }
 

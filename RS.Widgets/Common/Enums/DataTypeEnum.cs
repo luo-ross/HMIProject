@@ -9,7 +9,7 @@ namespace RS.Widgets.Models
     public enum DataTypeEnum
     {
         // 表示布尔类型
-        Boolean = 0,
+        Bool = 0,
         // 表示 16 位有符号整数类型，对应 short
         Short = 1,
         // 表示 16 位无符号整数类型，对应 ushort
