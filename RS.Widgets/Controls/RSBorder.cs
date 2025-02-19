@@ -1,5 +1,4 @@
-﻿using RS.Widgets.Common.Enums;
-using RS.Widgets.Common.KnownBoxes;
+﻿using RS.Widgets.Common.KnownBoxes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

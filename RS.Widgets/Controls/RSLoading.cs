@@ -1,5 +1,5 @@
-﻿using RS.Widgets.Exceptions;
-using RS.Widgets.Models;
+﻿using RS.HMI.Models.Widgets;
+using RS.Widgets.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

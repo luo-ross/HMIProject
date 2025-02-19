@@ -1,16 +1,22 @@
 ﻿using Microsoft.Win32;
+using NPOI.OpenXml4Net.OPC.Internal;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
+using RS.Commons.Enums;
 using RS.Commons.Excels;
 using RS.Commons.Extensions;
-using RS.Widgets.Common.Enums;
-using RS.Widgets.Models;
+using RS.Commons.Helpers;
+using RS.HMI.Models.Widgets;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
+using System.Net;
+using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,9 +65,6 @@ namespace RS.Widgets.Controls
             this.Loaded += RSSerialPort_Loaded;
             this.DeviceDataModelList = new ObservableCollection<DeviceDataModel>();
         }
-
-
-
 
         private void RSSerialPort_Loaded(object sender, RoutedEventArgs e)
         {
@@ -131,7 +134,6 @@ namespace RS.Widgets.Controls
             set { SetValue(TemplateDownloadCommandProperty, value); }
         }
         #endregion
-
 
         #region 依赖属性
 
@@ -345,7 +347,6 @@ namespace RS.Widgets.Controls
 
 
         #endregion
-
 
         #region 通用数据
         private static List<ComboBoxItemModel<FunctionCodeEnum>> functionCodeList;
@@ -1537,10 +1538,62 @@ namespace RS.Widgets.Controls
         /// 模板下载
         /// </summary>
         /// <param name="parameter"></param>
-        private void TemplateDownload(object parameter)
+        private async void TemplateDownload(object parameter)
         {
+            //这里我们需要打开一个文件选择框
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            // 设置Excel文件的过滤器
+            saveFileDialog.Filter = "Excel 文件 (*.xlsx;)|*.xlsx";
+            saveFileDialog.Title = "模版下载";
+            // 设置默认文件名
+            saveFileDialog.FileName = "ModbusRTU数据导入模版.xlsx";
+            // 显示对话框并检查用户是否点击了确定
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string filePathSelect = saveFileDialog.FileName;
+                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+                {
+                    var templateFilePath = PathHelper.MapPath("Temlates/ModbusRTU数据导入模版.xlsx");
 
+                    if (!File.Exists(templateFilePath))
+                    {
+                        return WarningOperateResult.CreateResult("模版不存在，无法下载！");
+                    }
+                    if (filePathSelect.Equals(templateFilePath))
+                    {
+                        return WarningOperateResult.CreateResult("不能覆盖模板文件！");
+                    }
+
+                    string apiUrl = "https://example.com/api/download/excel.xlsx";
+                    string localFilePath = @"C:\Downloads\downloaded_file.xlsx";
+                    using (WebClient client = new WebClient())
+                    {
+                        // 注册下载完成事件处理程序
+                        client.DownloadFileCompleted += (sender, e) =>
+                        {
+                            //if (e.Error == null)
+                            //{
+                            //    Console.WriteLine("文件下载成功！");
+                            //}
+                            //else
+                            //{
+                            //    Console.WriteLine($"下载文件时发生错误：{e.Error.Message}");
+                            //}
+                        };
+                        client.DownloadProgressChanged += (sender, e) =>
+                        {
+                        };
+                        // 异步下载文件
+                        await client.DownloadFileTaskAsync(new Uri(apiUrl), localFilePath);
+                    }
+
+                    FileHelper.CopyFile(templateFilePath, filePathSelect);
+                    return OperateResult.CreateResult();
+                });
+            }
         }
+
+
         #endregion
 
 
@@ -1757,8 +1810,6 @@ namespace RS.Widgets.Controls
             this.PART_BtnDisConnect = this.GetTemplateChild(nameof(this.PART_BtnDisConnect)) as Button;
             this.PART_BtnSavConfig = this.GetTemplateChild(nameof(this.PART_BtnSavConfig)) as Button;
 
-
-
             if (this.PART_BtnConnect != null)
             {
                 this.PART_BtnConnect.Click -= BtnConnect_Click;
@@ -1779,15 +1830,14 @@ namespace RS.Widgets.Controls
 
         }
 
-      
-
         public CancellationTokenSource CTS { get; set; }
+
         /// <summary>
         /// 设备连接
         /// </summary>
         private void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
-            if (CTS!=null)
+            if (CTS != null)
             {
                 CTS.Cancel();
             }
@@ -1801,10 +1851,11 @@ namespace RS.Widgets.Controls
                         this.IsConnectSuccess = true;
                         this.CommunicationTime = DateTime.Now;
                     });
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, CTS.Token);
                 }
             }, CTS.Token);
         }
+      
 
         /// <summary>
         /// 设备断开连接

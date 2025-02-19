@@ -1,15 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
-		<UseWPF>true</UseWPF>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-		<PackageReference Include="NPOI" Version="2.7.2" />
+		<None Remove="Assets\login-bg.jpg" />
+		<None Remove="Assets\login-left.jpg" />
+		<None Remove="Assets\logo.ico" />
+		<None Remove="Assets\verify.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Assets\logo.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
@@ -24,32 +36,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
-		<ProjectReference Include="..\RS.HMI.ClientData\RS.HMI.ClientData.csproj" />
-		<ProjectReference Include="..\RS.HMI.Models\RS.HMI.Models.csproj" />
-		<ProjectReference Include="..\RS.Win32API\RS.Win32API.csproj" />
+		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Page Update="Styles\Controls.GroupBox.xaml">
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Styles\Controls.DataGrid.xaml">
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Styles\Controls.Border.xaml">
-			<SubType>Designer</SubType>
-		</Page>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Temlates\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="Temlates\ModbusRTU数据导入模版.xlsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
+		<Resource Include="Assets\login-bg.jpg" />
+		<Resource Include="Assets\login-left.jpg" />
+		<Resource Include="Assets\logo.ico" />
+		<Resource Include="Assets\verify.jpg" />
 	</ItemGroup>
 
 </Project>

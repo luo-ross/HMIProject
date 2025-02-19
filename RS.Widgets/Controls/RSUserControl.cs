@@ -1,4 +1,4 @@
-﻿using RS.Widgets.Models;
+﻿using RS.HMI.Models.Widgets;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
