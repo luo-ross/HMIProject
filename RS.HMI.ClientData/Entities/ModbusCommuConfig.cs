@@ -8,12 +8,17 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.ClientData.Entities
 {
-    public class DeviceData
+    public sealed class ModbusCommuConfig
     {
         /// <summary>
         /// 主键
         /// </summary>
-        public int Id { get; set; }
+        public long Id { get; set; }
+
+        /// <summary>
+        /// 所属通讯配置主键
+        /// </summary>
+        public long SerialPortConfigId { get; set; }
 
         /// <summary>
         /// 数据标签 上位机使用
@@ -69,7 +74,6 @@ namespace RS.HMI.ClientData.Entities
         /// <remarks>
         /// 该属性不能为空，否则会触发 Required 验证错误
         /// </remarks>
-        [Required(ErrorMessage = "数据描述不能为空")]
         public string DataDescription { get; set; }
 
         /// <summary>
@@ -96,15 +100,6 @@ namespace RS.HMI.ClientData.Entities
         /// 如果是浮点数，保留小数点位数
         /// </summary>
         public byte? DigitalNumber { get; set; }
-
-        /// <summary>
-        /// 是否验证通过
-        /// </summary>
-        public bool IsValid { get; set; }
-
-        /// <summary>
-        /// 记录当前数据是否保存
-        /// </summary>
-        public bool IsSaved { get; set; }
+     
     }
 }

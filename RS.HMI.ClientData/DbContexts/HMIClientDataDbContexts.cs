@@ -1,34 +1,43 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using RS.Commons.Helpers;
 using RS.HMI.ClientData.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Environment;
 
 namespace RS.HMI.ClientData.DbContexts
 {
-    public class HMIClientDataDbContexts : DbContext
+    public sealed class HMIClientDataDbContexts : DbContext
     {
         public HMIClientDataDbContexts()
         {
-
+            this.DatabasePath = PathHelper.MapPath("Database/HMIProject.hmi");
+            this.MigrationDataBase();
         }
 
         /// <summary>
-        /// 设备数据表
+        /// 通讯站
         /// </summary>
-        public DbSet<DeviceData> DeviceData { get; set; }
+        public DbSet<CommuStation> CommuStation { get; set; }
+
+        /// <summary>
+        /// Modbus 通讯配置
+        /// </summary>
+        public DbSet<ModbusCommuConfig> ModbusCommuConfig { get; set; }
+
+        /// <summary>
+        /// 串口通讯配置
+        /// </summary>
+        public DbSet<SerialPortConfig> SerialPortConfig { get; set; }
 
 
-        public HMIClientDataDbContexts(string databasePath)
-        {
-            this.DatabasePath = databasePath;
-            MigrationDataBase();
-        }
 
         private void MigrationDataBase()
         {
@@ -38,15 +47,15 @@ namespace RS.HMI.ClientData.DbContexts
             }
         }
 
-        private string databasePath;
+        private  string databasePath;
 
         /// <summary>
         /// 数据库文件存储路径
         /// </summary>
-        public string DatabasePath
+        public  string DatabasePath
         {
             get { return databasePath; }
-            set { databasePath = value; }
+            private set { databasePath = value; }
         }
 
 

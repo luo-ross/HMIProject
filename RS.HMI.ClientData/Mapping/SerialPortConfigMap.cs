@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.ClientData.Mapping
 {
-    public class DeviceDataMap : IEntityTypeConfiguration<DeviceData>
+    public sealed class SerialPortConfigMap : IEntityTypeConfiguration<SerialPortConfig>
     {
-        public void Configure(EntityTypeBuilder<DeviceData> builder)
+        public void Configure(EntityTypeBuilder<SerialPortConfig> builder)
         {
-            builder.ToTable("DeviceData").HasKey(t=>t.Id);
+            builder.ToTable("SerialPortConfig").HasKey(t=>t.Id);
         }
     }
 }

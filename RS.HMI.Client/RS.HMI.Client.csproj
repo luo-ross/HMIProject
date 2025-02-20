@@ -36,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\RS.HMI.CommuLib\RS.HMI.CommuLib.csproj" />
 		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
 	</ItemGroup>
 

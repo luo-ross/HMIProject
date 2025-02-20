@@ -1,4 +1,5 @@
 ﻿using RS.Commons.Enums;
+using RS.HMI.Models.Widgets;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,10 +11,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace RS.HMI.Models.Widgets
+namespace RS.HMI.CommuLib.Models
 {
-    public class DeviceDataModel : NotifyBase
+    public class ModbusCommuConfigModel : NotifyBase
     {
+        /// <summary>
+        /// 数据唯一主键
+        /// </summary>
+        public long Id { get; set; }
 
         private int? dataId;
         /// <summary>
@@ -357,9 +362,9 @@ namespace RS.HMI.Models.Widgets
         /// 想用其克隆方式，可以去Nuget安装什么浅拷贝或者深拷贝啥的
         /// </summary>
         /// <returns></returns>
-        public DeviceDataModel Clone()
+        public ModbusCommuConfigModel Clone()
         {
-            return new DeviceDataModel()
+            return new ModbusCommuConfigModel()
             {
                 Address = this.Address,
                 ByteOrder = this.ByteOrder,

@@ -52,7 +52,6 @@ namespace RS.Widgets.Controls
             this.StateChanged += RSWindow_StateChanged;
         }
 
-
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {
             return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig);

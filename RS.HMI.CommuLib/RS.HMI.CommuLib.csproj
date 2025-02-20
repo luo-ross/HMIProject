@@ -8,9 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="IdGen" Version="3.0.7" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="NPOI" Version="2.7.2" />
-		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
 			<PrivateAssets>all</PrivateAssets>
@@ -24,22 +28,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
-		<ProjectReference Include="..\RS.HMI.ClientData\RS.HMI.ClientData.csproj" />
-		<ProjectReference Include="..\RS.HMI.Models\RS.HMI.Models.csproj" />
-		<ProjectReference Include="..\RS.Win32API\RS.Win32API.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Page Update="Styles\Controls.GroupBox.xaml">
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Styles\Controls.DataGrid.xaml">
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Styles\Controls.Border.xaml">
-			<SubType>Designer</SubType>
-		</Page>
+	  <None Update="Temlates\ModbusRTU数据导入模版.xlsx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

@@ -17,7 +17,8 @@
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>  </ItemGroup>
+	  </PackageReference>
+	  <PackageReference Include="System.IO.Ports" Version="9.0.1" />  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RS.HMI.Models\RS.HMI.Models.csproj" />

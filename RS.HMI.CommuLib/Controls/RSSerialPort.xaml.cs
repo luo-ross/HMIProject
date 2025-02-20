@@ -1,54 +1,53 @@
-﻿using Microsoft.Win32;
+﻿using IdGen;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using NPOI.OpenXml4Net.OPC.Internal;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
-using NPOI.XSSF.UserModel;
 using RS.Commons.Enums;
 using RS.Commons.Excels;
 using RS.Commons.Extensions;
 using RS.Commons.Helpers;
+using RS.HMI.ClientData.DbContexts;
+using RS.HMI.ClientData.Entities;
+using RS.HMI.CommuLib.Models;
 using RS.HMI.Models.Widgets;
-using System;
-using System.Collections.Concurrent;
+using RS.Widgets.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Net;
-using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static NPOI.HSSF.Util.HSSFColor;
 
-namespace RS.Widgets.Controls
+namespace RS.HMI.CommuLib.Controls
 {
-    public class RSSerialPort : ContentControl
+    /// <summary>
+    /// RSSerialPort.xaml 的交互逻辑
+    /// </summary>
+    public partial class RSSerialPort : UserControl
     {
-        public static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
-
-        private SerialPort serialPort;
-        private RSUserControl PART_RSUserControl;
-        private DataGrid? PART_DataGrid;
-        private Button PART_BtnConnect;
-        private Button PART_BtnDisConnect;
-        private Button PART_BtnSavConfig;
-
-
-        static RSSerialPort()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSSerialPort), new FrameworkPropertyMetadata(typeof(RSSerialPort)));
-        }
-
+        private int generatorId = 1;
+        private IdGenerator idGenerator;
+        /// <summary>
+        /// 唯一主键
+        /// </summary>
+        public long Id { get; set; }
         public RSSerialPort()
         {
+            InitializeComponent();
+
+            // 创建生成器实例
+            idGenerator = new IdGenerator(generatorId, IdGeneratorOptions.Default);
+
             // 添加数据命令
             AddDataCommand = new RelayCommand(AddData);
 
             //删除配置命令
-            DeleteCommand = new RelayCommand<string>(DeleteDeviceDataModel);
+            DeleteCommand = new RelayCommand<string>(DeleteModbusCommuConfigModel);
 
             //导入配置命令
             ImportConfigCommand = new RelayCommand(ImportConfig);
@@ -63,8 +62,19 @@ namespace RS.Widgets.Controls
             CellValueEditChangedCommand = new RelayCommand<string>(CellValueEditChanged);
 
             this.Loaded += RSSerialPort_Loaded;
-            this.DeviceDataModelList = new ObservableCollection<DeviceDataModel>();
+            this.ModbusCommuConfigModelList = new ObservableCollection<ModbusCommuConfigModel>();
+
         }
+
+        public static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
+
+        private SerialPort serialPort;
+        private RSUserControl PART_RSUserControl;
+        private DataGrid? PART_DataGrid;
+        private Button PART_BtnConnect;
+        private Button PART_BtnDisConnect;
+        private Button PART_BtnSaveConfig;
+
 
         private void RSSerialPort_Loaded(object sender, RoutedEventArgs e)
         {
@@ -262,13 +272,13 @@ namespace RS.Widgets.Controls
 
         [Description("设备数据")]
         [DefaultValue(null)]
-        public ObservableCollection<DeviceDataModel> DeviceDataModelList
+        public ObservableCollection<ModbusCommuConfigModel> ModbusCommuConfigModelList
         {
-            get { return (ObservableCollection<DeviceDataModel>)GetValue(DeviceDataModelListProperty); }
-            set { SetValue(DeviceDataModelListProperty, value); }
+            get { return (ObservableCollection<ModbusCommuConfigModel>)GetValue(ModbusCommuConfigModelListProperty); }
+            set { SetValue(ModbusCommuConfigModelListProperty, value); }
         }
-        public static readonly DependencyProperty DeviceDataModelListProperty =
-            DependencyProperty.Register("DeviceDataModelList", typeof(ObservableCollection<DeviceDataModel>), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty ModbusCommuConfigModelListProperty =
+            DependencyProperty.Register("ModbusCommuConfigModelList", typeof(ObservableCollection<ModbusCommuConfigModel>), typeof(RSSerialPort), new PropertyMetadata(null));
 
 
 
@@ -311,14 +321,14 @@ namespace RS.Widgets.Controls
 
 
         [Description("配置选中项")]
-        public DeviceDataModel DeviceDataModelSelected
+        public ModbusCommuConfigModel ModbusCommuConfigModelSelected
         {
-            get { return (DeviceDataModel)GetValue(DeviceDataModelSelectedProperty); }
-            set { SetValue(DeviceDataModelSelectedProperty, value); }
+            get { return (ModbusCommuConfigModel)GetValue(ModbusCommuConfigModelSelectedProperty); }
+            set { SetValue(ModbusCommuConfigModelSelectedProperty, value); }
         }
 
-        public static readonly DependencyProperty DeviceDataModelSelectedProperty =
-            DependencyProperty.Register("DeviceDataModelSelected", typeof(DeviceDataModel), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty ModbusCommuConfigModelSelectedProperty =
+            DependencyProperty.Register("ModbusCommuConfigModelSelected", typeof(ModbusCommuConfigModel), typeof(RSSerialPort), new PropertyMetadata(null));
 
 
 
@@ -333,7 +343,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("IsConnectSuccess", typeof(bool?), typeof(RSSerialPort), new PropertyMetadata(null));
 
 
-
         [Description("通讯时间")]
         public DateTime CommunicationTime
         {
@@ -342,9 +351,6 @@ namespace RS.Widgets.Controls
         }
         public static readonly DependencyProperty CommunicationTimeProperty =
             DependencyProperty.Register("CommunicationTime", typeof(DateTime), typeof(RSSerialPort), new PropertyMetadata(null));
-
-
-
 
         #endregion
 
@@ -519,38 +525,38 @@ namespace RS.Widgets.Controls
         /// <param name="property">编辑属性名称</param>
         private void CellValueEditChanged(string property)
         {
-            List<DeviceDataModel> deviceDataModelList = new List<DeviceDataModel>();
+            List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
             this.Dispatcher.Invoke(() =>
             {
-                deviceDataModelList = this.DeviceDataModelList.ToList();
+                modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
             });
             switch (property)
             {
                 //数据标签
-                case nameof(DeviceDataModel.DataId):
+                case nameof(ModbusCommuConfigModel.DataId):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var dataId = item.DataId;
                             //判断DataId是否重复  
-                            if (deviceDataModelList.Count(t => t.DataId == dataId) > 1)
+                            if (modbusCommuConfigModelList.Count(t => t.DataId == dataId) > 1)
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据编号重复"));
-                                item.AddErrors(nameof(DeviceDataModel.DataId), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusCommuConfigModel.DataId), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.DataId), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusCommuConfigModel.DataId), CellValueEditErrorKey);
                             }
                         }
                     }
                     break;
 
                 //通讯站号
-                case nameof(DeviceDataModel.StationNumber):
+                case nameof(ModbusCommuConfigModel.StationNumber):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var stationNumber = item.StationNumber;
                         }
@@ -558,9 +564,9 @@ namespace RS.Widgets.Controls
                     break;
 
                 //功能码
-                case nameof(DeviceDataModel.FunctionCode):
+                case nameof(ModbusCommuConfigModel.FunctionCode):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var functionCode = item.FunctionCode;
                         }
@@ -568,18 +574,18 @@ namespace RS.Widgets.Controls
                     break;
 
                 //读取地址
-                case nameof(DeviceDataModel.Address):
+                case nameof(ModbusCommuConfigModel.Address):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var address = item.Address;
                         }
                     }
                     break;
                 //读取字节顺序
-                case nameof(DeviceDataModel.ByteOrder):
+                case nameof(ModbusCommuConfigModel.ByteOrder):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var byteOrder = item.ByteOrder;
                         }
@@ -587,9 +593,9 @@ namespace RS.Widgets.Controls
                     break;
 
                 //数据类型
-                case nameof(DeviceDataModel.DataType):
+                case nameof(ModbusCommuConfigModel.DataType):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var dataType = item.DataType;
                         }
@@ -597,9 +603,9 @@ namespace RS.Widgets.Controls
                     break;
 
                 //字符长度
-                case nameof(DeviceDataModel.CharacterLength):
+                case nameof(ModbusCommuConfigModel.CharacterLength):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var characterLength = item.CharacterLength;
                             //判断字符串长度 
@@ -607,20 +613,20 @@ namespace RS.Widgets.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("长度不能小于0"));
-                                item.AddErrors(nameof(DeviceDataModel.CharacterLength), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusCommuConfigModel.CharacterLength), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.CharacterLength), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusCommuConfigModel.CharacterLength), CellValueEditErrorKey);
                             }
                         }
                     }
                     break;
 
                 //是否字符串颠倒
-                case nameof(DeviceDataModel.IsStringInverse):
+                case nameof(ModbusCommuConfigModel.IsStringInverse):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var isStringInverse = item.IsStringInverse;
                         }
@@ -628,9 +634,9 @@ namespace RS.Widgets.Controls
                     break;
 
                 //读写权限
-                case nameof(DeviceDataModel.ReadWritePermission):
+                case nameof(ModbusCommuConfigModel.ReadWritePermission):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var readWritePermission = item.ReadWritePermission;
                         }
@@ -638,27 +644,27 @@ namespace RS.Widgets.Controls
                     break;
 
                 //最小值
-                case nameof(DeviceDataModel.MinValue):
+                case nameof(ModbusCommuConfigModel.MinValue):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var minValue = item.MinValue;
                         }
                     }
                     break;
                 //最大值
-                case nameof(DeviceDataModel.MaxValue):
+                case nameof(ModbusCommuConfigModel.MaxValue):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var maxValue = item.MaxValue;
                         }
                     }
                     break;
                 //小数位数
-                case nameof(DeviceDataModel.DigitalNumber):
+                case nameof(ModbusCommuConfigModel.DigitalNumber):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var digitalNumber = item.DigitalNumber;
                             //判断字符串长度 
@@ -666,20 +672,20 @@ namespace RS.Widgets.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("小数表留长度在0-8之间"));
-                                item.AddErrors(nameof(DeviceDataModel.DigitalNumber), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusCommuConfigModel.DigitalNumber), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.DigitalNumber), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusCommuConfigModel.DigitalNumber), CellValueEditErrorKey);
                             }
                         }
                     }
                     break;
 
                 //数据分组
-                case nameof(DeviceDataModel.DataGroup):
+                case nameof(ModbusCommuConfigModel.DataGroup):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var dataGroup = item.DataGroup;
                         }
@@ -687,22 +693,22 @@ namespace RS.Widgets.Controls
                     break;
 
                 //数据描述
-                case nameof(DeviceDataModel.DataDescription):
+                case nameof(ModbusCommuConfigModel.DataDescription):
                     {
-                        foreach (var item in deviceDataModelList)
+                        foreach (var item in modbusCommuConfigModelList)
                         {
                             var dataDescription = item.DataDescription;
 
                             //判断DataDescription是否重复
-                            if (deviceDataModelList.Count(t => !string.IsNullOrWhiteSpace(t.DataDescription) && t.DataDescription?.Trim() == dataDescription?.Trim()) > 1)
+                            if (modbusCommuConfigModelList.Count(t => !string.IsNullOrWhiteSpace(t.DataDescription) && t.DataDescription?.Trim() == dataDescription?.Trim()) > 1)
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据描述重复"));
-                                item.AddErrors(nameof(DeviceDataModel.DataDescription), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusCommuConfigModel.DataDescription), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(DeviceDataModel.DataDescription), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusCommuConfigModel.DataDescription), CellValueEditErrorKey);
                             }
                         }
                     }
@@ -744,56 +750,56 @@ namespace RS.Widgets.Controls
 
         #region Command实现
 
-        private DeviceDataModel DeviceDataModelAdd;
+        private ModbusCommuConfigModel ModbusCommuConfigModelAdd;
         private async void AddData(object parameter)
         {
-            if (this.DeviceDataModelList == null)
+            if (this.ModbusCommuConfigModelList == null)
             {
-                this.DeviceDataModelList = new ObservableCollection<DeviceDataModel>();
+                this.ModbusCommuConfigModelList = new ObservableCollection<ModbusCommuConfigModel>();
             }
-            var seviceDataModelSelected = this.DeviceDataModelSelected;
-            var deviceDataModelList = this.DeviceDataModelList.ToList();
+            var seviceDataModelSelected = this.ModbusCommuConfigModelSelected;
+            var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
             var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
             {
                 //首先进行数据验证
-                var deviceDataModelValidResult = DeviceDataModelValid(deviceDataModelList);
-                if (!deviceDataModelValidResult.IsSuccess)
+                var modbusCommuConfigModelValidResult = ModbusCommuConfigModelValid(modbusCommuConfigModelList);
+                if (!modbusCommuConfigModelValidResult.IsSuccess)
                 {
-                    return deviceDataModelValidResult;
+                    return modbusCommuConfigModelValidResult;
                 }
 
                 //如果用户没有选中行
                 if (seviceDataModelSelected == null)
                 {
                     //我们就获取列表最后一个数据
-                    seviceDataModelSelected = deviceDataModelList.LastOrDefault();
+                    seviceDataModelSelected = modbusCommuConfigModelList.LastOrDefault();
                 }
 
-                DeviceDataModel deviceDataModel = null;
+                ModbusCommuConfigModel modbusCommuConfigModel = null;
                 if (seviceDataModelSelected != null)
                 {
-                    DeviceDataModelAdd = seviceDataModelSelected.Clone();
+                    ModbusCommuConfigModelAdd = seviceDataModelSelected.Clone();
                 }
 
-                if (deviceDataModel == null)
+                if (modbusCommuConfigModel == null)
                 {
                     //验证通过继续下一步
-                    deviceDataModel = new DeviceDataModel();
+                    modbusCommuConfigModel = new ModbusCommuConfigModel();
                 }
 
-                deviceDataModel.DataDescription = null;
+                modbusCommuConfigModel.DataDescription = null;
 
-                if (deviceDataModelList.Count > 0)
+                if (modbusCommuConfigModelList.Count > 0)
                 {
-                    deviceDataModel.DataId = deviceDataModelList.Max(t => t.DataId) + 1;
+                    modbusCommuConfigModel.DataId = modbusCommuConfigModelList.Max(t => t.DataId) + 1;
                 }
 
                 //主动触发一次校验 告诉用户哪些地方需要修改
-                deviceDataModel.ValidObject();
+                modbusCommuConfigModel.ValidObject();
                 this.Dispatcher.Invoke(() =>
                 {
-                    this.DeviceDataModelList.Add(deviceDataModel);
-                    this.DeviceDataModelSelected = deviceDataModel;
+                    this.ModbusCommuConfigModelList.Add(modbusCommuConfigModel);
+                    this.ModbusCommuConfigModelSelected = modbusCommuConfigModel;
                 });
 
                 return OperateResult.CreateResult();
@@ -805,7 +811,7 @@ namespace RS.Widgets.Controls
             }
         }
 
-        private OperateResult DeviceDataModelValid(List<DeviceDataModel> dataList)
+        private OperateResult ModbusCommuConfigModelValid(List<ModbusCommuConfigModel> dataList)
         {
             if (dataList.Count == 0)
             {
@@ -821,8 +827,8 @@ namespace RS.Widgets.Controls
                     this.Dispatcher.Invoke(() =>
                     {
                         //如果验证不通过设置选中
-                        this.DeviceDataModelSelected = item;
-                        this.ScrollDeviceDataModelIntoView(this.DeviceDataModelSelected);
+                        this.ModbusCommuConfigModelSelected = item;
+                        this.ScrollModbusCommuConfigModelIntoView(this.ModbusCommuConfigModelSelected);
                     });
                     return WarningOperateResult.CreateResult("数据验证不通过，不能继续新增数据！");
                 }
@@ -833,24 +839,24 @@ namespace RS.Widgets.Controls
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    this.DeviceDataModelSelected = duplicateData.FirstOrDefault();
-                    this.ScrollDeviceDataModelIntoView(this.DeviceDataModelSelected);
+                    this.ModbusCommuConfigModelSelected = duplicateData.FirstOrDefault();
+                    this.ScrollModbusCommuConfigModelIntoView(this.ModbusCommuConfigModelSelected);
                 });
                 return WarningOperateResult.CreateResult("数据配置重复！");
             }
             return OperateResult.CreateResult();
         }
 
-        private void ScrollDeviceDataModelIntoView(DeviceDataModel deviceDataModel)
+        private void ScrollModbusCommuConfigModelIntoView(ModbusCommuConfigModel modbusCommuConfigModel)
         {
-            this.PART_DataGrid?.ScrollIntoView(deviceDataModel);
+            this.PART_DataGrid?.ScrollIntoView(modbusCommuConfigModel);
         }
 
         /// <summary>
         /// 删除数据配置
         /// </summary>
         /// <param name="parameter">0 删除单行 1删除全部</param>
-        private async void DeleteDeviceDataModel(string parameter)
+        private async void DeleteModbusCommuConfigModel(string parameter)
         {
             //这里防老年痴呆，得问一问是否删除
             string msg = parameter.Equals("0") ? "你确定要删除该行数据吗" : "你确定要删除所有数据吗?";
@@ -860,27 +866,62 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+              {
+                  //这是删除一行
+                  if (parameter.Equals("0"))
+                  {
+                      ModbusCommuConfigModel modbusCommuConfigModelSelected = null;
+                      this.Dispatcher.Invoke(() =>
+                      {
+                          modbusCommuConfigModelSelected = this.ModbusCommuConfigModelSelected;
+                          this.ModbusCommuConfigModelList.Remove(modbusCommuConfigModelSelected);
+                      });
+
+                      //删除数据行
+                      using (HMIClientDataDbContexts db = new HMIClientDataDbContexts())
+                      {
+                          var count = await db.ModbusCommuConfig.Where(t => t.Id == modbusCommuConfigModelSelected.Id).ExecuteDeleteAsync();
+                          await db.SaveChangesAsync();
+                      }
+                  }
+                  else
+                  {
+                      //这是删除全部
+                      this.Dispatcher.Invoke(() =>
+                      {
+                          this.ModbusCommuConfigModelList.Clear();
+                      });
+
+                      //获取到配置主键
+                      var id = this.Id;
+                      //删除数据行
+                      using (HMIClientDataDbContexts db = new HMIClientDataDbContexts())
+                      {
+                          var count = await db.ModbusCommuConfig.Where(t => t.SerialPortConfigId == id).ExecuteDeleteAsync();
+                          await db.SaveChangesAsync();
+                      }
+                  }
+
+                  return OperateResult.CreateResult();
+              });
+
+            this.HandleOperationResult(operateResult);
+        }
+
+        /// <summary>
+        /// 通用处理操作结果
+        /// </summary>
+        /// <param name="operateResult"></param>
+        private void HandleOperationResult(OperateResult operateResult)
+        {
+            if (!operateResult.IsSuccess)
             {
-                if (parameter.Equals("0"))
+                this.Dispatcher.Invoke(async () =>
                 {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        this.DeviceDataModelList.Remove(this.DeviceDataModelSelected);
-                    });
-                }
-                else
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        this.DeviceDataModelList.Clear();
-                    });
-                }
-
-                return OperateResult.CreateResult();
-            });
-
-
+                   await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message);
+                });
+            }
         }
 
         /// <summary>
@@ -889,20 +930,20 @@ namespace RS.Widgets.Controls
         /// <param name="dataList"></param>
         /// <param name="exceptPropertyList"></param>
         /// <returns></returns>
-        private List<DeviceDataModel> GetDuplicateData(List<DeviceDataModel> dataList, List<string> exceptPropertyList = null)
+        private List<ModbusCommuConfigModel> GetDuplicateData(List<ModbusCommuConfigModel> dataList, List<string> exceptPropertyList = null)
         {
             var validPropertyList = new List<string>()
             {
-                nameof(DeviceDataModel.DataId),
-                nameof(DeviceDataModel.StationNumber),
-                nameof(DeviceDataModel.FunctionCode),
-                nameof(DeviceDataModel.Address),
-                nameof(DeviceDataModel.DataType),
-                nameof(DeviceDataModel.CharacterLength),
-                nameof(DeviceDataModel.ReadWritePermission),
-                nameof(DeviceDataModel.ByteOrder),
-                nameof(DeviceDataModel.DataGroup),
-                nameof(DeviceDataModel.DataDescription),
+                nameof(ModbusCommuConfigModel.DataId),
+                nameof(ModbusCommuConfigModel.StationNumber),
+                nameof(ModbusCommuConfigModel.FunctionCode),
+                nameof(ModbusCommuConfigModel.Address),
+                nameof(ModbusCommuConfigModel.DataType),
+                nameof(ModbusCommuConfigModel.CharacterLength),
+                nameof(ModbusCommuConfigModel.ReadWritePermission),
+                nameof(ModbusCommuConfigModel.ByteOrder),
+                nameof(ModbusCommuConfigModel.DataGroup),
+                nameof(ModbusCommuConfigModel.DataDescription),
             };
 
             if (exceptPropertyList != null)
@@ -929,59 +970,59 @@ namespace RS.Widgets.Controls
                 string filePath = openFileDialog.FileName;
 
                 //获取数据副本
-                var deviceDataModelList = this.DeviceDataModelList.ToList();
+                var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
                 var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
-                  {
-                      //获取Excel工作簿
-                      IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
+                {
+                    //获取Excel工作簿
+                    IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
 
-                      // 读取数据配置表
-                      ISheet sheet = workbook.GetSheet("DataConfig");
+                    // 读取数据配置表
+                    ISheet sheet = workbook.GetSheet("DataConfig");
 
-                      //读取串口通讯配置
-                      this.GetSerialPortConfig(sheet);
+                    //读取串口通讯配置
+                    this.GetSerialPortConfig(sheet);
 
-                      //读取数据配置
-                      var dataList = this.GetDeviceDataModelConfig(workbook, sheet);
+                    //读取数据配置
+                    var dataList = this.GetModbusCommuConfigModelConfig(workbook, sheet);
 
-                      deviceDataModelList = deviceDataModelList.Concat(dataList).ToList();
+                    modbusCommuConfigModelList = modbusCommuConfigModelList.Concat(dataList).ToList();
 
-                      //还需要验证数据配置是否有重复
-                      var duplicateData = GetDuplicateData(deviceDataModelList);
+                    //还需要验证数据配置是否有重复
+                    var duplicateData = GetDuplicateData(modbusCommuConfigModelList);
 
-                      //获取数据的差集
-                      dataList = dataList.Except(duplicateData).ToList();
+                    //获取数据的差集
+                    dataList = dataList.Except(duplicateData).ToList();
 
-                      foreach (var item in dataList)
-                      {
-                          this.Dispatcher.Invoke(() =>
-                          {
-                              //自动获取DataId
-                              if (item.DataId == -1 && deviceDataModelList.Count > 0)
-                              {
-                                  item.DataId = deviceDataModelList.Max(t => t.DataId) + 1;
-                              }
-                              this.DeviceDataModelList.Add(item);
-                          });
-                      }
+                    foreach (var item in dataList)
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            //自动获取DataId
+                            if (item.DataId == -1 && modbusCommuConfigModelList.Count > 0)
+                            {
+                                item.DataId = modbusCommuConfigModelList.Max(t => t.DataId) + 1;
+                            }
+                            this.ModbusCommuConfigModelList.Add(item);
+                        });
+                    }
 
-                      //触发数据验证
-                      CellValueEditChanged(nameof(DeviceDataModel.DataId));
-                      CellValueEditChanged(nameof(DeviceDataModel.StationNumber));
-                      CellValueEditChanged(nameof(DeviceDataModel.FunctionCode));
-                      CellValueEditChanged(nameof(DeviceDataModel.Address));
-                      CellValueEditChanged(nameof(DeviceDataModel.ByteOrder));
-                      CellValueEditChanged(nameof(DeviceDataModel.DataType));
-                      CellValueEditChanged(nameof(DeviceDataModel.CharacterLength));
-                      CellValueEditChanged(nameof(DeviceDataModel.IsStringInverse));
-                      CellValueEditChanged(nameof(DeviceDataModel.ReadWritePermission));
-                      CellValueEditChanged(nameof(DeviceDataModel.MinValue));
-                      CellValueEditChanged(nameof(DeviceDataModel.MaxValue));
-                      CellValueEditChanged(nameof(DeviceDataModel.DigitalNumber));
-                      CellValueEditChanged(nameof(DeviceDataModel.DataGroup));
-                      CellValueEditChanged(nameof(DeviceDataModel.DataDescription));
-                      return OperateResult.CreateResult();
-                  });
+                    //触发数据验证
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataId));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.StationNumber));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.FunctionCode));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.Address));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.ByteOrder));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataType));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.CharacterLength));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.IsStringInverse));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.ReadWritePermission));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.MinValue));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.MaxValue));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DigitalNumber));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataGroup));
+                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataDescription));
+                    return OperateResult.CreateResult();
+                });
 
                 if (!operateResult.IsSuccess)
                 {
@@ -1009,7 +1050,7 @@ namespace RS.Widgets.Controls
                 string filePath = saveFileDialog.FileName;
 
                 //获取数据副本
-                var deviceDataModelList = this.DeviceDataModelList.ToList();
+                var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
                 var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
                 {
                     //获取Excel工作簿
@@ -1160,7 +1201,7 @@ namespace RS.Widgets.Controls
                         "小数位数",
                         "数据分组",
                         "数据描述",
-                    };
+                };
 
                     //设置第4行的标题
                     for (int i = 0; i < rowTitleList.Length; i++)
@@ -1171,11 +1212,11 @@ namespace RS.Widgets.Controls
                     }
 
                     //导出数据配置
-                    int totalRow = deviceDataModelList.Count();
+                    int totalRow = modbusCommuConfigModelList.Count();
                     for (int i = 0; i < totalRow; i++)
                     {
                         //获取数据配置
-                        var dataConfig = deviceDataModelList[i];
+                        var dataConfig = modbusCommuConfigModelList[i];
                         //数据配置从第5行开始
                         currentRow = sheet.CreateRow(i + 4);
 
@@ -1439,99 +1480,99 @@ namespace RS.Widgets.Controls
         /// </summary>
         /// <param name="filePath">配置文件绝对路径</param>
         /// <returns></returns>
-        private List<DeviceDataModel> GetDeviceDataModelConfig(IWorkbook workbook, ISheet sheet)
+        private List<ModbusCommuConfigModel> GetModbusCommuConfigModelConfig(IWorkbook workbook, ISheet sheet)
         {
-            List<DeviceDataModel> deviceDataModelList = new List<DeviceDataModel>();
+            List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
             // 遍历行和单元格并读取数据
             for (int row = 4; row <= sheet.LastRowNum; row++)
             {
-                DeviceDataModel deviceDataModel = new DeviceDataModel();
+                ModbusCommuConfigModel modbusCommuConfigModel = new ModbusCommuConfigModel();
                 IRow currentRow = sheet.GetRow(row);
                 if (currentRow != null)
                 {
                     //读取数据标签
-                    deviceDataModel.DataId = currentRow.GetCell(0).ToInt();
+                    modbusCommuConfigModel.DataId = currentRow.GetCell(0).ToInt();
 
                     //读取通讯站号
-                    deviceDataModel.StationNumber = currentRow.GetCell(1).ToByte();
+                    modbusCommuConfigModel.StationNumber = currentRow.GetCell(1).ToByte();
 
                     //读取功能码 
-                    deviceDataModel.FunctionCode = currentRow.GetCell(2).ToEnum<FunctionCodeEnum>();
+                    modbusCommuConfigModel.FunctionCode = currentRow.GetCell(2).ToEnum<FunctionCodeEnum>();
 
                     //读取地址
-                    deviceDataModel.Address = currentRow.GetCell(3).ToInt();
+                    modbusCommuConfigModel.Address = currentRow.GetCell(3).ToInt();
 
                     //读取字节顺序
-                    deviceDataModel.ByteOrder = currentRow.GetCell(4).ToEnum<ByteOrderEnum>();
+                    modbusCommuConfigModel.ByteOrder = currentRow.GetCell(4).ToEnum<ByteOrderEnum>();
 
                     //读取数据类型
-                    deviceDataModel.DataType = currentRow.GetCell(5).ToEnum<DataTypeEnum>();
+                    modbusCommuConfigModel.DataType = currentRow.GetCell(5).ToEnum<DataTypeEnum>();
 
                     //只有数据类型为字符串时才读取字符长度
-                    if (deviceDataModel.DataType == DataTypeEnum.String)
+                    if (modbusCommuConfigModel.DataType == DataTypeEnum.String)
                     {
                         //读取字符长度
                         var cell = currentRow.GetCell(6)?.ToString();
                         if (cell != null)
                         {
-                            deviceDataModel.CharacterLength = cell.ToInt();
+                            modbusCommuConfigModel.CharacterLength = cell.ToInt();
                         }
                     }
 
                     //字符串是否颠倒
-                    deviceDataModel.IsStringInverse = currentRow.GetCell(7).ToBool();
+                    modbusCommuConfigModel.IsStringInverse = currentRow.GetCell(7).ToBool();
 
                     //读取读取权限
 
-                    deviceDataModel.ReadWritePermission = currentRow.GetCell(8).ToEnum<ReadWriteEnum>();
-                    if (!(deviceDataModel.ReadWritePermission >= ReadWriteEnum.Read && deviceDataModel.ReadWritePermission <= ReadWriteEnum.ReadWrite))
+                    modbusCommuConfigModel.ReadWritePermission = currentRow.GetCell(8).ToEnum<ReadWriteEnum>();
+                    if (!(modbusCommuConfigModel.ReadWritePermission >= ReadWriteEnum.Read && modbusCommuConfigModel.ReadWritePermission <= ReadWriteEnum.ReadWrite))
                     {
-                        deviceDataModel.ReadWritePermission = ReadWriteEnum.Read;
+                        modbusCommuConfigModel.ReadWritePermission = ReadWriteEnum.Read;
                     }
 
 
                     //读取最小值
-                    if (!(deviceDataModel.DataType == DataTypeEnum.Bool && deviceDataModel.DataType == DataTypeEnum.String))
+                    if (!(modbusCommuConfigModel.DataType == DataTypeEnum.Bool && modbusCommuConfigModel.DataType == DataTypeEnum.String))
                     {
                         var cell = currentRow.GetCell(9)?.ToString();
                         if (!string.IsNullOrEmpty(cell) && string.IsNullOrWhiteSpace(cell))
                         {
-                            deviceDataModel.MinValue = cell.ToDouble();
+                            modbusCommuConfigModel.MinValue = cell.ToDouble();
                         }
                     }
 
 
                     //读取最大值
-                    if (!(deviceDataModel.DataType == DataTypeEnum.Bool && deviceDataModel.DataType == DataTypeEnum.String))
+                    if (!(modbusCommuConfigModel.DataType == DataTypeEnum.Bool && modbusCommuConfigModel.DataType == DataTypeEnum.String))
                     {
                         var cell = currentRow.GetCell(10)?.ToString();
                         if (!string.IsNullOrEmpty(cell) && string.IsNullOrWhiteSpace(cell))
                         {
-                            deviceDataModel.MaxValue = cell.ToDouble();
+                            modbusCommuConfigModel.MaxValue = cell.ToDouble();
                         }
                     }
 
 
                     //读取小数位数
-                    if (deviceDataModel.DataType == DataTypeEnum.Float || deviceDataModel.DataType == DataTypeEnum.Double)
+                    if (modbusCommuConfigModel.DataType == DataTypeEnum.Float || modbusCommuConfigModel.DataType == DataTypeEnum.Double)
                     {
                         var cell = currentRow.GetCell(11)?.ToString();
                         if (!string.IsNullOrEmpty(cell) && string.IsNullOrWhiteSpace(cell))
                         {
-                            deviceDataModel.DigitalNumber = cell.ToByte();
+                            modbusCommuConfigModel.DigitalNumber = cell.ToByte();
                         }
                     }
 
                     //读取数据分组
-                    deviceDataModel.DataGroup = currentRow.GetCell(12).ToByte();
+                    modbusCommuConfigModel.DataGroup = currentRow.GetCell(12).ToByte();
 
                     //读取数据描述
-                    deviceDataModel.DataDescription = currentRow.GetCell(13)?.ToString();
-                    deviceDataModelList.Add(deviceDataModel);
+                    modbusCommuConfigModel.DataDescription = currentRow.GetCell(13)?.ToString();
+                    modbusCommuConfigModelList.Add(modbusCommuConfigModel);
                 }
             }
 
-            return deviceDataModelList;
+            return modbusCommuConfigModelList;
         }
 
         /// <summary>
@@ -1808,7 +1849,7 @@ namespace RS.Widgets.Controls
             this.PART_DataGrid = this.GetTemplateChild(nameof(this.PART_DataGrid)) as DataGrid;
             this.PART_BtnConnect = this.GetTemplateChild(nameof(this.PART_BtnConnect)) as Button;
             this.PART_BtnDisConnect = this.GetTemplateChild(nameof(this.PART_BtnDisConnect)) as Button;
-            this.PART_BtnSavConfig = this.GetTemplateChild(nameof(this.PART_BtnSavConfig)) as Button;
+            this.PART_BtnSaveConfig = this.GetTemplateChild(nameof(this.PART_BtnSaveConfig)) as Button;
 
             if (this.PART_BtnConnect != null)
             {
@@ -1822,10 +1863,10 @@ namespace RS.Widgets.Controls
                 this.PART_BtnDisConnect.Click += BtnDisConnect_Click;
             }
 
-            if (this.PART_BtnSavConfig != null)
+            if (this.PART_BtnSaveConfig != null)
             {
-                this.PART_BtnSavConfig.Click -= BtnSavConfig_Click;
-                this.PART_BtnSavConfig.Click += BtnSavConfig_Click;
+                this.PART_BtnSaveConfig.Click -= BtnSaveConfig_Click;
+                this.PART_BtnSaveConfig.Click += BtnSaveConfig_Click;
             }
 
         }
@@ -1855,7 +1896,7 @@ namespace RS.Widgets.Controls
                 }
             }, CTS.Token);
         }
-      
+
 
         /// <summary>
         /// 设备断开连接
@@ -1870,9 +1911,132 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 保存配置
         /// </summary>
-        private void BtnSavConfig_Click(object sender, RoutedEventArgs e)
+        private async void BtnSaveConfig_Click(object sender, RoutedEventArgs e)
         {
+            //把数据保存到Sqlite本地数据库,假如后面我们上了WebAPI,我们可以把数据保存到WebAPI
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+            {
+                //保存数据之前我们需要验证数据是否通过
+                bool isAdd = this.Id <= 0;
+                var serialPortConfig = new SerialPortConfig();
+                serialPortConfig.CommuStationId = 0;
+                this.Dispatcher.Invoke(() =>
+                {
+                    //这里我们需要保存串口通讯配置
+                    serialPortConfig.PortName = this.PortName;
+                    serialPortConfig.BaudRate = this.BaudRate;
+                    serialPortConfig.DataBits = this.DataBits;
+                    serialPortConfig.StopBits = this.StopBits;
+                    serialPortConfig.Parity = this.Parity;
+                    serialPortConfig.IsAutoConnect = this.IsAutoConnect;
+                });
 
+                if (isAdd)
+                {
+                    serialPortConfig.Id = idGenerator.CreateId();
+                    this.Id = serialPortConfig.Id;
+                }
+                else
+                {
+                    serialPortConfig.Id = this.Id;
+                }
+
+
+                List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
+                this.Dispatcher.Invoke(() =>
+                {
+                    modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
+                });
+                //验证配置是否通过
+                foreach (var item in modbusCommuConfigModelList)
+                {
+                    if (item.HasErrors)
+                    {
+                        return WarningOperateResult.CreateResult("数据配置验证不通过！请更新配置");
+                    }
+                }
+
+                List<ModbusCommuConfig> modbusCommuConfigAddList = new List<ModbusCommuConfig>();
+                List<ModbusCommuConfig> modbusCommuConfigUpdateList = new List<ModbusCommuConfig>();
+                //保存数据配置
+                foreach (var item in modbusCommuConfigModelList)
+                {
+                    var deviceDataConfig = new ModbusCommuConfig()
+                    {
+                        DataId = item.DataId,
+                        StationNumber = item.StationNumber,
+                        FunctionCode = item.FunctionCode,
+                        Address = item.Address,
+                        ByteOrder = item.ByteOrder,
+                        DataType = item.DataType,
+                        CharacterLength = item.CharacterLength,
+                        IsStringInverse = item.IsStringInverse,
+                        ReadWritePermission = item.ReadWritePermission,
+                        MinValue = item.MinValue,
+                        MaxValue = item.MaxValue,
+                        DigitalNumber = item.DigitalNumber,
+                        DataGroup = item.DataGroup,
+                        DataDescription = item.DataDescription,
+                        SerialPortConfigId = serialPortConfig.Id,
+                    };
+
+                    if (item.Id <= 0)
+                    {
+                        item.Id = idGenerator.CreateId();
+                        modbusCommuConfigAddList.Add(deviceDataConfig);
+                    }
+                    else
+                    {
+                        modbusCommuConfigUpdateList.Add(deviceDataConfig);
+                    }
+
+                    //设置Id
+                    deviceDataConfig.Id = item.Id;
+                }
+
+                //这里我们需要使用事务来保存数据
+                using (HMIClientDataDbContexts db = new HMIClientDataDbContexts())
+                {
+                    using (var trans = await db.Database.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            if (isAdd)
+                            {
+                                //添加串口通讯配置
+                                await db.SerialPortConfig.AddAsync(serialPortConfig);
+                            }
+                            else
+                            {
+                                db.SerialPortConfig.Update(serialPortConfig);
+                            }
+                            if (modbusCommuConfigAddList.Count > 0)
+                            {
+                                //添加数据配置
+                                await db.ModbusCommuConfig.AddRangeAsync(modbusCommuConfigAddList);
+                            }
+
+                            if (modbusCommuConfigUpdateList.Count > 0)
+                            {
+                                //添加数据配置
+                                db.ModbusCommuConfig.UpdateRange(modbusCommuConfigUpdateList);
+                            }
+
+                            await trans.CommitAsync();
+                            await db.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            await trans.RollbackAsync();
+                            return ErrorOperateResult.CreateResult($"保存数据出错了！错误消息:{ex.Message}");
+                        }
+                    }
+                }
+
+                return OperateResult.CreateResult();
+            });
+
+            this.HandleOperationResult(operateResult);
         }
     }
 }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Common.KnownBoxes
 {
-    internal static class BooleanBoxes
+    public static class BooleanBoxes
     {
-        internal static object TrueBox = true;
+        public static object TrueBox = true;
 
-        internal static object FalseBox = false;
+        public static object FalseBox = false;
 
-        internal static object Box(bool value)
+        public static object Box(bool value)
         {
             if (value)
             {

@@ -110,7 +110,6 @@ namespace RS.HMI.Models.Widgets
         /// <returns></returns>
         public bool ValidObject()
         {
-            ErrorsDic.Clear();
             ValidationContext validationContext = new ValidationContext(this);
             ICollection<ValidationResult>? validationResults = new List<ValidationResult>();
             var validResult = Validator.TryValidateObject(this, validationContext, validationResults, true);

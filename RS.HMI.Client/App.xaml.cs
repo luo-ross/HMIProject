@@ -17,8 +17,8 @@ namespace RS.HMI.Client
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            //HomeView view = new HomeView();
-            LoginView view = new LoginView();
+            HomeView view = new HomeView();
+            //LoginView view = new LoginView();
             view.Show();
         }
     }
