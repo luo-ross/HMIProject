@@ -12,6 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="HslCommunication" Version="12.2.0" />
 		<PackageReference Include="IdGen" Version="3.0.7" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="NPOI" Version="2.7.2" />

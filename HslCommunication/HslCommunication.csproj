@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Doc.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Doc.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
+    <PackageReference Include="System.IO.Ports" Version="9.0.2" />
+    <PackageReference Include="System.Management" Version="9.0.2" />
+    <PackageReference Include="System.Resources.Extensions" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="BasicFramework\FormAuthorAdvertisement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="BasicFramework\FormAuthorize.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="BasicFramework\FormPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="BasicFramework\FormPortraitSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="BasicFramework\FormSupport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\UserBottle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserClock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserCurve.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserDrum.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserGaugeChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserLantern.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserPieChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserPipe.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserSwitch.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UserVerticalProgress.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="LogNet\View\FormLogNetView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="LogNet\View\LogNetAnalysisControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

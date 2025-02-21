@@ -1,4 +1,5 @@
-﻿using IdGen;
+﻿using HslCommunication.ModBus;
+using IdGen;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using NPOI.OpenXml4Net.OPC.Internal;
@@ -355,6 +356,45 @@ namespace RS.HMI.CommuLib.Controls
         #endregion
 
         #region 通用数据
+
+        //private static List<ComboBoxItemModel<FunctionCodeEnum>> functionCodeList;
+        ///// <summary>
+        ///// 功能码
+        ///// </summary>
+        //public static List<ComboBoxItemModel<FunctionCodeEnum>> FunctionCodeList
+        //{
+        //    get
+        //    {
+        //        if (functionCodeList == null)
+        //        {
+        //            functionCodeList = new List<ComboBoxItemModel<FunctionCodeEnum>>();
+        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+        //            {
+        //                Key = FunctionCodeEnum.ReadCoils_0x01,
+        //                KeyDes = "01(0x01)- 读取线圈状态"
+        //            });
+        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+        //            {
+        //                Key = FunctionCodeEnum.ReadDiscreteInputs_0x02,
+        //                KeyDes = "02(0x02)-读取离散输入 "
+        //            });
+        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+        //            {
+        //                Key = FunctionCodeEnum.ReadHoldingRegisters_0x03,
+        //                KeyDes = "03(0x03)-读取保持寄存器 "
+        //            });
+        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
+        //            {
+        //                Key = FunctionCodeEnum.ReadInputRegisters_0x04,
+        //                KeyDes = "04(0x04)-读取输入寄存器 "
+        //            });
+        //        }
+        //        return functionCodeList;
+        //    }
+        //}
+
+
+
         private static List<ComboBoxItemModel<FunctionCodeEnum>> functionCodeList;
         /// <summary>
         /// 功能码
@@ -919,7 +959,7 @@ namespace RS.HMI.CommuLib.Controls
             {
                 this.Dispatcher.Invoke(async () =>
                 {
-                   await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message);
+                    await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message);
                 });
             }
         }
@@ -1637,6 +1677,7 @@ namespace RS.HMI.CommuLib.Controls
 
         #endregion
 
+        private ModbusRtu busRtuClient = null;
 
         /// <summary>
         /// 连接串口
@@ -1644,13 +1685,13 @@ namespace RS.HMI.CommuLib.Controls
         /// <returns>是否连接成功</returns>
         public bool Connect()
         {
+
             try
             {
                 if (IsConnected)
                 {
                     return true;
                 }
-
                 serialPort = new SerialPort
                 {
                     PortName = this.PortName,
@@ -1659,7 +1700,6 @@ namespace RS.HMI.CommuLib.Controls
                     DataBits = this.DataBits,
                     StopBits = this.StopBits
                 };
-
                 // 设置数据接收事件处理
                 serialPort.DataReceived += SerialPort_DataReceived;
                 // 设置错误事件处理
@@ -1871,30 +1911,69 @@ namespace RS.HMI.CommuLib.Controls
 
         }
 
-        public CancellationTokenSource CTS { get; set; }
+        public CancellationTokenSource ConnectCTS { get; set; }
 
         /// <summary>
         /// 设备连接
         /// </summary>
-        private void BtnConnect_Click(object sender, RoutedEventArgs e)
+        private async void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
-            if (CTS != null)
+            if (ConnectCTS != null)
             {
-                CTS.Cancel();
+                ConnectCTS.Cancel();
             }
-            CTS = new CancellationTokenSource();
-            Task.Factory.StartNew(async () =>
+            ConnectCTS = new CancellationTokenSource();
+
+            var portName = this.PortName;
+            var baudRate = this.BaudRate;
+            var dataBits = (int)this.DataBits;
+            var stopBits = this.StopBits;
+            var parity = this.Parity;
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
             {
-                while (!CTS.Token.IsCancellationRequested)
+                try
                 {
+                    busRtuClient?.Close();
+                    busRtuClient = new ModbusRtu();
+                    busRtuClient.AddressStartWithZero = true;
+                    //busRtuClient.IsStringReverse = checkBox3.Checked;
+                    //busRtuClient.StationNumber = 1;
+                    busRtuClient.SerialPortInni(sp =>
+                    {
+                        sp.PortName = portName;
+                        sp.BaudRate = baudRate;
+                        sp.DataBits = dataBits;
+                        sp.StopBits = stopBits;
+                        sp.Parity = parity;
+                    });
+                    busRtuClient.Open();
+
+                  var sdf=  busRtuClient.ReadCoil("100");
+
+
                     this.Dispatcher.Invoke(() =>
                     {
                         this.IsConnectSuccess = true;
                         this.CommunicationTime = DateTime.Now;
                     });
-                    await Task.Delay(1000, CTS.Token);
                 }
-            }, CTS.Token);
+                catch (Exception ex)
+                {
+
+                }
+
+                return OperateResult.CreateResult();
+            });
+            //while (!CTS.Token.IsCancellationRequested)
+            //{
+            //    this.Dispatcher.Invoke(() =>
+            //    {
+            //        this.IsConnectSuccess = true;
+            //        this.CommunicationTime = DateTime.Now;
+            //    });
+            //    await Task.Delay(1000, CTS.Token);
+            //}
+
         }
 
 
@@ -1903,7 +1982,7 @@ namespace RS.HMI.CommuLib.Controls
         /// </summary>
         private async void BtnDisConnect_Click(object sender, RoutedEventArgs e)
         {
-            await CTS?.CancelAsync();
+            await ConnectCTS?.CancelAsync();
             this.IsConnectSuccess = false;
             this.CommunicationTime = DateTime.Now;
         }

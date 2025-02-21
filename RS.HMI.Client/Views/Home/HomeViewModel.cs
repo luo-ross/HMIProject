@@ -67,56 +67,56 @@ namespace RS.HMI.Client.Views.Home
 
 
 
-        private ObservableCollection<string> serialPortNameList;
-        /// <summary>
-        /// 串口测试数据
-        /// </summary>
-        public ObservableCollection<string> SerialPortNameList
-        {
-            get
-            {
-                if (serialPortNameList == null)
-                {
-                    // 获取所有可用串口
-                    var portList = SerialPort.GetPortNames().ToList();
-                    serialPortNameList = new ObservableCollection<string>(portList);
+        //private ObservableCollection<string> serialPortNameList;
+        ///// <summary>
+        ///// 串口测试数据
+        ///// </summary>
+        //public ObservableCollection<string> SerialPortNameList
+        //{
+        //    get
+        //    {
+        //        if (serialPortNameList == null)
+        //        {
+        //            // 获取所有可用串口
+        //            var portList = SerialPort.GetPortNames().ToList();
+        //            serialPortNameList = new ObservableCollection<string>(portList);
 
-                    for (int i = 0; i < 5; i++)
-                    {
-                        serialPortNameList.Add($@"Com{i + 1}");
-                    }
-                }
-                return serialPortNameList;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref serialPortNameList, value);
-            }
-        }
+        //            for (int i = 0; i < 5; i++)
+        //            {
+        //                serialPortNameList.Add($@"Com{i + 1}");
+        //            }
+        //        }
+        //        return serialPortNameList;
+        //    }
+        //    set
+        //    {
+        //        this.OnPropertyChanged(ref serialPortNameList, value);
+        //    }
+        //}
 
 
 
        
 
-        private ObservableCollection< CommuStation> commuStationList;
-        /// <summary>
-        /// 通讯站列表
-        /// </summary>
-        public ObservableCollection<CommuStation> CommuStationList
-        {
-            get
-            {
-                if (commuStationList == null)
-                {
-                    commuStationList = new ObservableCollection<CommuStation>();
-                }
-                return commuStationList;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref commuStationList, value);
-            }
-        }
+        //private ObservableCollection< CommuStation> commuStationList;
+        ///// <summary>
+        ///// 通讯站列表
+        ///// </summary>
+        //public ObservableCollection<CommuStation> CommuStationList
+        //{
+        //    get
+        //    {
+        //        if (commuStationList == null)
+        //        {
+        //            commuStationList = new ObservableCollection<CommuStation>();
+        //        }
+        //        return commuStationList;
+        //    }
+        //    set
+        //    {
+        //        this.OnPropertyChanged(ref commuStationList, value);
+        //    }
+        //}
 
 
      

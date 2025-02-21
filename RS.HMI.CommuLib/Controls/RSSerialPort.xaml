@@ -140,7 +140,7 @@
                                             </TextBlock>
                                             <ComboBox
                                                 Grid.Column="1"
-                                                ItemsSource="{Binding SerialPortNameList}"
+                                                 ItemsSource="{Binding Source={x:Static local:RSSerialPort.SerialPortNameList}}"
                                                 SelectedValue="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <TextBlock
                                                 Grid.Column="2"
