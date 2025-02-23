@@ -361,3 +361,17 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/RS.Widgets/PixelShaders/Shazzam_v1.5.Setup.exe
+/RS.ConfigDoc/配置Docker/Docker Desktop Installer.exe
+/RS.ConfigDoc/着色器/Shazzam_v1.5.Setup.exe
+/RS.ConfigDoc/配置Docker/label-studio.tar
+/RS.ConfigDoc/配置Docker/mysql.tar
+/RS.ConfigDoc/配置Docker/nginx.tar
+/RS.ConfigDoc/配置Docker/rabbitmq.tar
+/RS.ConfigDoc/配置Docker/redis.tar
+/RS.ConfigDoc/配置Docker/sqlserver2019.tar
+/RS.SetupApp/MyPublish.zip
+/RS.WPFApp/Assets/Videos/girl.mp4
+/RS.WPFApp/Assets/Videos/robot.mp4
+/RS.WPFApp/Assets/Videos/ocean.mp4
+/RS.WPFApp/Assets/Videos/shark.mp4
