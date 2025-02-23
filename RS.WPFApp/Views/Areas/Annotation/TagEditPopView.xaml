@@ -1,0 +1,155 @@
+﻿<Popup
+    x:Class="RS.WPFApp.Views.Areas.TagEditPopView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.WPFApp.Views.Areas"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    Width="600"
+    Height="350"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    AllowsTransparency="True"
+    mc:Ignorable="d">
+    <Popup.DataContext>
+        <local:AnnotationViewModel />
+    </Popup.DataContext>
+
+    <Border
+        Margin="25"
+        Background="#fff"
+        CornerRadius="5">
+        <rs:RSUserControl x:Name="HostView">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Border
+                    x:Name="Border"
+                    Padding="15,15,0,15"
+                    Focusable="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="#434343"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="标签名称" />
+
+                            <TextBox
+                                x:Name="TxtClassName"
+                                Padding="0,3,0,3"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left"
+                                rs:TextBoxHelper.Watermark="请输入标签名称"
+                                Style="{StaticResource RSApp.Styles.TextBoxStyle}"
+                                Text="{Binding TagModelEdit.ClassName}" />
+
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="#434343"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="标签颜色" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    x:Name="TxtTagCor"
+                                    Padding="0,3,0,3"
+                                    VerticalAlignment="Center"
+                                    HorizontalContentAlignment="Left"
+                                    rs:TextBoxHelper.Watermark="请输入标签颜色"
+                                    Style="{StaticResource RSApp.Styles.TextBoxStyle}"
+                                    Text="{Binding TagModelEdit.TagColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Border
+                                    Grid.Column="1"
+                                    Width="28"
+                                    Height="28"
+                                    Background="{Binding TagModelEdit.TagColor, Mode=OneWay}"
+                                    CornerRadius="3" />
+                            </Grid>
+
+
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="#434343"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="快捷键" />
+                            <TextBox
+                                x:Name="TxtShortCut"
+                                Padding="0,3,0,3"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Left">
+                                <TextBox.Style>
+                                    <Style BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}">
+                                        <Setter Property="rs:TextBoxHelper.Watermark" Value="请输入快捷键" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding TagModelEdit.IsShortCutAuto}" Value="True">
+                                                <Setter Property="rs:TextBoxHelper.Watermark" Value="{Binding TagModelEdit.ShortCut, StringFormat='{}自动分配:{0}'}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+
+
+                        </StackPanel>
+                        <rs:RSColorPicker
+                            x:Name="ColorPicker"
+                            Grid.Column="1"
+                            OnColorSelect="ColorPicker_OnColorSelect"
+                            Margin="15,0,15,0" />
+                    </Grid>
+                </Border>
+                <Border
+                    Grid.Row="1"
+                    Padding="0,3,0,3"
+                    Background="#eee">
+                    <StackPanel
+                        MinHeight="20"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                        <rs:RSButton
+                            x:Name="BtnOK"
+                            BtnColorType="Primary"
+                            BtnType="Standard"
+                            Click="BtnOK_Click"
+                            Content="确定" />
+                    </StackPanel>
+                </Border>
+
+                <!--<Path
+                    x:Name="PathTriangle"
+                    Width="25"
+                    Height="25"
+                    Margin="-20,25,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Data="M270.912 484.96l512-323.744C792.768 154.976 805.248 154.592 815.424 160.224 825.664 165.856 832 176.608 832 188.256l0 647.328c0 11.648-6.336 22.4-16.576 28.032-4.8 2.656-10.112 3.968-15.424 3.968-5.952 0-11.904-1.664-17.088-4.928l-512-323.616C261.632 533.184 256 522.976 256 512 256 501.024 261.632 490.816 270.912 484.96z"
+                    Fill="#fff"
+                    Stretch="Fill" />-->
+            </Grid>
+        </rs:RSUserControl>
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="18"
+                Opacity="0.2"
+                ShadowDepth="0"
+                Color="#000" />
+        </Border.Effect>
+    </Border>
+
+
+</Popup>

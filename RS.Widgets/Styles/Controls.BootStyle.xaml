@@ -1,0 +1,253 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Thickness x:Key="RSApp.Styles.DefautMarginStyle">3</Thickness>
+    <Brush x:Key="RSApp.Styles.WatermarkColorStyle">#757575</Brush>
+    <Geometry x:Key="RSApp.Styles.CloseIconPath">M577.574 512l343.643-343.696a45.008 45.008 0 0 0 0-63.3l-1.885-1.842a44.997 44.997 0 0 0-63.288 0L512.348 447.29 168.662 103.162a45.008 45.008 0 0 0-63.3 0l-1.874 1.874a44.165 44.165 0 0 0 0 63.3L447.174 512 103.488 855.686a44.987 44.987 0 0 0 0 63.299l1.875 1.874a45.008 45.008 0 0 0 63.299 0l343.686-343.685 343.696 343.685a44.997 44.997 0 0 0 63.288 0l1.885-1.874a45.008 45.008 0 0 0 0-63.3z</Geometry>
+
+
+    <!--  这是bootcss基本样式  -->
+    <Brush x:Key="RSApp.Styles.Blue">#206bc4</Brush>
+    <Brush x:Key="RSApp.Styles.Azure">#4299e1</Brush>
+    <Brush x:Key="RSApp.Styles.Indigo">#4263eb</Brush>
+    <Brush x:Key="RSApp.Styles.Purple">#ae3ec9</Brush>
+    <Brush x:Key="RSApp.Styles.Pink">#d6336c</Brush>
+    <Brush x:Key="RSApp.Styles.Red">#d63939</Brush>
+    <Brush x:Key="RSApp.Styles.Orange">#f76707</Brush>
+    <Brush x:Key="RSApp.Styles.Yellow">#f59f00</Brush>
+    <Brush x:Key="RSApp.Styles.Lime">#74b816</Brush>
+    <Brush x:Key="RSApp.Styles.Green">#2fb344</Brush>
+    <Brush x:Key="RSApp.Styles.Teal">#0ca678</Brush>
+    <Brush x:Key="RSApp.Styles.Cyan">#17a2b8</Brush>
+    <Brush x:Key="RSApp.Styles.Primary">#206bc4</Brush>
+    <Brush x:Key="RSApp.Styles.Secondary">#656d77</Brush>
+    <Brush x:Key="RSApp.Styles.Success">#2fb344</Brush>
+    <Brush x:Key="RSApp.Styles.Info">#4299e1</Brush>
+    <Brush x:Key="RSApp.Styles.Warning">#f76707</Brush>
+    <Brush x:Key="RSApp.Styles.Danger">#d63939</Brush>
+    <Brush x:Key="RSApp.Styles.Light">#f4f6fa</Brush>
+    <Brush x:Key="RSApp.Styles.Dark">#232e3c</Brush>
+
+
+    <!--  这是按钮文字颜色  -->
+    <Brush x:Key="RSApp.Styles.Button.Foreground">#f4f6fa</Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.LightForeground">
+        #232e3c
+    </Brush>
+
+    <!--  这是按钮默认颜色  -->
+    <Brush x:Key="RSApp.Styles.Button.Primary">
+        #206bc4
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Secondary">
+        #656d77
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Success">
+        #2fb344
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Info">
+        #4299e1
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Warning">
+        #f76707
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Danger">
+        #d63939
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Light">
+        #f4f6fa
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Dark">
+        #232e3c
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Blue">
+        #206bc4
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Azure">
+        #4299e1
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Indigo">
+        #4263eb
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Purple">
+        #ae3ec9
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Pink">
+        #d6336c
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Red">
+        #d63939
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Orange">
+        #f76707
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Yellow">
+        #f59f00
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Lime">
+        #74b816
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Green">
+        #2fb344
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Teal">
+        #0ca678
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Cyan">
+        #17a2b8
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Facebook">
+        #3b5998
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Twitter">
+        #1da1f2
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Linkedin">
+        #0a66c2
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Google">
+        #dc4e41
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Youtube">
+        #ff0000
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Vimeo">
+        #1ab7ea
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Dribbble">
+        #ea4c89
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Github">
+        #181717
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Instagram">
+        #e4405f
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Pinterest">
+        #bd081c
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Vk">
+        #6383a8
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Rss">
+        #ffa500
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Flickr">
+        #0063dc
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Bitbucket">
+        #0052cc
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Tabler">
+        #206bc4
+    </Brush>
+
+
+
+    <!--  这是按钮MouseOver|Hover颜色  -->
+    <Brush x:Key="RSApp.Styles.Button.Primary.Darker">
+        #1d60b0
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Secondary.Darker">
+        #5b626b
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Success.Darker">
+        #2aa13d
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Info.Darker">
+        #3b8acb
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Warning.Darker">
+        #de5d06
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Danger.Darker">
+        #c13333
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Light.Darker">
+        #dcdde1
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Dark.Darker">
+        #202936
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Blue.Darker">
+        #1d60b0
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Azure.Darker">
+        #3b8acb
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Indigo.Darker">
+        #3b59d4
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Purple.Darker">
+        #9d38b5
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Pink.Darker">
+        #c12e61
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Red.Darker">
+        #c13333
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Orange.Darker">
+        #de5d06
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Yellow.Darker">
+        #dd8f00
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Lime.Darker">
+        #68a614
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Green.Darker">
+        #2aa13d
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Teal.Darker">
+        #0b956c
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Cyan.Darker">
+        #1592a6
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Facebook.Darker">
+        #355089
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Twitter.Darker">
+        #1a91da
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Linkedin.Darker">
+        #095caf
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Google.Darker">
+        #c6463b
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Youtube.Darker">
+        #e60000
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Vimeo.Darker">
+        #17a5d3
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Dribbble.Darker">
+        #d3447b
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Github.Darker">
+        #161515
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Instagram.Darker">
+        #cd3a56
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Pinterest.Darker">
+        #aa0719
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Vk.Darker">
+        #597697
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Rss.Darker">
+        #e69500
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Flickr.Darker">
+        #0059c6
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Outline.Bitbucket.Darker">
+        #004ab8
+    </Brush>
+    <Brush x:Key="RSApp.Styles.Button.Tabler.Darker">
+        #1d60b0
+    </Brush>
+
+
+</ResourceDictionary>

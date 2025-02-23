@@ -1,0 +1,444 @@
+﻿<rs:RSWindow
+    x:Class="RS.WPFApp.Views.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behavior="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.WPFApp.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    Title="LoginView"
+    Width="720"
+    Height="500"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <rs:RSWindow.DataContext>
+        <local:LoginViewModel />
+    </rs:RSWindow.DataContext>
+    <rs:RSWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ControlTemplate x:Key="ForgetPasswordAndSignUpTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button
+                        x:Name="BtnForgetPassword"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Top"
+                        Click="BtnForgetPassword_Click"
+                        Content="忘记密码"
+                        Style="{StaticResource RSApp.Styles.LeftIconButtonStyle}" />
+
+                    <Separator
+                        Grid.Column="1"
+                        Width="15"
+                        Height="1"
+                        Background="#757575">
+                        <Separator.LayoutTransform>
+                            <RotateTransform Angle="90" />
+                        </Separator.LayoutTransform>
+                    </Separator>
+                    <Button
+                        x:Name="BtnRegister"
+                        Margin="5,5,0,5"
+                        VerticalAlignment="Top"
+                        Click="BtnRegister_Click"
+                        Content="注册账号"
+                        Style="{StaticResource RSApp.Styles.LeftIconButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </ControlTemplate>
+
+        <!--  其他登录方式  -->
+        <ControlTemplate x:Key="OtherLoginTemplate">
+            <Border Grid.Row="2" Padding="0,5,0,20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border Height="1" Background="#616367" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Foreground="#616367"
+                            Text="其他方式登录" />
+
+                        <Border
+                            Grid.Column="2"
+                            Height="1"
+                            Background="#616367" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,15,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Button
+                            Grid.Column="0"
+                            rs:ControlsHelper.IconData="M1147.26896 912.681417l34.90165 111.318583-127.165111-66.823891a604.787313 604.787313 0 0 1-139.082747 22.263717c-220.607239 0-394.296969-144.615936-394.296969-322.758409s173.526026-322.889372 394.296969-322.889372C1124.219465 333.661082 1309.630388 478.669907 1309.630388 656.550454c0 100.284947-69.344929 189.143369-162.361428 256.130963zM788.070086 511.869037a49.11114 49.11114 0 0 0-46.360916 44.494692 48.783732 48.783732 0 0 0 46.360916 44.494693 52.090549 52.090549 0 0 0 57.983885-44.494693 52.385216 52.385216 0 0 0-57.983885-44.494692z m254.985036 0a48.881954 48.881954 0 0 0-46.09899 44.494692 48.620028 48.620028 0 0 0 46.09899 44.494693 52.385216 52.385216 0 0 0 57.983886-44.494693 52.58166 52.58166 0 0 0-57.951145-44.494692z m-550.568615 150.018161a318.567592 318.567592 0 0 0 14.307712 93.212943c-14.307712 1.080445-28.746387 1.768001-43.283284 1.768001a827.293516 827.293516 0 0 1-162.394168-22.296458l-162.001279 77.955749 46.328175-133.811485C69.410411 600.858422 0 500.507993 0 378.38496 0 166.683208 208.689602 0 463.510935 0c227.908428 0 427.594322 133.18941 467.701752 312.379588a427.463358 427.463358 0 0 0-44.625655-2.619261c-220.24709 0-394.100524 157.74498-394.100525 352.126871zM312.90344 189.143369a64.270111 64.270111 0 0 0-69.803299 55.659291 64.532037 64.532037 0 0 0 69.803299 55.659292 53.694846 53.694846 0 0 0 57.852923-55.659292 53.465661 53.465661 0 0 0-57.852923-55.659291z m324.428188 0a64.040926 64.040926 0 0 0-69.574114 55.659291 64.302852 64.302852 0 0 0 69.574114 55.659292 53.694846 53.694846 0 0 0 57.951145-55.659292 53.465661 53.465661 0 0 0-57.951145-55.659291z"
+                            Style="{StaticResource RSApp.Styles.MoreLoginIconButtonStyle}"
+                            ToolTip="微信账号登录" />
+
+                        <Button
+                            Grid.Column="1"
+                            rs:ControlsHelper.IconData="M116.435 593.714c-33.54 78.964-38.985 154.297-12.059 168.37 18.572 9.696 47.686-12.382 74.936-52.909 10.791 44.157 37.493 84.137 75.633 116.21-40.004 14.768-66.135 38.886-66.135 66.232 0 44.954 70.709 81.302 157.978 81.302 78.716 0 143.907-29.538 155.94-68.371 3.232-0.049 15.663-0.049 18.796 0 12.083 38.784 77.324 68.371 155.989 68.371 87.267 0 157.978-36.398 157.978-81.302 0-27.297-26.105-51.464-66.135-66.232 38.089-32.123 64.889-72.053 75.631-116.21 27.251 40.527 56.29 62.605 74.887 52.909 26.95-14.073 21.631-89.456-12.032-168.37-26.355-62.058-62.11-107.754-89.457-117.848 0.398-3.929 0.596-7.958 0.596-11.935 0-23.968-6.661-46.146-18.049-64.196 0.199-1.393 0.199-2.834 0.199-4.227 0-11.038-2.636-21.381-7.114-30.332-6.909-161.309-111.93-289.402-281.866-289.402-170.036 0-275.106 128.093-281.943 289.402-4.525 9.001-7.135 19.343-7.135 30.332 0 1.393 0.099 2.835 0.15 4.227-11.288 18.05-17.951 40.178-17.951 64.196 0 3.978 0.15 7.955 0.498 11.935-27.151 10.094-63.028 55.841-89.333 117.848z"
+                            Style="{StaticResource RSApp.Styles.MoreLoginIconButtonStyle}"
+                            ToolTip="QQ账号登录" />
+
+
+
+                        <Button
+                            Grid.Column="2"
+                            rs:ControlsHelper.IconData="M914.432 518.144q27.648 21.504 38.912 51.712t9.216 62.976-14.336 65.536-31.744 59.392q-34.816 48.128-78.848 81.92t-91.136 56.32-94.72 35.328-89.6 18.944-75.264 7.68-51.712 1.536-49.152-2.56-68.096-10.24-78.336-21.504-79.872-36.352-74.24-55.296-59.904-78.848q-16.384-29.696-22.016-63.488t-5.632-86.016q0-22.528 7.68-51.2t27.136-63.488 53.248-75.776 86.016-90.112q51.2-48.128 105.984-85.504t117.248-57.856q28.672-10.24 63.488-11.264t57.344 11.264q10.24 11.264 19.456 23.04t12.288 29.184q3.072 14.336 0.512 27.648t-5.632 26.624-5.12 25.6 2.048 22.528q17.408 2.048 33.792-1.536t31.744-9.216 31.232-11.776 33.28-9.216q27.648-5.12 54.784-4.608t49.152 7.68 36.352 22.016 17.408 38.4q2.048 14.336-2.048 26.624t-8.704 23.04-7.168 22.016 1.536 23.552q3.072 7.168 14.848 13.312t27.136 12.288 32.256 13.312 29.184 16.384zM656.384 836.608q26.624-16.384 53.76-45.056t44.032-64 18.944-75.776-20.48-81.408q-19.456-33.792-47.616-57.344t-62.976-37.376-74.24-19.968-80.384-6.144q-78.848 0-139.776 16.384t-105.472 43.008-72.192 60.416-38.912 68.608q-11.264 33.792-6.656 67.072t20.992 62.976 42.496 53.248 57.856 37.888q58.368 25.6 119.296 32.256t116.224 0.512 100.864-21.504 74.24-33.792zM522.24 513.024q20.48 8.192 38.912 18.432t32.768 27.648q10.24 12.288 17.92 30.72t10.752 39.424 1.536 42.496-9.728 38.912q-8.192 18.432-19.968 37.376t-28.672 35.328-40.448 29.184-57.344 18.944q-61.44 11.264-117.76-11.264t-88.064-74.752q-12.288-39.936-13.312-70.656t16.384-66.56q13.312-27.648 40.448-51.712t62.464-38.912 75.264-17.408 78.848 12.8zM359.424 764.928q37.888 3.072 57.856-18.432t21.504-48.128-15.36-47.616-52.736-16.896q-27.648 3.072-43.008 23.552t-17.408 43.52 9.728 42.496 39.424 21.504zM778.24 6.144q74.752 0 139.776 19.968t113.664 57.856 76.288 92.16 27.648 122.88q0 33.792-16.384 50.688t-35.328 17.408-35.328-14.336-16.384-45.568q0-40.96-22.528-77.824t-59.392-64.512-84.48-43.52-96.768-15.872q-31.744 0-47.104-15.36t-14.336-34.304 18.944-34.304 51.712-15.36zM778.24 169.984q95.232 0 144.384 48.64t49.152 146.944q0 30.72-10.24 43.52t-22.528 11.264-22.528-14.848-10.24-35.84q0-60.416-34.816-96.256t-93.184-35.84q-19.456 0-28.672-10.752t-9.216-23.04 9.728-23.04 28.16-10.752z"
+                            Style="{StaticResource RSApp.Styles.MoreLoginIconButtonStyle}"
+                            ToolTip="微博账号登录" />
+
+
+                        <Button
+                            Grid.Column="3"
+                            rs:ControlsHelper.IconData="M998.912 694.23616 998.912 215.06048c0-103.296-83.82464-187.12064-187.18208-187.12064L212.72064 27.93984C109.42976 27.93984 25.6 111.76448 25.6 215.06048l0 599.00928c0 103.29088 83.7632 187.11552 187.12064 187.11552l599.00928 0c92.03712 0 168.6272-66.54976 184.25856-154.08128-49.6384-21.4784-264.73984-114.37056-376.79616-167.84384-85.27872 103.30112-174.58688 165.28896-309.20704 165.28896s-224.47104-82.9184-213.70368-184.38656c7.1168-66.6112 52.80256-175.49824 251.23328-156.8256 104.57088 9.79456 152.448 29.32736 237.73696 57.48736 22.07744-40.44288 40.38144-84.98176 54.31296-132.36736L261.38624 428.45696l0-37.47328 187.11552 0L448.50176 323.70176 220.2624 323.70176l0-41.2416 228.23936 0L448.50176 185.37472c0 0 2.06848-15.21152 18.86208-15.21152l93.55776 0 0 112.29696 243.31776 0 0 41.2416-243.31776 0 0 67.28192 198.49728 0c-18.2528 74.27584-45.93152 142.52544-80.60416 202.14272C736.48128 613.9904 998.912 694.23616 998.912 694.23616L998.912 694.23616 998.912 694.23616 998.912 694.23616zM295.08608 780.30336c-142.22336 0-164.73088-89.7792-157.18912-127.31904 7.48032-37.3504 48.6656-86.07232 127.74912-86.07232 90.88 0 172.27264 23.23456 269.96736 70.79936C466.9952 727.08096 382.68416 780.30336 295.08608 780.30336L295.08608 780.30336 295.08608 780.30336z"
+                            Style="{StaticResource RSApp.Styles.MoreLoginIconButtonStyle}"
+                            ToolTip="支付宝账号登录" />
+
+
+                        <Button
+                            Grid.Column="4"
+                            rs:ControlsHelper.IconData="M603.131557 677.800163l-41.990347 0s-5.385661-3.331885-5.38566-12.722765l0-88.091315-47.356565 0.604774 0 98.002035s4.563946 25.894763 38.895869 25.894763l79.526241 0L626.821095 583.066569 603.130533 583.066569l0 94.733594zM461.021955 583.066569l-44.414559 0s-40.995693-1.62194-55.359842 44.867883c-4.975315 31.022551 4.457522 42.857087 6.100952 46.771234 1.665942 3.872191 14.904455 26.782993 48.155766 26.782993l69.205175 0L484.709447 523.293207l-23.688515-0.520863 0 60.294225zm0 94.733594l-35.023678 0s-21.570271-0.606821-28.211528-25.442462c-3.331885-11.096732 0.520863-21.699208 2.25025-26.693965 1.62194-4.977361 8.847505-18.909675 23.774473-18.909675l37.210483 0 0 71.046102zM511.51393 66.691935c-245.932202 0-445.285552 199.375863-445.285553 445.308065S265.582751 957.308065 511.51393 957.308065s445.285552-199.375863 445.285552-445.308065S757.446132 66.691935 511.51393 66.691935zm27.151383 236.326427c3.546779-32.385595 42.271756-82.078367 73.316819-74.982762 30.934546 7.05365 59.167564 48.113811 53.435003 83.420944-5.582135 35.369555-33.683147 82.034365-77.406974 76.323293-43.656289-5.582135-53.543474-45.127803-49.344848-84.761475zm-91.575672-89.12997c32.711006 0 59.167564 37.663808 59.167565 84.154655 0 46.533826-26.457582 84.198657-59.167565 84.198657-32.667004 0-59.167564-37.663808-59.167564-84.198657-0.001023-46.489824 26.500561-84.154655 59.167564-84.154655zM262.553765 413.284721s6.989181-69.292156 54.928006-73.576739c38.096666-3.26537 66.135256 38.422078 69.054749 62.263066 1.796926 15.467273 9.842159 86.252433-49.389873 98.994641-59.103096 12.700253-81.080643-55.683207-74.592882-87.680968zm450.888153 298.394041c-32.407084 76.365248-150.830217 36.68962-150.830217 36.68962s-43.676755-14.018272-94.342691-2.791579c-50.688449 11.338233-94.38874 7.031137-94.388741 7.031137s-59.277058 1.428535-76.172867-73.467245c-16.874319-74.982762 59.167564-116.042923 64.859194-123.030058 5.602601-7.095605 45.082778-33.943067 70.39528-76.345806 25.440415-42.444694 101.504812-76.387761 155.048285 7.009648 39.483246 56.593949 107.130949 108.947318 107.130949 108.947318s50.665936 39.612183 18.300808 115.956965zm-9.886161-173.97945c-64.878636 1.473561-67.626213-43.829228-67.626213-76.279291 0-34.008558 6.987135-82.10088 59.21259-82.100879 52.136428 0 66.177212 50.947346 66.177211 67.865667 0 17.026792 7.117095 89.088014-57.763588 90.514503z"
+                            Style="{StaticResource RSApp.Styles.MoreLoginIconButtonStyle}"
+                            ToolTip="百度账号登录" />
+
+
+                    </Grid>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+
+        <!--  用户协议和隐私条款  -->
+        <ControlTemplate x:Key="PrivacyAgreementTemplate">
+            <Border VerticalAlignment="Center" BorderBrush="#bbb">
+                <StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <CheckBox
+                            Content="同意"
+                            Foreground="#616367"
+                            Style="{StaticResource RSApp.Styles.AgreementCheckStyle}" />
+                        <Button Content="《用户协议》" Style="{DynamicResource RSApp.Styles.GreenNoBorderButtonStyle}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="#616367"
+                            Text="和" />
+                        <Button Content="《隐私条款》" Style="{DynamicResource RSApp.Styles.GreenNoBorderButtonStyle}" />
+                    </StackPanel>
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Center"
+                        Foreground="#616367"
+                        Text="未注册过的手机号，我们将自动帮您注册账号"
+                        Visibility="{Binding ElementName=RadioBtnMessage, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </StackPanel>
+
+            </Border>
+        </ControlTemplate>
+
+
+
+    </rs:RSWindow.Resources>
+    <Border Background="#FFF">
+        <Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="330" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Assets/Images/20240216200553.png" />
+                    </Grid.Background>
+                    <Grid
+                        Margin="0,0,0,70"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            FontSize="26"
+                            Foreground="#FFF"
+                            Text="登录可享会员特惠价" />
+
+                        <Grid Grid.Row="1" Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Border Height="1" Background="#FFF" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,0,10,0"
+                                HorizontalAlignment="Center"
+                                FontSize="16"
+                                Foreground="#FFF"
+                                Text="新朋友享专属特惠" />
+
+                            <Border
+                                Grid.Column="2"
+                                Height="1"
+                                Background="#FFF" />
+                        </Grid>
+                    </Grid>
+
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="Visible">
+                        <Button
+                            x:Name="BtnShark"
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            Click="BtnShark_Click"
+                            Content="鲨鱼"
+                            Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+                        <Button
+                            x:Name="BtnGirl"
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            Click="BtnGirl_Click"
+                            Content="美女"
+                            Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+                        <Button
+                            x:Name="BtnRobot"
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            Click="BtnRobot_Click"
+                            Content="机器人"
+                            Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+                        <Button
+                            x:Name="BtnOcean"
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            Click="BtnOcean_Click"
+                            Content="海洋"
+                            Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+
+                <Border
+                    x:Name="LoginHostView"
+                    Grid.Column="1"
+                    Visibility="Visible">
+                    <Grid>
+                        <Grid Margin="50,100,50,0">
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <!--  登录选择  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <RadioButton
+                                        x:Name="RadioBtnPassword"
+                                        Grid.Column="0"
+                                        Margin="20,0,0,0"
+                                        HorizontalAlignment="Center"
+                                        Content="密码登录"
+                                        IsChecked="True"
+                                        Style="{DynamicResource RSApp.Styles.TabButtonStyle}" />
+                                    <RadioButton
+                                        x:Name="RadioBtnMessage"
+                                        Grid.Column="1"
+                                        Margin="0,0,20,0"
+                                        HorizontalAlignment="Center"
+                                        Content="短信登录"
+                                        IsChecked="False"
+                                        Style="{DynamicResource RSApp.Styles.TabButtonStyle}" />
+
+                                </Grid>
+
+                                <!--  登录操作区  -->
+                                <Border Grid.Row="1" Padding="0,30,0,0">
+                                    <Grid>
+                                        <Grid Visibility="{Binding ElementName=RadioBtnPassword, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <StackPanel>
+                                                <TextBox
+                                                    x:Name="TxtUserName"
+                                                    rs:ControlsHelper.IsRequired="False"
+                                                    rs:TextBoxHelper.Watermark="请输入手机号/邮箱"
+                                                    MaxLength="30"
+                                                    Style="{DynamicResource RSApp.Styles.TextBoxStyle}"
+                                                    Text="{Binding PasswordLoginModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                                                <PasswordBox
+                                                    x:Name="TxtPassword"
+                                                    Margin="5,10,5,0"
+                                                    rs:ControlsHelper.IsRequired="False"
+                                                    rs:PasswordBoxBindBehavior.Password="{Binding PasswordLoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    rs:TextBoxHelper.Watermark="请输入密码"
+                                                    MaxLength="50"
+                                                    Style="{StaticResource RSApp.Styles.PasswordBoxStyle}" />
+                                                <Button
+                                                    x:Name="BtnPasswordLogin"
+                                                    Margin="5,30,5,0"
+                                                    Click="BtnPasswordLogin_Click"
+                                                    Content="登录"
+                                                    IsEnabled="True"
+                                                    Style="{DynamicResource RSApp.Styles.LoginButtonStyle}" />
+                                                <ContentControl Margin="0,5,0,5" Template="{Binding Source={StaticResource ForgetPasswordAndSignUpTemplate}}" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Visibility="{Binding ElementName=RadioBtnMessage, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <StackPanel>
+                                                <rs:RSPhoneTextBox
+                                                    x:Name="TxtPhone"
+                                                    rs:ControlsHelper.IsRequired="False"
+                                                    IsCloseWindowWhenCountryCodeSelected="True"
+                                                    Phone="{Binding SMSRegisterModel.Phone, UpdateSourceTrigger=PropertyChanged}" />
+                                                <rs:RSVerificationTextBox
+                                                    x:Name="TxtVerification"
+                                                    Margin="5,10,5,0"
+                                                    rs:ControlsHelper.IsRequired="False"
+                                                    GetVerificationClick="TxtVerification_GetVerificationClick"
+                                                    Verification="{Binding SMSRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}" />
+                                                <Button
+                                                    x:Name="BtnSMMLogin"
+                                                    Margin="5,30,5,0"
+                                                    Click="BtnSMMLogin_Click"
+                                                    Content="登录"
+                                                    IsEnabled="True"
+                                                    Style="{DynamicResource RSApp.Styles.LoginButtonStyle}" />
+
+                                                <ContentControl Margin="0,5,0,5" Template="{Binding Source={StaticResource ForgetPasswordAndSignUpTemplate}}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+
+
+                                <!--  其他登录方式  -->
+                                <!--<ContentControl Grid.Row="2" Template="{StaticResource OtherLoginTemplate}" />-->
+
+                                <!--  用户协议和隐私条款  -->
+                                <ContentControl Grid.Row="2" Template="{StaticResource PrivacyAgreementTemplate}" />
+
+                            </Grid>
+
+
+
+
+                            <Grid Background="#fff" Visibility="{Binding ElementName=TogBtnQRCode, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+
+
+                                <!--  登录操作区  -->
+                                <Border Grid.Row="1" Padding="0,10,0,0">
+                                    <Grid>
+                                        <Grid>
+                                            <rs:RSQRCodeLogin
+                                                x:Name="QRCodeLogin"
+                                                IsQRCodeLogin="{Binding ElementName=TogBtnQRCode, Path=IsChecked}"
+                                                OnCancelQRCodeLogin="QRCodeLogin_OnCancelQRCodeLogin"
+                                                OnGetLoginQRCode="QRCodeLogin_OnGetLoginQRCode"
+                                                OnQRCodeAuthLoginSuccess="QRCodeLogin_OnQRCodeAuthLoginSuccess"
+                                                OnQueryQRCodeLoginStatus="QRCodeLogin_OnQueryQRCodeLoginStatus"
+                                                QRCodeHeight="200"
+                                                QRCodeWidth="200" />
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+
+                        </Grid>
+                        <ToggleButton
+                            x:Name="TogBtnQRCode"
+                            Width="35"
+                            Height="35"
+                            Margin="5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Style="{StaticResource RSApp.Styles.QRCodeLoginSwitchStyle}" />
+                    </Grid>
+
+                </Border>
+
+
+
+                <Border
+                    x:Name="RegisterHostView"
+                    Grid.Column="1"
+                    Background="#FFF"
+                    Visibility="Collapsed">
+                    <Grid>
+                        <local:RegisterView x:Name="RegisterView" RegisterEnd="RegisterView_RegisterEnd" />
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+            <Border x:Name="LoadingBg" Visibility="Collapsed">
+                <Border.Background>
+                    <RadialGradientBrush x:Name="GradientBrush" Center="0.0,0.0" GradientOrigin="0,0" RadiusX="2" RadiusY="2">
+                        <GradientStop Offset="0.01" Color="Gold" />
+                        <GradientStop Offset="0.5" Color="#006CBE" />
+                    </RadialGradientBrush>
+                </Border.Background>
+            </Border>
+        </Grid>
+    </Border>
+
+    <rs:RSWindow.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard RepeatBehavior="Forever">
+                    <PointAnimationUsingKeyFrames Storyboard.TargetName="GradientBrush" Storyboard.TargetProperty="GradientOrigin">
+                        <EasingPointKeyFrame KeyTime="0:0:0" Value="0,0" />
+                        <EasingPointKeyFrame KeyTime="0:0:2" Value="1,0" />
+                        <EasingPointKeyFrame KeyTime="0:0:4" Value="1,1" />
+                        <EasingPointKeyFrame KeyTime="0:0:6" Value="0,1" />
+                        <EasingPointKeyFrame KeyTime="0:0:8" Value="0,0" />
+                    </PointAnimationUsingKeyFrames>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </rs:RSWindow.Triggers>
+</rs:RSWindow>

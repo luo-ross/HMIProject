@@ -11,7 +11,7 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <Style x:Key="RS.Styles.TextBoxStyle" TargetType="{x:Type TextBox}">
+    <Style x:Key="RSApp.Styles.TextBoxStyle" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="#e0e0e0" />
         <Setter Property="Foreground" Value="#333" />
@@ -85,12 +85,12 @@
                                 Grid.Column="2"
                                 Margin="3,0,3,0"
                                 HorizontalAlignment="Right"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                 rs:ControlsHelper.IconHeight="12"
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                Style="{StaticResource RS.Styles.IconButton}"
+                                Style="{StaticResource RSApp.Styles.IconButton}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
                         </Grid>
@@ -136,8 +136,8 @@
 
 
     <Style
-        x:Key="RS.Styles.IconTextBox"
-        BasedOn="{StaticResource RS.Styles.TextBoxStyle}"
+        x:Key="RSApp.Styles.IconTextBox"
+        BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}"
         TargetType="{x:Type TextBox}">
         <Setter Property="Margin" Value="3,3,3,3" />
         <Setter Property="Padding" Value="5,4,5,4" />
@@ -187,12 +187,12 @@
                                 Grid.Column="3"
                                 Margin="0"
                                 HorizontalAlignment="Right"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                 rs:ControlsHelper.IconHeight="12"
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                Style="{StaticResource RS.Styles.IconButton}"
+                                Style="{StaticResource RSApp.Styles.IconButton}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
                         </Grid>
@@ -222,5 +222,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+
+
 
 </ResourceDictionary>

@@ -1,0 +1,201 @@
+﻿<rs:RSUserControl
+    x:Class="RS.WPFApp.Views.RegisterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.WPFApp.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <rs:RSUserControl.DataContext>
+        <local:RegisterViewModel />
+    </rs:RSUserControl.DataContext>
+    <rs:RSUserControl.Resources>
+        <ResourceDictionary>
+            <Style
+                x:Key="RSApp.Styles.RegisterPasswordStyle"
+                BasedOn="{StaticResource RSApp.Styles.PasswordBoxStyle}"
+                TargetType="{x:Type PasswordBox}">
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="Visibility" Value="Collapsed" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerification">
+                        <Setter Property="IsEnabled" Value="True" />
+                        <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </rs:RSUserControl.Resources>
+    <Grid Background="#FFF">
+        <Border Padding="0,50,0,20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Text="欢迎使用与贝" />
+                        <TextBlock
+                            Margin="0,5,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Text="请输入信息完成账号注册" />
+                    </StackPanel>
+
+
+                </Grid>
+
+                <Grid
+                    Grid.Row="1"
+                    Width="300"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="1">
+                        <TextBox
+                            x:Name="TxtEmail"
+                            rs:ControlsHelper.IsRequired="False"
+                            rs:TextBoxHelper.Watermark="请输入邮箱接收验证码"
+                            MaxLength="30"
+                            Text="{Binding EmailRegisterModel.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}">
+                            <TextBox.Style>
+                                <Style BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerification">
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <PasswordBox
+                            rs:ControlsHelper.IsRequired="False"
+                            rs:PasswordBoxBindBehavior.Password="{Binding EmailRegisterModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                            rs:TextBoxHelper.Watermark="请输入登录密码"
+                            MaxLength="50"
+                            Style="{StaticResource RSApp.Styles.RegisterPasswordStyle}" />
+
+                        <PasswordBox
+                            rs:ControlsHelper.IsRequired="False"
+                            rs:PasswordBoxBindBehavior.Password="{Binding EmailRegisterModel.PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                            rs:TextBoxHelper.Watermark="请再次输入密码"
+                            MaxLength="50"
+                            Style="{StaticResource RSApp.Styles.RegisterPasswordStyle}" />
+
+                        <rs:RSVerificationTextBox
+                            x:Name="TxtEmailVerification"
+                            rs:ControlsHelper.IsRequired="False"
+                            rs:TextBoxHelper.Watermark="请输入邮箱接收到的验证码"
+                            GetVerificationClick="TxtEmailVerification_GetVerificationClick"
+                            Verification="{Binding EmailRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}">
+                            <rs:RSVerificationTextBox.Style>
+                                <Style TargetType="{x:Type rs:RSVerificationTextBox}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="EmailVerificationValid">
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </rs:RSVerificationTextBox.Style>
+                        </rs:RSVerificationTextBox>
+
+                        <rs:RSPhoneTextBox
+                            x:Name="TxtPhone"
+                            rs:ControlsHelper.IsRequired="False"
+                            CountryCode="{Binding SMSRegisterModel.CountryCode, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                            IsCloseWindowWhenCountryCodeSelected="True"
+                            Phone="{Binding SMSRegisterModel.Phone, UpdateSourceTrigger=PropertyChanged}">
+                            <rs:RSPhoneTextBox.Style>
+                                <Style TargetType="{x:Type rs:RSPhoneTextBox}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetSMSVerification">
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </rs:RSPhoneTextBox.Style>
+                        </rs:RSPhoneTextBox>
+                        <rs:RSVerificationTextBox
+                            x:Name="TxtSMSVerification"
+                            rs:ControlsHelper.IsRequired="False"
+                            rs:TextBoxHelper.Watermark="请输入短信接收到的验证码"
+                            GetVerificationClick="TxtSMSVerification_GetVerificationClick"
+                            Verification="{Binding SMSRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}">
+                            <rs:RSVerificationTextBox.Style>
+                                <Style TargetType="{x:Type rs:RSVerificationTextBox}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="SMSVerificationValid">
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </rs:RSVerificationTextBox.Style>
+                        </rs:RSVerificationTextBox>
+                        <Button
+                            x:Name="BtnRegister"
+                            Margin="5,20,5,0"
+                            Click="BtnRegister_Click"
+                            IsEnabled="True">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource RSApp.Styles.LoginButtonStyle}" TargetType="{x:Type Button}">
+                                    <Setter Property="Content" Value="继续" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerification">
+                                            <Setter Property="Content" Value="继续" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="EmailVerificationValid">
+                                            <Setter Property="Content" Value="邮箱验证" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetSMSVerification">
+                                            <Setter Property="Content" Value="继续" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="SMSVerificationValid">
+                                            <Setter Property="Content" Value="完成注册" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Button
+            x:Name="BtnReturn"
+            VerticalAlignment="Top"
+            rs:ControlsHelper.IconData="M670.608974 895.066254c-7.776956 0-15.656241-2.865194-21.795943-8.697911L298.645348 555.745378c-6.344359-6.037374-9.925852-14.325972-9.925852-23.023883 0-8.697911 3.581493-17.088838 9.925852-23.023883l350.167683-330.725292c12.688718-12.074748 32.847407-11.460777 44.819826 1.330269 12.074748 12.688718 11.460777 32.847407-1.330269 44.819826L366.693714 532.619167l325.711202 307.599081c12.688718 12.074748 13.302688 32.131108 1.330269 44.819826C687.493155 891.791746 678.9999 895.066254 670.608974 895.066254z"
+            Click="BtnReturn_Click"
+            Content="返回"
+            Style="{StaticResource RSApp.Styles.LeftIconButtonStyle}" />
+    </Grid>
+
+</rs:RSUserControl>

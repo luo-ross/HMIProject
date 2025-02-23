@@ -1,0 +1,47 @@
+{
+  "builder": {
+    "gc": {
+      "defaultKeepStorage": "20GB",
+      "enabled": true
+    }
+  },
+  "debug": true,
+  "experimental": true,
+  "features": {
+    "buildkit": true
+  },
+  "insecure-registries": [],
+  "registry-mirrors": [
+    "https://mirror.ccs.tencentyun.com",
+    "https://reg-mirror.qiniu.com",
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://dockerhub.azk8s.cn",
+    "https://hub-mirror.c.163.com",
+    "https://registry.docker-cn.com"
+  ]
+}
+
+
+查询镜像
+docker search 镜像名称
+拉取镜像
+docker pull 镜像名称
+保存镜像
+docker save -o d:\Users\Administrator\Desktop\test1\label-studio.tar heartexlabs/label-studio
+加载镜像
+docker load -i D:\Users\Administrator\Desktop\images\label-studio.tar
+安装示例
+安装label-studio
+docker run  -it -d --name label-studio -p 8080:8080  -v /d/label-studio/data:/label-studio/data --restart=always heartexlabs/label-studio:latest
+安装rabbitmq
+docker run  -it -d --name rabbitmq -p 5672:5672 -p 15672:15672 -v /d/rabbitmq:/var/lib/rabbitmq --restart=always rabbitmq:management
+安装redis
+docker run  -it -d --name redis -p 6379:6379 -v /d/redis/redis.conf:/etc/redis/redis.conf -v /d/redis/data:/data --restart=always redis:latest /etc/redis/redis.conf
+安装Nginx
+docker run -d -it --restart=always --name nginx -p 8090:80  -v /d/nginx/nginx.conf:/etc/nginx/nginx.conf -v /d/nginx/default.conf:/etc/nginx/conf.d/default.conf   nginx:latest
+安装mysql
+docker run -d -it --restart=always --name mysql -p 3306:3306 -p 33060:33060  -e MYSQL_ROOT_PASSWORD=123456  -v /d/mysql:/var/lib/mysql mysql:latest
+安装sqlserver
+docker run -d -it --restart=always --name sqlserver2019 -p 1436:1433 -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=@admin@123 -v /d/sqlserverdocker:/var/opt/mssql/data mcr.microsoft.com/mssql/server:2019-latest
+
+

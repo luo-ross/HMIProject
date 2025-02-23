@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<AllowedReferenceRelatedFileExtensions>
+			阻止默认的 XML 和 PDB 文件复制到 RELEASE 的输出目录.
+			.dll
+		</AllowedReferenceRelatedFileExtensions>
+		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+		<AssemblyName>Setup</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Assets\douyin1.png" />
+		<None Remove="Assets\douyin2.png" />
+		<None Remove="Assets\icon.ico" />
+		<None Remove="Assets\logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <COMReference Include="IWshRuntimeLibrary">
+	    <WrapperTool>tlbimp</WrapperTool>
+	    <VersionMinor>0</VersionMinor>
+	    <VersionMajor>1</VersionMajor>
+	    <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+	    <Lcid>0</Lcid>
+	    <Isolated>false</Isolated>
+	    <EmbedInteropTypes>true</EmbedInteropTypes>
+	  </COMReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Assets\icon.ico">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Costura.Fody" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Assets\douyin1.png" />
+		<Resource Include="Assets\douyin2.png" />
+		<Resource Include="Assets\logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="FodyWeavers.xml">
+			<Generator>MSBuild:Compile</Generator>
+		</None>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,95 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <Style x:Key="RSApp.Styles.CountryCodeToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border
+                        x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="true">
+                        <ContentPresenter
+                            x:Name="contentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Focusable="False"
+                            RecognizesAccessKey="True"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Border>
+                    <ControlTemplate.Triggers />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="RSApp.Styles.QRCodeLoginSwitchStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="Opacity" Value="0.7" />
+        <Setter Property="Foreground">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="#2FCDF3" />
+                    <GradientStop Offset="1" Color="#00E138" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Background="{TemplateBinding Background}">
+                        <Grid>
+                            <Path
+                                x:Name="PART_QRCode"
+                                Data="M400 544c44.202667 0 80 35.84 80 80v66.858667L384 786.816V640H160v224h146.773333L210.730667 960H144A80 80 0 0 1 64 880v-256c0-44.202667 35.84-80 80-80h256z m-128 160a48 48 0 1 1 0 96 48 48 0 0 1 0-96z m354.901333-160l-82.901333 82.901333v-2.901333c0-44.202667 35.84-80 80-80h2.901333zM400 64c44.202667 0 80 35.84 80 80v256c0 44.202667-35.84 80-80 80h-256A80 80 0 0 1 64 400v-256c0-44.202667 35.84-80 80-80h256z m480 0c44.202667 0 80 35.84 80 80v67.072l-96 95.957333V160H640V384h146.986667l-96.042667 96h-66.944a80 80 0 0 1-80-80v-256c0-44.202667 35.84-80 80-80h256zM384 160H160V384H384V160z m-112 64a48 48 0 1 1 0 96 48 48 0 0 1 0-96z m480 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96z"
+                                Fill="{TemplateBinding Foreground}"
+                                Stretch="Fill" />
+
+                            <Path
+                                x:Name="PART_Win"
+                                Data="M306.773333 864l-95.402666 95.445333a48 48 0 0 1 7.296-95.445333H306.773333zM960 144v67.072l-96 95.957333V160H160v516.010667l334.890667-0.042667-96.042667 96H144A80 80 0 0 1 64 692.053333V144c0-44.202667 35.84-80 80-80h736c44.202667 0 80 35.84 80 80zM800 224v146.986667l-241.066667 240.981333H224V224h576z"
+                                Fill="{TemplateBinding Foreground}"
+                                Stretch="Fill" />
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="PART_Win" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_QRCode" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="PART_QRCode" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_Win" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+</ResourceDictionary>

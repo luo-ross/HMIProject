@@ -492,7 +492,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style x:Key="RS.Styles.MenuItemStyle" TargetType="{x:Type MenuItem}">
+    <Style x:Key="RSApp.Styles.MenuItemStyle" TargetType="{x:Type MenuItem}">
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="Background" Value="Transparent" />

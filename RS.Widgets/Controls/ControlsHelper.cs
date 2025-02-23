@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace RS.Widgets.Controls
@@ -115,5 +116,42 @@ namespace RS.Widgets.Controls
         {
             obj.SetValue(EmptyDataDesProperty, value);
         }
+
+
+
+        #region 必填选项设置
+
+        public static readonly DependencyProperty IsRequiredProperty =
+  DependencyProperty.RegisterAttached("IsRequired", typeof(bool), typeof(ControlsHelper), new PropertyMetadata(false));
+
+        public static bool GetIsRequired(UIElement element)
+        {
+            return (bool)element.GetValue(IsRequiredProperty);
+        }
+        public static void SetIsRequired(UIElement element, bool value)
+        {
+            element.SetValue(IsRequiredProperty, value);
+        }
+        #endregion
+
+
+        public static readonly DependencyProperty IsShowValueProperty = DependencyProperty.RegisterAttached(
+       "IsShowValue",
+       typeof(bool),
+       typeof(ControlsHelper),
+       new FrameworkPropertyMetadata(false));
+
+        [AttachedPropertyBrowsableForType(typeof(Button))]
+        public static bool GetIsShowValue(UIElement element)
+        {
+            return (bool)element.GetValue(IsShowValueProperty);
+        }
+
+        [AttachedPropertyBrowsableForType(typeof(Button))]
+        public static void SetIsShowValue(UIElement element, bool value)
+        {
+            element.SetValue(IsShowValueProperty, value);
+        }
+
     }
 }

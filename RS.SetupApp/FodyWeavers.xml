@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+	<Costura >
+		<Unmanaged64Assemblies>
+			D3DCompiler_47_cor3
+			PenImc_cor3
+			PresentationNative_cor3
+			vcruntime140_cor3
+			wpfgfx_cor3
+		</Unmanaged64Assemblies>
+	</Costura>
+</Weavers>

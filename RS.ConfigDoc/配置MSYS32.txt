@@ -1,0 +1,42 @@
+1、关闭网络安装
+安装gcc, 执行下面的命令安装与MinGW-w64匹配的gcc
+命令: pacman -S mingw-w64-x86_64-gcc
+
+执行pacman -S make安装make
+
+pacman -S  mingw-w64-i686-toolchain　　　　可以不安装
+pacman -S  mingw-w64-x86_64-toolchain
+
+安装常用工具
+pacman -S  base-devel git wget perl ruby python2
+
+安装GTK
+pacman -S  mingw-w64-i686-gtk3　　可以不安装
+pacman -S mingw-w64-x86_64-gtk3
+
+安装Glade
+pacman -S  mingw-w64-i686-glade
+pacman -S  mingw-w64-x86_64-glade
+
+设置系统环境变量
+
+在Path值中加入参数
+32位
+D:\msys64\mingw32\bin
+
+64位
+D:\msys64\mingw64\bin
+
+设置mingw的环境变量
+
+变量MINGW_HOME
+D:\msys64\mingw32
+
+变量C_INCLUDE_PATH
+%MINGW_HOME%\include
+
+变量LIBRARY_PATH
+%MINGW_HOME%\lib
+
+变量Path中添加如下值
+%MINGW_HOME%\bin;

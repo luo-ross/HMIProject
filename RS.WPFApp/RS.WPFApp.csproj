@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Assets\BlueDrag.cur" />
+		<None Remove="Assets\BlueDraw.cur" />
+		<None Remove="Assets\BlueHand.cur" />
+		<None Remove="Assets\Draw.cur" />
+		<None Remove="Assets\Images\20240216200553.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Castle.Core" Version="5.1.1" />
+		<PackageReference Include="IdGen" Version="3.0.7" />
+		<PackageReference Include="IdGen.DependencyInjection" Version="3.0.7" />
+		<PackageReference Include="libphonenumber-csharp" Version="8.13.32" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
+		
+		<PackageReference Include="Microsoft.ML" Version="3.0.1" />
+		<PackageReference Include="Microsoft.ML.Vision" Version="3.0.1" />
+		<PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+		<PackageReference Include="OpenCV" Version="2.4.11" />
+		<PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
+		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
+		<PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20241108" />
+		<PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.3.1" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RS.AnnotationSQLite\RS.AnnotationSQLite.csproj" />
+		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
+		<ProjectReference Include="..\RS.WPFApp.BLL\RS.WPFApp.BLL.csproj" />
+		<ProjectReference Include="..\RS.WPFApp.IBLL\RS.WPFApp.IBLL.csproj" />
+		<ProjectReference Include="..\RS.WPFApp.Models\RS.WPFApp.Models.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Assets\BlueDrag.cur" />
+		<Resource Include="Assets\BlueDraw.cur" />
+		<Resource Include="Assets\BlueHand.cur" />
+		<Resource Include="Assets\Images\20240216200553.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Assets\Videos\girl.mp4">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Videos\ocean.mp4">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Videos\robot.mp4">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Videos\shark.mp4">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Configs\log4net.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+</Project>

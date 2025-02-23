@@ -1,0 +1,68 @@
+1、下载Nginx 
+下载地址：http://nginx.org/en/download.html
+解压安装包
+
+2、创建Nginx
+在D盘创建Nginx文件夹
+将解压出来nginx.exe所在目录所有文件拷贝到Nginx文件夹下
+
+3、配置Config
+进入config文件夹，备份nginx.conf
+使用记事本打开，修改配置文件，默认是80，如果80被其他端口占用，可以修改端口比如7000
+
+4、Nginx命令列表
+启动nginx，执行命令
+start nginx
+重新加载修改配置
+nginx -s reload
+重新打开日志文件
+nginx -s reopen
+测试配置文件是否正确，如果不指定路径，会检测默认配置文件
+nginx -t
+检测指定路径配置文件
+nginx -t -c c:/path/to/nginx.conf 
+检查是否启动成功
+tasklist /fi “imagename eq nginx.exe” 
+服务停止
+nginx -s stop 
+服务退出
+nginx -s quit
+
+将服务配置为windows 服务自启动
+5、Windows Service Wrapper工具下载
+下载地址https://github.com/winsw/winsw/releases 下载速度可能较慢 可以百度搜索从其他链接下载
+解压安装包获取WinSW-x64.exe
+将程序拷贝到Nginx文件夹
+
+6、配置WinSW
+将WinSW-x64.exe重命名为nginx-service.exe
+在Nginx文件夹创建一个日志文件夹server-logs
+在Nginx文件夹创建一个xml文件nginx-service.xml
+输入一下内容
+<service>
+    <id>nginx</id>
+    <name>nginx</name>
+    <description>nginx</description>
+    <logpath>D:\nginx\server-logs\</logpath>
+    <logmode>roll</logmode>
+    <depend></depend>
+    <executable>D:\nginx\nginx.exe</executable>
+    <stopexecutable>D:\nginx\nginx.exe -s stop</stopexecutable>
+</service>
+
+
+7、安装服务
+在在Nginx文件夹所在目录上面的路径框输入cmd开打
+安装服务
+nginx-service.exe install  
+卸载服务
+nginx-service.exe uninstall 
+开启服务
+nginx-service.exe start  
+停止服务
+nginx-service.exe stop  
+
+8、在服务列表找到nginx名称的服务
+右键属性可以设置自启动或者手动
+
+

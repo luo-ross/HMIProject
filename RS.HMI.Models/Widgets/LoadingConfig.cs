@@ -109,7 +109,7 @@ namespace RS.HMI.Models.Widgets
             {
                 if (iconData == null)
                 {
-                    iconData = (Geometry)Application.Current.FindResource("RS.Icons.DefaultLoadingIcon");
+                    iconData = (Geometry)Application.Current.FindResource("RSApp.Icons.DefaultLoadingIcon");
                 }
                 return iconData;
             }

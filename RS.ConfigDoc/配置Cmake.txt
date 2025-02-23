@@ -1,0 +1,65 @@
+以下是一个简单示例
+
+# 将源代码添加到此项目的可执行文件。
+add_executable (PytorchLib "TorchAPI.cpp" "TorchAPI.h")
+
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET PytorchLib PROPERTY CXX_STANDARD 20)
+endif()
+
+#配置头文件所在目录
+#Pytoch 文件路径
+set(TORCH_INCLUDE_DIR
+D:\\CPlusPackage\\libtorch\\include
+D:\\CPlusPackage\\libtorch\\include\\torch\\csrc\\api\\include
+)
+
+set(TORCH_LIB_DIR
+D:\\CPlusPackage\\libtorch\\lib
+)
+
+#OPENCV 文件路径
+set(OPENCV_INCLUDE_DIR
+D:\\CPlusPackage\\opencv\\build\\include
+)
+
+set(OPENCV_LIB_DIR
+D:\\CPlusPackage\\opencv\\build\\x64\\vc16\\lib
+)
+
+#头文件配置好了
+target_include_directories(PytorchLib PRIVATE
+${TORCH_INCLUDE_DIR}
+${OPENCV_INCLUDE_DIR}
+)
+
+
+#配置静态库
+target_link_libraries(PytorchLib PRIVATE
+${TORCH_LIB_DIR}\\asmjit.lib
+${TORCH_LIB_DIR}\\c10.lib
+${TORCH_LIB_DIR}\\c10_cuda.lib
+${TORCH_LIB_DIR}\\caffe2_nvrtc.lib
+${TORCH_LIB_DIR}\\cpuinfo.lib
+${TORCH_LIB_DIR}\\dnnl.lib
+${TORCH_LIB_DIR}\\fbgemm.lib
+${TORCH_LIB_DIR}\\fbjni.lib
+${TORCH_LIB_DIR}\\fmtd.lib
+${TORCH_LIB_DIR}\\kineto.lib
+${TORCH_LIB_DIR}\\libprotobuf-lited.lib
+${TORCH_LIB_DIR}\\libprotobufd.lib
+${TORCH_LIB_DIR}\\libprotocd.lib
+${TORCH_LIB_DIR}\\pthreadpool.lib
+${TORCH_LIB_DIR}\\pytorch_jni.lib
+${TORCH_LIB_DIR}\\torch.lib
+${TORCH_LIB_DIR}\\torch_cpu.lib
+${TORCH_LIB_DIR}\\torch_cuda.lib
+${TORCH_LIB_DIR}\\XNNPACK.lib
+${OPENCV_LIB_DIR}\\opencv_world4100d.lib
+)
+
+#这里是配置Pytorch可以使用CUDA
+target_link_options(PytorchLib PRIVATE
+"-INCLUDE:?ignore_this_library_placeholder@@YAHXZ"
+)
+

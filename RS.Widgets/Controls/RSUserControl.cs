@@ -1,4 +1,5 @@
-﻿using RS.HMI.Models.Widgets;
+﻿using RS.Commons;
+using RS.HMI.Models.Widgets;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

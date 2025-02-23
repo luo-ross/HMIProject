@@ -19,7 +19,7 @@
     </rs:RSWindow.DataContext>
     <rs:RSWindow.Resources>
         <ResourceDictionary>
-            <Style x:Key="RS.LoginView.HyperlinkStyle" TargetType="{x:Type Hyperlink}">
+            <Style x:Key="RSApp.LoginView.HyperlinkStyle" TargetType="{x:Type Hyperlink}">
                 <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="TextDecorations" Value="None" />
                 <Setter Property="Foreground" Value="#b3b3b3" />
@@ -32,8 +32,8 @@
 
 
             <Style
-                x:Key="RS.LoginView.ButtonStyle"
-                BasedOn="{StaticResource RS.Styles.ButtonBase}"
+                x:Key="RSApp.LoginView.ButtonStyle"
+                BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
                 TargetType="{x:Type Button}">
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Background" Value="#198cff" />
@@ -114,7 +114,7 @@
                                 HorizontalAlignment="Left"
                                 Content="登录账号"
                                 IsChecked="True"
-                                Style="{StaticResource RS.Styles.TabButtonStyle}">
+                                Style="{StaticResource RSApp.Styles.TabButtonStyle}">
                                 <RadioButton.Triggers>
                                     <EventTrigger RoutedEvent="RadioButton.Checked">
                                         <BeginStoryboard Storyboard="{StaticResource FadeInOutAnimation}" />
@@ -125,7 +125,7 @@
                                 x:Name="RadBtnSignUp"
                                 Margin="14,3,14,3"
                                 Content="注册新用户"
-                                Style="{StaticResource RS.Styles.TabButtonStyle}">
+                                Style="{StaticResource RSApp.Styles.TabButtonStyle}">
                                 <RadioButton.Triggers>
                                     <EventTrigger RoutedEvent="RadioButton.Checked">
                                         <BeginStoryboard Storyboard="{StaticResource FadeInOutAnimation}" />
@@ -138,22 +138,22 @@
                                 <StackPanel Orientation="Vertical">
                                     <Grid Margin="0,5,0,5">
                                         <TextBox
-                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
                                             rs:TextBoxHelper.IsShowClearButton="True"
                                             rs:TextBoxHelper.Watermark="请输入用户名"
                                             MaxLength="30"
-                                            Style="{StaticResource RS.Styles.IconTextBox}"
+                                            Style="{StaticResource RSApp.Styles.IconTextBox}"
                                             Text="{Binding LoginModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
                                     </Grid>
 
                                     <Grid Margin="0,5,0,5">
                                         <PasswordBox
-                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                                             rs:PasswordBoxBindBehavior.Password="{Binding LoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                                             rs:TextBoxHelper.IsShowClearButton="True"
                                             rs:TextBoxHelper.Watermark="请输入密码"
                                             MaxLength="30"
-                                            Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                            Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
                                     </Grid>
 
                                     <Grid Margin="0,5,0,5">
@@ -163,11 +163,11 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBox
                                             Grid.Column="0"
-                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.Verify}"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Verify}"
                                             rs:TextBoxHelper.IsShowClearButton="True"
                                             rs:TextBoxHelper.Watermark="请输入验证码"
                                             MaxLength="11"
-                                            Style="{StaticResource RS.Styles.IconTextBox}"
+                                            Style="{StaticResource RSApp.Styles.IconTextBox}"
                                             Text="{Binding LoginModel.Verify, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
 
                                         <Button
@@ -236,30 +236,30 @@
                                 <StackPanel Orientation="Vertical">
                                     <Grid>
                                         <TextBox
-                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.User}"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
                                             rs:TextBoxHelper.IsShowClearButton="True"
                                             rs:TextBoxHelper.Watermark="请输入用户名"
                                             MaxLength="30"
-                                            Style="{StaticResource RS.Styles.IconTextBox}"
+                                            Style="{StaticResource RSApp.Styles.IconTextBox}"
                                             Text="{Binding SignUpModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
                                     </Grid>
                                     <Grid Margin="0,5,0,5">
                                         <PasswordBox
-                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                                             rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                                             rs:TextBoxHelper.IsShowClearButton="True"
                                             rs:TextBoxHelper.Watermark="请输入密码"
                                             MaxLength="30"
-                                            Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                            Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
                                     </Grid>
                                     <Grid Margin="0,5,0,5">
                                         <PasswordBox
-                                            rs:ControlsHelper.IconData="{StaticResource RS.Icons.Password}"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                                             rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, ValidatesOnNotifyDataErrors=True}"
                                             rs:TextBoxHelper.IsShowClearButton="True"
                                             rs:TextBoxHelper.Watermark="请输入确认密码"
                                             MaxLength="30"
-                                            Style="{StaticResource RS.Styles.PasswordBoxTextBox}" />
+                                            Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
                                     </Grid>
                                     <Grid Margin="0,10,0,20">
                                         <Grid.ColumnDefinitions>

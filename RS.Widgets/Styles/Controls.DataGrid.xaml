@@ -109,7 +109,7 @@
                                                 rs:ControlsHelper.IconData="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.IconData)}"
                                                 rs:ControlsHelper.IconHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.IconHeight)}"
                                                 rs:ControlsHelper.IconWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.IconWidth)}"
-                                                Template="{StaticResource RS.ControlTemplate.EmptyDataTemplate}"
+                                                Template="{StaticResource RSApp.ControlTemplate.EmptyDataTemplate}"
                                                 Visibility="Collapsed" />
                                         </Grid>
 

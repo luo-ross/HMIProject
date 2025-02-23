@@ -8,7 +8,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <ControlTemplate x:Key="RS.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
+    <ControlTemplate x:Key="RSApp.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
         <Border
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
@@ -37,7 +37,7 @@
     </ControlTemplate>
 
 
-    <ControlTemplate x:Key="RS.ControlTemplate.EmptyDataTemplate" TargetType="{x:Type ContentControl}">
+    <ControlTemplate x:Key="RSApp.ControlTemplate.EmptyDataTemplate" TargetType="{x:Type ContentControl}">
         <Border>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Path
@@ -55,12 +55,12 @@
         </Border>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
-                <Setter TargetName="PART_EmptyDataIcon" Property="Data" Value="{StaticResource RS.Icons.EmptyData}" />
+                <Setter TargetName="PART_EmptyDataIcon" Property="Data" Value="{StaticResource RSApp.Icons.EmptyData}" />
             </DataTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="RS.ControlTemplate.DefaultDataError">
+    <ControlTemplate x:Key="RSApp.ControlTemplate.DefaultDataError">
         <Border
             BorderBrush="#ff5b5b"
             BorderThickness="1"
@@ -111,4 +111,29 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+
+
+    <ControlTemplate x:Key="RSApp.Styles.DataErrorTemplates">
+        <AdornedElementPlaceholder x:Name="PART_Adorned">
+            <Border>
+                <Grid>
+                    <Popup
+                        x:Name="PART_ErrorPopup"
+                        AllowsTransparency="True"
+                        HorizontalOffset="2"
+                        IsOpen="True"
+                        Placement="Right"
+                        PlacementTarget="{Binding ElementName=PART_Adorned}"
+                        StaysOpen="True"
+                        VerticalOffset="5">
+                        <Border Padding="10,5,10,5" Background="#ff5b5b">
+                            <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+        </AdornedElementPlaceholder>
+    </ControlTemplate>
+
+
 </ResourceDictionary>

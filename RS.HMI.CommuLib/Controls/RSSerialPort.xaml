@@ -20,8 +20,8 @@
                 <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style
-                x:Key="RS.Styles.DataGridTextBlockStyle"
-                BasedOn="{StaticResource RS.Styles.TextBlockStyle}"
+                x:Key="RSApp.Styles.DataGridTextBlockStyle"
+                BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}"
                 TargetType="{x:Type TextBlock}">
                 <Setter Property="VerticalAlignment" Value="Stretch" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -62,15 +62,15 @@
                                                     <Button
                                                         x:Name="PART_BtnConnect"
                                                         Content="连接"
-                                                        Style="{StaticResource RS.Styles.DefaultButton}" />
+                                                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
                                                     <Button
                                                         x:Name="PART_BtnDisConnect"
                                                         Content="断开连接"
-                                                        Style="{StaticResource RS.Styles.DefaultButton}" />
+                                                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
                                                     <Button
                                                         x:Name="PART_BtnSaveConfig"
                                                         Content="保存配置"
-                                                        Style="{StaticResource RS.Styles.DefaultButton}" />
+                                                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
                                                 </StackPanel>
                                             </Border>
                                         </Grid>
@@ -140,7 +140,7 @@
                                             </TextBlock>
                                             <ComboBox
                                                 Grid.Column="1"
-                                                 ItemsSource="{Binding Source={x:Static local:RSSerialPort.SerialPortNameList}}"
+                                                ItemsSource="{Binding Source={x:Static local:RSSerialPort.SerialPortNameList}}"
                                                 SelectedValue="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <TextBlock
                                                 Grid.Column="2"
@@ -384,7 +384,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding DataId, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding DataId}" />
                                                             </DataTemplate>
@@ -432,7 +432,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding StationNumber, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding StationNumber}" />
                                                             </DataTemplate>
@@ -482,7 +482,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding FunctionCode, Converter={StaticResource EnumToHexConverter}, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding FunctionCode}" />
                                                             </DataTemplate>
@@ -537,7 +537,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding Address}" />
                                                             </DataTemplate>
@@ -596,7 +596,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding ByteOrder, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding ByteOrder}" />
                                                             </DataTemplate>
@@ -628,7 +628,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding DataType, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding DataType}" />
                                                             </DataTemplate>
@@ -660,7 +660,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding CharacterLength}"
                                                                     ToolTip="{Binding CharacterLength}" />
                                                             </DataTemplate>
@@ -701,7 +701,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding IsStringInverse}"
                                                                     ToolTip="{Binding IsStringInverse}" />
                                                             </DataTemplate>
@@ -742,7 +742,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding ReadWritePermission, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding ReadWritePermission}" />
                                                             </DataTemplate>
@@ -774,7 +774,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding MinValue, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding MinValue}" />
                                                             </DataTemplate>
@@ -819,7 +819,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding MaxValue, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding MaxValue}" />
                                                             </DataTemplate>
@@ -863,7 +863,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding DigitalNumber, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding DigitalNumber}" />
                                                             </DataTemplate>
@@ -908,7 +908,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding DataGroup, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding DataGroup}" />
                                                             </DataTemplate>
@@ -942,7 +942,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding DataDescription, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                                     ToolTip="{Binding DataDescription}" />
                                                             </DataTemplate>
@@ -970,7 +970,7 @@
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
-                                                                    Style="{StaticResource RS.Styles.DataGridTextBlockStyle}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridTextBlockStyle}"
                                                                     Text="{Binding DataValue, StringFormat='{}{0:N2}'}"
                                                                     ToolTip="{Binding DataValue}" />
                                                             </DataTemplate>

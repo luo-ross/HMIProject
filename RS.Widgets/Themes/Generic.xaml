@@ -1,9 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSColorPicker.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDLMethod.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSImg.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSLoading.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMessageBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSModal.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSNumbericUpDown.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSPhoneTextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSProject.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSQRCodeLogin.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSSearch.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSUserControl.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSVerificationTextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

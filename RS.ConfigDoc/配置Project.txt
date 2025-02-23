@@ -1,0 +1,17 @@
+1、移除PDB.XML以及不必要的语言配置 条件Condition可以移除 
+    右键项目->编辑项目文件->复制下面节点
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <AllowedReferenceRelatedFileExtensions>
+            <!--阻止复制PDF和XML文件，只允许复制.allowedextension 实际不存在-->
+            .allowedextension
+        </AllowedReferenceRelatedFileExtensions> 
+    </PropertyGroup>
+    发布的时候还会发现有PDB，还需要在主程序集按照下面设置。
+    右键项目属性->生成->调试符号 选择->嵌入到DLL/EXE中，可跨平台移植
+
+2、移除语言示例
+    <ItemGroup>
+        <FluentValidationExcludedCultures Include="be;cs;cs-CZ;da;de;es;fa;fi;fr;ja;it;ko;mk;nl;pl;pt;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT">
+            <InProject>false</InProject>
+        </FluentValidationExcludedCultures> 
+    </ItemGroup>

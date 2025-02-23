@@ -20,10 +20,9 @@
     <rs:RSWindow.DataContext>
         <local:HomeViewModel />
     </rs:RSWindow.DataContext>
-
     <rs:RSWindow.Resources>
         <ResourceDictionary>
-            <SolidColorBrush x:Key="RS.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
+            <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
         </ResourceDictionary>
     </rs:RSWindow.Resources>
     <rs:RSWindow.CaptionContent>
@@ -35,7 +34,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Margin="5,0,0,0" Orientation="Horizontal">
-                <Button rs:ControlsHelper.IconData="M924.1 471.3H175.5l295.7-295.7c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L77.8 478.4c-12.5 12.5-12.5 32.8 0 45.3l361.4 361.4c6.2 6.2 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3L180 535.3h744.1c17.7 0 32-14.3 32-32s-14.4-32-32-32z" Style="{StaticResource RS.Styles.IconButton}" />
+                <Button rs:ControlsHelper.IconData="M924.1 471.3H175.5l295.7-295.7c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L77.8 478.4c-12.5 12.5-12.5 32.8 0 45.3l361.4 361.4c6.2 6.2 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3L180 535.3h744.1c17.7 0 32-14.3 32-32s-14.4-32-32-32z" Style="{StaticResource RSApp.Styles.IconButton}" />
                 <TextBlock
                     Margin="5,0,0,0"
                     HorizontalAlignment="Left"
@@ -54,8 +53,8 @@
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button
                     Padding="0"
-                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Setting}"
-                    Style="{StaticResource RS.Styles.IconButton}" />
+                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
+                    Style="{StaticResource RSApp.Styles.IconButton}" />
             </StackPanel>
         </Grid>
     </rs:RSWindow.CaptionContent>
@@ -84,27 +83,27 @@
                         <StackPanel>
                             <RadioButton
                                 Margin="0,5,0,5"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Home}"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Home}"
                                 Content="监控中心"
-                                Style="{StaticResource RS.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavButton}" />
 
                             <RadioButton
                                 Margin="0,3,0,3"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.SerialPort}"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.SerialPort}"
                                 Content="串口通讯1"
-                                Style="{StaticResource RS.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavButton}" />
 
                             <RadioButton
                                 Margin="0,3,0,3"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.ModbusTCP}"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ModbusTCP}"
                                 Content="ModbusTCP"
-                                Style="{StaticResource RS.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavButton}" />
 
                             <RadioButton
                                 Margin="0,3,0,3"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.ModbusRTU}"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ModbusRTU}"
                                 Content="ModbusRTU"
-                                Style="{StaticResource RS.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavButton}" />
 
 
                         </StackPanel>
@@ -113,12 +112,12 @@
                 <Border
                     Grid.Row="2"
                     Padding="0,8,0,8"
-                    BorderBrush="{StaticResource RS.SolidColorBrush.EBEBEB}"
+                    BorderBrush="{StaticResource RSApp.SolidColorBrush.EBEBEB}"
                     BorderThickness="0,1,0,0">
                     <RadioButton
-                        rs:ControlsHelper.IconData="{StaticResource RS.Icons.Setting}"
+                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
                         Content="设置"
-                        Style="{StaticResource RS.Styles.NavButton}" />
+                        Style="{StaticResource RSApp.Styles.NavButton}" />
                 </Border>
             </Grid>
         </Border>

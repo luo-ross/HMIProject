@@ -1,0 +1,12 @@
+C/C++->附加目录
+D:\libtorch\include\torch\csrc\api\include
+D:\libtorch\include
+链接器->附加库目录
+D:\libtorch\lib
+链接器->输入->附加依赖项
+方式1：手动一个一个复制粘贴*.lib	(不推荐)
+方式1：D:\libtorch\lib\*.lib  (推荐)
+方式3：在lib目录运行CMD 运行命令dir *.lib /b > res.txt 然后复制粘贴	(不推荐)
+
+配置环境，只需要添加当前用户环境就可以，不用添加系统 
+把D:\libtorch\include 添加到用户环境变量

@@ -1,4 +1,5 @@
-﻿using RS.HMI.Client.Views.Home;
+﻿using RS.Commons;
+using RS.HMI.Client.Views.Home;
 using RS.HMI.Models.Widgets;
 using RS.Widgets.Controls;
 using System.Diagnostics;
@@ -79,7 +80,7 @@ namespace RS.HMI.Client.Views.Logoin
                   //模拟登录
                   await Task.Delay(2000);
 
-                  return OperateResult.CreateResult();
+                  return OperateResult.CreateSuccessResult();
               }, loadingConfig);
 
             if (operateResult.IsSuccess)

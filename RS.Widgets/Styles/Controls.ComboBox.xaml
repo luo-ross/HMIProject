@@ -67,7 +67,7 @@
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="40" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="50" />
-        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.ControlTemplate.DefaultDataError}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.ControlTemplate.DefaultDataError}" />
         <Setter Property="rs:TextBoxHelper.Watermark" Value="请选择内容" />
         <Setter Property="Template">
             <Setter.Value>
@@ -123,12 +123,12 @@
                                     Grid.Column="2"
                                     Margin="3,0,3,0"
                                     HorizontalAlignment="Right"
-                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
+                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                     rs:ControlsHelper.IconHeight="12"
                                     rs:ControlsHelper.IconWidth="12"
                                     Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                    Style="{StaticResource RS.Styles.IconButton}"
+                                    Style="{StaticResource RSApp.Styles.IconButton}"
                                     ToolTip="清除输入框内容"
                                     Visibility="Visible" />
                             </Grid>
@@ -161,7 +161,7 @@
                                     Margin="15"
                                     Background="#FFF"
                                     CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                                    Effect="{StaticResource RS.Styles.DefaultDropShadowEffect}">
+                                    Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
 
                                     <Grid x:Name="DropDown" SnapsToDevicePixels="True">
                                         <ScrollViewer SnapsToDevicePixels="True">
@@ -175,7 +175,7 @@
                                             rs:ControlsHelper.IconData="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconData)}"
                                             rs:ControlsHelper.IconHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconHeight)}"
                                             rs:ControlsHelper.IconWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconWidth)}"
-                                            Template="{StaticResource RS.ControlTemplate.EmptyDataTemplate}"
+                                            Template="{StaticResource RSApp.ControlTemplate.EmptyDataTemplate}"
                                             Visibility="Collapsed" />
                                     </Grid>
                                 </Border>

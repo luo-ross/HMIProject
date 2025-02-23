@@ -1,0 +1,110 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:model="clr-namespace:RS.Widgets.Models"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.BootStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <Style TargetType="{x:Type rs:RSVerificationTextBox}">
+        <Setter Property="Background" Value="#FFF" />
+        <Setter Property="BorderBrush" Value="#BBB" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMarginStyle}" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
+        <Setter Property="rs:TextBoxHelper.Watermark" Value="请输入验证码" />
+        <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type rs:RSVerificationTextBox}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="PART_Required" Style="{StaticResource RSApp.Styles.RequiredTextBlockStyle}" />
+                        <Border
+                            x:Name="PART_Border"
+                            Grid.Column="1"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    x:Name="PART_TxtVerification"
+                                    Grid.Column="0"
+                                    Margin="0"
+                                    rs:ControlsHelper.CornerRadius="0"
+                                    rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    MaxLength="9"
+                                    Style="{StaticResource RSApp.Styles.TextBoxStyle}"
+                                    Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Verification, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <Border
+                                    x:Name="PART_ValidErrorTip"
+                                    Grid.Column="1"
+                                    Style="{StaticResource RSApp.Styles.ValidErrorTipBorderStyle}">
+                                    <Path Style="{StaticResource RSApp.Styles.ValidErrorTipPathStyle}" />
+                                </Border>
+                                <Grid Grid.Column="2">
+                                    <Button
+                                        x:Name="PART_BtnVerification"
+                                        Margin="0,0,5,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Content="获取验证码"
+                                        Style="{DynamicResource RSApp.Styles.GreenNoBorderButtonStyle}" />
+                                    <TextBlock
+                                        x:Name="PART_TxtExpireTime"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Foreground="{DynamicResource RSApp.Styles.WatermarkColorStyle}"
+                                        Text="{TemplateBinding ExpireTimeDes}"
+                                        Visibility="Collapsed" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsVerificationSuccess" Value="True">
+                            <Setter TargetName="PART_BtnVerification" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_TxtExpireTime" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <Trigger SourceName="PART_TxtVerification" Property="IsFocused" Value="True">
+                            <Setter Property="BorderBrush" Value="#06B025" />
+                        </Trigger>
+
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter Property="BorderBrush" Value="#ff5b5b" />
+                            <Setter TargetName="PART_ValidErrorTip" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
+                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Styles.DataErrorTemplates}" />
+                        </Trigger>
+
+                        <Trigger Property="rs:ControlsHelper.IsRequired" Value="True">
+                            <Setter TargetName="PART_Required" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

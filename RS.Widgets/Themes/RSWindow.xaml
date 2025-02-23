@@ -10,7 +10,7 @@
     <Style TargetType="{x:Type rs:RSWindow}">
         <Setter Property="WindowStyle" Value="None" />
         <Setter Property="ResizeMode" Value="CanResize" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="#eee" />
         <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="WindowChrome.WindowChrome">
@@ -25,7 +25,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWindow}">
-                    <Border Effect="{StaticResource RS.Styles.DefaultDropShadowEffect}">
+                    <Border Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
                         <Border
                             x:Name="PART_Border"
                             Margin="15"
@@ -90,21 +90,24 @@
                                                 <Button
                                                     x:Name="PART_Minimize"
                                                     Margin="8,0,8,0"
-                                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Minus}"
+                                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Minus}"
                                                     rs:ControlsHelper.IconHeight="2"
                                                     Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-                                                    Style="{StaticResource RS.Styles.IconButton}"
+                                                    Foreground="{TemplateBinding Foreground}"
+                                                    Style="{StaticResource RSApp.Styles.IconButton}"
                                                     ToolTip="最小化" />
                                                 <Button
                                                     x:Name="PART_BtnMaxRestore"
                                                     Margin="8,0,8,0"
-                                                    Style="{StaticResource RS.Styles.IconButton}" />
+                                                    Foreground="{TemplateBinding Foreground}"
+                                                    Style="{StaticResource RSApp.Styles.IconButton}" />
                                                 <Button
                                                     x:Name="PART_BtnClose"
                                                     Margin="8,0,15,0"
-                                                    rs:ControlsHelper.IconData="{StaticResource RS.Icons.Close}"
+                                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                                     Command="{x:Static SystemCommands.CloseWindowCommand}"
-                                                    Style="{StaticResource RS.Styles.IconButton}"
+                                                    Foreground="{TemplateBinding Foreground}"
+                                                    Style="{StaticResource RSApp.Styles.IconButton}"
                                                     ToolTip="关闭" />
                                             </StackPanel>
                                         </Grid>
@@ -121,12 +124,12 @@
                             <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="恢复" />
                             <Setter TargetName="PART_Border" Property="Margin" Value="0" />
                             <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Restore}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Restore}" />
                         </Trigger>
                         <Trigger Property="WindowState" Value="Normal">
                             <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="最大化" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RS.Icons.Maxsize}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Maxsize}" />
                         </Trigger>
                         <Trigger Property="IsFitSystem" Value="True">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />

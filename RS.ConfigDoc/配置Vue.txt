@@ -1,0 +1,6 @@
+1、下载安装Node.js
+2、下载安装npm cnpm pnpm
+3、使用cnpm安装vue
+4、使用Visual Studio 2022 创建Vue项目
+
+备注：可以下载Vben Admin 开源项目学习

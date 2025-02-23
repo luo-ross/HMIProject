@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using NPOI.OpenXml4Net.OPC.Internal;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using RS.Commons;
 using RS.Commons.Enums;
 using RS.Commons.Excels;
 using RS.Commons.Extensions;
@@ -356,43 +357,20 @@ namespace RS.HMI.CommuLib.Controls
         #endregion
 
         #region 通用数据
-
-        //private static List<ComboBoxItemModel<FunctionCodeEnum>> functionCodeList;
-        ///// <summary>
-        ///// 功能码
-        ///// </summary>
-        //public static List<ComboBoxItemModel<FunctionCodeEnum>> FunctionCodeList
-        //{
-        //    get
-        //    {
-        //        if (functionCodeList == null)
-        //        {
-        //            functionCodeList = new List<ComboBoxItemModel<FunctionCodeEnum>>();
-        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
-        //            {
-        //                Key = FunctionCodeEnum.ReadCoils_0x01,
-        //                KeyDes = "01(0x01)- 读取线圈状态"
-        //            });
-        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
-        //            {
-        //                Key = FunctionCodeEnum.ReadDiscreteInputs_0x02,
-        //                KeyDes = "02(0x02)-读取离散输入 "
-        //            });
-        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
-        //            {
-        //                Key = FunctionCodeEnum.ReadHoldingRegisters_0x03,
-        //                KeyDes = "03(0x03)-读取保持寄存器 "
-        //            });
-        //            functionCodeList.Add(new ComboBoxItemModel<FunctionCodeEnum>()
-        //            {
-        //                Key = FunctionCodeEnum.ReadInputRegisters_0x04,
-        //                KeyDes = "04(0x04)-读取输入寄存器 "
-        //            });
-        //        }
-        //        return functionCodeList;
-        //    }
-        //}
-
+        // 添加静态串口列表属性
+        private static List<string> serialPortNameList;
+        public static List<string> SerialPortNameList
+        {
+            get
+            {
+                if (serialPortNameList == null)
+                {
+                    serialPortNameList = SerialPort.GetPortNames().ToList();
+                    serialPortNameList.Sort();
+                }
+                return serialPortNameList;
+            }
+        }
 
 
         private static List<ComboBoxItemModel<FunctionCodeEnum>> functionCodeList;
@@ -842,7 +820,7 @@ namespace RS.HMI.CommuLib.Controls
                     this.ModbusCommuConfigModelSelected = modbusCommuConfigModel;
                 });
 
-                return OperateResult.CreateResult();
+                return OperateResult.CreateSuccessResult();
             });
 
             if (!operateResult.IsSuccess)
@@ -855,7 +833,7 @@ namespace RS.HMI.CommuLib.Controls
         {
             if (dataList.Count == 0)
             {
-                return OperateResult.CreateResult();
+                return OperateResult.CreateSuccessResult();
             }
 
             //添加之前验证我们的数据是否都符合规定
@@ -870,7 +848,7 @@ namespace RS.HMI.CommuLib.Controls
                         this.ModbusCommuConfigModelSelected = item;
                         this.ScrollModbusCommuConfigModelIntoView(this.ModbusCommuConfigModelSelected);
                     });
-                    return WarningOperateResult.CreateResult("数据验证不通过，不能继续新增数据！");
+                    return OperateResult.CreateFailResult("数据验证不通过，不能继续新增数据！");
                 }
             }
             //还需要验证数据配置是否有重复
@@ -882,9 +860,9 @@ namespace RS.HMI.CommuLib.Controls
                     this.ModbusCommuConfigModelSelected = duplicateData.FirstOrDefault();
                     this.ScrollModbusCommuConfigModelIntoView(this.ModbusCommuConfigModelSelected);
                 });
-                return WarningOperateResult.CreateResult("数据配置重复！");
+                return OperateResult.CreateFailResult("数据配置重复！");
             }
-            return OperateResult.CreateResult();
+            return OperateResult.CreateSuccessResult();
         }
 
         private void ScrollModbusCommuConfigModelIntoView(ModbusCommuConfigModel modbusCommuConfigModel)
@@ -943,7 +921,7 @@ namespace RS.HMI.CommuLib.Controls
                       }
                   }
 
-                  return OperateResult.CreateResult();
+                  return OperateResult.CreateSuccessResult();
               });
 
             this.HandleOperationResult(operateResult);
@@ -1061,7 +1039,7 @@ namespace RS.HMI.CommuLib.Controls
                     CellValueEditChanged(nameof(ModbusCommuConfigModel.DigitalNumber));
                     CellValueEditChanged(nameof(ModbusCommuConfigModel.DataGroup));
                     CellValueEditChanged(nameof(ModbusCommuConfigModel.DataDescription));
-                    return OperateResult.CreateResult();
+                    return OperateResult.CreateSuccessResult();
                 });
 
                 if (!operateResult.IsSuccess)
@@ -1387,10 +1365,10 @@ namespace RS.HMI.CommuLib.Controls
                     }
                     catch (IOException ex)
                     {
-                        return WarningOperateResult.CreateResult(ex.Message);
+                        return OperateResult.CreateFailResult(ex.Message);
                     }
 
-                    return OperateResult.CreateResult();
+                    return OperateResult.CreateSuccessResult();
                 });
 
                 if (!operateResult.IsSuccess)
@@ -1581,7 +1559,6 @@ namespace RS.HMI.CommuLib.Controls
                         }
                     }
 
-
                     //读取最大值
                     if (!(modbusCommuConfigModel.DataType == DataTypeEnum.Bool && modbusCommuConfigModel.DataType == DataTypeEnum.String))
                     {
@@ -1591,7 +1568,6 @@ namespace RS.HMI.CommuLib.Controls
                             modbusCommuConfigModel.MaxValue = cell.ToDouble();
                         }
                     }
-
 
                     //读取小数位数
                     if (modbusCommuConfigModel.DataType == DataTypeEnum.Float || modbusCommuConfigModel.DataType == DataTypeEnum.Double)
@@ -1638,11 +1614,11 @@ namespace RS.HMI.CommuLib.Controls
 
                     if (!File.Exists(templateFilePath))
                     {
-                        return WarningOperateResult.CreateResult("模版不存在，无法下载！");
+                        return OperateResult.CreateFailResult("模版不存在，无法下载！");
                     }
                     if (filePathSelect.Equals(templateFilePath))
                     {
-                        return WarningOperateResult.CreateResult("不能覆盖模板文件！");
+                        return OperateResult.CreateFailResult("不能覆盖模板文件！");
                     }
 
                     string apiUrl = "https://example.com/api/download/excel.xlsx";
@@ -1669,7 +1645,7 @@ namespace RS.HMI.CommuLib.Controls
                     }
 
                     FileHelper.CopyFile(templateFilePath, filePathSelect);
-                    return OperateResult.CreateResult();
+                    return OperateResult.CreateSuccessResult();
                 });
             }
         }
@@ -1920,10 +1896,11 @@ namespace RS.HMI.CommuLib.Controls
         {
             if (ConnectCTS != null)
             {
-                ConnectCTS.Cancel();
+                await ConnectCTS.CancelAsync();
             }
             ConnectCTS = new CancellationTokenSource();
 
+            //这里我们需要连接设备
             var portName = this.PortName;
             var baudRate = this.BaudRate;
             var dataBits = (int)this.DataBits;
@@ -1936,8 +1913,6 @@ namespace RS.HMI.CommuLib.Controls
                     busRtuClient?.Close();
                     busRtuClient = new ModbusRtu();
                     busRtuClient.AddressStartWithZero = true;
-                    //busRtuClient.IsStringReverse = checkBox3.Checked;
-                    //busRtuClient.StationNumber = 1;
                     busRtuClient.SerialPortInni(sp =>
                     {
                         sp.PortName = portName;
@@ -1947,23 +1922,25 @@ namespace RS.HMI.CommuLib.Controls
                         sp.Parity = parity;
                     });
                     busRtuClient.Open();
-
-                  var sdf=  busRtuClient.ReadCoil("100");
-
-
                     this.Dispatcher.Invoke(() =>
                     {
                         this.IsConnectSuccess = true;
                         this.CommunicationTime = DateTime.Now;
                     });
+
+                    //采集数据
+
+
                 }
                 catch (Exception ex)
                 {
 
                 }
 
-                return OperateResult.CreateResult();
+                return OperateResult.CreateSuccessResult();
             });
+
+
             //while (!CTS.Token.IsCancellationRequested)
             //{
             //    this.Dispatcher.Invoke(() =>
@@ -1974,6 +1951,7 @@ namespace RS.HMI.CommuLib.Controls
             //    await Task.Delay(1000, CTS.Token);
             //}
 
+            this.HandleOperationResult(operateResult);
         }
 
 
@@ -2020,18 +1998,18 @@ namespace RS.HMI.CommuLib.Controls
                     serialPortConfig.Id = this.Id;
                 }
 
-
                 List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
                 this.Dispatcher.Invoke(() =>
                 {
                     modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
                 });
+
                 //验证配置是否通过
                 foreach (var item in modbusCommuConfigModelList)
                 {
                     if (item.HasErrors)
                     {
-                        return WarningOperateResult.CreateResult("数据配置验证不通过！请更新配置");
+                        return OperateResult.CreateFailResult("数据配置验证不通过！请更新配置");
                     }
                 }
 
@@ -2042,7 +2020,7 @@ namespace RS.HMI.CommuLib.Controls
                 {
                     var deviceDataConfig = new ModbusCommuConfig()
                     {
-                        DataId = item.DataId,
+                        DataId = item.DataId.ToInt(),
                         StationNumber = item.StationNumber,
                         FunctionCode = item.FunctionCode,
                         Address = item.Address,
@@ -2107,12 +2085,12 @@ namespace RS.HMI.CommuLib.Controls
                         catch (Exception ex)
                         {
                             await trans.RollbackAsync();
-                            return ErrorOperateResult.CreateResult($"保存数据出错了！错误消息:{ex.Message}");
+                            return OperateResult.CreateFailResult($"保存数据出错了！错误消息:{ex.Message}");
                         }
                     }
                 }
 
-                return OperateResult.CreateResult();
+                return OperateResult.CreateSuccessResult();
             });
 
             this.HandleOperationResult(operateResult);

@@ -213,6 +213,5 @@ DependencyProperty.RegisterAttached("IsShowClearButton", typeof(bool), typeof(Te
             obj.SetValue(IsShowClearButtonProperty, value);
         }
         #endregion
-
     }
 }

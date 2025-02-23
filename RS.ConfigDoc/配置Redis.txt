@@ -1,0 +1,58 @@
+1、	安装WSL 按照微软教程：https://learn.microsoft.com/zh-cn/windows/wsl/install
+
+2、	安装Redis 按照Redis.io官方教材：https://redis.io/docs/install/install-redis/install-redis-on-windows/
+	具体命令如下：
+	curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+	echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+	sudo apt-get update
+	sudo apt-get install redis
+	sudo service redis-server start
+	redis-cli 
+	ping
+
+3、	配置redis.conf
+	打开终端并登录到Linux系统。
+	使用编辑器（如vi、nano等）打开/etc/redis/redis.conf文件。
+	命令示例：sudo vi /etc/redis/redis.conf。
+	3.3配置数据持久化 save 
+	3.4配置密码 requirepass 
+	以及其他需要配置的属性
+	对于vi编辑器，可以先按Esc键，然后输入:wq保存并退出；
+	对于nano编辑器，则直接按Ctrl+X，再按Y确认保存。
+	重新加载Redis服务，使得配置生效。可以通过运行以下命令之一来完成此操作：
+	sudo service redis-server restart (Debian/Ubuntu)
+	sudo systemctl restart redis (CentOS/RHEL)
+
+4、	数据持久化
+	在Linux上配置Redis的数据持久化可以通过修改redis.conf文件来完成。
+	RDB（Redis Database）持久化：将内存中的数据保存到磁盘上的RDB文件中。
+	默认情况下，Redis会每隔一段时间自动进行RDB持久化操作。
+	要开启或关闭RDB持久化功能，需要编辑redis.conf文件并取消注释相应的行。
+	打开redis.conf文件：sudo vi /etc/redis/redis.conf
+	查找 save 参数，该参数用于指定何时进行RDB持久化。
+	默认为 save 900 1 save 300 10 save 60 10000，
+	表示当有超过1个key发生变更、或者300s内有超过10个key发生变更、或者60s内有超过10000个key发生变更时才进行RDB持久化。
+	如果不想使用RDB持久化，则可以将这些行都注释掉。
+	若要手动触发RDB持久化，可以运行命令 SAVE 或 BGSAVE。
+	其中，前者会阻塞Redis服务器直到持久化完成；后者会创建子进程进行持久化操作，而主线程仍然处理客户端请求。
+	AOF（Append Only File）持久化：将所有写入Redis的命令记录到AOF文件中，从而达到数据持久化的目的。
+	与RDB持久化不同，AOF持久化只对写操作进行日志记录，因此比RDB持久化更加安全。
+	打开redis.conf文件：sudo vi /etc/redis/redis.conf
+	确保 appendonly no 被注释掉，即没有 #符号在前面。
+	重新启动Redis服务器，使得AOF持久化生效。
+	除了以上两种持久化方式外，还可以结合使用RDB和AOF持久化，以提高数据的安全性和容错性。
+
+5、	在Linux Redis开机自启动方案
+	确保redis.conf配置里
+	设置 daemonize yes
+	设置 supervised systemd
+	使用命令sudo service redis-server restart
+
+6   解决Windows Ubuntu22.04下Redis自启动
+	Win+R 运行shell:startup 进入说面启动项
+	创建AutoRunRedis-server.vbs脚本<---这个名称随意
+	输入内容
+	Set ws = CreateObject("Wscript.Shell")
+	ws.run "wsl -u root service redis-server start", vbhide
+	以后重启电脑后就不用每次手动启动Redis服务了
+

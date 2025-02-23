@@ -1,0 +1,3 @@
+Çë²Î¿¼
+https://www.easy-dotnet.com/pages/a6a3ef/#%E5%90%AF%E5%8A%A8-ocelot
+https://learn.microsoft.com/zh-cn/dotnet/architecture/microservices/multi-container-microservice-net-applications/implement-api-gateways-with-ocelot

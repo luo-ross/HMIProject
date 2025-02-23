@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.ClientData.Entities
 {
+
+    /// <summary>
+    /// Modbus通讯配置
+    /// </summary>
     public sealed class ModbusCommuConfig
     {
         /// <summary>
@@ -16,17 +20,19 @@ namespace RS.HMI.ClientData.Entities
         public long Id { get; set; }
 
         /// <summary>
+        /// 所属通讯站 Id
+        /// </summary>
+        public long CommuStationId { get; set; }
+
+        /// <summary>
         /// 所属通讯配置主键
         /// </summary>
         public long SerialPortConfigId { get; set; }
-
+    
         /// <summary>
         /// 数据标签 上位机使用
         /// </summary>
-        /// <remarks>
-        /// 该属性不能为空，否则会触发 Required 验证错误
-        /// </remarks>
-        public int? DataId { get; set; }
+        public int DataId { get; set; }
 
         /// <summary>
         /// 设备地址，用于唯一标识网络中的一个设备，范围一般在 1 到 247 之间，0 通常作为广播地址

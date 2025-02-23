@@ -1,0 +1,48 @@
+如果需要批量从数据库创建实体模型 请按照如下方式进行
+1、安装程序集
+Microsoft.EntityFrameworkCore.SqlSever
+Microsoft.EntityFrameworkCore.SqlSever.Tools
+Microsoft.EntityFrameworkCore.SqlSever.Design
+
+2、工具->Nuget管理器->程序包管理器控制台->默认项目选择
+复制下面的代码 将
+Scaffold-DbContext "Data Source=.;Initial Catalog=数据库名称;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Model -f
+
+指令详细介绍：
+Scaffold-DbContext [-Connection] [-Provider] [-OutputDir ] [-Context ] 
+[-Schemas ] [-Tables ] [-DataAnnotations] [ -Force] [-Project ] 
+[-StartupProject ] [-Environment ] []
+
+PARAMETERS 
+-Connection  
+指定数据库的连接字符串。
+
+-Provider  
+指定要使用的提供程序。例如，Microsoft.EntityFrameworkCore.SqlServer。
+
+-OutputDir  
+指定用于输出类的目录。如果省略，则使用顶级项目目录。
+
+-Context  
+指定生成的DbContext类的名称。
+
+-Schemas  
+指定要为其生成类的模式。
+
+-Tables  
+指定要为其生成类的表。
+
+-DataAnnotations [] 
+使用DataAnnotation属性在可能的情况下配置模型。如果省略，输出代码将仅使用流畅的API。
+
+-Force [] 
+强制脚手架覆盖现有文件。否则，只有在没有输出文件被覆盖的情况下，代码才会继续。
+
+-Project  
+指定要使用的项目。如果省略，则使用默认项目。
+
+-StartupProject  
+指定要使用的启动项目。如果省略，则使用解决方案的启动项目。
+
+-Environment  
+指定要使用的环境。如果省略，则使用“开发”。

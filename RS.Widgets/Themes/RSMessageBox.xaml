@@ -18,7 +18,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Effect="{StaticResource RS.Styles.DefaultDropShadowEffect}">
+                        Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
 
                         <Border
                             MinWidth="300"
@@ -81,22 +81,22 @@
                                             <Button
                                                 x:Name="PART_BtnYes"
                                                 Content="Yes"
-                                                Style="{StaticResource RS.Styles.PrimaryButton}"
+                                                Style="{StaticResource RSApp.Styles.PrimaryButton}"
                                                 Visibility="Collapsed" />
                                             <Button
                                                 x:Name="PART_BtnOK"
                                                 Content="OK"
-                                                Style="{StaticResource RS.Styles.PrimaryButton}"
+                                                Style="{StaticResource RSApp.Styles.PrimaryButton}"
                                                 Visibility="Collapsed" />
                                             <Button
                                                 x:Name="PART_BtnNo"
                                                 Content="No"
-                                                Style="{StaticResource RS.Styles.WarningButton}"
+                                                Style="{StaticResource RSApp.Styles.WarningButton}"
                                                 Visibility="Collapsed" />
                                             <Button
                                                 x:Name="PART_BtnCancel"
                                                 Content="Cancel"
-                                                Style="{StaticResource RS.Styles.DefaultButton}"
+                                                Style="{StaticResource RSApp.Styles.DefaultButton}"
                                                 Visibility="Collapsed" />
                                         </StackPanel>
                                     </Grid>
@@ -131,37 +131,37 @@
 
                         <Trigger Property="MessageBoxImage" Value="Error">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#D63939" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Error}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                         </Trigger>
                         <Trigger Property="MessageBoxImage" Value="Hand">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#D63939" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Error}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                         </Trigger>
                         <Trigger Property="MessageBoxImage" Value="Stop">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#D63939" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Error}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                         </Trigger>
                         <Trigger Property="MessageBoxImage" Value="Exclamation">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#F76707" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Warning}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Warning}" />
                         </Trigger>
                         <Trigger Property="MessageBoxImage" Value="Warning">
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Warning}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Warning}" />
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#F76707" />
                         </Trigger>
 
                         <Trigger Property="MessageBoxImage" Value="Information">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Information}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Information}" />
                         </Trigger>
                         <Trigger Property="MessageBoxImage" Value="Asterisk">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Information}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Information}" />
                         </Trigger>
 
                         <Trigger Property="MessageBoxImage" Value="Question">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
-                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RS.Icons.Question}" />
+                            <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Question}" />
                         </Trigger>
 
                     </ControlTemplate.Triggers>

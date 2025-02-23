@@ -5,11 +5,19 @@
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="PixelShaders\BrightnessContrastEffect.ps" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="NPOI" Version="2.7.2" />
+		<PackageReference Include="ScottPlot" Version="5.0.54" />
+		<PackageReference Include="ScottPlot.WPF" Version="5.0.54" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.2" />
 		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
@@ -21,6 +29,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="ZXing.Net" Version="0.16.10" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -28,6 +37,10 @@
 		<ProjectReference Include="..\RS.HMI.ClientData\RS.HMI.ClientData.csproj" />
 		<ProjectReference Include="..\RS.HMI.Models\RS.HMI.Models.csproj" />
 		<ProjectReference Include="..\RS.Win32API\RS.Win32API.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 
 	<ItemGroup>

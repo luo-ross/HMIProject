@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Controls;
+using RS.Widgets.Behaviors;
 
 namespace RS.Widgets.Controls
 {
@@ -19,8 +20,12 @@ namespace RS.Widgets.Controls
         static RSCommands()
         {
             CleanTextCommand = new RoutedCommand("CleanText", typeof(RSCommands));
+            CommandManager.RegisterClassCommandBinding(typeof(Window), new CommandBinding(ClearControlCommand, ClearControl, CanClearControl));
+
+
         }
 
+       
         public static void CleanText(object source)
         {
             if (source is TextBox textBox)
@@ -35,6 +40,59 @@ namespace RS.Widgets.Controls
             {
                 comboBox.SelectedValue = null;
                 comboBox.SelectedItem = null;
+            }
+        }
+
+
+        /// <summary>
+        /// 清除控件内容
+        /// </summary>
+        public static RoutedCommand ClearControlCommand { get; } = new RoutedCommand("Clear", typeof(RSCommands));
+        
+
+        private static void CanClearControl(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (e.Handled)
+            {
+                return;
+            }
+
+            if (e.OriginalSource is not DependencyObject control || !TextBoxHelper.GetIsShowClearButton(control))
+            {
+                return;
+            }
+
+            e.CanExecute = control switch
+            {
+                TextBox textBox => !textBox.IsReadOnly,
+                _ => true,
+            };
+        }
+
+        private static void ClearControl(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Handled)
+            {
+                return;
+            }
+
+            if (e.OriginalSource is not DependencyObject control || !TextBoxHelper.GetIsShowClearButton(control))
+            {
+                return;
+            }
+
+            switch (control)
+            {
+                case TextBox textBox:
+                    textBox.Clear();
+                    textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+                    textBox.Focus();
+                    break;
+                case PasswordBox passwordBox:
+                    passwordBox.Clear();
+                    passwordBox.GetBindingExpression(PasswordBoxBindBehavior.PasswordProperty)?.UpdateSource();
+                    passwordBox.Focus();
+                    break;
             }
         }
     }

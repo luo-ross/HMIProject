@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.ClientData.Entities
 {
+    /// <summary>
+    /// 通讯站
+    /// </summary>
     public  sealed class CommuStation
     {
         /// <summary>

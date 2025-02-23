@@ -1,0 +1,38 @@
+
+////////////////////////////////////无法使用cuda////////////////////////////////////////////////////////////
+找到对应版本在连接器->命令行里运行
+
+版本：pytorch 2.0	Release正常/Debug未测 
+-INCLUDE:?ignore_this_library_placeholder@@YAHXZ
+依赖的torch_cuda_cpp.lib被取消 与1.13参数一致
+
+版本：1.11(评论区贡献) 1.10 1.9/1.9.1 Release正常/Debug未测
+-INCLUDE:?warp_size@cuda@at@@YAHXZ 
+是的,1.6-1.7的参数又行了
+
+版本：1.8.1	Debug/Release 有2套参数,部分版本组合可能需要使用备选（便于显示加了换行，粘贴时需去除）
+-INCLUDE:?wait@Future@ivalue@c10@@QEAAXXZ 
+-INCLUDE:?mutate@OptOutMutator@cuda@fuser@jit@torch@@UEAAPEAVStatement@2345@PEAVForLoop@kir@2345@@Z 
+静态库换成了torch_cuda_cpp.lib,torch_cuda_cu.lib
+
+版本：1.6/1.7	Debug/Release
+-INCLUDE:?warp_size@cuda@at@@YAHXZ 
+
+版本：1.5	Debug/Release
+-INCLUDE:THCudaCharTensor_zero
+////////////////////////////////////无法使用cuda////////////////////////////////////////////////////////////////
+
+////////////////////////////////////提示Visual studio 版本不支持/////////////////////////////////////////////////
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.1\include\crt\host_config.h
+
+#if defined(_WIN32)
+/*#if _MSC_VER < 1910 || _MSC_VER >= 1940*/
+#if _MSC_VER < 1910 || _MSC_VER >= 2030
+
+#error -- unsupported Microsoft Visual Studio version! Only the versions between 2017 and 2022 (inclusive) are supported! The nvcc flag '-allow-unsupported-compiler' can be used to override this version check; however, using an unsupported host compiler may cause compilation failure or incorrect run time execution. Use at your own risk.
+
+#elif _MSC_VER >= 1910 && _MSC_VER < 1910
+
+找到代码_MSC_VER < 1910 || _MSC_VER >= 1940
+修改成#if _MSC_VER < 1910 || _MSC_VER >= 2030
+////////////////////////////////////提示Visual studio 版本不支持////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
-﻿using RS.HMI.Models.Widgets;
+﻿using RS.Commons;
+using RS.HMI.Models.Widgets;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -46,7 +47,7 @@ namespace RS.Widgets.Controls
                 }
                 catch (Exception ex)
                 {
-                    return ErrorOperateResult.CreateResult(0, "出现异常了", ex);
+                    return OperateResult.CreateFailResult(ex.Message);
                 }
                 finally
                 {

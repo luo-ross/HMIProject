@@ -44,8 +44,8 @@
                                 Grid.Column="1"
                                 Margin="0"
                                 Padding="0"
-                                rs:ControlsHelper.IconData="{StaticResource RS.Icons.Search}"
-                                Style="{StaticResource RS.Styles.IconButton}" />
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Search}"
+                                Style="{StaticResource RSApp.Styles.IconButton}" />
                         </Grid>
                     </Border>
 

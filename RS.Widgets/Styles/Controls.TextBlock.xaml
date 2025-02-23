@@ -8,16 +8,35 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <Style x:Key="RS.Styles.TextBlockStyle" TargetType="{x:Type TextBlock}">
+    <Style x:Key="RSApp.Styles.TextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RS.ControlTemplate.DefaultDataError}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.ControlTemplate.DefaultDataError}" />
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="True">
                 <Setter Property="MinWidth" Value="20" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+
+    <Style x:Key="RSApp.Styles.RequiredTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Padding" Value="3,0,3,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="#ff5b5b" />
+        <Setter Property="Text" Value="*" />
+        <Setter Property="ToolTip" Value="必填选项" />
+        <Setter Property="Visibility" Value="Collapsed" />
+    </Style>
+
+
+
+    <Style
+        x:Key="RSApp.Styles.FormTextBlockStyle"
+        BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
     </Style>
 
 </ResourceDictionary>

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RS.WebApp.Entity\RS.WebApp.Entity.csproj" />
+    <ProjectReference Include="..\RS.WebApp.IDAL\RS.WebApp.IDAL.csproj" />
+    <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.16" />
+		<PackageReference Include="NRedisStack" Version="0.11.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="MySQL\" />
+	  <Folder Include="SQLite\" />
+	  <Folder Include="Oracle\" />
+	</ItemGroup>
+
+</Project>

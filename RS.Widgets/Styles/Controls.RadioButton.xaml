@@ -7,7 +7,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="RS.Styles.TabButtonStyle" TargetType="{x:Type RadioButton}">
+    <Style x:Key="RSApp.Styles.TabButtonStyle" TargetType="{x:Type RadioButton}">
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="FontSize" Value="14" />
@@ -86,8 +86,8 @@
 
 
     <Style
-        x:Key="RS.Styles.NavButton"
-        BasedOn="{StaticResource RS.Styles.ButtonBase}"
+        x:Key="RSApp.Styles.NavButton"
+        BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
         TargetType="{x:Type RadioButton}">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />

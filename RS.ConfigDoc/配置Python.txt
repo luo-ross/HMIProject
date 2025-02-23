@@ -1,0 +1,17 @@
+安装Anaconda
+命令:conda create --name 虚拟环境名称 python
+命令:conda activate 虚拟环境名称
+
+安装应用
+pip install 安装包 
+
+安装ipykernel
+命令: pip install ipykernel
+
+将虚拟环境加载到jupyter ipykernel 里
+命令: python -m ipykernel install --user --name=你的虚拟环境名称
+
+方法1: 使用Jupter创建pthon应用
+方法2:使用Visual Studio创建python项目
+
+
