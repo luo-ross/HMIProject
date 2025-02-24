@@ -1,5 +1,5 @@
 ﻿using RS.HMI.Client.Models;
-using RS.HMI.Models.Widgets;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

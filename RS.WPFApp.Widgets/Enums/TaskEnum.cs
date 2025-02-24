@@ -4,10 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.HMI.Models.Widgets
+namespace RS.WPFApp.Widgets.Enums
 {
-    public class CommuStation
+    public enum TaskEnum
     {
-
+        Detect,
+        Segment,
+        Classify,
+        Pose,
+        OBB
     }
 }

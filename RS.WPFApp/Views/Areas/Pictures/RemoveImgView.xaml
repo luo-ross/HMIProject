@@ -55,18 +55,16 @@
                         MinHeight="20"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                        <rs:RSButton
+                        <Button
                             x:Name="BtnClose"
-                            BtnColorType="Light"
-                            BtnType="Standard"
                             Click="BtnClose_Click"
-                            Content="取消" />
-                        <rs:RSButton
+                            Content="取消"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                        <Button
                             x:Name="BtnOK"
-                            BtnColorType="Primary"
-                            BtnType="Standard"
                             Click="BtnOK_Click"
-                            Content="确定" />
+                            Content="确定"
+                            Style="{StaticResource RSApp.Styles.PrimaryButton}" />
                     </StackPanel>
                 </Border>
             </Grid>

@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Enums;
+﻿using RS.Commons.Enums;
+using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;

@@ -48,10 +48,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\RS.AnnotationSQLite\RS.AnnotationSQLite.csproj" />
 		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
-		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
 		<ProjectReference Include="..\RS.WPFApp.BLL\RS.WPFApp.BLL.csproj" />
 		<ProjectReference Include="..\RS.WPFApp.IBLL\RS.WPFApp.IBLL.csproj" />
-		<ProjectReference Include="..\RS.WPFApp.Models\RS.WPFApp.Models.csproj" />
+		<ProjectReference Include="..\RS.WPFApp.Widgets\RS.WPFApp.Widgets.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Assets\BlueDrag.cur" />

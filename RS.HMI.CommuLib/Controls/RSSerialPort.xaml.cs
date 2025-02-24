@@ -10,10 +10,8 @@ using RS.Commons.Enums;
 using RS.Commons.Excels;
 using RS.Commons.Extensions;
 using RS.Commons.Helpers;
-using RS.HMI.ClientData.DbContexts;
-using RS.HMI.ClientData.Entities;
 using RS.HMI.CommuLib.Models;
-using RS.HMI.Models.Widgets;
+using RS.Widgets.Models;
 using RS.Widgets.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -24,6 +22,8 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using RS.HMI.ClientData.DbContexts;
+using RS.HMI.ClientData.Entities;
 
 namespace RS.HMI.CommuLib.Controls
 {

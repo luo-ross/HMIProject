@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenCvSharp.WpfExtensions;
 using RS.Commons;
+using RS.Commons.Enums;
 using RS.Commons.Helper;
 using RS.Widgets.Commons;
 using RS.Widgets.Controls;

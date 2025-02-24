@@ -5,6 +5,7 @@ using RS.Widgets.Controls;
 using RS.Widgets.Models;
 using RS.WPFApp.Models;
 using RS.WPFApp.Views.Home;
+using RS.WPFApp.Widgets.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,7 +49,7 @@ namespace RS.WPFApp.Views.Areas
             //在这里显示新增项目内容
             AddProjectView addProjectView = new AddProjectView(this);
             addProjectView.AddProjectCallBack += AddProjectView_AddProjectCallBack;
-            //this.HomeView.ShowModal(addProjectView);
+            this.HomeView.ShowModal(addProjectView);
         }
 
         private void AddProjectView_AddProjectCallBack(bool isConfirmed)
@@ -62,7 +63,7 @@ namespace RS.WPFApp.Views.Areas
             {
 
             }
-            //this.HomeView.HideModal();
+            this.HomeView.HideModal();
         }
 
         /// <summary>

@@ -5,22 +5,8 @@ using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Extend;
 using RS.Widgets.Controls;
-using RS.Widgets.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace RS.WPFApp.Views.Home
 {
@@ -36,7 +22,7 @@ namespace RS.WPFApp.Views.Home
             InitializeComponent();
             this.ViewModel = this.DataContext as HomeViewModel;
             //程序设置默认项目是第一个
-            //this.RadBtnPorjectView.IsChecked = true;
+            this.RadBtnPorjectView.IsChecked = true;
             this.Loaded += HomeView_Loaded;
         }
 
@@ -56,8 +42,8 @@ namespace RS.WPFApp.Views.Home
         {
             this.Dispatcher.Invoke(() =>
             {
-                //this.RadBtnPicturesView.Visibility=Visibility.Visible;
-                //this.RadBtnPicturesView.IsChecked = true;
+                this.RadBtnPicturesView.Visibility = Visibility.Visible;
+                this.RadBtnPicturesView.IsChecked = true;
             });
         }
 
@@ -66,8 +52,8 @@ namespace RS.WPFApp.Views.Home
         {
             this.Dispatcher.Invoke(() =>
             {
-                //this.RadAnnotationView.Visibility = Visibility.Visible;
-                //this.RadAnnotationView.IsChecked = true;
+                this.RadAnnotationView.Visibility = Visibility.Visible;
+                this.RadAnnotationView.IsChecked = true;
             });
         }
 

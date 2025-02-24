@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RS.Widgets.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace RS.HMI.Models.Widgets
+namespace RS.Widgets.Models
 {
     public class LoadingConfig : NotifyBase
     {

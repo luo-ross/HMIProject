@@ -1,5 +1,7 @@
-﻿using RS.Models;
+﻿using RS.Commons.Enums;
+using RS.Models;
 using RS.Widgets.Models;
+using RS.WPFApp.Widgets.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

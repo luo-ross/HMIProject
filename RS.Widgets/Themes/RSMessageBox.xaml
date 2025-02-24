@@ -38,7 +38,7 @@
                                 <Border
                                     Grid.Row="0"
                                     Padding="10"
-                                    BorderBrush="#e6e6e6"
+                                    BorderBrush="#eeeeee"
                                     BorderThickness="0,0,0,1">
                                     <TextBlock
                                         VerticalAlignment="Center"

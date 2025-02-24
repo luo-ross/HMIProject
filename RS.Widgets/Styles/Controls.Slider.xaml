@@ -2,112 +2,38 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
-    </ResourceDictionary.MergedDictionaries>
 
-    <Color x:Key="WindowColor">#FFE8EDF9</Color>
-    <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
-    <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
-
-    <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
-    <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
-    <Color x:Key="DisabledForegroundColor">#FF888888</Color>
-
-    <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
-    <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
-
-    <Color x:Key="ControlLightColor">White</Color>
-    <Color x:Key="ControlMediumColor">#FF7381F9</Color>
-    <Color x:Key="ControlDarkColor">#FF211AA9</Color>
-
-    <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
-    <Color x:Key="ControlPressedColor">#FF211AA9</Color>
-
-
-    <Color x:Key="GlyphColor">#FF444444</Color>
-    <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
-
-    <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
-    <Color x:Key="BorderMediumColor">#FF888888</Color>
-    <Color x:Key="BorderDarkColor">#FF444444</Color>
-
-    <Color x:Key="PressedBorderLightColor">#FF888888</Color>
-    <Color x:Key="PressedBorderDarkColor">#FF444444</Color>
-
-    <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
-    <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
-
-    <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
-
-    <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
-    <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
-    <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
-
-    <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
-
-    <LinearGradientBrush x:Key="MenuPopupBrush" StartPoint="0.5,0" EndPoint="0.5,1">
-        <GradientStop Offset="0" Color="{DynamicResource ControlLightColor}" />
-        <GradientStop Offset="0.5" Color="{DynamicResource ControlMediumColor}" />
-        <GradientStop Offset="1" Color="{DynamicResource ControlLightColor}" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill" StartPoint="0,0" EndPoint="1,0">
-        <LinearGradientBrush.GradientStops>
-            <GradientStopCollection>
-                <GradientStop Offset="0" Color="#000000FF" />
-                <GradientStop Offset="0.4" Color="#600000FF" />
-                <GradientStop Offset="0.6" Color="#600000FF" />
-                <GradientStop Offset="1" Color="#000000FF" />
-            </GradientStopCollection>
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-
-    <Style x:Key="SliderDecreaseRepeatButtonStyle" TargetType="{x:Type RepeatButton}">
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="IsTabStop" Value="false" />
-        <Setter Property="Focusable" Value="false" />
+    <Style x:Key="RSApp.Styles.ThumbSliderStyle" TargetType="Thumb">
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Border Background="#e53256" CornerRadius="5,0,0,5" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="SliderIncreaseRepeatButtonStyle" TargetType="{x:Type RepeatButton}">
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="IsTabStop" Value="false" />
-        <Setter Property="Focusable" Value="false" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Border Background="#313131" CornerRadius="0,5,5,0" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="SliderThumbStyle" TargetType="{x:Type Thumb}">
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="Height" Value="16" />
-        <Setter Property="Width" Value="16" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Ellipse
-                        x:Name="Ellipse"
-                        Fill="#eee"
-                        Stroke="#eee"
-                        StrokeThickness="1" />
+                <ControlTemplate TargetType="Thumb">
+                    <Grid>
+                        <Border
+                            Width="24"
+                            Height="24"
+                            BorderBrush="#BBB"
+                            BorderThickness="1"
+                            CornerRadius="50" />
+                        <Ellipse
+                            Width="23"
+                            Height="23"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Fill="#FFF" />
+                        <Ellipse
+                            x:Name="Ellipse2"
+                            Width="12"
+                            Height="12"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Fill="#06b025" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                            <Setter TargetName="Ellipse" Property="Stroke" Value="#e53256" />
+                            <Setter TargetName="Ellipse2" Property="Width" Value="15" />
+                            <Setter TargetName="Ellipse2" Property="Height" Value="15" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -115,57 +41,137 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="HorizontalSlider" TargetType="{x:Type Slider}">
-        <Grid>
+    <Style x:Key="RSApp.Styles.RepeatButton.SliderHorizontalTrackStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Rectangle Height="3" Fill="{TemplateBinding Foreground}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="RSApp.Styles.RepeatButton.SliderHorizontalTrackValueStyle"
+        BasedOn="{StaticResource RSApp.Styles.RepeatButton.SliderHorizontalTrackStyle}"
+        TargetType="{x:Type RepeatButton}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Rectangle Height="5" Fill="{TemplateBinding Foreground}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="RSApp.Styles.RepeatButton.SliderVerticalTrackStyle"
+        BasedOn="{StaticResource RSApp.Styles.RepeatButton.SliderHorizontalTrackStyle}"
+        TargetType="{x:Type RepeatButton}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Rectangle Width="3" Fill="{TemplateBinding Foreground}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="RSApp.Styles.RepeatButton.Slider.VerticalTrackValueStyle"
+        BasedOn="{StaticResource RSApp.Styles.RepeatButton.SliderVerticalTrackStyle}"
+        TargetType="{x:Type RepeatButton}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Rectangle Width="5" Fill="{TemplateBinding Foreground}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="RSApp.Templates.Slider.Horizontal" TargetType="{x:Type Slider}">
+        <Grid
+            x:Name="HorizontalTemplate"
+            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+            Background="{TemplateBinding Background}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                <RowDefinition Height="*" MinHeight="{TemplateBinding Slider.MinHeight}" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TickBar
                 x:Name="TopTick"
-                Height="4"
+                Grid.Row="0"
+                Height="50"
+                Fill="{TemplateBinding Foreground}"
                 Placement="Top"
-                SnapsToDevicePixels="True"
-                Visibility="Collapsed">
-                <TickBar.Fill>
-                    <SolidColorBrush Color="{DynamicResource GlyphColor}" />
-                </TickBar.Fill>
-            </TickBar>
-            <Border
-                x:Name="TrackBackground"
-                Grid.Row="1"
-                Height="{TemplateBinding Height}"
-                Margin="0"
-                Background="Transparent"
-                BorderBrush="Transparent"
-                BorderThickness="1"
-                CornerRadius="3" />
-            <Track x:Name="PART_Track" Grid.Row="1">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton
-                        Height="{TemplateBinding Height}"
-                        Command="Slider.DecreaseLarge"
-                        Style="{StaticResource SliderDecreaseRepeatButtonStyle}" />
-                </Track.DecreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb Style="{StaticResource SliderThumbStyle}" />
-                </Track.Thumb>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton
-                        Height="{TemplateBinding Height}"
-                        Command="Slider.IncreaseLarge"
-                        Style="{StaticResource SliderIncreaseRepeatButtonStyle}" />
-                </Track.IncreaseRepeatButton>
-            </Track>
+                Visibility="Collapsed" />
             <TickBar
                 x:Name="BottomTick"
                 Grid.Row="2"
-                Height="4"
+                Height="50"
                 Fill="{TemplateBinding Foreground}"
                 Placement="Bottom"
-                SnapsToDevicePixels="True"
                 Visibility="Collapsed" />
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Track x:Name="PART_Track" Grid.Column="0">
+
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton
+                            x:Name="HorizontalTrackDecrease"
+                            Command="{x:Static Slider.DecreaseLarge}"
+                            Foreground="#06b025"
+                            Style="{DynamicResource RSApp.Styles.RepeatButton.SliderHorizontalTrackValueStyle}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton
+                            x:Name="HorizontalTrackIncrease"
+                            Command="{x:Static Slider.IncreaseLarge}"
+                            Foreground="#868686"
+                            Style="{DynamicResource RSApp.Styles.RepeatButton.SliderHorizontalTrackStyle}" />
+                    </Track.IncreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb x:Name="HorizontalThumb" Style="{DynamicResource RSApp.Styles.ThumbSliderStyle}" />
+                    </Track.Thumb>
+                </Track>
+
+                <TextBox
+                    x:Name="PART_TxtValue"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="#eee"
+                    Focusable="False"
+                    FontSize="11"
+                    IsReadOnly="True"
+                    IsTabStop="False"
+                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}" />
+            </Grid>
+
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -175,74 +181,84 @@
                 <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="TickPlacement" Value="Both">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
                 <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="rs:ControlsHelper.IsShowValue" Value="True">
+                <Setter TargetName="PART_TxtValue" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="rs:ControlsHelper.IsShowValue" Value="False">
+                <Setter TargetName="PART_TxtValue" Property="Visibility" Value="Collapsed" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="VerticalSlider" TargetType="{x:Type Slider}">
-        <Grid>
+    <ControlTemplate x:Key="RSApp.Templates.Slider.Vertical" TargetType="{x:Type Slider}">
+        <Grid
+            x:Name="HorizontalTemplate"
+            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+            Background="{TemplateBinding Background}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" MinWidth="{TemplateBinding MinWidth}" />
+                <ColumnDefinition Width="*" MinWidth="{TemplateBinding Slider.MinWidth}" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TickBar
                 x:Name="TopTick"
+                Grid.Column="0"
                 Width="4"
+                Fill="{TemplateBinding Foreground}"
                 Placement="Left"
-                SnapsToDevicePixels="True"
-                Visibility="Collapsed">
-                <TickBar.Fill>
-                    <SolidColorBrush Color="{DynamicResource GlyphColor}" />
-                </TickBar.Fill>
-            </TickBar>
-
-            <Border
-                x:Name="TrackBackground"
-                Grid.Column="1"
-                Width="4"
-                Margin="0"
-                BorderThickness="1"
-                CornerRadius="2">
-                <Border.BorderBrush>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <LinearGradientBrush.GradientStops>
-                            <GradientStopCollection>
-                                <GradientStop Offset="0.0" Color="{DynamicResource BorderLightColor}" />
-                                <GradientStop Offset="1.0" Color="{DynamicResource BorderDarkColor}" />
-                            </GradientStopCollection>
-                        </LinearGradientBrush.GradientStops>
-                    </LinearGradientBrush>
-
-                </Border.BorderBrush>
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0.25,0" EndPoint="1,0">
-                        <GradientStop Offset="0" Color="{DynamicResource ControlLightColor}" />
-                        <GradientStop Offset="1" Color="{DynamicResource SliderTrackDarkColor}" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
-            <Track x:Name="PART_Track" Grid.Column="1">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderButtonStyle}" />
-                </Track.DecreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb Style="{StaticResource SliderThumbStyle}" />
-                </Track.Thumb>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource SliderButtonStyle}" />
-                </Track.IncreaseRepeatButton>
-            </Track>
+                Visibility="Collapsed" />
             <TickBar
                 x:Name="BottomTick"
                 Grid.Column="2"
                 Width="4"
                 Fill="{TemplateBinding Foreground}"
                 Placement="Right"
-                SnapsToDevicePixels="True"
                 Visibility="Collapsed" />
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Track x:Name="PART_Track" Grid.Row="0">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton
+                            x:Name="VerticalTrackDecrease"
+                            Command="{x:Static Slider.DecreaseLarge}"
+                            Foreground="#06b025"
+                            Style="{DynamicResource RSApp.Styles.RepeatButton.SliderVerticalTrackValueStyle}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton
+                            x:Name="VerticalTrackIncrease"
+                            Command="{x:Static Slider.IncreaseLarge}"
+                            Foreground="#868686"
+                            Style="{DynamicResource RSApp.Styles.RepeatButton.SliderVerticalTrackStyle}" />
+                    </Track.IncreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb
+                            x:Name="VerticalThumb"
+                            Width="24"
+                            Height="24"
+                            Style="{DynamicResource RSApp.Styles.ThumbSliderStyle}" />
+                    </Track.Thumb>
+                </Track>
+                <TextBox
+                    Grid.Row="1"
+                    Padding="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="#eee"
+                    IsReadOnly="True"
+                    IsTabStop="False"
+                    Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}" />
+
+            </Grid>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -252,28 +268,42 @@
                 <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="TickPlacement" Value="Both">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
                 <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#F5F5F5" />
+                <Setter Property="Foreground" Value="#A9A9A9" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style TargetType="{x:Type Slider}">
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="Margin" Value="5,0,5,0" />
+    <Style x:Key="RSApp.Styles.SliderStyle" TargetType="{x:Type Slider}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Minimum" Value="0" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsSnapToTickEnabled" Value="True" />
+        <Setter Property="AutoToolTipPlacement" Value="None" />
+        <Setter Property="rs:ControlsHelper.IsShowValue" Value="True" />
+        <Setter Property="Template" Value="{DynamicResource RSApp.Templates.Slider.Horizontal}" />
+        <Setter Property="Value" Value="10" />
         <Style.Triggers>
-            <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="MinWidth" Value="104" />
-                <Setter Property="MinHeight" Value="21" />
-                <Setter Property="Template" Value="{StaticResource HorizontalSlider}" />
-            </Trigger>
             <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="MinWidth" Value="21" />
-                <Setter Property="MinHeight" Value="104" />
-                <Setter Property="Template" Value="{StaticResource VerticalSlider}" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="Template" Value="{DynamicResource RSApp.Templates.Slider.Vertical}" />
+            </Trigger>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#F5F5F5" />
+                <Setter Property="Foreground" Value="#A9A9A9" />
             </Trigger>
         </Style.Triggers>
     </Style>
+
+
 
 </ResourceDictionary>

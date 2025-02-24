@@ -1,5 +1,5 @@
 ﻿using RS.Commons;
-using RS.HMI.Models.Widgets;
+using RS.Widgets.Models;
 using System.Windows;
 using System.Windows.Controls;
 

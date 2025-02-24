@@ -6,7 +6,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="GroupBox">
+    <Style x:Key="RSApp.Styles.GroupBoxStyle" TargetType="GroupBox">
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="BorderThickness" Value="1" />
@@ -26,10 +26,13 @@
                             </Grid.RowDefinitions>
                             <Border
                                 Grid.Row="0"
-                                Padding="5,5,5,5"
+                                Padding="3"
                                 BorderBrush="#eee"
                                 BorderThickness="0,0,0,1">
-                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" />
+                                <ContentPresenter
+                                    MinHeight="26"
+                                    ContentSource="Header"
+                                    RecognizesAccessKey="True" />
                             </Border>
 
                             <Border Grid.Row="1">

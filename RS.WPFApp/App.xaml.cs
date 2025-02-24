@@ -74,7 +74,6 @@ namespace RS.WPFApp
             //loginView.Show();
             var homeView = AppHost.Services.GetRequiredService<HomeView>();
             homeView.Show();
-
             //var singnalChartView = AppHost.Services.GetRequiredService<SingnalChartView>();
             //singnalChartView.Show();
         }

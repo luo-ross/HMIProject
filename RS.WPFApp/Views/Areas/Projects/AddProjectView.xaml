@@ -60,25 +60,23 @@
                                     <ColumnDefinition Width="auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    Margin="5,0,0,0"
-                                    Padding="0,3,5,3"
+                                    Margin="3,3,0,3"
                                     rs:ControlsHelper.CornerRadius="3,0,0,3"
                                     rs:TextBoxHelper.IsShowClearButton="False"
                                     rs:TextBoxHelper.Watermark="请选择项目存储路径"
                                     IsReadOnly="True"
                                     Style="{StaticResource RSApp.Styles.TextBoxStyle}"
                                     Text="{Binding ProjectModelAdd.ProjectPath, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
-                                <rs:RSButton
+                                <Button
                                     x:Name="BtnChooseProjectPath"
                                     Grid.Column="1"
                                     Margin="0"
+                                    rs:ControlsHelper.CornerRadius="0"
                                     BorderBrush="#eee"
                                     BorderThickness="0,1,1,1"
-                                    BtnColorType="Light"
-                                    BtnType="Standard"
                                     Click="BtnChooseProjectPath_Click"
                                     Content="选择"
-                                    CornerRadius="0,5,5,0" />
+                                    Style="{StaticResource RSApp.Styles.DefaultButton}" />
                             </Grid>
 
                             <TextBlock
@@ -138,7 +136,6 @@
                                 Text="备注信息" />
                             <TextBox
                                 Height="70"
-                                Padding="0,3,5,3"
                                 VerticalAlignment="Top"
                                 VerticalContentAlignment="Top"
                                 rs:TextBoxHelper.Watermark="请输入备注信息"
@@ -159,18 +156,16 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <rs:RSButton
+                            <Button
                                 x:Name="BtnClose"
-                                BtnColorType="Light"
-                                BtnType="Standard"
                                 Click="BtnClose_Click"
-                                Content="取消" />
-                            <rs:RSButton
+                                Content="取消"
+                                Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                            <Button
                                 x:Name="BtnOK"
-                                BtnColorType="Primary"
-                                BtnType="Standard"
                                 Click="BtnOK_Click"
-                                Content="确定" />
+                                Content="确定"
+                                Style="{StaticResource RSApp.Styles.PrimaryButton}" />
                         </StackPanel>
                     </Grid>
                 </Border>

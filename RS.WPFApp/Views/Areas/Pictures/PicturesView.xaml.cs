@@ -32,6 +32,7 @@ using RS.Commons;
 using RS.Widgets.Enums;
 using System.ComponentModel;
 using ZXing.Aztec.Internal;
+using RS.WPFApp.Widgets.Controls;
 
 namespace RS.WPFApp.Views.Areas
 {
@@ -934,7 +935,7 @@ namespace RS.WPFApp.Views.Areas
             }
             RemoveImgView removeImgView = new RemoveImgView(this, confirmDes);
             removeImgView.OnReveImgCallBack += RemoveImgView_OnReveImgCallBack;
-            //this.HomeView.ShowModal(removeImgView);
+            this.HomeView.ShowModal(removeImgView);
         }
 
         private void RemoveImgView_OnReveImgCallBack(bool obj)

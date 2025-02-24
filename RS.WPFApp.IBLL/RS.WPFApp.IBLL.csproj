@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\RS.Models\RS.Models.csproj" />
     <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
-    <ProjectReference Include="..\RS.WPFApp.Models\RS.WPFApp.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,6 +15,7 @@
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
                             <ContentPresenter />
+                            <rs:RSModal x:Name="PART_Modal" />
                             <rs:RSLoading x:Name="PART_Loading" />
                             <rs:RSMessageBox x:Name="MessageBox" />
                             <rs:RSBorder

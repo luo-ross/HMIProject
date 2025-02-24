@@ -219,7 +219,7 @@
                             Text="图像名称" />
 
                         <TextBox
-                            Padding="5"
+                            Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             BorderThickness="0"
@@ -236,7 +236,7 @@
 
 
                         <TextBox
-                            Padding="5"
+                            Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             BorderThickness="0"

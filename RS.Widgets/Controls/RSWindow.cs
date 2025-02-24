@@ -1,5 +1,5 @@
 ﻿using RS.Commons;
-using RS.HMI.Models.Widgets;
+using RS.Widgets.Models;
 using RS.Win32API;
 using System;
 using System.Collections.Generic;
@@ -154,6 +154,23 @@ namespace RS.Widgets.Controls
         private void CloseWindow(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);
+        }
+
+
+        /// <summary>
+        /// 显示模态
+        /// </summary>
+        public void ShowModal(object modalContent)
+        {
+            this.PART_WinContentHost.ShowModal(modalContent);
+        }
+
+        /// <summary>
+        /// 关闭模态
+        /// </summary>
+        public void HideModal()
+        {
+            this.PART_WinContentHost.HideModal();
         }
 
         public override void OnApplyTemplate()

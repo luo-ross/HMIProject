@@ -13,7 +13,7 @@
 
     <Style x:Key="RSApp.Styles.TextBoxStyle" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="#fff" />
-        <Setter Property="BorderBrush" Value="#e0e0e0" />
+        <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="Foreground" Value="#333" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
@@ -66,6 +66,7 @@
                                 x:Name="PART_Watermark"
                                 Grid.Column="0"
                                 Padding="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 FontSize="{TemplateBinding FontSize}"
                                 Foreground="#969091"
@@ -118,6 +119,10 @@
 
                         <Trigger Property="IsMouseOver" Value="False">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

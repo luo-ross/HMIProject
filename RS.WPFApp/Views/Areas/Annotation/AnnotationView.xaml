@@ -667,7 +667,7 @@
 
             <GroupBox Grid.Row="1" Margin="0,0,0,3">
                 <GroupBox.Style>
-                    <Style TargetType="{x:Type GroupBox}">
+                    <Style BasedOn="{StaticResource RSApp.Styles.GroupBoxStyle}" TargetType="{x:Type GroupBox}">
                         <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RectModelSelect}" Value="{x:Null}">

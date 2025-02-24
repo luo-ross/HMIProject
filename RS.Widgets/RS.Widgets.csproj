@@ -34,8 +34,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
-		<ProjectReference Include="..\RS.HMI.ClientData\RS.HMI.ClientData.csproj" />
-		<ProjectReference Include="..\RS.HMI.Models\RS.HMI.Models.csproj" />
 		<ProjectReference Include="..\RS.Win32API\RS.Win32API.csproj" />
 	</ItemGroup>
 

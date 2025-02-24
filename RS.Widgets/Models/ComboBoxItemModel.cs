@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace  RS.HMI.Models.Widgets
+namespace  RS.Widgets.Models
 {
     public class ComboBoxItemModel<T>
     {

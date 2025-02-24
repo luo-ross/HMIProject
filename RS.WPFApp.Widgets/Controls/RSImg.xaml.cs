@@ -1,26 +1,30 @@
-﻿using RS.Commons;
-using RS.Widgets.Commons;
-using RS.Widgets.Models;
+﻿using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace RS.Widgets.Controls
+namespace RS.WPFApp.Widgets.Controls
 {
-    public class RSImg : CheckBox
+    /// <summary>
+    /// RSImg.xaml 的交互逻辑
+    /// </summary>
+    public partial class RSImg : CheckBox
     {
-        static RSImg()
+        public RSImg()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSImg), new FrameworkPropertyMetadata(typeof(RSImg)));
+            InitializeComponent();
         }
-
 
         public ImgModel ImgModel
         {

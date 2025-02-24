@@ -276,8 +276,8 @@
         <Setter Property="Background" Value="#FFF" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="MinWidth" Value="90" />
-        <Setter Property="Padding" Value="15,5,15,5" />
-        <Setter Property="BorderBrush" Value="#e6e6e6" />
+        <Setter Property="Padding" Value="15,3,15,3" />
+        <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -626,6 +626,7 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Padding" Value="5" />
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#949494" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="0" />

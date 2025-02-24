@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.HMI.Models.Widgets
+namespace RS.Widgets.Models
 {
     public class CollectionBasedDictionary<TKey, TValue>
  : KeyedCollection<TKey, KeyValuePair<TKey, TValue>>, IDictionary<TKey, TValue>

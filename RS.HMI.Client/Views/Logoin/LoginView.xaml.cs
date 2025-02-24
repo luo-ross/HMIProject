@@ -1,9 +1,10 @@
 ﻿using RS.Commons;
 using RS.HMI.Client.Views.Home;
-using RS.HMI.Models.Widgets;
+using RS.Widgets.Models;
 using RS.Widgets.Controls;
 using System.Diagnostics;
 using System.Windows;
+using RS.Widgets.Enums;
 
 namespace RS.HMI.Client.Views.Logoin
 {

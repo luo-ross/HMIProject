@@ -109,8 +109,8 @@
                         <rs:RSColorPicker
                             x:Name="ColorPicker"
                             Grid.Column="1"
-                            OnColorSelect="ColorPicker_OnColorSelect"
-                            Margin="15,0,15,0" />
+                            Margin="15,0,15,0"
+                            OnColorSelect="ColorPicker_OnColorSelect" />
                     </Grid>
                 </Border>
                 <Border
@@ -121,12 +121,11 @@
                         MinHeight="20"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                        <rs:RSButton
+                        <Button
                             x:Name="BtnOK"
-                            BtnColorType="Primary"
-                            BtnType="Standard"
                             Click="BtnOK_Click"
-                            Content="确定" />
+                            Content="确定"
+                            Style="{StaticResource RSApp.Styles.PrimaryButton}" />
                     </StackPanel>
                 </Border>
 

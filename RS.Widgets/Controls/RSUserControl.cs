@@ -1,5 +1,5 @@
 ﻿using RS.Commons;
-using RS.HMI.Models.Widgets;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +16,7 @@ namespace RS.Widgets.Controls
     {
         private RSLoading PART_Loading;
         public RSMessageBox MessageBox;
+        public RSModal PART_Modal;
         static RSUserControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSUserControl), new FrameworkPropertyMetadata(typeof(RSUserControl)));
@@ -58,11 +59,36 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("IsAllowWindowMaxRestoreCommand", typeof(bool), typeof(RSUserControl), new PropertyMetadata(false));
 
 
+        #region 模态窗口控制
+        public void ShowModal(object modalContent)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.PART_Modal.Content = modalContent;
+                this.PART_Modal.Visibility = Visibility.Visible;
+            });
+        }
+
+        public void HideModal()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.PART_Modal.Content = null;
+                this.PART_Modal.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        #endregion
+
+
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as RSLoading ;
             this.MessageBox = this.GetTemplateChild(nameof(this.MessageBox)) as RSMessageBox;
+
+            this.PART_Modal = GetTemplateChild(nameof(PART_Modal)) as RSModal;
         }
 
 

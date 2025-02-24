@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Widgets.Enums
+namespace RS.Commons.Enums
 {
     public enum CRUD
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace RS.HMI.Models.Widgets
+namespace RS.Widgets.Models
 {
     public class RelayCommand<T> : ICommand
     {

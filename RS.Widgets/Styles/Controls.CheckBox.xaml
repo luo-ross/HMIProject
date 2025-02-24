@@ -34,7 +34,7 @@
                                 Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
                                 Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
                                 Background="#fff"
-                                BorderBrush="#e0e0e0"
+                                BorderBrush="#eeeeee"
                                 BorderThickness="1"
                                 CornerRadius="3">
                                 <Path

@@ -8,6 +8,8 @@ using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using RS.WPFApp.Models;
 using RS.WPFApp.Views.Home;
+using RS.WPFApp.Widgets.Controls;
+using RS.WPFApp.Widgets.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -153,8 +155,8 @@ namespace RS.WPFApp.Views.Areas
                 var projectModelAdd = this.ViewModel.ProjectModelAdd;
                 projectModelAdd.CreateTime = dateTime;
                 projectModelAdd.UpdateTime = dateTime;
-             
-                //this.HomeView.HideModal();
+
+                this.HomeView.HideModal();
                 this.HomeView.ProjectView.SetFirstProjectModel(projectModelAdd);
                 return OperateResult.CreateSuccessResult();
             });

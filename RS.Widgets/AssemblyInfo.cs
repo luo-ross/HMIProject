@@ -7,5 +7,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject", "RS.Widgets.Controls")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject", "RS.Widgets.Converters")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject", "RS.Widgets.Behaviors")]
+[assembly: XmlnsDefinition("https://github.com/luo-ross/HMIProject", "RS.Widgets.PixelShaders")]
+
 
 

@@ -207,7 +207,7 @@
 
 
                         <TextBox
-                            Padding="5"
+                            Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             BorderThickness="0"
