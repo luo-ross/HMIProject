@@ -39,25 +39,10 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-
-                                    <Grid x:Name="PART_Client" Grid.Row="1">
-                                        <AdornerDecorator>
-                                            <Grid>
-                                                <ContentPresenter />
-                                                <ResizeGrip
-                                                    x:Name="PART_BtnResize"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Bottom"
-                                                    Visibility="Collapsed" />
-                                            </Grid>
-                                        </AdornerDecorator>
-                                    </Grid>
-
                                     <rs:RSBorder
                                         x:Name="PART_Caption"
                                         Grid.Row="0"
-                                        Height="{TemplateBinding CaptionHeight}"
-                                        Background="Transparent">
+                                        Height="{TemplateBinding CaptionHeight}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto" />
@@ -112,6 +97,21 @@
                                             </StackPanel>
                                         </Grid>
                                     </rs:RSBorder>
+
+                                    <Grid x:Name="PART_Client" Grid.Row="1">
+                                        <AdornerDecorator>
+                                            <Grid>
+                                                <ContentPresenter />
+                                                <ResizeGrip
+                                                    x:Name="PART_BtnResize"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    Visibility="Collapsed" />
+                                            </Grid>
+                                        </AdornerDecorator>
+                                    </Grid>
+
+
                                 </Grid>
                             </rs:RSUserControl>
 
@@ -134,6 +134,7 @@
                         <Trigger Property="IsFitSystem" Value="True">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
+                            <Setter TargetName="PART_Client" Property="Panel.ZIndex" Value="-1" />
                         </Trigger>
 
                         <Trigger Property="IsFitSystem" Value="False">

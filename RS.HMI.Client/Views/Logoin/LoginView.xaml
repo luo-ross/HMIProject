@@ -177,7 +177,7 @@
                                             <Button.Style>
                                                 <Style TargetType="{x:Type Button}">
                                                     <Setter Property="Background" Value="Transparent" />
-                                                    <Setter Property="BorderBrush" Value="#e0e0e0" />
+                                                    <Setter Property="BorderBrush" Value="#eeeeee" />
                                                     <Setter Property="Margin" Value="5,3,5,3" />
                                                     <Setter Property="Template">
                                                         <Setter.Value>
@@ -218,7 +218,7 @@
                                                 Foreground="#b3b3b3"
                                                 NavigateUri="https://github.com/luo-ross/HMIProject"
                                                 RequestNavigate="Hyperlink_RequestNavigate"
-                                                Style="{StaticResource RS.LoginView.HyperlinkStyle}">
+                                                Style="{StaticResource RSApp.LoginView.HyperlinkStyle}">
                                                 忘记了密码?
                                             </Hyperlink>
                                         </TextBlock>
@@ -228,7 +228,7 @@
                                         x:Name="BtnLogin"
                                         Click="BtnLogin_Click"
                                         Content="登录"
-                                        Style="{StaticResource RS.LoginView.ButtonStyle}" />
+                                        Style="{StaticResource RSApp.LoginView.ButtonStyle}" />
                                 </StackPanel>
                             </Grid>
 
@@ -276,7 +276,7 @@
                                         x:Name="BtnSignUp"
                                         Click="BtnSignUp_Click"
                                         Content="注册"
-                                        Style="{StaticResource RS.LoginView.ButtonStyle}" />
+                                        Style="{StaticResource RSApp.LoginView.ButtonStyle}" />
                                 </StackPanel>
                             </Grid>
                         </Grid>

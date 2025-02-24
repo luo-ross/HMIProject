@@ -11,9 +11,9 @@
     <Style TargetType="{x:Type rs:RSQRCodeLogin}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMarginStyle}" />
-        <Setter Property="rs:ControlsHelper.CornerRadius" Value="8" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconData" Value="M951.182222 629.76a454.030222 454.030222 0 0 0-556.942222-556.942222l-45.511111-45.511111a511.260444 511.260444 0 0 1 647.964444 647.964444zM72.817778 394.24a453.859556 453.859556 0 0 0 556.373333 556.942222l46.08 45.511111A511.260444 511.260444 0 0 1 27.306667 348.728889z" />
         <Setter Property="Template">
             <Setter.Value>

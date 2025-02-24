@@ -10,6 +10,7 @@
     Title="LoginView"
     Width="720"
     Height="500"
+    IsFitSystem="True"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -258,7 +259,6 @@
                     Visibility="Visible">
                     <Grid>
                         <Grid Margin="50,100,50,0">
-
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -298,19 +298,23 @@
                                             <StackPanel>
                                                 <TextBox
                                                     x:Name="TxtUserName"
+                                                    Padding="3,4,3,4"
                                                     rs:ControlsHelper.IsRequired="False"
                                                     rs:TextBoxHelper.Watermark="请输入手机号/邮箱"
                                                     MaxLength="30"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
                                                     Style="{DynamicResource RSApp.Styles.TextBoxStyle}"
                                                     Text="{Binding PasswordLoginModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
                                                 <PasswordBox
                                                     x:Name="TxtPassword"
                                                     Margin="5,10,5,0"
+                                                    Padding="3,4,3,4"
+                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:ControlsHelper.IsRequired="False"
                                                     rs:PasswordBoxBindBehavior.Password="{Binding PasswordLoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                                                     rs:TextBoxHelper.Watermark="请输入密码"
                                                     MaxLength="50"
-                                                    Style="{StaticResource RSApp.Styles.PasswordBoxStyle}" />
+                                                    Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
                                                 <Button
                                                     x:Name="BtnPasswordLogin"
                                                     Margin="5,30,5,0"
@@ -326,12 +330,14 @@
                                             <StackPanel>
                                                 <rs:RSPhoneTextBox
                                                     x:Name="TxtPhone"
+                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:ControlsHelper.IsRequired="False"
                                                     IsCloseWindowWhenCountryCodeSelected="True"
                                                     Phone="{Binding SMSRegisterModel.Phone, UpdateSourceTrigger=PropertyChanged}" />
                                                 <rs:RSVerificationTextBox
                                                     x:Name="TxtVerification"
                                                     Margin="5,10,5,0"
+                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:ControlsHelper.IsRequired="False"
                                                     GetVerificationClick="TxtVerification_GetVerificationClick"
                                                     Verification="{Binding SMSRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}" />
@@ -394,6 +400,7 @@
                             Width="35"
                             Height="35"
                             Margin="5"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Style="{StaticResource RSApp.Styles.QRCodeLoginSwitchStyle}" />
@@ -423,6 +430,7 @@
                     </RadialGradientBrush>
                 </Border.Background>
             </Border>
+
         </Grid>
     </Border>
 

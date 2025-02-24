@@ -16,7 +16,7 @@
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSPhoneTextBox}">
         <Setter Property="Background" Value="#FFF" />
-        <Setter Property="BorderBrush" Value="#BBB" />
+        <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMarginStyle}" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
@@ -45,7 +45,10 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="auto" />
                                 </Grid.ColumnDefinitions>
-                                <ToggleButton x:Name="PART_TogBtnCountryCode" Style="{StaticResource RSApp.Styles.CountryCodeToggleButtonStyle}">
+                                <ToggleButton
+                                    x:Name="PART_TogBtnCountryCode"
+                                    Margin="3"
+                                    Style="{StaticResource RSApp.Styles.CountryCodeToggleButtonStyle}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto" />
@@ -84,6 +87,7 @@
                                     Background="Transparent"
                                     BorderThickness="0"
                                     MaxLength="20"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
                                     Style="{StaticResource RSApp.Styles.TextBoxStyle}"
                                     Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <Border

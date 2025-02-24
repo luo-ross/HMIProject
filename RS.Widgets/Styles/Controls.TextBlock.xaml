@@ -7,6 +7,7 @@
     </ResourceDictionary.MergedDictionaries>
 
 
+
     <Style x:Key="RSApp.Styles.TextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Left" />
@@ -25,7 +26,6 @@
         </Style.Triggers>
     </Style>
 
-
     <Style x:Key="RSApp.Styles.RequiredTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="Padding" Value="3,0,3,0" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -40,7 +40,7 @@
         x:Key="RSApp.Styles.FormTextBlockStyle"
         BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}"
         TargetType="{x:Type TextBlock}">
-        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
     </Style>
 
 </ResourceDictionary>

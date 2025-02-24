@@ -16,7 +16,7 @@
         <ResourceDictionary>
             <Style
                 x:Key="RSApp.Styles.RegisterPasswordStyle"
-                BasedOn="{StaticResource RSApp.Styles.PasswordBoxStyle}"
+                BasedOn="{StaticResource RSApp.Styles.PasswordBoxTextBox}"
                 TargetType="{x:Type PasswordBox}">
                 <Setter Property="IsEnabled" Value="False" />
                 <Setter Property="Visibility" Value="Collapsed" />
@@ -70,6 +70,7 @@
                         <TextBox
                             x:Name="TxtEmail"
                             rs:ControlsHelper.IsRequired="False"
+                            rs:TextBoxHelper.IsShowClearButton="True"
                             rs:TextBoxHelper.Watermark="请输入邮箱接收验证码"
                             MaxLength="30"
                             Text="{Binding EmailRegisterModel.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}">
@@ -90,6 +91,7 @@
                         <PasswordBox
                             rs:ControlsHelper.IsRequired="False"
                             rs:PasswordBoxBindBehavior.Password="{Binding EmailRegisterModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                            rs:TextBoxHelper.IsShowClearButton="True"
                             rs:TextBoxHelper.Watermark="请输入登录密码"
                             MaxLength="50"
                             Style="{StaticResource RSApp.Styles.RegisterPasswordStyle}" />
@@ -97,6 +99,7 @@
                         <PasswordBox
                             rs:ControlsHelper.IsRequired="False"
                             rs:PasswordBoxBindBehavior.Password="{Binding EmailRegisterModel.PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                            rs:TextBoxHelper.IsShowClearButton="True"
                             rs:TextBoxHelper.Watermark="请再次输入密码"
                             MaxLength="50"
                             Style="{StaticResource RSApp.Styles.RegisterPasswordStyle}" />

@@ -14,7 +14,7 @@
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSVerificationTextBox}">
         <Setter Property="Background" Value="#FFF" />
-        <Setter Property="BorderBrush" Value="#BBB" />
+        <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMarginStyle}" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
@@ -45,15 +45,14 @@
                                 <TextBox
                                     x:Name="PART_TxtVerification"
                                     Grid.Column="0"
-                                    Margin="0"
                                     rs:ControlsHelper.CornerRadius="0"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
                                     rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                     Background="Transparent"
                                     BorderThickness="0"
                                     MaxLength="9"
                                     Style="{StaticResource RSApp.Styles.TextBoxStyle}"
                                     Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Verification, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
                                 <Border
                                     x:Name="PART_ValidErrorTip"
                                     Grid.Column="1"

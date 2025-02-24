@@ -15,7 +15,6 @@ namespace RS.WPFApp.Models
         /// 电话号码
         /// </summary>
         [Required(ErrorMessage = "电话号码不能为空")]
-        [InternationalPhone]
         public string Phone
         {
             get { return phone; }
