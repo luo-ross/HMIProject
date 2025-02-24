@@ -9,8 +9,8 @@
     Title="HomeView"
     Width="640"
     Height="460"
-    CaptionHeight="50"
     Foreground="#fff"
+    IsFitSystem="True"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -392,13 +392,11 @@
     </Window.Resources>
 
     <Grid>
-
-
         <Grid x:Name="PART_InstallStartPage">
             <Grid.RowDefinitions>
-                <RowDefinition Height="400" />
-                <RowDefinition Height="60" />
-                <RowDefinition Height="100" />
+                <RowDefinition Height="370" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
@@ -493,7 +491,6 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
-
                     <StackPanel Orientation="Horizontal">
                         <CheckBox
                             Content="阅读并同意"

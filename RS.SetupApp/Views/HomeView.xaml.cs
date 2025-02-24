@@ -551,7 +551,7 @@ namespace RS.SetupApp.Views
             shortcut.WindowStyle = 1;
 
             //快捷方式的描述
-            shortcut.Description = $"这是Ross快发的{SoftwareName}，请大家多多点赞！哈哈哈哈";
+            shortcut.Description = $"这是Ross开发的{SoftwareName}，请大家多多点赞！哈哈哈哈";
 
             //可以自定义快捷方式图标.(如果不设置, 则将默认源文件图标.)
             //shortcut.IconLocation = System.Environment.SystemDirectory + "\\" + "shell32.dll, 165";

@@ -41,3 +41,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\51d76d93-
 第5:注册表设置开机启动项
 
 
+备注：如果提示找不到MyPublish,这个就是MyPublish.Zip文件
+这个文件就是程序的压缩包，自己创建一个就可以了
+
+

@@ -103,7 +103,7 @@
                                                     Style="{StaticResource RSApp.Styles.IconButton}" />
                                                 <Button
                                                     x:Name="PART_BtnClose"
-                                                    Margin="8,0,15,0"
+                                                    Margin="8,0,10,0"
                                                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                                     Command="{x:Static SystemCommands.CloseWindowCommand}"
                                                     Foreground="{TemplateBinding Foreground}"

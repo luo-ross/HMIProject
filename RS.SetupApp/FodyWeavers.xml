@@ -7,6 +7,10 @@
 			PresentationNative_cor3
 			vcruntime140_cor3
 			wpfgfx_cor3
+			e_sqlite3
+			glfw3
+			libHarfBuzzSharp
+			libSkiaSharp
 		</Unmanaged64Assemblies>
 	</Costura>
 </Weavers>
