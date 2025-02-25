@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 namespace RS.Commons.Extensions
 {
     /// <summary>
-    /// 服务扩展
+    /// 服务扩展 就是方便全局获取服务
     /// </summary>
     public static class ServiceProviderExtensions
     {
         /// <summary>
         /// 服务宿主
         /// </summary>
-        public static IHost AppHost { get; set; }
+        private static IHost AppHost { get; set; }
 
         /// <summary>
         /// 配置服务
@@ -34,12 +34,17 @@ namespace RS.Commons.Extensions
         /// <returns></returns>
         public static TResult GetService<TResult>()
         {
+            if (AppHost == null)
+            {
+                return default(TResult);
+            }
+
             return AppHost.Services.GetService<TResult>();
         }
 
         public static HttpClient GetHttpClient(string clientName)
         {
-           return GetService<IHttpClientFactory>().CreateClient(clientName);
+            return GetService<IHttpClientFactory>().CreateClient(clientName);
         }
     }
 }

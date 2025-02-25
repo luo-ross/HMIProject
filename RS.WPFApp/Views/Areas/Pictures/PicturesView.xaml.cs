@@ -1,44 +1,29 @@
 ﻿using IdGen;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
+using RS.Commons;
 using RS.Commons.Helper;
 using RS.Widgets.Controls;
 using RS.Widgets.Models;
-using System;
-using System.Collections.Generic;
+using RS.WPFApp.Views.Areas.Pictures;
+using RS.WPFApp.Views.Home;
+using RS.WPFApp.Widgets.Controls;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using OpenCvSharp.WpfExtensions;
-using System.Diagnostics.Eventing.Reader;
-using Microsoft.Extensions.Logging;
-using System.Windows.Media.Imaging;
-using RS.WPFApp.Views.Areas.Pictures;
-using RS.WPFApp.Views.Home;
-using Microsoft.Win32;
-using RS.Commons;
-using RS.Widgets.Enums;
-using System.ComponentModel;
-using ZXing.Aztec.Internal;
-using RS.WPFApp.Widgets.Controls;
 
 namespace RS.WPFApp.Views.Areas
 {
-    /// <summary>
-    /// PicturesView.xaml 的交互逻辑
-    /// </summary>
+   
     public partial class PicturesView : RSUserControl
     {
         public IdGenerator IdGenerator { get; set; }

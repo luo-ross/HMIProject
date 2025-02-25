@@ -15,7 +15,7 @@ using RazorLight.Extensions;
 using RS.Commons;
 using RS.Commons.Converters;
 using RS.Commons.Extensions;
-using RS.Commons.Interceptors;
+using RS.Commons.LogService;
 using RS.Models;
 using RS.WebApp.BLL;
 using RS.WebApp.DAL;

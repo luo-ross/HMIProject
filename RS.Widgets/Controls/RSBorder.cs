@@ -13,6 +13,7 @@ namespace RS.Widgets.Controls
             EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.PreviewMouseRightButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
             EventManager.RegisterClassHandler(typeof(RSBorder), UIElement.MouseRightButtonDownEvent, new MouseButtonEventHandler(HandleDoubleClick), true);
         }
+
         public RSBorder()
         {
           

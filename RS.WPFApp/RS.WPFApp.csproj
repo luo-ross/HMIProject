@@ -18,9 +18,9 @@
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
 		<PackageReference Include="IdGen" Version="3.0.7" />
 		<PackageReference Include="IdGen.DependencyInjection" Version="3.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.4" />
 		<PackageReference Include="libphonenumber-csharp" Version="8.13.32" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
@@ -70,9 +70,6 @@
 		</None>
 		<None Update="Assets\Videos\shark.mp4">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Configs\log4net.config">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

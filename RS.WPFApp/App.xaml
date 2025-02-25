@@ -1,13 +1,14 @@
-﻿<Application
+﻿<rs:ApplicationBase
     x:Class="RS.WPFApp.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:RS.WPFApp">
-    <Application.Resources>
+    xmlns:local="clr-namespace:RS.WPFApp"
+    xmlns:rs="https://github.com/luo-ross/HMIProject">
+    <rs:ApplicationBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Application.Resources>
-</Application>
+    </rs:ApplicationBase.Resources>
+</rs:ApplicationBase>

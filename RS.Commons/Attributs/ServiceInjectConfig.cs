@@ -18,18 +18,22 @@ namespace RS.Commons.Attributs
         /// 服务主键
         /// </summary>
         public string ServiceKey { get; set; }
+
         /// <summary>
         /// 是否需要进行拦截
         /// </summary>
         public bool IsInterceptor { get; set; }
+
         /// <summary>
         /// 接口类型
         /// </summary>
         public Type ServiceType { get; set; }
+
         /// <summary>
         /// 依赖注入服务类型
         /// </summary>
         public ServiceLifetime Lifetime { get; set; }
+
         public ServiceInjectConfig(Type serviceType, ServiceLifetime lifetime)
         {
             ServiceType=serviceType;

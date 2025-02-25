@@ -1,4 +1,6 @@
-﻿using RS.Widgets.Controls;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RS.Commons.Attributs;
+using RS.Widgets.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -20,6 +22,7 @@ namespace RS.HMI.Client.Views.Home
     /// <summary>
     /// HomeView.xaml 的交互逻辑
     /// </summary>
+    [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class HomeView : RSWindow
     {
         public HomeViewModel ViewModel { get; set; }

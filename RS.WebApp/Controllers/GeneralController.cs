@@ -8,10 +8,10 @@ using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Enums;
 using RS.Commons.Extensions;
-using RS.Commons.Interceptors;
 using RS.Models;
 using StackExchange.Redis;
 using System.Collections;
+using RS.Commons.LogService;
 
 namespace RS.WebApp.Controllers
 {

@@ -1,12 +1,6 @@
 ﻿using Castle.DynamicProxy;
-using Microsoft.Extensions.Logging;
 using RS.Commons.Attributs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RS.Commons.Interceptors
 {
@@ -96,6 +90,7 @@ namespace RS.Commons.Interceptors
             {
                 return interceptorFilter;
             }
+
             //鉴权拦截器处理
             if (interceptorConfig.IsAuthInterceptor)
             {

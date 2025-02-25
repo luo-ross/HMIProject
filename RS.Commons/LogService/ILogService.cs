@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Commons.Interceptors
+namespace RS.Commons
 {
     /// <summary>
     /// 日志服务接口

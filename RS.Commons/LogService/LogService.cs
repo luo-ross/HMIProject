@@ -2,14 +2,9 @@
 using Microsoft.Extensions.Logging;
 using RS.Commons.Attributs;
 using RS.Models;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RS.Commons.Interceptors
+namespace RS.Commons
 {
     /// <summary>
     /// 日志服务

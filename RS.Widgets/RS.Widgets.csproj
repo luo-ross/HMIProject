@@ -9,10 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Configs\log4net.config" />
 	  <None Remove="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="NPOI" Version="2.7.2" />
 		<PackageReference Include="ScottPlot" Version="5.0.54" />
@@ -30,6 +33,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="ZXing.Net" Version="0.16.10" />
+		<PackageReference Include="IdGen" Version="3.0.7" />
+		<PackageReference Include="IdGen.DependencyInjection" Version="3.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -38,6 +44,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Resource Include="Configs\log4net.config">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
 	  <Resource Include="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 

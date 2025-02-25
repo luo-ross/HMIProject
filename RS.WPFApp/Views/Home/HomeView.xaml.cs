@@ -10,9 +10,7 @@ using System.Windows;
 
 namespace RS.WPFApp.Views.Home
 {
-    /// <summary>
-    /// HomeView.xaml 的交互逻辑
-    /// </summary>
+    
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class HomeView : RSWindow
     {

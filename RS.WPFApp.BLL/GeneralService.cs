@@ -12,7 +12,6 @@ using System.Collections;
 namespace RS.WPFApp.BLL
 {
     [ServiceInjectConfig(typeof(IGeneralService), ServiceLifetime.Transient, IsInterceptor = true)]
-
     internal class GeneralService : IGeneralService
     {
         private readonly IMemoryCache MemoryCache;
@@ -22,12 +21,6 @@ namespace RS.WPFApp.BLL
             CryptographyService = cryptographyService;
             MemoryCache = memoryCache;
         }
-
-       
-
-      
-
-
 
         /// <summary>
         /// 创建会话
