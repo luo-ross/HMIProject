@@ -69,4 +69,10 @@
 		<Resource Include="Assets\verify.jpg" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Configs\log4net.config">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

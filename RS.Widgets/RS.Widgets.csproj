@@ -9,7 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Configs\log4net.config" />
 	  <None Remove="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 
@@ -44,9 +43,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Configs\log4net.config">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Resource>
 	  <Resource Include="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 

@@ -11,6 +11,7 @@
 			glfw3
 			libHarfBuzzSharp
 			libSkiaSharp
+			aspnetcorev2_inprocess
 		</Unmanaged64Assemblies>
 	</Costura>
 </Weavers>

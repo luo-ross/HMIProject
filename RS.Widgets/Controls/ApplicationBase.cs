@@ -45,7 +45,7 @@ namespace RS.Widgets.Controls
 
         public ApplicationBase()
         {
-           
+
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -72,7 +72,6 @@ namespace RS.Widgets.Controls
             //注册当前程序集服务
             Builder.Services.RegisterService(Assembly.GetExecutingAssembly());
 
-          
             OnConfigServices?.Invoke(Builder);
 
             //注册Id生成器
@@ -99,9 +98,11 @@ namespace RS.Widgets.Controls
             AppHost = Builder.Build();
             //这个必须放在builder.Build()后才生效
             ServiceProviderExtensions.ConfigServices(AppHost);
+
             //启动日志后台线程服务
             LogService = AppHost.Services.GetRequiredService<ILogService>();
             LogService.InitLogService();
+
 
             //初始化RSA 秘钥
             InitRSASecurityKeyData();
