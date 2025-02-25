@@ -45,3 +45,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\51d76d93-
 这个文件就是程序的压缩包，自己创建一个就可以了
 
 
+
+
+
+
