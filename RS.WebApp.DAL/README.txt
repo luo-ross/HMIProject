@@ -12,6 +12,6 @@
 //Update-Database
 
 //常用命令如
-//Add-Migration  MyMigration0  创建
-//Update-Database MyMigration0  更新
-//Remove-Migration MyMigration0  撤销
+//Add-Migration  RSAppMigration0  创建
+//Update-Database RSAppMigration0  更新
+//Remove-Migration RSAppMigration0  撤销

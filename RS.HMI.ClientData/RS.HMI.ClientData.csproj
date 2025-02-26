@@ -21,7 +21,7 @@
 	  <PackageReference Include="System.IO.Ports" Version="9.0.1" />  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RS.HMI.Models\RS.HMI.Models.csproj" />
+    <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
   </ItemGroup>
 
 </Project>

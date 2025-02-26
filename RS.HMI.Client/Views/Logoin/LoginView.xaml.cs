@@ -10,9 +10,7 @@ using RS.Commons.Attributs;
 
 namespace RS.HMI.Client.Views.Logoin
 {
-    /// <summary>
-    /// LoginView.xaml 的交互逻辑
-    /// </summary>
+   
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class LoginView : RSWindow
     {

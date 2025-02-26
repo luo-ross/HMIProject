@@ -65,7 +65,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9、Win32API", "9、Win32AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RS.SetupApp", "RS.SetupApp\RS.SetupApp.csproj", "{6C121653-BB55-47A8-9250-03BB5FDADC93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RS.WPFApp.Widgets", "RS.WPFApp.Widgets\RS.WPFApp.Widgets.csproj", "{A1E40E8B-E607-47B2-9C1C-6633A6C75EBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RS.WPFApp.Widgets", "RS.WPFApp.Widgets\RS.WPFApp.Widgets.csproj", "{A1E40E8B-E607-47B2-9C1C-6633A6C75EBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

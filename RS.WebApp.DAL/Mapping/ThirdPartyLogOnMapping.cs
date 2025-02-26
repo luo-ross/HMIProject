@@ -1,0 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using RS.WebApp.Entity;
+
+namespace RS.WebApp.DAL.Mapping
+{
+    /// <summary>
+    /// 第三方登录表配置映射
+    /// </summary>
+    internal class ThirdPartyLogOnMapping : IEntityTypeConfiguration<ThirdPartyLogOnEntity>
+    {
+        public void Configure(EntityTypeBuilder<ThirdPartyLogOnEntity> builder)
+        {
+            builder.ToTable("ThirdPartyLogOn").HasKey(t => t.Id);
+        }
+    }
+}

@@ -23,10 +23,10 @@ namespace RS.HMI.Client
             this.OnConfigServices += App_OnConfigServices;
             base.OnStartup(e);
 
-            var loginView = AppHost.Services.GetRequiredService<LoginView>();
-            loginView.Show();
-            //var homeView = AppHost.Services.GetRequiredService<HomeView>();
-            //homeView.Show();
+            //var loginView = AppHost.Services.GetRequiredService<LoginView>();
+            //loginView.Show();
+            var homeView = AppHost.Services.GetRequiredService<HomeView>();
+            homeView.Show();
         }
 
 

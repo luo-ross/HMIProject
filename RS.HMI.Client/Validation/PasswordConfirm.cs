@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RS.HMI.Client.ValidationAttributes
+namespace RS.HMI.Client.Validation
 {
     /// <summary>
     /// 密码确认验证类

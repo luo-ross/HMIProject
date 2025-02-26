@@ -4,25 +4,18 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using RazorLight;
 using RazorLight.Extensions;
 using RS.Commons;
 using RS.Commons.Converters;
 using RS.Commons.Extensions;
-using RS.Commons.LogService;
 using RS.Models;
 using RS.WebApp.BLL;
 using RS.WebApp.DAL;
 using RS.WebApp.Filters;
-using System;
-using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace RS.WebApp

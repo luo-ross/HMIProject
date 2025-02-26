@@ -1,4 +1,4 @@
-﻿using RS.HMI.Client.ValidationAttributes;
+﻿using RS.HMI.Client.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

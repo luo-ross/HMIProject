@@ -50,7 +50,7 @@
             Focusable="False" />
     </ControlTemplate>
 
-    <Style x:Key="{x:Type ComboBox}" TargetType="{x:Type ComboBox}">
+    <Style x:Key="RSApp.Styles.ComboBoxStyle" TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
@@ -63,7 +63,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Margin" Value="3,3,3,3" />
-        <Setter Property="Padding" Value="2,3,2,3" />
+        <Setter Property="Padding" Value="2" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="40" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="50" />
@@ -100,7 +100,6 @@
                                 <ScrollViewer x:Name="PART_ContentScrollViewer">
                                     <ContentPresenter
                                         x:Name="ContentSite"
-                                        Margin="3,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Stretch"
                                         Content="{TemplateBinding SelectionBoxItem}"
@@ -162,12 +161,10 @@
                                     Background="#FFF"
                                     CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
                                     Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
-
                                     <Grid x:Name="DropDown" SnapsToDevicePixels="True">
                                         <ScrollViewer SnapsToDevicePixels="True">
                                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                         </ScrollViewer>
-
                                         <ContentControl
                                             x:Name="PART_EmptyData"
                                             Margin="15"
@@ -229,10 +226,9 @@
                 <ControlTemplate TargetType="{x:Type ComboBoxItem}">
                     <Border
                         x:Name="Border"
-                        Padding="5,5,5,5"
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="true">
-                        <ContentPresenter />
+                        <ContentPresenter Margin="2,3,2,3" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

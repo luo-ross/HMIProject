@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RS.Commons;
-using RS.Commons.LogService;
+
 using RS.WebApp.Models;
 using System.Diagnostics;
 

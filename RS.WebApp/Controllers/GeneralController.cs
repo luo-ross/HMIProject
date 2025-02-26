@@ -1,17 +1,9 @@
-﻿using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
-using RS.WebApp.IBLL;
-using RS.WebApp.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using RS.Commons;
-using RS.Commons.Attributs;
-using RS.Commons.Enums;
-using RS.Commons.Extensions;
 using RS.Models;
-using StackExchange.Redis;
+using RS.WebApp.IBLL;
 using System.Collections;
-using RS.Commons.LogService;
+
 
 namespace RS.WebApp.Controllers
 {

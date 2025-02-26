@@ -38,7 +38,7 @@
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HeadersVisibility" Value="Column" />
-        <Setter Property="RowHeight" Value="28" />
+        <Setter Property="MinRowHeight" Value="28" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="VerticalGridLinesBrush" Value="#e5e6eb" />
         <Setter Property="HorizontalGridLinesBrush" Value="#e5e6eb" />

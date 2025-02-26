@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RazorLight;
 using RS.Commons;
-using RS.Commons.LogService;
 using RS.WebApp.IBLL;
 using RS.WebApp.Models;
 using System.ComponentModel.DataAnnotations;

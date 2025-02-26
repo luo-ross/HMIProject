@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RS.Commons;
 using RS.Commons.Attributs;
-using RS.Commons.LogService;
+
 using System.Net;
 
 namespace RS.WebApp.Filters

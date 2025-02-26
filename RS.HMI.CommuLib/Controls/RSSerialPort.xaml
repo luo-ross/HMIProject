@@ -28,6 +28,13 @@
                 <Setter Property="Padding" Value="2,3,2,3" />
             </Style>
 
+            <Style
+                x:Key="RSApp.Styles.DataGridComboBoxStyle"
+                BasedOn="{StaticResource RSApp.Styles.ComboBoxStyle}"
+                TargetType="{x:Type ComboBox}">
+                <Setter Property="Padding" Value="2,0,2,0" />
+            </Style>
+
             <converters:EnumToHexConverter x:Key="EnumToHexConverter" />
 
             <Style TargetType="{x:Type local:RSSerialPort}">
@@ -493,7 +500,8 @@
                                                                     DisplayMemberPath="KeyDes"
                                                                     ItemsSource="{Binding Source={x:Static local:RSSerialPort.FunctionCodeList}}"
                                                                     SelectedValue="{Binding FunctionCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
-                                                                    SelectedValuePath="Key">
+                                                                    SelectedValuePath="Key"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridComboBoxStyle}">
                                                                     <i:Interaction.Triggers>
                                                                         <i:EventTrigger EventName="SelectionChanged">
                                                                             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:RSSerialPort}}, Path=CellValueEditChangedCommand}" CommandParameter="FunctionCode" />
@@ -603,7 +611,10 @@
                                                         </DataGridTemplateColumn.CellTemplate>
                                                         <DataGridTemplateColumn.CellEditingTemplate>
                                                             <DataTemplate>
-                                                                <ComboBox ItemsSource="{Binding Source={x:Static local:RSSerialPort.ByteOrderList}}" SelectedValue="{Binding ByteOrder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}">
+                                                                <ComboBox
+                                                                    ItemsSource="{Binding Source={x:Static local:RSSerialPort.ByteOrderList}}"
+                                                                    SelectedValue="{Binding ByteOrder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridComboBoxStyle}">
                                                                     <i:Interaction.Triggers>
                                                                         <i:EventTrigger EventName="SelectionChanged">
                                                                             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:RSSerialPort}}, Path=CellValueEditChangedCommand}" CommandParameter="ByteOrder" />
@@ -635,7 +646,10 @@
                                                         </DataGridTemplateColumn.CellTemplate>
                                                         <DataGridTemplateColumn.CellEditingTemplate>
                                                             <DataTemplate>
-                                                                <ComboBox ItemsSource="{Binding Source={x:Static local:RSSerialPort.DataTypeList}}" SelectedValue="{Binding DataType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}">
+                                                                <ComboBox
+                                                                    ItemsSource="{Binding Source={x:Static local:RSSerialPort.DataTypeList}}"
+                                                                    SelectedValue="{Binding DataType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridComboBoxStyle}">
                                                                     <i:Interaction.Triggers>
                                                                         <i:EventTrigger EventName="SelectionChanged">
                                                                             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:RSSerialPort}}, Path=CellValueEditChangedCommand}" CommandParameter="DataType" />
@@ -749,7 +763,10 @@
                                                         </DataGridTemplateColumn.CellTemplate>
                                                         <DataGridTemplateColumn.CellEditingTemplate>
                                                             <DataTemplate>
-                                                                <ComboBox ItemsSource="{Binding Source={x:Static local:RSSerialPort.ReadWritePermissionList}}" SelectedValue="{Binding ReadWritePermission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}">
+                                                                <ComboBox
+                                                                    ItemsSource="{Binding Source={x:Static local:RSSerialPort.ReadWritePermissionList}}"
+                                                                    SelectedValue="{Binding ReadWritePermission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                                    Style="{StaticResource RSApp.Styles.DataGridComboBoxStyle}">
                                                                     <i:Interaction.Triggers>
                                                                         <i:EventTrigger EventName="SelectionChanged">
                                                                             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:RSSerialPort}}, Path=CellValueEditChangedCommand}" CommandParameter="ReadWritePermission" />
