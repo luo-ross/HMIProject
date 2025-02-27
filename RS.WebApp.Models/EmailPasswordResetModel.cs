@@ -1,5 +1,4 @@
-﻿using RS.Commons.ValidationAttributes;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RS.WebApp.Models
 {

@@ -3,13 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Extensions;
+using RS.HMI.IBLL;
 using RS.Models;
 using RS.RESTfulApi;
-using RS.WPFApp.IBLL;
 using System.Collections;
 
 
-namespace RS.WPFApp.BLL
+namespace RS.HMI.BLL
 {
     [ServiceInjectConfig(typeof(IGeneralService), ServiceLifetime.Transient, IsInterceptor = true)]
     internal class GeneralService : IGeneralService

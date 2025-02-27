@@ -14,6 +14,7 @@ using RS.Models;
 using System;
 using System.Data.SqlTypes;
 using System.Net.Mail;
+using RS.Commons.Helper;
 
 namespace RS.WebApp.BLL
 {

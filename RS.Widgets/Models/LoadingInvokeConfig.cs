@@ -16,7 +16,7 @@ namespace RS.Widgets.Models
         /// <summary>
         /// 加载类型
         /// </summary>
-        public LoadingType LoadingType { get; set; } = LoadingType.CircleLoading;
+        public LoadingType LoadingType { get; set; } = LoadingType.ProgressBar;
 
         /// <summary>
         /// MVVM实体类

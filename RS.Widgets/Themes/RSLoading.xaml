@@ -80,7 +80,7 @@
                 <Border
                     x:Name="PART_BorderTop"
                     Grid.Column="1"
-                    Height="5"
+                    Height="2"
                     VerticalAlignment="Top">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
@@ -95,7 +95,7 @@
                 </Border>
                 <Border
                     x:Name="PART_BorderLeft"
-                    Width="5"
+                    Width="2"
                     HorizontalAlignment="Left">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
@@ -110,7 +110,7 @@
                 </Border>
                 <Border
                     x:Name="PART_BorderRight"
-                    Width="5"
+                    Width="2"
                     HorizontalAlignment="Right">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -125,7 +125,7 @@
                 </Border>
                 <Border
                     x:Name="PART_BorderBottom"
-                    Height="5"
+                    Height="2"
                     VerticalAlignment="Bottom">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="1,0.5" EndPoint="0,0.5">
@@ -138,8 +138,6 @@
                         </LinearGradientBrush>
                     </Border.Background>
                 </Border>
-
-
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
@@ -147,100 +145,46 @@
                 <DataTrigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard RepeatBehavior="Forever">
-
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderTop_LinearGradientBrush1" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderTop_LinearGradientBrush2" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderTop_LinearGradientBrush3" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="1" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:1.5" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderTop_LinearGradientBrush4" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="1" />
-
-                            </DoubleAnimationUsingKeyFrames>
-
-
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderRight_LinearGradientBrush1" Storyboard.TargetProperty="Offset">
                                 <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="1" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:1.5" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderRight_LinearGradientBrush2" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
+
+
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderRight_LinearGradientBrush3" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderRight_LinearGradientBrush4" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:01" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-
-
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderBottom_LinearGradientBrush1" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderBottom_LinearGradientBrush2" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:1.5" Value="0" />
                                 <LinearDoubleKeyFrame KeyTime="00:00:3" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderBottom_LinearGradientBrush3" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderBottom_LinearGradientBrush4" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:02" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="1" />
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderRight_LinearGradientBrush4" Storyboard.TargetProperty="Offset">
+                                <LinearDoubleKeyFrame KeyTime="00:00:1.5" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:3" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
 
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderLeft_LinearGradientBrush1" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:04" Value="1" />
+
+
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderBottom_LinearGradientBrush3" Storyboard.TargetProperty="Offset">
+                                <LinearDoubleKeyFrame KeyTime="00:00:3" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:4.5" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderLeft_LinearGradientBrush2" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:04" Value="1" />
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderBottom_LinearGradientBrush4" Storyboard.TargetProperty="Offset">
+                                <LinearDoubleKeyFrame KeyTime="00:00:3" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:4.5" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
+
+
+
+
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderLeft_LinearGradientBrush3" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:04" Value="1" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:4.5" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:5" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_BorderLeft_LinearGradientBrush4" Storyboard.TargetProperty="Offset">
-                                <LinearDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:03" Value="0.2" />
-                                <LinearDoubleKeyFrame KeyTime="00:00:04" Value="1" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:4.5" Value="0" />
+                                <LinearDoubleKeyFrame KeyTime="00:00:5" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </BeginStoryboard>

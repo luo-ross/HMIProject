@@ -1,25 +1,20 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RS.WPFApp.IBLL;
-using RS.WPFApp.Views.Home;
 using RS.Commons;
 using RS.Commons.Attributs;
+using RS.Commons.Enums;
 using RS.Commons.Extensions;
 using RS.Models;
 using RS.RESTfulApi;
 using RS.Widgets.Controls;
-using RS.Widgets.Enums;
 using RS.Widgets.Models;
-using System;
-using System.Collections.Generic;
+using RS.WPFApp.IBLL;
+using RS.WPFApp.Views.Home;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using RS.Commons.Enums;
 
 namespace RS.WPFApp.Views
 {
-  
+
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class LoginView : RSWindow
     {
@@ -183,7 +178,7 @@ namespace RS.WPFApp.Views
             {
                 //this.SetLoadingText("正在登录中...");
                 //验证用户登录
-                var validLoginResult = await RSAppAPI.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
+                var validLoginResult = await RSAppAPI.User.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
                 {
                     UserName = this.ViewModel.PasswordLoginModel.UserName,
                     Password = this.CryptographyService.GetSHA256HashCode(this.ViewModel.PasswordLoginModel.Password),

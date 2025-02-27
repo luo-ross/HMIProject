@@ -9,6 +9,7 @@ namespace RS.Widgets.Enums
     public enum LoadingType
     {
         ProgressBar,
-        CircleLoading
+        RotatingAnimation,
+        BorderSurroundingAnimation
     }
 }

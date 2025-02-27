@@ -6,7 +6,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace RS.Commons
+namespace RS.Commons.HttpMethods
 {
     public class HttpMethods
     {

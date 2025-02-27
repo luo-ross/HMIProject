@@ -50,5 +50,7 @@ namespace RS.HMI.Client.Views.Logoin
                 this.OnPropertyChanged(ref signUpModel, value);
             }
         }
+
+      
     }
 }

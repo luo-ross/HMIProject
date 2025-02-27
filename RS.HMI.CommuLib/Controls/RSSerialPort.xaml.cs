@@ -7,9 +7,7 @@ using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using RS.Commons;
 using RS.Commons.Enums;
-using RS.Commons.Excels;
 using RS.Commons.Extensions;
-using RS.Commons.Helpers;
 using RS.HMI.CommuLib.Models;
 using RS.Widgets.Models;
 using RS.Widgets.Controls;
@@ -24,6 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using RS.HMI.ClientData.DbContexts;
 using RS.HMI.ClientData.Entities;
+using RS.Commons.Helper;
 
 namespace RS.HMI.CommuLib.Controls
 {
@@ -1644,7 +1643,7 @@ namespace RS.HMI.CommuLib.Controls
                         await client.DownloadFileTaskAsync(new Uri(apiUrl), localFilePath);
                     }
 
-                    FileHelper.CopyFile(templateFilePath, filePathSelect);
+                    NPOI.OpenXml4Net.OPC.Internal.FileHelper.CopyFile(templateFilePath, filePathSelect);
                     return OperateResult.CreateSuccessResult();
                 });
             }

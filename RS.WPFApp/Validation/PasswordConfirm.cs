@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RS.WPFApp.ValidationAttributes
+namespace RS.WPFApp.Validation
 {
     /// <summary>
     /// 密码确认验证类

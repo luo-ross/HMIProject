@@ -7,7 +7,7 @@ using RS.Models;
 namespace RS.WebApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("/api/v1/[controller]/[action]")]
     [Authorize]
     public class RegisterController : BaseController
     {

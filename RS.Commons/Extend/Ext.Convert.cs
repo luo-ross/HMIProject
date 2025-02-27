@@ -265,7 +265,6 @@ namespace RS.Commons.Extend
 
         #endregion
 
-
         /// <summary>   
         /// 根据文件后缀来获取MIME类型字符串   
         /// </summary>   

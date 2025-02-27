@@ -27,7 +27,6 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToggleButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tooltip.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <Style BasedOn="{StaticResource RSApp.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.ComboBoxStyle}" TargetType="{x:Type ComboBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.GroupBoxStyle}" TargetType="{x:Type GroupBox}" />

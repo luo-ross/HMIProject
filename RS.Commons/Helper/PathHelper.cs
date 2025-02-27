@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Commons.Helpers
+namespace RS.Commons.Helper
 {
     public class PathHelper
     {

@@ -6,12 +6,13 @@ using RS.HMI.Client.Views.Logoin;
 using RS.Widgets.Controls;
 using System.Reflection;
 using System.Windows;
-
+using RS.HMI.BLL;
 namespace RS.HMI.Client
 {
 
     public partial class App : ApplicationBase
     {
+
         public App()
         {
 
@@ -23,16 +24,17 @@ namespace RS.HMI.Client
             this.OnConfigServices += App_OnConfigServices;
             base.OnStartup(e);
 
-            //var loginView = AppHost.Services.GetRequiredService<LoginView>();
-            //loginView.Show();
-            var homeView = AppHost.Services.GetRequiredService<HomeView>();
-            homeView.Show();
+            var loginView = AppHost.Services.GetRequiredService<LoginView>();
+            loginView.Show();
+            //var homeView = AppHost.Services.GetRequiredService<HomeView>();
+            //homeView.Show();
         }
 
 
         private void App_OnConfigServices(HostApplicationBuilder builder)
         {
             //注册当前程序集服务
+            builder.Services.RegisterBLLService();
             builder.Services.RegisterService(Assembly.GetExecutingAssembly());
         }
       

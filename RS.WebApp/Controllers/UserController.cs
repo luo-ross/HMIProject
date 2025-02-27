@@ -1,18 +1,16 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RS.WebApp.IBLL;
-using RS.WebApp.Models;
 using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Models;
-using System.Security.Claims;
+using RS.WebApp.IBLL;
 
 
 namespace RS.WebApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("/api/v1/[controller]/[action]")]
     [Authorize]
     public class UserController : BaseController
     {

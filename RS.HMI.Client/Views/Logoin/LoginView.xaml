@@ -2,6 +2,7 @@
     x:Class="RS.HMI.Client.Views.Logoin.LoginView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:RS.HMI.Client"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:RS.HMI.Client.Views.Logoin"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -97,7 +98,7 @@
                     <ImageBrush ImageSource="/Assets/login-left.jpg" />
                 </Border.Background>
             </Border>
-            <rs:RSUserControl x:Name="Test" Grid.Column="1">
+            <rs:RSUserControl x:Name="LoginForm" Grid.Column="1">
                 <Border Padding="28,20,28,50">
                     <Grid VerticalAlignment="Center">
                         <Grid.RowDefinitions>
@@ -283,6 +284,27 @@
                     </Grid>
                 </Border>
             </rs:RSUserControl>
+            <Border
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Padding="5"
+                VerticalAlignment="Top"
+                Background="{DynamicResource RSApp.Styles.Warning}">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source={x:Static app:App.ViewModel}, Path=IsServerConnectSuccess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Foreground="#fff"
+                    Text="连接服务器失败，请检查网络连接!" />
+            </Border>
         </Grid>
     </Grid>
 </rs:RSWindow>

@@ -110,7 +110,7 @@ namespace RS.WPFApp.Views
         {
 
             //如果邮箱验证通过 则往服务端发起验证码发送请求，
-            var getEmailVerificationResult = await RSAppAPI.GetEmailVerification.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerificationModel>(nameof(RSAppAPI), new EmailRegisterPostModel()
+            var getEmailVerificationResult = await RSAppAPI.Register.GetEmailVerification.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerificationModel>(nameof(RSAppAPI), new EmailRegisterPostModel()
             {
                 Email = this.ViewModel.EmailRegisterModel.Email,
                 //这里需要将秘密进行SHA256加密
@@ -152,7 +152,7 @@ namespace RS.WPFApp.Views
             }
 
             //往服务端发起请求验证用户输入的验证码是否和服务端存储的验证码一致
-            var emailVerificationValidResult = await RSAppAPI.EmailVerificationValid.AESHttpPostAsync(nameof(RSAppAPI), new RegisterVerificationValidModel()
+            var emailVerificationValidResult = await RSAppAPI.Register.EmailVerificationValid.AESHttpPostAsync(nameof(RSAppAPI), new RegisterVerificationValidModel()
             {
                 Token = this.ViewModel.RegisterVerificationModel.Token,
                 Verification = this.ViewModel.EmailRegisterModel.Verification,

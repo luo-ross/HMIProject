@@ -8,7 +8,7 @@ using System.Collections;
 namespace RS.WebApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("/api/v1/[controller]/[action]")]
     public class GeneralController : BaseController
     {
         private readonly IGeneralService GeneralService;
@@ -20,6 +20,16 @@ namespace RS.WebApp.Controllers
             this.GeneralService = generalService;
             this.LogService = logService;
             this.CryptographyService = cryptographyService;
+        }
+
+        /// <summary>
+        /// 心跳检测接口
+        /// </summary>
+        /// <returns>服务器状态信息</returns>
+        [HttpGet]
+        public OperateResult HeartBeatCheck()
+        {
+            return OperateResult.CreateSuccessResult();
         }
 
         /// <summary>

@@ -83,11 +83,11 @@
                                     Grid.Column="2"
                                     Margin="0"
                                     rs:ControlsHelper.CornerRadius="0"
+                                    rs:TextBoxHelper.IsShowClearButton="True"
                                     rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                     Background="Transparent"
                                     BorderThickness="0"
                                     MaxLength="20"
-                                    rs:TextBoxHelper.IsShowClearButton="True"
                                     Style="{StaticResource RSApp.Styles.TextBoxStyle}"
                                     Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <Border

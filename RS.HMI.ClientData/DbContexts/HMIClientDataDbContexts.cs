@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RS.Commons.Helpers;
+using RS.Commons.Helper;
 using RS.HMI.ClientData.Entities;
 using System.Data;
 using System.Reflection;

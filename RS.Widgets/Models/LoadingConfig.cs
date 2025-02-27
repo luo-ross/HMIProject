@@ -97,7 +97,6 @@ namespace RS.Widgets.Models
         #endregion
 
 
-
         #region 这里旋转动画设置
 
         private Geometry iconData;

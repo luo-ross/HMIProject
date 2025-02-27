@@ -17,6 +17,7 @@ using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using TencentCloud.Ciam.V20220331.Models;
+using RS.Commons.Helper;
 
 namespace RS.WebApp.BLL
 {

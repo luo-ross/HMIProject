@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTK.Compute.OpenCL;
 using RS.Commons;
 using RS.Commons.Extensions;
 using RS.Models;
 using RS.RESTfulApi;
+using RS.Widgets.Models;
+using System.ComponentModel;
 using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Windows;
@@ -17,7 +21,7 @@ using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class ApplicationBase : Application
+    public class ApplicationBase : Application, INotifyPropertyChanged
     {
         /// <summary>
         /// 服务宿主
@@ -29,6 +33,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         public static ILogService LogService { get; set; }
 
+
         /// <summary>
         /// 秘钥存储路径
         /// </summary>
@@ -38,22 +43,123 @@ namespace RS.Widgets.Controls
         /// 主机地址
         /// </summary>
         public static string HostAddress = "http://localhost:9000";
-        //internal const string HostAddress = "http://localhost:7109";
+
+        /// <summary>
+        /// 服务器连接是否成功
+        /// </summary>
+        public static ApplicationViewModel ViewModel;
+
+        #region 事件处理
+        public event Action OnServerDisconnect;
+        public event Action OnServerConnect ;
+        #endregion
+
 
         private HostApplicationBuilder Builder { get; set; }
         public event Action<HostApplicationBuilder> OnConfigServices;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// 心跳检测间隔（毫秒）
+        /// </summary>
+        private const int HeartbeatInterval = 1000;
+
+        /// <summary>
+        /// 心跳检测线程
+        /// </summary>
+        private Thread heartbeatThread;
+
+        /// <summary>
+        /// 心跳检测取消标记
+        /// </summary>
+        private CancellationTokenSource heartbeatCancellation;
+
+        static ApplicationBase()
+        {
+            ViewModel = new ApplicationViewModel();
+        }
         public ApplicationBase()
         {
-
+            heartbeatCancellation = new CancellationTokenSource();
         }
+
+
 
         protected override void OnStartup(StartupEventArgs e)
         {
             System.Windows.FrameworkCompatibilityPreferences.KeepTextBoxDisplaySynchronizedWithTextProperty = false;
             base.OnStartup(e);
+
             this.RegisterUnknowExceptionsHandler();
             this.ConfigServices();
+
+
+            // 启动心跳检测线程
+            this.StartHeartbeatCheck();
+        }
+
+        /// <summary>
+        /// 启动心跳检测
+        /// </summary>
+        private void StartHeartbeatCheck()
+        {
+            heartbeatThread = new Thread(async () =>
+            {
+                while (!heartbeatCancellation.Token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        var heartBeatCheckResult = await RSAppAPI.General.HeartBeatCheck.HttpGetAsync(nameof(RSAppAPI));
+                        if (!heartBeatCheckResult.IsSuccess)
+                        {
+                            ViewModel.IsServerConnectSuccess = false;
+                            OnServerDisconnect?.Invoke();
+                            //if (LogService != null)
+                            //{
+                            //    LogService.LogInformation($"服务器连接状态变更: {(ViewModel.IsServerConnectSuccess == true ? "已连接" : "已断开")}");
+                            //}
+                        }
+                        else
+                        {
+                            ViewModel.IsServerConnectSuccess = true;
+                        }
+                    }
+                    catch
+                    {
+                        if (ViewModel.IsServerConnectSuccess != false)
+                        {
+                            ViewModel.IsServerConnectSuccess = false;
+                            OnServerConnect?.Invoke();
+                            //if (LogService != null)
+                            //{
+                            //    LogService.LogWarning("服务器连接失败");
+                            //}
+                        }
+                    }
+                    try
+                    {
+                        await Task.Delay(HeartbeatInterval, heartbeatCancellation.Token);
+                    }
+                    catch (TaskCanceledException ex)
+                    {
+
+                    }
+                }
+            })
+            {
+                IsBackground = true
+            };
+
+            heartbeatThread.Start();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // 停止心跳检测线程
+            heartbeatCancellation?.Cancel();
+            heartbeatThread?.Join(1000);
+
+            base.OnExit(e);
         }
 
 
@@ -110,7 +216,6 @@ namespace RS.Widgets.Controls
             AppHost.RunAsync();
         }
         #endregion
-
 
 
         /// <summary>

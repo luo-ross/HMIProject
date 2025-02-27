@@ -27,7 +27,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RS.Commons.ValidationAttributes
+namespace RS.Commons.Validation
 {
 	/// <summary>
 	/// An attribute that validates the syntax of an email address.

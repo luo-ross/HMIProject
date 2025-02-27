@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,9 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RS.WebApp.Models\RS.WebApp.Models.csproj" />
-    <ProjectReference Include="..\RS.Models\RS.Models.csproj" />
     <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+    <ProjectReference Include="..\RS.Models\RS.Models.csproj" />
   </ItemGroup>
 
 </Project>

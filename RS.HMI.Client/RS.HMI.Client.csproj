@@ -58,7 +58,10 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+		<ProjectReference Include="..\RS.HMI.BLL\RS.HMI.BLL.csproj" />
+		<ProjectReference Include="..\RS.HMI.ClientData\RS.HMI.ClientData.csproj" />
 		<ProjectReference Include="..\RS.HMI.CommuLib\RS.HMI.CommuLib.csproj" />
+		<ProjectReference Include="..\RS.HMI.IBLL\RS.HMI.IBLL.csproj" />
 		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
 	</ItemGroup>
 

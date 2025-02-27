@@ -8,35 +8,61 @@ using System.Threading.Tasks;
 namespace RS.RESTfulApi
 {
     /// <summary>
-    /// 服务接口类
+    /// API路由配置类
     /// </summary>
     public class RSAppAPI
     {
+        /// <summary>
+        /// API版本
+        /// </summary>
+        private const string ApiVersion = "v1";
 
         /// <summary>
-        /// 获取会话接口
+        /// 通用API
         /// </summary>
-        public static readonly string GetSessionModel = "/Api/General/GetSessionModel";
+        public static class General
+        {
+            /// <summary>
+            /// 心跳检测接口
+            /// </summary>
+            public static readonly string HeartBeatCheck = $"/Api/{ApiVersion}/General/HeartBeatCheck";
+
+            /// <summary>
+            /// 获取会话接口
+            /// </summary>
+            public static readonly string GetSessionModel = $"/Api/{ApiVersion}/General/GetSessionModel";
+        }
 
         /// <summary>
-        /// 获取注册邮箱验证码接口
+        /// 注册相关API
         /// </summary>
-        public static readonly string GetEmailVerification = "/Api/Register/GetEmailVerification";
+        public static class Register
+        {
+            /// <summary>
+            /// 获取注册邮箱验证码接口
+            /// </summary>
+            public static readonly string GetEmailVerification = $"/Api/{ApiVersion}/Register/GetEmailVerification";
+
+            /// <summary>
+            /// 注册邮箱验证码验证接口
+            /// </summary>
+            public static readonly string EmailVerificationValid = $"/Api/{ApiVersion}/Register/EmailVerificationValid";
+        }
 
         /// <summary>
-        /// 注册邮箱验证码验证接口
+        /// 用户相关API
         /// </summary>
-        public static readonly string EmailVerificationValid = "/Api/Register/EmailVerificationValid";
+        public static class User
+        {
+            /// <summary>
+            /// 获取用户接口
+            /// </summary>
+            public static readonly string GetUser = $"/Api/{ApiVersion}/User/GetUser";
 
-        /// <summary>
-        /// 获取用户接口
-        /// </summary>
-        public static readonly string GetUser = "/Api/User/GetUser";
-
-        /// <summary>
-        /// 验证登录接口
-        /// </summary>
-        public static readonly string ValidLogin = "/Api/User/ValidLogin";
-
+            /// <summary>
+            /// 验证登录接口
+            /// </summary>
+            public static readonly string ValidLogin = $"/Api/{ApiVersion}/User/ValidLogin";
+        }
     }
 }

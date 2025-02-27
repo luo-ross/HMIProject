@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using RS.Commons.Extend;
 using RS.Commons.Extensions;
 
-namespace RS.Commons
+namespace RS.Commons.Helper
 {
     public static class ValidationHelper
     {
@@ -246,7 +246,7 @@ namespace RS.Commons
         /// <returns></returns>
         public static bool IsDate(this string value, string format)
         {
-            return IsDate(value, format, null, DateTimeStyles.None);
+            return value.IsDate(format, null, DateTimeStyles.None);
         }
 
         /// <summary>
@@ -654,7 +654,7 @@ namespace RS.Commons
         public static bool IsLengthStr(this string value, int begin, int end)
         {
             int length = Regex.Replace(value, @"[^\x00-\xff]", "OK").Length;
-            if ((length <= begin) && (length >= end))
+            if (length <= begin && length >= end)
             {
                 return false;
             }
