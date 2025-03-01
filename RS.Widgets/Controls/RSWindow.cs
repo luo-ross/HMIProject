@@ -22,7 +22,6 @@ namespace RS.Widgets.Controls
 {
     public class RSWindow : Window
     {
-        private RSBorder PART_Caption;
         private Button PART_Minimize;
         private Button PART_BtnMaxRestore;
         private Button PART_BtnClose;
@@ -52,6 +51,19 @@ namespace RS.Widgets.Controls
             this.SizeChanged += RSWindow_SizeChanged;
             this.StateChanged += RSWindow_StateChanged;
         }
+
+
+        [Description("服务连接是否成功")]
+        public bool? IsServerConnectSuccess
+        {
+            get { return (bool?)GetValue(IsServerConnectSuccessProperty); }
+            set { SetValue(IsServerConnectSuccessProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsServerConnectSuccessProperty =
+            DependencyProperty.Register("IsServerConnectSuccess", typeof(bool?), typeof(RSWindow), new PropertyMetadata(null));
+
+
 
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {
@@ -177,7 +189,6 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_Border = this.GetTemplateChild(nameof(this.PART_Border)) as Border;
-            this.PART_Caption = this.GetTemplateChild(nameof(this.PART_Caption)) as RSBorder;
             this.PART_Minimize = this.GetTemplateChild(nameof(this.PART_Minimize)) as Button;
             this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(this.PART_BtnMaxRestore)) as Button;
             this.PART_BtnClose = this.GetTemplateChild(nameof(this.PART_BtnClose)) as Button;

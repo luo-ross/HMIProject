@@ -1,7 +1,7 @@
-﻿using RS.WPFApp.ValidationAttributes;
-using RS.Commons.ValidationAttributes;
-using RS.Widgets.Models;
+﻿using RS.Widgets.Models;
 using System.ComponentModel.DataAnnotations;
+using RS.WPFApp.Validation;
+using RS.Commons.Validation;
 
 namespace RS.WPFApp.Models
 {

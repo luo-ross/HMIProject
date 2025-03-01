@@ -93,7 +93,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Border x:Name="AdvertisingPageHost" CornerRadius="10,0,0,10">
+            <Border x:Name="AdvertisingPageHost">
                 <Border.Background>
                     <ImageBrush ImageSource="/Assets/login-left.jpg" />
                 </Border.Background>
@@ -284,27 +284,6 @@
                     </Grid>
                 </Border>
             </rs:RSUserControl>
-            <Border
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Padding="5"
-                VerticalAlignment="Top"
-                Background="{DynamicResource RSApp.Styles.Warning}">
-                <Border.Style>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Source={x:Static app:App.ViewModel}, Path=IsServerConnectSuccess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Foreground="#fff"
-                    Text="连接服务器失败，请检查网络连接!" />
-            </Border>
         </Grid>
     </Grid>
 </rs:RSWindow>
