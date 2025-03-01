@@ -26,7 +26,7 @@ namespace RS.HMI.Client.Views.Home
 
         private unsafe void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+          
         }
 
         private async void BtnSearch_OnBtnSearchCallBack(string obj)

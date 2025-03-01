@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using RS.Commons.Extensions;
 using RS.Widgets.Controls;
 using RS.WPFApp.BLL;
+using RS.WPFApp.Views;
 using RS.WPFApp.Views.Home;
 using System.Reflection;
 using System.Windows;
@@ -25,10 +26,10 @@ namespace RS.WPFApp
             //配置服务
             this.OnConfigServices += App_OnConfigServices;
             base.OnStartup(e);
-            //var loginView = AppHost.Services.GetRequiredService<LoginView>();
-            //loginView.Show();
-            var homeView = AppHost.Services.GetRequiredService<HomeView>();
-            homeView.Show();
+            var loginView = AppHost.Services.GetRequiredService<LoginView>();
+            loginView.Show();
+            //var homeView = AppHost.Services.GetRequiredService<HomeView>();
+            //homeView.Show();
             //var singnalChartView = AppHost.Services.GetRequiredService<SingnalChartView>();
             //singnalChartView.Show();
         }

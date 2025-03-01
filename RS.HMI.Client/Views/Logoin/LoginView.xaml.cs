@@ -40,7 +40,7 @@ namespace RS.HMI.Client.Views.Logoin
 
         private void LoginView_Closed(object? sender, EventArgs e)
         {
-            
+
         }
 
         private async void LoginView_Loaded(object sender, RoutedEventArgs e)
@@ -61,7 +61,7 @@ namespace RS.HMI.Client.Views.Logoin
                 return OperateResult.CreateSuccessResult();
             }, new LoadingConfig()
             {
-                LoadingType=LoadingType.RotatingAnimation,
+                LoadingType = LoadingType.RotatingAnimation,
             });
 
         }
@@ -157,6 +157,41 @@ namespace RS.HMI.Client.Views.Logoin
 
         }
 
+        private void QRCodeLogin_OnCancelQRCodeLogin(QRCodeLoginResultModel loginQRCodeResult)
+        {
 
+        }
+
+        private Task<QRCodeLoginResultModel> QRCodeLogin_OnGetLoginQRCode()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                //用户就在这里去往服务端发起请求获取验证码
+                var expireTime = new DateTimeOffset(DateTime.Now.AddSeconds(120)).ToUnixTimeMilliseconds();
+                //https://passport.iqiyi.com/apis/qrcode/token_login.action?token=7a068e22fe923ea273bcf76242db4bfba
+                string token = $"{Guid.NewGuid().ToString()}";
+                QRCodeLoginResultModel loginQRCodeResultModel = new QRCodeLoginResultModel()
+                {
+                    IsSuccess = true,
+                    Token = token,
+                    QRCodeContent = $"https://passport.myweb.com/apis/qrcode/token_login?token={token}",
+                    ExpireTime = expireTime
+                };
+                return loginQRCodeResultModel;
+            });
+        }
+
+        private void QRCodeLogin_OnQRCodeAuthLoginSuccess(QRCodeLoginResultModel loginQRCodeResult)
+        {
+
+        }
+
+        private Task<QRCodeLoginStatusModel> QRCodeLogin_OnQueryQRCodeLoginStatus()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                return new QRCodeLoginStatusModel();
+            });
+        }
     }
 }

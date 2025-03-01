@@ -14,6 +14,8 @@ namespace RS.HMI.Client.Views.Home
             this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
         }
 
+        
+
         private bool CanBtnClick(object arg)
         {
             return true;
@@ -63,10 +65,6 @@ namespace RS.HMI.Client.Views.Home
             }
         }
 
-
-
-
-
         //private ObservableCollection<string> serialPortNameList;
         ///// <summary>
         ///// 串口测试数据
@@ -96,7 +94,7 @@ namespace RS.HMI.Client.Views.Home
 
 
 
-       
+
 
         //private ObservableCollection< CommuStation> commuStationList;
         ///// <summary>
@@ -119,6 +117,6 @@ namespace RS.HMI.Client.Views.Home
         //}
 
 
-     
+
     }
 }

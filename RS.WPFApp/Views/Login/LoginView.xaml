@@ -300,18 +300,18 @@
                                                     x:Name="TxtUserName"
                                                     Padding="3,4,3,4"
                                                     rs:ControlsHelper.IsRequired="False"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:TextBoxHelper.Watermark="请输入手机号/邮箱"
                                                     MaxLength="30"
-                                                    rs:TextBoxHelper.IsShowClearButton="True"
                                                     Style="{DynamicResource RSApp.Styles.TextBoxStyle}"
                                                     Text="{Binding PasswordLoginModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
                                                 <PasswordBox
                                                     x:Name="TxtPassword"
                                                     Margin="5,10,5,0"
                                                     Padding="3,4,3,4"
-                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:ControlsHelper.IsRequired="False"
                                                     rs:PasswordBoxBindBehavior.Password="{Binding PasswordLoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:TextBoxHelper.Watermark="请输入密码"
                                                     MaxLength="50"
                                                     Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
@@ -330,15 +330,15 @@
                                             <StackPanel>
                                                 <rs:RSPhoneTextBox
                                                     x:Name="TxtPhone"
-                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:ControlsHelper.IsRequired="False"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
                                                     IsCloseWindowWhenCountryCodeSelected="True"
                                                     Phone="{Binding SMSRegisterModel.Phone, UpdateSourceTrigger=PropertyChanged}" />
                                                 <rs:RSVerificationTextBox
                                                     x:Name="TxtVerification"
                                                     Margin="5,10,5,0"
-                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     rs:ControlsHelper.IsRequired="False"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
                                                     GetVerificationClick="TxtVerification_GetVerificationClick"
                                                     Verification="{Binding SMSRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}" />
                                                 <Button
@@ -378,19 +378,15 @@
 
                                 <!--  登录操作区  -->
                                 <Border Grid.Row="1" Padding="0,10,0,0">
-                                    <Grid>
-                                        <Grid>
-                                            <rs:RSQRCodeLogin
-                                                x:Name="QRCodeLogin"
-                                                IsQRCodeLogin="{Binding ElementName=TogBtnQRCode, Path=IsChecked}"
-                                                OnCancelQRCodeLogin="QRCodeLogin_OnCancelQRCodeLogin"
-                                                OnGetLoginQRCode="QRCodeLogin_OnGetLoginQRCode"
-                                                OnQRCodeAuthLoginSuccess="QRCodeLogin_OnQRCodeAuthLoginSuccess"
-                                                OnQueryQRCodeLoginStatus="QRCodeLogin_OnQueryQRCodeLoginStatus"
-                                                QRCodeHeight="200"
-                                                QRCodeWidth="200" />
-                                        </Grid>
-                                    </Grid>
+                                    <rs:RSQRCodeLogin
+                                        x:Name="QRCodeLogin"
+                                        IsQRCodeLogin="{Binding ElementName=TogBtnQRCode, Path=IsChecked}"
+                                        OnCancelQRCodeLogin="QRCodeLogin_OnCancelQRCodeLogin"
+                                        OnGetLoginQRCode="QRCodeLogin_OnGetLoginQRCode"
+                                        OnQRCodeAuthLoginSuccess="QRCodeLogin_OnQRCodeAuthLoginSuccess"
+                                        OnQueryQRCodeLoginStatus="QRCodeLogin_OnQueryQRCodeLoginStatus"
+                                        QRCodeHeight="200"
+                                        QRCodeWidth="200" />
                                 </Border>
                             </Grid>
 
@@ -400,10 +396,10 @@
                             Width="35"
                             Height="35"
                             Margin="5"
-                            WindowChrome.IsHitTestVisibleInChrome="True"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            Style="{StaticResource RSApp.Styles.QRCodeLoginSwitchStyle}" />
+                            Style="{StaticResource RSApp.Styles.QRCodeLoginSwitchStyle}"
+                            WindowChrome.IsHitTestVisibleInChrome="True" />
                     </Grid>
 
                 </Border>

@@ -8,7 +8,7 @@ namespace RS.Widgets.Controls
 {
     public static class ItemHelper
     {
-
+       
         public static readonly DependencyProperty ActiveSelectionBackgroundBrushProperty
             = DependencyProperty.RegisterAttached(
                 "ActiveSelectionBackgroundBrush",

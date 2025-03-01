@@ -64,10 +64,7 @@
                                             <RowDefinition Height="auto" />
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
-                                        <Border
-                                            x:Name="PART_Caption"
-                                            Grid.Row="0"
-                                            Background="Transparent">
+                                        <Border x:Name="PART_Caption" Grid.Row="0">
                                             <Grid Height="{TemplateBinding CaptionHeight}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="auto" />
@@ -94,7 +91,6 @@
                                                         </Style>
                                                     </Button.Style>
                                                 </Button>
-
                                                 <ContentControl Grid.Column="1" Content="{TemplateBinding CaptionContent}" />
                                                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                                                     <Button
