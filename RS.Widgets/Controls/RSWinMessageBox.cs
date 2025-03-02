@@ -1,8 +1,8 @@
 ﻿using RS.Widgets.Interface;
-using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,16 +11,37 @@ using System.Windows.Controls;
 
 namespace RS.Widgets.Controls
 {
-    public class RSMessageBox : ContentControl, IMessageBox
+    public class RSWinMessageBox : RSWindowBase, IMessageBox
     {
         private Button PART_BtnYes;
         private Button PART_BtnOK;
         private Button PART_BtnNo;
         private Button PART_BtnCancel;
-        static RSMessageBox()
+
+        static RSWinMessageBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSMessageBox), new FrameworkPropertyMetadata(typeof(RSMessageBox)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWinMessageBox), new FrameworkPropertyMetadata(typeof(RSWinMessageBox)));
         }
+
+       
+
+        public RSWinMessageBox(Window owner = null)
+        {
+            this.Width = 500;
+            this.Height = 350;
+            this.BorderCornerRadius = new CornerRadius(10);
+            this.Owner = owner;
+            if (this.Owner == null)
+            {
+                this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            else
+            {
+                this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+        }
+
+
 
 
         [Description("消息提示图标")]
@@ -33,7 +54,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MessageBoxImageProperty =
-            DependencyProperty.Register("MessageBoxImage", typeof(MessageBoxImage), typeof(RSMessageBox), new PropertyMetadata(MessageBoxImage.None));
+            DependencyProperty.Register("MessageBoxImage", typeof(MessageBoxImage), typeof(RSWinMessageBox), new PropertyMetadata(MessageBoxImage.None));
 
 
         [Description("消息框按钮")]
@@ -46,7 +67,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MessageBoxButtonProperty =
-            DependencyProperty.Register("MessageBoxButton", typeof(MessageBoxButton), typeof(RSMessageBox), new PropertyMetadata(MessageBoxButton.OK));
+            DependencyProperty.Register("MessageBoxButton", typeof(MessageBoxButton), typeof(RSWinMessageBox), new PropertyMetadata(MessageBoxButton.OK));
 
 
         [Description("消息框内容")]
@@ -59,7 +80,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MessageBoxTextProperty =
-            DependencyProperty.Register("MessageBoxText", typeof(string), typeof(RSMessageBox), new PropertyMetadata(null));
+            DependencyProperty.Register("MessageBoxText", typeof(string), typeof(RSWinMessageBox), new PropertyMetadata(null));
 
 
         [Description("消息框标题")]
@@ -72,7 +93,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty CaptionProperty =
-            DependencyProperty.Register("Caption", typeof(string), typeof(RSMessageBox), new PropertyMetadata("消息提示"));
+            DependencyProperty.Register("Caption", typeof(string), typeof(RSWinMessageBox), new PropertyMetadata("消息提示"));
 
 
 
@@ -86,7 +107,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DefaultResultProperty =
-            DependencyProperty.Register("DefaultResult", typeof(MessageBoxResult), typeof(RSMessageBox), new PropertyMetadata(MessageBoxResult.None));
+            DependencyProperty.Register("DefaultResult", typeof(MessageBoxResult), typeof(RSWinMessageBox), new PropertyMetadata(MessageBoxResult.None));
 
 
         [Description("指定消息框的特殊显示选项")]
@@ -99,7 +120,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty OptionsProperty =
-            DependencyProperty.Register("Options", typeof(MessageBoxOptions), typeof(RSMessageBox), new PropertyMetadata(MessageBoxOptions.None));
+            DependencyProperty.Register("Options", typeof(MessageBoxOptions), typeof(RSWinMessageBox), new PropertyMetadata(MessageBoxOptions.None));
 
 
         public override void OnApplyTemplate()
@@ -153,6 +174,7 @@ namespace RS.Widgets.Controls
             this.SetMessageBoxResult(MessageBoxResult.Yes);
         }
 
+
         public void SetMessageBoxResult(MessageBoxResult messageBoxResult)
         {
             this.MessageBoxResultTCS?.SetResult(messageBoxResult);
@@ -163,16 +185,19 @@ namespace RS.Widgets.Controls
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Visibility = Visibility.Visible;
+                this.Owner = window;
+                this.ShowDialog();
             });
         }
+
 
         public void MessageBoxClose()
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Visibility = Visibility.Collapsed;
+                this.Close();
             });
         }
+
     }
 }

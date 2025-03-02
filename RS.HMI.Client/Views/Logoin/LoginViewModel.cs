@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace RS.HMI.Client.Views.Logoin
 {
@@ -31,6 +32,7 @@ namespace RS.HMI.Client.Views.Logoin
         }
 
 
+
         private SignUpModel signUpModel;
         /// <summary>
         /// 注册
@@ -51,6 +53,8 @@ namespace RS.HMI.Client.Views.Logoin
             }
         }
 
-      
+
+       
+
     }
 }

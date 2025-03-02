@@ -6,15 +6,82 @@ using System.Windows.Input;
 
 namespace RS.HMI.Client.Views.Home
 {
+    public class User : NotifyBase
+    {
+        public int Id { get; set; }
+     
+
+        private string name;
+        /// <summary>
+        /// 中文
+        /// </summary>
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                this.OnPropertyChanged(ref name, value);
+            }
+        }
+
+        private string name2;
+        /// <summary>
+        /// 英文
+        /// </summary>
+        public string Name2
+        {
+            get { return name2; }
+            set
+            {
+                this.OnPropertyChanged(ref name2, value);
+            }
+        }
+    }
+
+
     public class HomeViewModel : NotifyBase
     {
 
         public HomeViewModel()
         {
             this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
+
+            this.DataList = new ObservableCollection<User>();
+            for (int i = 0; i < 10; i++)
+            {
+                this.DataList.Add(new User()
+                {
+                    Id = i + 1,
+                    Name = $"Ross{i + 1}",
+                    Name2 = $"螺丝{i + 1}",
+                });
+            }
         }
 
-        
+
+        private bool isEnglish;
+
+        public bool IsEnglish
+        {
+            get { return isEnglish; }
+            set
+            {
+                this.OnPropertyChanged(ref isEnglish, value);
+            }
+        }
+
+
+        private ObservableCollection<User> dataList;
+
+        public ObservableCollection<User> DataList
+        {
+            get { return dataList; }
+            set
+            {
+                this.OnPropertyChanged(ref dataList, value);
+            }
+        }
+
 
         private bool CanBtnClick(object arg)
         {
@@ -48,8 +115,7 @@ namespace RS.HMI.Client.Views.Home
             get { return isFullScreen; }
             set
             {
-                isFullScreen = value;
-                this.OnPropertyChanged();
+                this.OnPropertyChanged(ref isFullScreen, value);
             }
         }
 
@@ -60,8 +126,7 @@ namespace RS.HMI.Client.Views.Home
             get { return btnClickCommand; }
             set
             {
-                btnClickCommand = value;
-                this.OnPropertyChanged();
+                this.OnPropertyChanged(ref btnClickCommand, value);
             }
         }
 

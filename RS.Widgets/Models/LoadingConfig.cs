@@ -44,23 +44,7 @@ namespace RS.Widgets.Models
         /// 加载图标颜色
         /// </summary>
         public SolidColorBrush LoadingColor { get; set; }
-
-        //private SolidColorBrush loadingColor;
-        ///// <summary>
-        ///// 加载图标颜色
-        ///// </summary>
-        //public SolidColorBrush LoadingColor
-        //{
-        //    get
-        //    {
-        //        return loadingColor;
-        //    }
-        //    set
-        //    {
-        //        this.OnPropertyChanged(ref loadingColor, value);
-        //    }
-        //}
-
+      
         /// <summary>
         /// 加载背景色
         /// </summary>

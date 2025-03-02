@@ -23,7 +23,6 @@ namespace RS.HMI.Client
             //配置服务
             this.OnConfigServices += App_OnConfigServices;
             base.OnStartup(e);
-
             var loginView = AppHost.Services.GetRequiredService<LoginView>();
             loginView.Show();
             //var homeView = AppHost.Services.GetRequiredService<HomeView>();

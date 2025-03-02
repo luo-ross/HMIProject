@@ -6,32 +6,27 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="{x:Type rs:RSMessageBox}">
-        <Setter Property="Visibility" Value="Collapsed" />
-        <Setter Property="Background" Value="#22000000" />
+    <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWinMessageBox}">
+        <Setter Property="MaxHeight" Value="450" />
+        <Setter Property="MaxWidth" Value="600" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type rs:RSMessageBox}">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
+                <ControlTemplate TargetType="{x:Type rs:RSWinMessageBox}">
+                    <Border Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
                         <Border
-                            MinWidth="300"
-                            MaxWidth="600"
-                            Margin="50,0,50,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Background="#fff"
-                            CornerRadius="5"
-                            SnapsToDevicePixels="True">
+                            x:Name="PART_Border"
+                            Margin="15"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Clip="{TemplateBinding BorderClipRect}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
-                                    <RowDefinition MinHeight="100" />
+                                    <RowDefinition Height="*" />
                                     <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
                                 <Border
@@ -44,7 +39,7 @@
                                         FontSize="14"
                                         Text="{TemplateBinding Caption}" />
                                 </Border>
-                                <Grid Grid.Row="1">
+                                <Grid Grid.Row="1" Background="#fff">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition />
@@ -59,9 +54,13 @@
                                         VerticalAlignment="Center"
                                         Fill="{TemplateBinding Foreground}"
                                         Stretch="Fill" />
+
                                     <TextBox
                                         Grid.Column="1"
+                                        Margin="0"
                                         Padding="3"
+                                        VerticalAlignment="Stretch"
+                                        rs:ControlsHelper.CornerRadius="0"
                                         BorderThickness="0"
                                         IsReadOnly="True"
                                         Text="{TemplateBinding MessageBoxText}"
@@ -101,6 +100,7 @@
                                     </Grid>
                                 </Border>
                             </Grid>
+
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -159,6 +159,7 @@
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Question}" />
                         </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

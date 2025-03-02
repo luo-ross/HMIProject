@@ -26,6 +26,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
+
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button
                         x:Name="BtnForgetPassword"

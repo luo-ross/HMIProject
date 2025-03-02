@@ -47,9 +47,7 @@ namespace RS.HMI.Client.Models
         /// <summary>
         /// 用户密码
         /// </summary>
-        [MaxLength(30,ErrorMessage = "密码长度不能超过30")]
         [Required(ErrorMessage="用户密码不能为空")]
-        [StringLength(30, MinimumLength = 8, ErrorMessage = "密码长度必须在8到30个字符之间")]
         public string Password
         {
             get { return password; }

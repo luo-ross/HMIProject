@@ -7,13 +7,11 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <Style TargetType="{x:Type rs:RSWindow}">
-        <Setter Property="WindowStyle" Value="None" />
+
+    <Style x:Key="RSApp.Styles.RSWindowBaseStyle" TargetType="{x:Type rs:RSWindowBase}">
         <Setter Property="ResizeMode" Value="CanResize" />
         <Setter Property="Background" Value="#eee" />
-        <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="IsServerConnectSuccess" Value="{Binding Source={x:Static rs:ApplicationBase.ViewModel}, Path=IsServerConnectSuccess}" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
                 <WindowChrome
@@ -23,6 +21,10 @@
                     UseAeroCaptionButtons="False" />
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWindow}">
+        <Setter Property="IsServerConnectSuccess" Value="{Binding Source={x:Static rs:ApplicationBase.ViewModel}, Path=IsServerConnectSuccess}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWindow}">
@@ -34,6 +36,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Clip="{TemplateBinding BorderClipRect}">
+
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -179,7 +182,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-
     </Style>
-
 </ResourceDictionary>

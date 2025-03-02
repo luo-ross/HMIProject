@@ -1,4 +1,5 @@
 ﻿using RS.Commons;
+using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,38 @@ namespace RS.Widgets.Controls
     public class RSUserControl : ContentControl
     {
         private RSLoading PART_Loading;
-        public RSMessageBox MessageBox;
+        private RSMessageBox PART_MessageBox;
+        private RSWindow ParentWin;
         public RSModal PART_Modal;
+
+        public IMessageBox MessageBox
+        {
+            get
+            {
+                return this.PART_MessageBox;
+            }
+        }
+
+        public IMessageBox WinMessageBox
+        {
+            get
+            {
+                return new RSWinMessageBox()
+                {
+                    Owner = this.ParentWin,
+                    Width = 350,
+                    Height = 250
+                };
+            }
+        }
+
         static RSUserControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSUserControl), new FrameworkPropertyMetadata(typeof(RSUserControl)));
+        }
+        public RSUserControl()
+        {
+            this.ParentWin = this.TryFindParent<RSWindow>();
         }
 
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
@@ -77,7 +105,6 @@ namespace RS.Widgets.Controls
                 this.PART_Modal.Visibility = Visibility.Collapsed;
             });
         }
-
         #endregion
 
 
@@ -85,9 +112,8 @@ namespace RS.Widgets.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as RSLoading ;
-            this.MessageBox = this.GetTemplateChild(nameof(this.MessageBox)) as RSMessageBox;
-
+            this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as RSLoading;
+            this.PART_MessageBox = this.GetTemplateChild(nameof(this.PART_MessageBox)) as RSMessageBox;
             this.PART_Modal = GetTemplateChild(nameof(PART_Modal)) as RSModal;
         }
 

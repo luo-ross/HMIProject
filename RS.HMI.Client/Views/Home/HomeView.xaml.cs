@@ -2,18 +2,20 @@
 using RS.Commons.Attributs;
 using RS.Widgets.Controls;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace RS.HMI.Client.Views.Home
 {
-   
+
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class HomeView : RSWindow
     {
-        private HomeViewModel ViewModel { get; set; }
+        public HomeViewModel ViewModel { get; set; }
         public HomeView()
         {
             InitializeComponent();
-            this.ViewModel=this.DataContext as HomeViewModel;
+            this.ViewModel = this.DataContext as HomeViewModel;
             this.SizeChanged += HomeView_SizeChanged;
         }
 
@@ -26,7 +28,7 @@ namespace RS.HMI.Client.Views.Home
 
         private unsafe void Button_Click(object sender, RoutedEventArgs e)
         {
-          
+
         }
 
         private async void BtnSearch_OnBtnSearchCallBack(string obj)

@@ -17,7 +17,7 @@
                             <ContentPresenter />
                             <rs:RSModal x:Name="PART_Modal" />
                             <rs:RSLoading x:Name="PART_Loading" />
-                            <rs:RSMessageBox x:Name="MessageBox" />
+                            <rs:RSMessageBox x:Name="PART_MessageBox" />
                             <rs:RSBorder
                                 x:Name="PART_LoadingBorder"
                                 Height="{TemplateBinding CaptionHeight}"
@@ -30,7 +30,7 @@
                         <Trigger SourceName="PART_Loading" Property="Visibility" Value="Visible">
                             <Setter TargetName="PART_LoadingBorder" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger SourceName="MessageBox" Property="Visibility" Value="Visible">
+                        <Trigger SourceName="PART_MessageBox" Property="Visibility" Value="Visible">
                             <Setter TargetName="PART_LoadingBorder" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>

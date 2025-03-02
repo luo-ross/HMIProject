@@ -90,8 +90,8 @@
     <Grid Background="#fff">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
             <Border x:Name="AdvertisingPageHost">
                 <Border.Background>
@@ -101,7 +101,7 @@
             <rs:RSUserControl x:Name="LoginForm" Grid.Column="1">
                 <Grid>
 
-                    <Border Padding="28,20,28,50">
+                    <Border Padding="28,30,28,50">
                         <Grid VerticalAlignment="Center">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -110,12 +110,13 @@
                             <StackPanel
                                 Grid.Row="0"
                                 Margin="0,0,0,35"
+                                HorizontalAlignment="Center"
                                 Orientation="Horizontal">
                                 <RadioButton
                                     x:Name="RadBtnLogin"
                                     Margin="0,3,14,3"
                                     HorizontalAlignment="Left"
-                                    Content="登录账号"
+                                    Content="登录"
                                     IsChecked="True"
                                     Style="{StaticResource RSApp.Styles.TabButtonStyle}">
                                     <RadioButton.Triggers>
@@ -127,7 +128,7 @@
                                 <RadioButton
                                     x:Name="RadBtnSignUp"
                                     Margin="14,3,14,3"
-                                    Content="注册新用户"
+                                    Content="注册"
                                     Style="{StaticResource RSApp.Styles.TabButtonStyle}">
                                     <RadioButton.Triggers>
                                         <EventTrigger RoutedEvent="RadioButton.Checked">
@@ -141,6 +142,7 @@
                                     <StackPanel Orientation="Vertical">
                                         <Grid Margin="0,5,0,5">
                                             <TextBox
+                                                Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
                                                 rs:TextBoxHelper.Watermark="请输入用户名"
@@ -151,6 +153,7 @@
 
                                         <Grid Margin="0,5,0,5">
                                             <PasswordBox
+                                                Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                                                 rs:PasswordBoxBindBehavior.Password="{Binding LoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
@@ -166,6 +169,7 @@
                                             </Grid.ColumnDefinitions>
                                             <TextBox
                                                 Grid.Column="0"
+                                                Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Verify}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
                                                 rs:TextBoxHelper.Watermark="请输入验证码"
@@ -232,6 +236,7 @@
                                             Click="BtnLogin_Click"
                                             Content="登录"
                                             Style="{StaticResource RSApp.LoginView.ButtonStyle}" />
+
                                     </StackPanel>
                                 </Grid>
 
@@ -239,6 +244,7 @@
                                     <StackPanel Orientation="Vertical">
                                         <Grid>
                                             <TextBox
+                                                Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
                                                 rs:TextBoxHelper.Watermark="请输入用户名"
@@ -248,6 +254,7 @@
                                         </Grid>
                                         <Grid Margin="0,5,0,5">
                                             <PasswordBox
+                                                Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                                                 rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
@@ -257,6 +264,7 @@
                                         </Grid>
                                         <Grid Margin="0,5,0,5">
                                             <PasswordBox
+                                                Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                                                 rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, ValidatesOnNotifyDataErrors=True}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
@@ -310,7 +318,14 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Style="{StaticResource RSApp.Styles.QRCodeLoginSwitchStyle}"
-                        WindowChrome.IsHitTestVisibleInChrome="True" />
+                        WindowChrome.IsHitTestVisibleInChrome="True">
+                        <ToggleButton.Foreground>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#198cff" />
+                                <GradientStop Offset="1" Color="#1afa29" />
+                            </LinearGradientBrush>
+                        </ToggleButton.Foreground>
+                    </ToggleButton>
                 </Grid>
 
             </rs:RSUserControl>
