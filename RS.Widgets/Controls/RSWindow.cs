@@ -16,6 +16,7 @@ namespace RS.Widgets.Controls
         private Button PART_BtnClose;
         private RSUserControl PART_WinContentHost;
 
+
         public IMessageBox MessageBox
         {
             get
@@ -38,6 +39,29 @@ namespace RS.Widgets.Controls
         }
 
 
+        private RSWinInfoBar rsWinInfoBar;
+
+        public RSWinInfoBar RSWinInfoBar
+        {
+            get
+            {
+                if (rsWinInfoBar == null)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        rsWinInfoBar = new RSWinInfoBar();
+                        rsWinInfoBar.Show();
+                    });
+                }
+                return rsWinInfoBar;
+            }
+
+
+        }
+
+
+
+
         static RSWindow()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWindow), new FrameworkPropertyMetadata(typeof(RSWindow)));
@@ -52,8 +76,14 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
+
+            this.Closing += RSWindow_Closing;
         }
 
+        private void RSWindow_Closing(object? sender, CancelEventArgs e)
+        {
+           this.RSWinInfoBar?.Close();
+        }
 
         [Description("服务连接是否成功")]
         public bool? IsServerConnectSuccess
@@ -229,7 +259,6 @@ namespace RS.Widgets.Controls
                 {
                     SystemCommands.RestoreWindow(this);
                 }
-
             }
 
         }

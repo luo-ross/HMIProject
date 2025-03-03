@@ -153,5 +153,7 @@ namespace RS.Widgets.Controls
             element.SetValue(IsShowValueProperty, value);
         }
 
+
+     
     }
 }

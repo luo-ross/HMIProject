@@ -15,6 +15,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSUserControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSVerificationTextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWindow.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWinInfoBar.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWinMessageBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
