@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RS.Models;
+using RS.Widgets.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +35,10 @@ namespace RS.Widgets.Models
         public DateTime CreateTime { get; set; }
 
 
-        private MessageBoxImage infoType;
+        private InfoType infoType;
         /// <summary>
         /// 消息类型>
-        public MessageBoxImage InfoType
+        public InfoType InfoType
         {
             get
             {

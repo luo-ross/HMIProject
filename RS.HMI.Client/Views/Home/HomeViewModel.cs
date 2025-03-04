@@ -6,37 +6,6 @@ using System.Windows.Input;
 
 namespace RS.HMI.Client.Views.Home
 {
-    public class User : NotifyBase
-    {
-        public int Id { get; set; }
-     
-
-        private string name;
-        /// <summary>
-        /// 中文
-        /// </summary>
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                this.OnPropertyChanged(ref name, value);
-            }
-        }
-
-        private string name2;
-        /// <summary>
-        /// 英文
-        /// </summary>
-        public string Name2
-        {
-            get { return name2; }
-            set
-            {
-                this.OnPropertyChanged(ref name2, value);
-            }
-        }
-    }
 
 
     public class HomeViewModel : NotifyBase
@@ -46,16 +15,7 @@ namespace RS.HMI.Client.Views.Home
         {
             this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
 
-            this.DataList = new ObservableCollection<User>();
-            for (int i = 0; i < 10; i++)
-            {
-                this.DataList.Add(new User()
-                {
-                    Id = i + 1,
-                    Name = $"Ross{i + 1}",
-                    Name2 = $"螺丝{i + 1}",
-                });
-            }
+
         }
 
 
@@ -71,16 +31,7 @@ namespace RS.HMI.Client.Views.Home
         }
 
 
-        private ObservableCollection<User> dataList;
 
-        public ObservableCollection<User> DataList
-        {
-            get { return dataList; }
-            set
-            {
-                this.OnPropertyChanged(ref dataList, value);
-            }
-        }
 
 
         private bool CanBtnClick(object arg)
@@ -130,56 +81,72 @@ namespace RS.HMI.Client.Views.Home
             }
         }
 
-        //private ObservableCollection<string> serialPortNameList;
-        ///// <summary>
-        ///// 串口测试数据
-        ///// </summary>
-        //public ObservableCollection<string> SerialPortNameList
-        //{
-        //    get
-        //    {
-        //        if (serialPortNameList == null)
-        //        {
-        //            // 获取所有可用串口
-        //            var portList = SerialPort.GetPortNames().ToList();
-        //            serialPortNameList = new ObservableCollection<string>(portList);
+        private ObservableCollection<TreeModel> treeModelList;
 
-        //            for (int i = 0; i < 5; i++)
-        //            {
-        //                serialPortNameList.Add($@"Com{i + 1}");
-        //            }
-        //        }
-        //        return serialPortNameList;
-        //    }
-        //    set
-        //    {
-        //        this.OnPropertyChanged(ref serialPortNameList, value);
-        //    }
-        //}
+        public ObservableCollection<TreeModel> TreeModelList
+        {
+            get
+            {
+                if (treeModelList==null)
+                {
+                    treeModelList = new ObservableCollection<TreeModel>();
+                }
+
+                treeModelList.Add(new TreeModel()
+                {
+                    TreeName = "快速访问",
+                    TreeIcon = "/Assets/test.png",
+                });
+                treeModelList.Add(new TreeModel()
+                {
+                    TreeName = "OneDrive-Personal",
+                    TreeIcon = "/Assets/test.png",
+                });
+                treeModelList.Add(new TreeModel()
+                {
+                    TreeName = "此电脑",
+                    TreeIcon = "/Assets/test.png",
+                    Children = new ObservableCollection<TreeModel>()
+                {
+                    new TreeModel()
+            {
+                TreeName = "3D对象",
+                TreeIcon = "/Assets/test.png",
+                Children= new ObservableCollection<TreeModel>()
+                {
+                    new TreeModel()
+            {
+                TreeName = "OneDrive-Personal",
+                TreeIcon = "/Assets/test.png",
+            }
+                }
+            },
+                           new TreeModel()
+            {
+                TreeName = "视频",
+                TreeIcon = "/Assets/test.png",
+            },
+                }
+                });
+
+                treeModelList.Add(new TreeModel()
+                {
+                    TreeName = "网络",
+                    TreeIcon = "/Assets/test.png",
+                });
+                treeModelList.Add(new TreeModel()
+                {
+                    TreeName = "Linux",
+                    TreeIcon = "/Assets/test.png",
+                });
+
+                return treeModelList;
+            }
+            set { treeModelList = value; }
+        }
 
 
 
-
-
-        //private ObservableCollection< CommuStation> commuStationList;
-        ///// <summary>
-        ///// 通讯站列表
-        ///// </summary>
-        //public ObservableCollection<CommuStation> CommuStationList
-        //{
-        //    get
-        //    {
-        //        if (commuStationList == null)
-        //        {
-        //            commuStationList = new ObservableCollection<CommuStation>();
-        //        }
-        //        return commuStationList;
-        //    }
-        //    set
-        //    {
-        //        this.OnPropertyChanged(ref commuStationList, value);
-        //    }
-        //}
 
 
 

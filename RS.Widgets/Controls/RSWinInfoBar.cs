@@ -1,8 +1,12 @@
-﻿using RS.Widgets.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RS.Commons.Attributs;
+using RS.Widgets.Enums;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +17,15 @@ using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
 namespace RS.Widgets.Controls
 {
+    [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public class RSWinInfoBar : Window
     {
+        /// <summary>
+        /// 这里是线程安全的数据
+        /// </summary>
         public ConcurrentBag<InfoBarModel> InfoBarModelDataSource { get; set; }
 
-        public CancellationTokenSource InfoBarCTS { get; set; }
+        public CancellationTokenSource HandleInfoBarCTS { get; set; }
 
         static RSWinInfoBar()
         {
@@ -26,84 +34,94 @@ namespace RS.Widgets.Controls
 
         public RSWinInfoBar()
         {
+            this.InfoBarModelDataSource = new ConcurrentBag<InfoBarModel>();
+            this.HandleInfoBarCTS = new CancellationTokenSource();
             this.WindowStyle = WindowStyle.None;
             this.AllowsTransparency = true;
             this.Topmost = true;
             this.Loaded += RSWinInfoBar_Loaded;
-            this.ShowInTaskbar = true;
+            this.ShowInTaskbar = false;
             this.InfoBarModelList = new ObservableCollection<InfoBarModel>();
             this.Closing += RSWinInfoBar_Closing;
+            this.Show();
         }
 
         private void RSWinInfoBar_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.InfoBarCTS?.Cancel();
+            this.HandleInfoBarCTS?.Cancel();
+
+
         }
 
         private void HandleInfoBarAsync()
         {
-            InfoBarModelDataSource = new ConcurrentBag<InfoBarModel>();
-            InfoBarCTS = new CancellationTokenSource();
             Task.Factory.StartNew(async () =>
             {
-                while (!this.InfoBarCTS.Token.IsCancellationRequested)
+                try
                 {
-                 
-                    if (InfoBarModelDataSource.Count > 0 && InfoBarModelDataSource.TryTake(out InfoBarModel infoBarModel))
+                    while (!this.HandleInfoBarCTS.Token.IsCancellationRequested)
                     {
+
+                        if (InfoBarModelDataSource.Count > 0 && InfoBarModelDataSource.TryTake(out InfoBarModel infoBarModel))
+                        {
+                            //添加消息
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                this.InfoBarModelList.Add(infoBarModel);
+                            });
+                        }
+                        else
+                        {
+                            await Task.Delay(100, this.HandleInfoBarCTS.Token);
+                        }
+
+
+                        var infoBarModelList = new List<InfoBarModel>();
                         //添加消息
                         this.Dispatcher.Invoke(() =>
                         {
-                            this.InfoBarModelList.Add(infoBarModel);
+                            infoBarModelList = this.InfoBarModelList.ToList();
                         });
-                    }
-                    else
-                    {
-                        await Task.Delay(100, InfoBarCTS.Token);
-                    }
 
-
-                    var infoBarModelList = new List<InfoBarModel>();
-                    //添加消息
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        infoBarModelList = this.InfoBarModelList.ToList();
-                    });
-
-                    if (infoBarModelList.Count == 0)
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            this.Visibility = Visibility.Collapsed;
-                        });
-                    }
-                    else
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            this.Visibility = Visibility.Visible;
-                        });
-                    }
-
-                    //移除消息
-                    foreach (var item in infoBarModelList)
-                    {
-                        if (this.InfoBarCTS.Token.IsCancellationRequested)
-                        {
-                            break;
-                        }
-                        if (DateTime.Now.Subtract(item.CreateTime).TotalMilliseconds >= 5000)
+                        if (infoBarModelList.Count == 0)
                         {
                             this.Dispatcher.Invoke(() =>
                             {
-                                this.InfoBarModelList.Remove(item);
+                                this.Visibility = Visibility.Collapsed;
                             });
                         }
-                    }
+                        else
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                this.Visibility = Visibility.Visible;
+                            });
+                        }
 
-                  
+                        //移除消息
+                        foreach (var item in infoBarModelList)
+                        {
+                            if (this.HandleInfoBarCTS.Token.IsCancellationRequested)
+                            {
+                                break;
+                            }
+                            if (DateTime.Now.Subtract(item.CreateTime).TotalMilliseconds >= 5000)
+                            {
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    this.InfoBarModelList.Remove(item);
+                                });
+                            }
+                        }
+
+
+                    }
                 }
-            }, InfoBarCTS.Token);
+                catch (TaskCanceledException)
+                {
+
+                }
+            }, this.HandleInfoBarCTS.Token);
         }
 
         private void RSWinInfoBar_Loaded(object sender, RoutedEventArgs e)
@@ -135,17 +153,19 @@ namespace RS.Widgets.Controls
             var hWnd = new WindowInteropHelper(this).Handle;
             int nWidth = (int)SystemParameters.WorkArea.Width;  // 新的宽度
             int nHeight = (int)SystemParameters.WorkArea.Height; // 新的高度
-            Ross.SetWindowPos(new HWND(hWnd), HWND.Null, (nWidth - 300)/2, 0, 300, nHeight, SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
+            //Ross.SetWindowPos(new HWND(hWnd), HWND.Null, (nWidth - 300)/2, 0, 300, nHeight, SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
+            Ross.SetWindowPos(new HWND(hWnd), HWND.Null, nWidth - 300, 0, 300, nHeight, SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
         }
 
-        public void AddMessageAsync(string message, MessageBoxImage infoType)
+        public void AddMessageAsync(string message, InfoType infoType = InfoType.None)
         {
             var infoBarModel = new InfoBarModel()
             {
                 CreateTime = DateTime.Now,
                 Message = message,
-                InfoType= infoType
+                InfoType = infoType
             };
+
 
             this.InfoBarModelDataSource.Add(infoBarModel);
         }

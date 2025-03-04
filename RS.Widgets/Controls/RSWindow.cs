@@ -38,25 +38,12 @@ namespace RS.Widgets.Controls
             }
         }
 
-
-        private RSWinInfoBar rsWinInfoBar;
-
         public RSWinInfoBar RSWinInfoBar
         {
             get
             {
-                if (rsWinInfoBar == null)
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        rsWinInfoBar = new RSWinInfoBar();
-                        rsWinInfoBar.Show();
-                    });
-                }
-                return rsWinInfoBar;
+                return ApplicationBase.RSWinInfoBar;
             }
-
-
         }
 
 
@@ -82,7 +69,7 @@ namespace RS.Widgets.Controls
 
         private void RSWindow_Closing(object? sender, CancelEventArgs e)
         {
-           this.RSWinInfoBar?.Close();
+            this.RSWinInfoBar?.Close();
         }
 
         [Description("服务连接是否成功")]

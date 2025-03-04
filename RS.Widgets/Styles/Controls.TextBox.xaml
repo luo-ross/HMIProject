@@ -124,6 +124,7 @@
                         <Trigger Property="IsReadOnly" Value="True">
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

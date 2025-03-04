@@ -25,7 +25,7 @@ namespace RS.Widgets.Controls
 
         public RSWinMessageBox(Window owner = null)
         {
-            this.Width = 500;
+            this.Width = 600;
             this.Height = 350;
             this.BorderCornerRadius = new CornerRadius(10);
             this.Owner = owner;

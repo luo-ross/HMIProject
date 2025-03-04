@@ -100,8 +100,7 @@
             </Border>
             <rs:RSUserControl x:Name="LoginForm" Grid.Column="1">
                 <Grid>
-
-                    <Border Padding="28,30,28,50">
+                    <Border x:Name="PART_PasswordLoginArea" Padding="28,30,28,50">
                         <Grid VerticalAlignment="Center">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -292,12 +291,22 @@
                                 </Grid>
                             </Grid>
                         </Grid>
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=TogBtnQRCode, Path=IsChecked}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
                     </Border>
 
                     <Border
+                        x:Name="PART_QRCodeLoginArea"
                         Padding="28,30,28,50"
-                        Background="#fff"
-                        Visibility="{Binding ElementName=TogBtnQRCode, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Background="#fff">
                         <rs:RSQRCodeLogin
                             x:Name="QRCodeLogin"
                             Margin="0,25,0,0"
@@ -308,6 +317,17 @@
                             OnQueryQRCodeLoginStatus="QRCodeLogin_OnQueryQRCodeLoginStatus"
                             QRCodeHeight="200"
                             QRCodeWidth="200" />
+
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=TogBtnQRCode, Path=IsChecked}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
                     </Border>
 
                     <ToggleButton
@@ -327,7 +347,6 @@
                         </ToggleButton.Foreground>
                     </ToggleButton>
                 </Grid>
-
             </rs:RSUserControl>
         </Grid>
     </Grid>

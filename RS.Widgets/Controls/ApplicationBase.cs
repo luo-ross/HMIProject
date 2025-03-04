@@ -49,9 +49,14 @@ namespace RS.Widgets.Controls
         /// </summary>
         public static ApplicationViewModel ViewModel;
 
+        /// <summary>
+        /// 服务器连接是否成功
+        /// </summary>
+        public static RSWinInfoBar RSWinInfoBar;
+
         #region 事件处理
         public event Action OnServerDisconnect;
-        public event Action OnServerConnect ;
+        public event Action OnServerConnect;
         #endregion
 
 
@@ -72,7 +77,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 心跳检测取消标记
         /// </summary>
-        private CancellationTokenSource heartbeatCancellation;
+        private CancellationTokenSource heartbeatCancellation= new CancellationTokenSource();
 
         static ApplicationBase()
         {
@@ -80,10 +85,7 @@ namespace RS.Widgets.Controls
         }
         public ApplicationBase()
         {
-            heartbeatCancellation = new CancellationTokenSource();
         }
-
-
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -92,8 +94,6 @@ namespace RS.Widgets.Controls
 
             this.RegisterUnknowExceptionsHandler();
             this.ConfigServices();
-
-
             // 启动心跳检测线程
             this.StartHeartbeatCheck();
         }
@@ -158,8 +158,7 @@ namespace RS.Widgets.Controls
             // 停止心跳检测线程
             heartbeatCancellation?.Cancel();
             heartbeatThread?.Join(1000);
-
-            base.OnExit(e);
+            RSWinInfoBar?.Close();
         }
 
 
@@ -178,7 +177,11 @@ namespace RS.Widgets.Controls
             //注册当前程序集服务
             Builder.Services.RegisterService(Assembly.GetExecutingAssembly());
 
+
+            #region 这里是用户自己添加需要的服务
             OnConfigServices?.Invoke(Builder);
+            #endregion
+
 
             //注册Id生成器
             Builder.Services.AddIdGen(1, () => new IdGeneratorOptions());
@@ -201,6 +204,10 @@ namespace RS.Widgets.Controls
                 }
             });
 
+            #region 注册当前程序集的服务
+            Builder.Services.RegisterService(Assembly.GetExecutingAssembly());
+            #endregion
+
             AppHost = Builder.Build();
             //这个必须放在builder.Build()后才生效
             ServiceProviderExtensions.ConfigServices(AppHost);
@@ -213,6 +220,10 @@ namespace RS.Widgets.Controls
             //初始化RSA 秘钥
             InitRSASecurityKeyData();
 
+
+            #region 初始化InfoBar消息窗体
+            RSWinInfoBar= AppHost.Services.GetRequiredService<RSWinInfoBar>();
+            #endregion
             AppHost.RunAsync();
         }
         #endregion

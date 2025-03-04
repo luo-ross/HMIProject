@@ -14,12 +14,12 @@
     <Brush x:Key="RSApp.Styles.Orange">#f76707</Brush>
     <Brush x:Key="RSApp.Styles.Yellow">#f59f00</Brush>
     <Brush x:Key="RSApp.Styles.Lime">#74b816</Brush>
-    <Brush x:Key="RSApp.Styles.Green">#2fb344</Brush>
+    <Brush x:Key="RSApp.Styles.Green">#06b025</Brush>
     <Brush x:Key="RSApp.Styles.Teal">#0ca678</Brush>
     <Brush x:Key="RSApp.Styles.Cyan">#17a2b8</Brush>
     <Brush x:Key="RSApp.Styles.Primary">#206bc4</Brush>
     <Brush x:Key="RSApp.Styles.Secondary">#656d77</Brush>
-    <Brush x:Key="RSApp.Styles.Success">#2fb344</Brush>
+    <Brush x:Key="RSApp.Styles.Success">#06b025</Brush>
     <Brush x:Key="RSApp.Styles.Info">#4299e1</Brush>
     <Brush x:Key="RSApp.Styles.Warning">#f76707</Brush>
     <Brush x:Key="RSApp.Styles.Danger">#d63939</Brush>

@@ -4,6 +4,7 @@
     xmlns:model="clr-namespace:RS.Widgets.Models"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.BootStyle.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
@@ -21,7 +22,6 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <StackPanel>
-
                             <ScrollViewer>
                                 <ItemsControl ItemsSource="{TemplateBinding InfoBarModelList}">
                                     <ItemsControl.ItemsPanel>
@@ -35,8 +35,7 @@
                                                 x:Name="PART_Border"
                                                 Margin="0,3,0,3"
                                                 Padding="5"
-                                                Background="#fff"
-                                                CornerRadius="5"
+                                                CornerRadius="3"
                                                 Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
@@ -45,68 +44,51 @@
                                                     </Grid.ColumnDefinitions>
                                                     <Path
                                                         x:Name="PART_Icon"
-                                                        Width="25"
-                                                        Height="25"
+                                                        Width="15"
+                                                        Height="15"
                                                         Margin="5,0,10,0"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         Fill="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground}"
                                                         Stretch="Fill" />
-                                                    <TextBlock Grid.Column="1" Text="{Binding Message}" />
+                                                    <TextBlock
+                                                        x:Name="PART_TxtMessage"
+                                                        Grid.Column="1"
+                                                        Foreground="#fff"
+                                                        Text="{Binding Message}" />
                                                 </Grid>
                                             </Border>
 
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding InfoType}" Value="None">
+                                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.Success}" />
+                                                    <Setter TargetName="PART_TxtMessage" Property="Foreground" Value="#fff" />
                                                     <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
 
                                                 <DataTrigger Binding="{Binding InfoType}" Value="Error">
 
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#D63939" />
+                                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.Danger}" />
                                                     <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
+                                                    <Setter TargetName="PART_TxtMessage" Property="Foreground" Value="#fff" />
                                                     <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                                                 </DataTrigger>
 
-                                                <DataTrigger Binding="{Binding InfoType}" Value="Hand">
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#D63939" />
-                                                    <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
-                                                    <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
-                                                </DataTrigger>
 
-                                                <DataTrigger Binding="{Binding InfoType}" Value="Stop">
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#D63939" />
-                                                    <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
-                                                    <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding InfoType}" Value="Exclamation">
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#F76707" />
-                                                    <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
-                                                    <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Warning}" />
-                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding InfoType}" Value="Warning">
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#F76707" />
+                                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.Warning}" />
                                                     <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Warning}" />
                                                     <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
+                                                    <Setter TargetName="PART_TxtMessage" Property="Foreground" Value="#fff" />
                                                 </DataTrigger>
 
                                                 <DataTrigger Binding="{Binding InfoType}" Value="Information">
                                                     <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#4299e1" />
-                                                    <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Information}" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding InfoType}" Value="Asterisk">
-                                                    <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#4299e1" />
+                                                    <Setter TargetName="PART_TxtMessage" Property="Foreground" Value="#fff" />
+                                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.Info}" />
                                                     <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Information}" />
                                                 </DataTrigger>
 
-                                                <DataTrigger Binding="{Binding InfoType}" Value="Question">
-                                                    <Setter TargetName="PART_Icon" Property="Fill" Value="#fff" />
-                                                    <Setter TargetName="PART_Border" Property="Background" Value="#4299e1" />
-                                                    <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Question}" />
-                                                </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
