@@ -146,6 +146,7 @@ namespace RS.Widgets.Controls
                 Message = message,
                 InfoType= infoType
             };
+
             this.InfoBarModelDataSource.Add(infoBarModel);
         }
     }
