@@ -64,7 +64,6 @@ namespace RS.HMI.CommuLib.Controls
 
             this.Loaded += RSSerialPort_Loaded;
             this.ModbusCommuConfigModelList = new ObservableCollection<ModbusCommuConfigModel>();
-
         }
 
         public static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
@@ -75,11 +74,12 @@ namespace RS.HMI.CommuLib.Controls
         private Button PART_BtnConnect;
         private Button PART_BtnDisConnect;
         private Button PART_BtnSaveConfig;
+        private RSWindow ParentWin;
 
 
         private void RSSerialPort_Loaded(object sender, RoutedEventArgs e)
         {
-
+            this.ParentWin = this.TryFindParent<RSWindow>();
         }
 
         #region Command事件
@@ -1909,6 +1909,7 @@ namespace RS.HMI.CommuLib.Controls
             {
                 try
                 {
+                    this.ParentWin.ShowInfoAsync("设备开始连接！！！！！");
                     busRtuClient?.Close();
                     busRtuClient = new ModbusRtu();
                     busRtuClient.AddressStartWithZero = true;

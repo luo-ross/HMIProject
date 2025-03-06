@@ -45,27 +45,23 @@ namespace RS.HMI.Client.Views.Logoin
 
         }
 
-        private async void LoginView_Loaded(object sender, RoutedEventArgs e)
+        private  void LoginView_Loaded(object sender, RoutedEventArgs e)
         {
-            var operateResult = await this.InvokeLoadingActionAsync(async () =>
-            {
-
-                var getSessionModelResult = await this.GeneralService.GetSessionModelAsync();
-                if (!getSessionModelResult.IsSuccess)
-                {
-                    this.Dispatcher.Invoke(async () =>
-                    {
-                        await this.MessageBox.ShowAsync(getSessionModelResult.Message);
-                    });
-                }
-
-
-                return OperateResult.CreateSuccessResult();
-            }, new LoadingConfig()
-            {
-                LoadingType = LoadingType.RotatingAnimation,
-            });
-
+            //var operateResult = await this.InvokeLoadingActionAsync(async () =>
+            //{
+            //    var getSessionModelResult = await this.GeneralService.GetSessionModelAsync();
+            //    if (!getSessionModelResult.IsSuccess)
+            //    {
+            //        this.Dispatcher.Invoke(async () =>
+            //        {
+            //            await this.MessageBox.ShowAsync(getSessionModelResult.Message);
+            //        });
+            //    }
+            //    return OperateResult.CreateSuccessResult();
+            //}, new LoadingConfig()
+            //{
+            //    LoadingType = LoadingType.RotatingAnimation,
+            //});
         }
 
         /// <summary>
@@ -81,9 +77,15 @@ namespace RS.HMI.Client.Views.Logoin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnVerify_Click(object sender, RoutedEventArgs e)
+        private async void BtnVerify_Click(object sender, RoutedEventArgs e)
         {
+            var operateResult = await this.LoginForm.InvokeLoadingActionAsync(async () =>
+            {
 
+                await Task.Delay(2000);
+
+                return OperateResult.CreateSuccessResult();
+            });
         }
 
         /// <summary>
@@ -92,12 +94,12 @@ namespace RS.HMI.Client.Views.Logoin
         private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
 
-            this.RSWinInfoBar.AddMessageAsync($"这是消息触发，5秒后自动消失", InfoType.None);
-            this.RSWinInfoBar.AddMessageAsync($"这是消息触发，5秒后自动消失", InfoType.Warning);
-            this.RSWinInfoBar.AddMessageAsync($"这是消息触发，5秒后自动消失", InfoType.Information);
-            this.RSWinInfoBar.AddMessageAsync($"这是消息触发，5秒后自动消失", InfoType.Error);
+            //this.RSWinInfoBar.ShowInfoAsync($"这是消息触发1，5秒后自动消失", InfoType.None);
 
-            var result = await this.MessageBox.ShowAsync("代码解释\r\n数据准备：创建一个 Person 对象的列表，并将其设置为 ItemsControl 的 ItemsSource。\r\n遍历项容器：使用 for 循环遍历 ItemsControl 的所有项，通过 ItemContainerGenerator.ContainerFromIndex 方法获取每个项对应的 ContentPresenter 容器。\r\n查找模板内的控件：定义 FindVisualChild 方法，使用 VisualTreeHelper 递归查找容器内指定名称的 TextBlock 控件。\r\n处理控件内容：若找到控件，则输出其文本内容。\r\n通过以上步骤，你就可以在后台循环遍历 ItemsControl 下的每一个模板内容，并对其中的控件进行操作。\r\nSystem.InvalidOperationException:“在显示 Window 或调用 WindowInteropHelper.EnsureHandle 之后，无法更改 AllowsTransparency。”\r\n这个 System.InvalidOperationException 异常提示表明，在窗口已经显示或者调用了 WindowInteropHelper.EnsureHandle 方法之后，你尝试修改 AllowsTransparency 属性，而 WPF 不允许在这种情况下更改该属性。下面为你详细解释问题原因并提供解决方案。\r\n问题原因\r\nAllowsTransparency 属性用于指定窗口是否允许透明效果。在 WPF 中，窗口的句柄（Handle）一旦创建，就不能再修改 AllowsTransparency 属性，因为该属性的更改会影响窗口的样式和行为，而窗口句柄创建后其样式是固定的。窗口显示或者调用 WindowInteropHelper.EnsureHandle 方法时，窗口句柄会被创建，此时再修改 AllowsTransparency 就会抛出异常。\r\n解决方案\r\n1. 在窗口显示之前设置 AllowsTransparency\r\n确保在调用 Window.Show、Window.ShowDialog 或者窗口自动显示（如在 MainWindow 启动时）之前设置 AllowsTransparency 属性。\r\n示例代码：\r\ncsharp\r\nusing System.Windows;\r\n\r\nnamespace WpfApp\r\n{\r\n    public partial class MainWindow : Window\r\n    {\r\n        public MainWindow()\r\n        {\r\n            InitializeComponent();\r\n\r\n            // 在窗口显示之前设置 AllowsTransparency\r\n            AllowsTransparency = true;\r\n            Background = System.Windows.Media.Brushes.Transparent;\r\n            WindowStyle = WindowStyle.None;\r\n        }\r\n    }\r\n}", "错误提示", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+            this.ShowInfoAsync($"这是消息触发1，5秒后自动消失", InfoType.Warning);
+
+
+            var result = await this.MessageBox.ShowAsync("代码解释\r\n数据准备：创建一个 Person 对象的列表，并将其设置为 ItemsControl 的 ItemsSource。\r\n遍历项容器：使用 for 循环遍历 ItemsControl 的所有项，通过 ItemContainerGenerator.ContainerFromIndex 方法获取每个项对应的 ContentPresenter 容器。\r\n查找模板内的控件：定义 FindVisualChild 方法，使用 VisualTreeHelper 递归查找容器内指定名称的 TextBlock 控件。\r\n处理控件内容：若找到控件，则输出其文本内容。\r\n通过以上步骤，你就可以在后台循环遍历 ItemsControl 下的每一个模板内容，并对其中的控件进行操作。\r\nSystem.InvalidOperationException:“在显示 Window 或调用 WindowInteropHelper.EnsureHandle 之后，无法更改 AllowsTransparency。”\r\n这个 System.InvalidOperationException 异常提示表明，在窗口已经显示或者调用了 WindowInteropHelper.EnsureHandle 方法之后，你尝试修改 AllowsTransparency 属性，而 WPF 不允许在这种情况下更改该属性。下面为你详细解释问题原因并提供解决方案。\r\n问题原因\r\nAllowsTransparency 属性用于指定窗口是否允许透明效果。在 WPF 中，窗口的句柄（Handle）一旦创建，就不能再修改 AllowsTransparency 属性，因为该属性的更改会影响窗口的样式和行为，而窗口句柄创建后其样式是固定的。窗口显示或者调用 WindowInteropHelper.EnsureHandle 方法时，窗口句柄会被创建，此时再修改 AllowsTransparency 就会抛出异常。\r\n解决方案\r\n1. 在窗口显示之前设置 AllowsTransparency\r\n确保在调用 Window.Show、Window.ShowDialog 或者窗口自动显示（如在 MainWindow 启动时）之前设置 AllowsTransparency 属性。\r\n示例代码：\r\ncsharp\r\nusing System.Windows;\r\n\r\nnamespace WpfApp\r\n{\r\n    public partial class MainWindow : Window\r\n    {\r\n        public MainWindow()\r\n        {\r\n            InitializeComponent();\r\n\r\n            // 在窗口显示之前设置 AllowsTransparency\r\n            AllowsTransparency = true;\r\n            Background = System.Windows.Media.Brushes.Transparent;\r\n            WindowStyle = WindowStyle.None;\r\n        }\r\n    }\r\n}", "错误提示");
             if (result == MessageBoxResult.OK)
             {
 

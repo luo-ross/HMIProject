@@ -12,10 +12,10 @@ namespace RS.Commons
     [ServiceInjectConfig(typeof(ILogService), ServiceLifetime.Singleton)]
     public class LogService : ILogService
     {
-        public ILogger<LogService> Logger { get; set; }
-        public static ConcurrentBag<LogModel> LogModelDataSource { get; set; }
-        public Thread HandleLogThread { get; set; }
-        public bool IsEndLogEvent { get; set; }
+        private ILogger<LogService> Logger;
+        private static ConcurrentBag<LogModel> LogModelDataSource;
+        private Thread HandleLogThread;
+        private bool IsEndLogEvent;
         static LogService()
         {
             LogModelDataSource = new ConcurrentBag<LogModel>();
@@ -23,10 +23,6 @@ namespace RS.Commons
         public LogService(ILogger<LogService> logger)
         {
             Logger = logger;
-        }
-
-        public void InitLogService()
-        {
             HandleLogThread = new Thread(HandleLogEvent);
             HandleLogThread.IsBackground = true;
             HandleLogThread.Start();

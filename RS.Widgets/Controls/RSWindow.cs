@@ -1,15 +1,18 @@
 ﻿using RS.Commons;
+using RS.Widgets.Enums;
 using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 
 namespace RS.Widgets.Controls
 {
-    public class RSWindow : RSWindowBase
+    public class RSWindow : RSWindowBase, IInfoBar
     {
         private Button PART_Minimize;
         private Button PART_BtnMaxRestore;
@@ -38,7 +41,7 @@ namespace RS.Widgets.Controls
             }
         }
 
-        public RSWinInfoBar RSWinInfoBar
+        public IInfoBar RSWinInfoBar
         {
             get
             {
@@ -47,7 +50,7 @@ namespace RS.Widgets.Controls
         }
 
 
-
+        private DispatcherTimer InfoBarTimer;
 
         static RSWindow()
         {
@@ -69,19 +72,66 @@ namespace RS.Widgets.Controls
 
         private void RSWindow_Closing(object? sender, CancelEventArgs e)
         {
-            this.RSWinInfoBar?.Close();
+            ((RSWinInfoBar)this.RSWinInfoBar)?.Close();
         }
 
-        [Description("服务连接是否成功")]
-        public bool? IsServerConnectSuccess
+
+        [Description("消息")]
+        public InfoBarModel InfoBarModel
         {
-            get { return (bool?)GetValue(IsServerConnectSuccessProperty); }
-            set { SetValue(IsServerConnectSuccessProperty, value); }
+            get { return (InfoBarModel)GetValue(InfoBarModelProperty); }
+            set { SetValue(InfoBarModelProperty, value); }
+        }
+        public static readonly DependencyProperty InfoBarModelProperty =
+            DependencyProperty.Register("InfoBarModel", typeof(InfoBarModel), typeof(RSWindow), new PropertyMetadata(null, OnInfoBarModelPropertyChanged));
+
+        private static void OnInfoBarModelPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var rsWindow = d as RSWindow;
+            if (rsWindow.InfoBarModel == null)
+            {
+                return;
+            }
+            rsWindow.InfoBarTimer?.Stop();
+            // 初始化定时器
+            rsWindow.InfoBarTimer = new DispatcherTimer();
+            // 设置定时器的间隔为 3 秒
+            rsWindow.InfoBarTimer.Interval = TimeSpan.FromSeconds(5);
+            // 为定时器的 Tick 事件添加处理程序
+            rsWindow.InfoBarTimer.Tick += rsWindow.InfoBarTimer_Tick;
+            // 启动定时器
+            rsWindow.InfoBarTimer.Start();
         }
 
-        public static readonly DependencyProperty IsServerConnectSuccessProperty =
-            DependencyProperty.Register("IsServerConnectSuccess", typeof(bool?), typeof(RSWindow), new PropertyMetadata(null));
+        private void InfoBarTimer_Tick(object? sender, EventArgs e)
+        {
+            this.InfoBarTimer.Stop();
+            this.InfoBarTimer = null;
+            this.Dispatcher.Invoke(() =>
+            {
+                this.InfoBarModel = null;
+            });
+        }
 
+
+        /// <summary>
+        /// 添加消息
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="infoType"></param>
+        public void ShowInfoAsync(string message, InfoType infoType = InfoType.None)
+        {
+            var infoBarModel = new InfoBarModel()
+            {
+                CreateTime = DateTime.Now,
+                Message = message,
+                InfoType = infoType
+            };
+            this.Dispatcher.InvokeAsync(() =>
+            {
+                this.InfoBarModel = infoBarModel;
+            });
+        }
 
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {
@@ -119,10 +169,6 @@ namespace RS.Widgets.Controls
         {
             SystemCommands.ShowSystemMenu(this, this.PointToScreen(Mouse.GetPosition(this)));
         }
-
-
-
-
 
         private void CanRestoreWindow(object sender, CanExecuteRoutedEventArgs e)
         {

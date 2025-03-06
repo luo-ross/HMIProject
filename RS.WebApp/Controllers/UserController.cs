@@ -37,6 +37,8 @@ namespace RS.WebApp.Controllers
             return await UserService.GetUsersAsync(this.SessionId);
         }
 
+
+
         /// <summary>
         /// 验证登录
         /// </summary>

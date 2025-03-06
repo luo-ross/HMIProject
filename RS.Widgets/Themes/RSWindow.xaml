@@ -24,7 +24,7 @@
     </Style>
 
     <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWindow}">
-        <Setter Property="IsServerConnectSuccess" Value="{Binding Source={x:Static rs:ApplicationBase.ViewModel}, Path=IsServerConnectSuccess}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWindow}">
@@ -43,23 +43,15 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Border
+                                    x:Name="PART_InfoBorder"
                                     Padding="5"
                                     VerticalAlignment="Top"
-                                    Background="{DynamicResource RSApp.Styles.Warning}">
-                                    <Border.Style>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsServerConnectSuccess}" Value="False">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
+                                    Background="#eee"
+                                    Visibility="Visible">
                                     <TextBlock
+                                        x:Name="PART_TxtInfo"
                                         HorizontalAlignment="Center"
-                                        Foreground="#fff"
-                                        Text="连接服务器失败，请检查网络连接!" />
+                                        Foreground="#333" />
                                 </Border>
                                 <rs:RSUserControl x:Name="PART_WinContentHost" Grid.Row="1">
                                     <Grid>
@@ -158,26 +150,60 @@
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
                             <Setter TargetName="PART_Client" Property="Panel.ZIndex" Value="-1" />
                         </Trigger>
-
                         <Trigger Property="IsFitSystem" Value="False">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="1" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="1" />
                         </Trigger>
-
                         <Trigger Property="ResizeMode" Value="NoResize">
                             <Setter TargetName="PART_Minimize" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-
-
                         <Trigger Property="ResizeMode" Value="CanResizeWithGrip">
                             <Setter TargetName="PART_BtnResize" Property="Visibility" Value="Visible" />
                         </Trigger>
-
                         <Trigger Property="Icon" Value="{x:Null}">
                             <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
 
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel}" Value="{x:Null}">
+                            <Setter TargetName="PART_InfoBorder" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel.InfoType}" Value="None">
+                            <Setter TargetName="PART_InfoBorder" Property="Background" Value="{StaticResource RSApp.Styles.Success}" />
+                            <Setter TargetName="PART_TxtInfo" Property="Foreground" Value="#fff" />
+                            <Setter TargetName="PART_TxtInfo" Property="Text" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=InfoBarModel.Message}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel.InfoType}" Value="Error">
+                            <Setter TargetName="PART_InfoBorder" Property="Background" Value="{StaticResource RSApp.Styles.Danger}" />
+                            <Setter TargetName="PART_TxtInfo" Property="Foreground" Value="#fff" />
+                            <Setter TargetName="PART_TxtInfo" Property="Text" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=InfoBarModel.Message}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel.InfoType}" Value="Warning">
+                            <Setter TargetName="PART_InfoBorder" Property="Background" Value="{StaticResource RSApp.Styles.Warning}" />
+                            <Setter TargetName="PART_TxtInfo" Property="Foreground" Value="#fff" />
+                            <Setter TargetName="PART_TxtInfo" Property="Text" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=InfoBarModel.Message}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel.InfoType}" Value="Information">
+                            <Setter TargetName="PART_InfoBorder" Property="Background" Value="{StaticResource RSApp.Styles.Info}" />
+                            <Setter TargetName="PART_TxtInfo" Property="Foreground" Value="#fff" />
+                            <Setter TargetName="PART_TxtInfo" Property="Text" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=InfoBarModel.Message}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Source={x:Static rs:ApplicationBase.ViewModel}, Path=IsServerConnectSuccess}" Value="False">
+                            <Setter TargetName="PART_InfoBorder" Property="Background" Value="{StaticResource RSApp.Styles.Warning}" />
+                            <Setter TargetName="PART_InfoBorder" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_TxtInfo" Property="Text" Value="与服务器连接失败，服务不可用!" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Source={x:Static rs:ApplicationBase.ViewModel}, Path=IsNetworkAvailable}" Value="False">
+                            <Setter TargetName="PART_InfoBorder" Property="Background" Value="{StaticResource RSApp.Styles.Warning}" />
+                            <Setter TargetName="PART_InfoBorder" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_TxtInfo" Property="Text" Value="与服务器连接失败,请检查你的网络!" />
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

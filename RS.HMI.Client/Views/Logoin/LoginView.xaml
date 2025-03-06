@@ -93,12 +93,15 @@
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
-            <Border x:Name="AdvertisingPageHost">
+            <Border x:Name="AdvertisingPageHost" Grid.ColumnSpan="2">
                 <Border.Background>
-                    <ImageBrush ImageSource="/Assets/login-left.jpg" />
+                    <ImageBrush ImageSource="https://img.tukuppt.com/bg_grid/00/45/55/G2iLF9SGJO.jpg!/fh/350" />
                 </Border.Background>
             </Border>
-            <rs:RSUserControl x:Name="LoginForm" Grid.Column="1">
+            <rs:RSUserControl
+                x:Name="LoginForm"
+                Grid.Column="1"
+                Background="#fff">
                 <Grid>
                     <Border x:Name="PART_PasswordLoginArea" Padding="28,30,28,50">
                         <Grid VerticalAlignment="Center">

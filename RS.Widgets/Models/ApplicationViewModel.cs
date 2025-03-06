@@ -25,5 +25,38 @@ namespace RS.Widgets.Models
                 OnPropertyChanged(ref isServerConnectSuccess, value);
             }
         }
+
+        private bool? isNetworkAvailable;
+        /// <summary>
+        /// 网络是否可用
+        /// </summary>
+        public bool? IsNetworkAvailable
+        {
+            get
+            {
+                return isNetworkAvailable;
+            }
+            set
+            {
+                OnPropertyChanged(ref isNetworkAvailable, value);
+            }
+        }
+
+
+        private bool isGetSessionModelSuccess;
+        /// <summary>
+        /// 是否成功获取会话
+        /// </summary>
+        public bool IsGetSessionModelSuccess
+        {
+            get
+            {
+                return isGetSessionModelSuccess;
+            }
+            set
+            {
+                OnPropertyChanged(ref isGetSessionModelSuccess, value);
+            }
+        }
     }
 }

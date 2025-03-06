@@ -13,7 +13,7 @@
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="Padding" Value="3,3,3,3" />
-        <Setter Property="Foreground" Value="#1A1A1A" />
+        <!--<Setter Property="Foreground" Value="#1A1A1A" />-->
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.ControlTemplate.DefaultDataError}" />
         <Style.Triggers>

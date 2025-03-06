@@ -5,10 +5,6 @@
     /// </summary>
     public interface ILogService
     {
-        /// <summary>
-        /// 初始化日志服务
-        /// </summary>
-        void InitLogService();
 
         /// <summary>
         /// 异常消息日志

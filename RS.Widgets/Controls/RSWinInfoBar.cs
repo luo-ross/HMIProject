@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RS.Commons.Attributs;
 using RS.Widgets.Enums;
+using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Concurrent;
@@ -18,7 +19,7 @@ using Windows.Win32.UI.WindowsAndMessaging;
 namespace RS.Widgets.Controls
 {
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
-    public class RSWinInfoBar : Window
+    public class RSWinInfoBar : Window, IInfoBar
     {
         /// <summary>
         /// 这里是线程安全的数据
@@ -49,8 +50,6 @@ namespace RS.Widgets.Controls
         private void RSWinInfoBar_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             this.HandleInfoBarCTS?.Cancel();
-
-
         }
 
         private void HandleInfoBarAsync()
@@ -113,11 +112,13 @@ namespace RS.Widgets.Controls
                                 });
                             }
                         }
-
-
                     }
                 }
                 catch (TaskCanceledException)
+                {
+
+                }
+                catch (InvalidOperationException)
                 {
 
                 }
@@ -132,8 +133,9 @@ namespace RS.Widgets.Controls
         }
 
 
-
-
+        /// <summary>
+        /// 消息显示列表
+        /// </summary>
         public ObservableCollection<InfoBarModel> InfoBarModelList
         {
             get { return (ObservableCollection<InfoBarModel>)GetValue(InfoBarModelListProperty); }
@@ -144,9 +146,9 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("InfoBarModelList", typeof(ObservableCollection<InfoBarModel>), typeof(RSWinInfoBar), new PropertyMetadata(null));
 
 
-
-
-
+        /// <summary>
+        /// 更新消息窗体的位置
+        /// </summary>
         private void RefreshWindowSizeAndLocation()
         {
             // 使用 WindowInteropHelper 获取窗口句柄
@@ -157,7 +159,12 @@ namespace RS.Widgets.Controls
             Ross.SetWindowPos(new HWND(hWnd), HWND.Null, nWidth - 300, 0, 300, nHeight, SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
         }
 
-        public void AddMessageAsync(string message, InfoType infoType = InfoType.None)
+        /// <summary>
+        /// 添加消息
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="infoType"></param>
+        public void ShowInfoAsync(string message, InfoType infoType = InfoType.None)
         {
             var infoBarModel = new InfoBarModel()
             {
@@ -165,8 +172,6 @@ namespace RS.Widgets.Controls
                 Message = message,
                 InfoType = infoType
             };
-
-
             this.InfoBarModelDataSource.Add(infoBarModel);
         }
     }

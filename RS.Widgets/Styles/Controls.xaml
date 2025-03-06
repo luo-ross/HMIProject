@@ -28,11 +28,11 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tooltip.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tree.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    <Style BasedOn="{StaticResource RSApp.Styles.FormTextBlockStyle}" TargetType="{x:Type TextBlock}" />
     <Style BasedOn="{StaticResource RSApp.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.ComboBoxStyle}" TargetType="{x:Type ComboBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.GroupBoxStyle}" TargetType="{x:Type GroupBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.MenuItemStyle}" TargetType="{x:Type MenuItem}" />
     <Style BasedOn="{StaticResource RSApp.Styles.SliderStyle}" TargetType="{x:Type Slider}" />
     <Style BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}" />
-    <Style BasedOn="{StaticResource RSApp.Styles.FormTextBlockStyle}" TargetType="{x:Type TextBlock}" />
 </ResourceDictionary>

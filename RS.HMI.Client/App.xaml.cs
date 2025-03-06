@@ -12,16 +12,14 @@ namespace RS.HMI.Client
 
     public partial class App : ApplicationBase
     {
-
         public App()
         {
-
+            //配置依赖注入服务
+            this.OnConfigIocServices += App_OnConfigIocServices;
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //配置服务
-            this.OnConfigServices += App_OnConfigServices;
             base.OnStartup(e);
             var loginView = AppHost.Services.GetRequiredService<LoginView>();
             loginView.Show();
@@ -29,8 +27,9 @@ namespace RS.HMI.Client
             //homeView.Show();
         }
 
+      
 
-        private void App_OnConfigServices(HostApplicationBuilder builder)
+        private void App_OnConfigIocServices(HostApplicationBuilder builder)
         {
             //注册当前程序集服务
             builder.Services.RegisterBLLService();
