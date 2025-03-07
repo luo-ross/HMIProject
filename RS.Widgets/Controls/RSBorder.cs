@@ -71,60 +71,6 @@ namespace RS.Widgets.Controls
             }
         }
 
-
-        //#region 自定义Command 需要继承ICommandSource
-
-        //public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
-        //   nameof(Command), typeof(ICommand), typeof(RSBorder),
-        //   new PropertyMetadata(null, new PropertyChangedCallback(CommandChanged)));
-
-        //public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(
-        //    nameof(CommandParameter), typeof(object), typeof(RSBorder),
-        //    new PropertyMetadata(null));
-
-        //public static readonly DependencyProperty CommandTargetProperty = DependencyProperty.Register(
-        //   nameof(CommandTarget), typeof(IInputElement), typeof(RSBorder),
-        //    new PropertyMetadata(null));
-
-        //public ICommand Command
-        //{
-        //    get { return (ICommand)GetValue(CommandProperty); }
-        //    set { SetValue(CommandProperty, value); }
-        //}
-
-        //public object CommandParameter
-        //{
-        //    get { return GetValue(CommandParameterProperty); }
-        //    set { SetValue(CommandParameterProperty, value); }
-        //}
-
-        //public IInputElement CommandTarget
-        //{
-        //    get { return (IInputElement)GetValue(CommandTargetProperty); }
-        //    set { SetValue(CommandTargetProperty, value); }
-        //}
-
-        //private static void CommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    var commandBorder = (RSBorder)d;
-        //    if (e.OldValue != null)
-        //    {
-        //        ((ICommand)e.OldValue).CanExecuteChanged -= commandBorder.CanExecuteChanged;
-        //    }
-        //    if (e.NewValue != null)
-        //    {
-        //        ((ICommand)e.NewValue).CanExecuteChanged += commandBorder.CanExecuteChanged;
-        //    }
-        //}
-        //private void CanExecuteChanged(object sender, EventArgs e)
-        //{
-        //    if (Command != null)
-        //    {
-        //        IsEnabled = Command.CanExecute(CommandParameter);
-        //    }
-        //}
-        //#endregion
-
         #region 自定义双击事件
 
         public static readonly RoutedEvent PreviewMouseDoubleClickEvent = EventManager.RegisterRoutedEvent("PreviewMouseDoubleClick", RoutingStrategy.Direct, typeof(MouseButtonEventHandler), typeof(RSBorder));

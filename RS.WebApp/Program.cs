@@ -106,12 +106,11 @@ namespace RS.WebApp
                 string applicationDiscriminator = configuration["ConnectionStrings:ApplicationDiscriminator"];
                 setupAction.ApplicationDiscriminator = applicationDiscriminator;
             }).PersistKeysToFileSystem(new DirectoryInfo(KeysRepository))
-              .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
-              {
-                  EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
-                  ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
-              })
-              .SetDefaultKeyLifetime(TimeSpan.FromDays(7));
+            .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
+            {
+                EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+                ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+            }).SetDefaultKeyLifetime(TimeSpan.FromDays(7));
 
             //AddAuthentication 是 ASP.NET Core 中用于配置身份验证服务的一个方法。
             //它属于 ASP.NET Core 的身份验证和授权框架，用于在应用程序中启用和配置多种身份验证方案。
@@ -199,10 +198,6 @@ namespace RS.WebApp
 
             //这个必须放在builder.Build()后才生效
             ServiceProviderExtensions.ConfigServices(AppHost);
-
-            //启动日志后台线程服务
-            var logService = AppHost.Services.GetRequiredService<ILogService>();
-            logService.InitLogService();
 
             //配置HTTP请求管道。
             if (AppHost.Environment.IsDevelopment())

@@ -17,7 +17,6 @@ namespace RS.WebApp.Controllers
         public GeneralController(IGeneralService generalService, ICryptographyService cryptographyService,ILogService logService) 
         {
             this.GeneralService = generalService;
-            this.GeneralService = generalService;
             this.LogService = logService;
             this.CryptographyService = cryptographyService;
         }

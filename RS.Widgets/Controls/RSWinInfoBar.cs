@@ -82,20 +82,20 @@ namespace RS.Widgets.Controls
                             infoBarModelList = this.InfoBarModelList.ToList();
                         });
 
-                        if (infoBarModelList.Count == 0)
-                        {
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                this.Visibility = Visibility.Collapsed;
-                            });
-                        }
-                        else
-                        {
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                this.Visibility = Visibility.Visible;
-                            });
-                        }
+                        //if (infoBarModelList.Count == 0)
+                        //{
+                        //    this.Dispatcher.Invoke(() =>
+                        //    {
+                        //        this.Visibility = Visibility.Collapsed;
+                        //    });
+                        //}
+                        //else
+                        //{
+                        //    this.Dispatcher.Invoke(() =>
+                        //    {
+                        //        this.Visibility = Visibility.Visible;
+                        //    });
+                        //}
 
                         //移除消息
                         foreach (var item in infoBarModelList)

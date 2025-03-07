@@ -11,6 +11,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Assets\img1.jpg" />
+		<None Remove="Assets\img2.jpg" />
+		<None Remove="Assets\img3.jpg" />
+		<None Remove="Assets\img4.jpg" />
+		<None Remove="Assets\img5.jpg" />
 		<None Remove="Assets\login-bg.jpg" />
 		<None Remove="Assets\login-left.jpg" />
 		<None Remove="Assets\logo.ico" />
@@ -66,6 +71,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Assets\img1.jpg">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\img2.jpg">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\img3.jpg">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\img4.jpg">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\img5.jpg">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Assets\login-bg.jpg" />
 		<Resource Include="Assets\login-left.jpg" />
 		<Resource Include="Assets\logo.ico" />

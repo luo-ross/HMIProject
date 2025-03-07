@@ -1909,7 +1909,7 @@ namespace RS.HMI.CommuLib.Controls
             {
                 try
                 {
-                    this.ParentWin.ShowInfoAsync("设备开始连接！！！！！");
+                 
                     busRtuClient?.Close();
                     busRtuClient = new ModbusRtu();
                     busRtuClient.AddressStartWithZero = true;

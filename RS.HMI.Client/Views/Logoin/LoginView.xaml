@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/HMIProject"
     Title="LoginView"
-    Width="860"
+    Width="1000"
     Height="495"
     BorderCornerRadius="10"
     IsFitSystem="True"
@@ -85,23 +85,101 @@
                     <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Visible}" />
                 </ObjectAnimationUsingKeyFrames>
             </Storyboard>
+
+
+            <Style x:Key="RSApp.Styles.SwiperSlideStyle" TargetType="{x:Type Border}">
+                <Setter Property="Margin" Value="0,0,60,0" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="Width" Value="300" />
+                <Setter Property="Height" Value="400" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Effect" Value="{StaticResource RSApp.Styles.DefaultDropShadowEffect}" />
+            </Style>
+
+            <ControlTemplate x:Key="RSApp.ControlTemplate.SwiperSlideTemplate" TargetType="{x:Type ContentControl}">
+                <Border
+                    x:Name="SwiperSlide1"
+                    RenderTransformOrigin="0.5,0.5"
+                    Style="{StaticResource RSApp.Styles.SwiperSlideStyle}">
+                    <Border.Background>
+                        <ImageBrush ImageSource="/Assets/img1.jpg" Stretch="UniformToFill" />
+                    </Border.Background>
+                    <Border CornerRadius="0,0,15,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                <GradientStop Offset="1" Color="#002c5364" />
+                                <GradientStop Offset="0.5" Color="#00203a43" />
+                                <GradientStop Offset="0" Color="#0f2027" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel VerticalAlignment="Bottom">
+                            <Border
+                                Padding="20,7,25,7"
+                                HorizontalAlignment="Left"
+                                Background="#62667f"
+                                CornerRadius="0,20,20,0">
+                                <TextBlock
+                                    FontSize="13"
+                                    Foreground="#fff"
+                                    Text="D O M E S T I C" />
+                            </Border>
+                            <Border Padding="20,25,40,25">
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="0,0,0,15"
+                                        FontFamily="Open Sans"
+                                        FontSize="22"
+                                        FontWeight="DemiBold"
+                                        Foreground="#fff"
+                                        Text="Enjoy the exotic of sunny Hawaii"
+                                        TextWrapping="WrapWithOverflow" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path
+                                            Width="25"
+                                            Height="25"
+                                            Data="{StaticResource RSApp.Icons.Location}"
+                                            Fill="#fff" />
+
+                                        <TextBlock
+                                            FontSize="16"
+                                            Foreground="#fff"
+                                            Text="Maui,Hawaii " />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <TranslateTransform X="0" Y="0" />
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                            <RotateTransform Angle="0" />
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                </Border>
+            </ControlTemplate>
         </ResourceDictionary>
     </rs:RSWindow.Resources>
-    <Grid Background="#fff">
+    <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
-            <Border x:Name="AdvertisingPageHost" Grid.ColumnSpan="2">
+            <!--<Border x:Name="AdvertisingPageHost" Grid.ColumnSpan="2">
                 <Border.Background>
                     <ImageBrush ImageSource="https://img.tukuppt.com/bg_grid/00/45/55/G2iLF9SGJO.jpg!/fh/350" />
                 </Border.Background>
-            </Border>
+            </Border>-->
+            <rs:RSCarousel Background="#2196f3" CarouselSliderList="{Binding CarouselSliderList}" />
+
+
             <rs:RSUserControl
                 x:Name="LoginForm"
                 Grid.Column="1"
-                Background="#fff">
+                Background="#fff"
+                Visibility="Collapsed">
                 <Grid>
                     <Border x:Name="PART_PasswordLoginArea" Padding="28,30,28,50">
                         <Grid VerticalAlignment="Center">
