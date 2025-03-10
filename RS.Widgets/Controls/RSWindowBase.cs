@@ -23,6 +23,14 @@ namespace RS.Widgets.Controls
             this.SizeChanged += RSWindowBase_SizeChanged;
             this.StateChanged += RSWindow_StateChanged;
             this.Activated += RSWindowBase_Activated;
+            this.Loaded += RSWindowBase_Loaded;
+        }
+
+        
+
+        private void RSWindowBase_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.RefreshWindowSizeAndLocation();
         }
 
         private void RSWindowBase_Activated(object? sender, EventArgs e)

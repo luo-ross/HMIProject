@@ -72,13 +72,6 @@
                                     </Border>
                                 </StackPanel>
                             </Border>
-                            <Border.RenderTransform>
-                                <TransformGroup>
-                                    <TranslateTransform X="0" Y="0" />
-                                    <ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Scale}" ScaleY="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Scale}" />
-                                    <RotateTransform Angle="0" />
-                                </TransformGroup>
-                            </Border.RenderTransform>
                             <Border.Effect>
                                 <BlurEffect Radius="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=BlurRadius}" />
                             </Border.Effect>
@@ -87,15 +80,7 @@
                         <Border x:Name="PART_BlurBorder" Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}" />
                     </Grid>
 
-                    <ControlTemplate.Triggers>
-                        <!--<Trigger Property="IsBlur" Value="True">
-                            <Setter TargetName="PART_Border" Property="Effect">
-                                <Setter.Value>
-                                    <BlurEffect Radius="3" />
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>-->
-                    </ControlTemplate.Triggers>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

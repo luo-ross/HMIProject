@@ -13,6 +13,8 @@
     BorderCornerRadius="10"
     IsFitSystem="True"
     ResizeMode="NoResize"
+    WindowState="Maximized"
+    IsMaxsizedFullScreen="False"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <rs:RSWindow.DataContext>
@@ -172,7 +174,10 @@
                     <ImageBrush ImageSource="https://img.tukuppt.com/bg_grid/00/45/55/G2iLF9SGJO.jpg!/fh/350" />
                 </Border.Background>
             </Border>-->
-            <rs:RSCarousel Background="#2196f3" CarouselSliderList="{Binding CarouselSliderList}" />
+            <rs:RSCarousel
+                Grid.ColumnSpan="2"
+                Background="#2196f3"
+                CarouselSliderList="{Binding CarouselSliderList}" />
 
 
             <rs:RSUserControl

@@ -18,6 +18,9 @@ namespace RS.Widgets.Controls
         }
 
 
+        public int Id { get; set; }
+
+
         [Description("图像资源绝对路径")]
         public string ImageSource
         {
@@ -64,19 +67,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("Location", typeof(string), typeof(RSCarouselSlider), new PropertyMetadata(null));
 
 
-
-        [Description("等比例缩放")]
-        public double Scale
-        {
-            get { return (double)GetValue(ScaleProperty); }
-            set { SetValue(ScaleProperty, value); }
-        }
-        public static readonly DependencyProperty ScaleProperty =
-            DependencyProperty.Register("Scale", typeof(double), typeof(RSCarouselSlider), new PropertyMetadata(1D));
-
-
-
-
         [Description("模糊度")]
         public double BlurRadius
         {
@@ -86,8 +76,6 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty BlurRadiusProperty =
             DependencyProperty.Register("BlurRadius", typeof(double), typeof(RSCarouselSlider), new PropertyMetadata(0D));
-
-
 
 
         public override void OnApplyTemplate()
