@@ -16,6 +16,9 @@ using RS.Widgets.Models;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Windows.Media.Media3D;
+using System.Windows.Controls.Primitives;
+using NPOI.SS.Formula.Functions;
+using NPOI.POIFS.Properties;
 
 namespace RS.Widgets.Controls
 {
@@ -79,11 +82,32 @@ namespace RS.Widgets.Controls
         private static void CarouselSliderListPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var rsCarousel = d as RSCarousel;
+
+            //根据用户传递过来的数据需要处理一下
+            rsCarousel.DataInit();
             rsCarousel?.RefeshCarousel();
         }
 
-        private List<RSCarouselSlider> DataList1 = new List<RSCarouselSlider>();
-        private List<RSCarouselSlider> DataList2 = new List<RSCarouselSlider>();
+
+        private void DataInit()
+        {
+            var count = this.CarouselSliderList.Count;
+
+            int middleIndex = this.CarouselSliderList.Count / 2;
+            // 获取前半部分
+            this.LeftDataList = this.CarouselSliderList.Take(middleIndex).ToList();
+            // 获取后半部分
+            this.RightDataList = this.CarouselSliderList.Skip(middleIndex).ToList();
+        }
+
+        /// <summary>
+        /// 缩放后的轮廓图片高度差
+        /// </summary>
+        public int SliderScaleHeightDiff = 60;
+
+
+        private List<CarouselSlider> RightDataList = new List<CarouselSlider>();
+        private List<CarouselSlider> LeftDataList = new List<CarouselSlider>();
 
         private void RefeshCarousel()
         {
@@ -95,34 +119,70 @@ namespace RS.Widgets.Controls
             {
                 return;
             }
-            this.PART_Canvas.Children.Clear();
-
 
             //获取容器的宽度和高度
             var canvasWidth = this.PART_Canvas.ActualWidth;
             var canvasHeight = this.PART_Canvas.ActualHeight;
             //获取Slider的长宽
 
-            for (int i = 0; i < CarouselSliderList.Count; i++)
-            {
-                var item = CarouselSliderList[i];
-                RSCarouselSlider rsCarouselSlider = new RSCarouselSlider();
-                rsCarouselSlider.Name = item.Name;
-                rsCarouselSlider.Background = (Brush)new BrushConverter().ConvertFrom(item.Background);
-                rsCarouselSlider.BlurRadius = 5;
-                rsCarouselSlider.Caption = item.Caption;
-                rsCarouselSlider.Description = item.Description;
-                rsCarouselSlider.ImageSource = item.ImageSource;
-                rsCarouselSlider.Location = item.Location;
-                rsCarouselSlider.DragDelta += RsCarouselSlider_DragDelta;
-                rsCarouselSlider.Width = this.SliderWidth;
-                rsCarouselSlider.Height = this.SliderHeight;
-                DataList1.Add(rsCarouselSlider);
-                this.PART_Canvas.Children.Add(rsCarouselSlider);
+            var viewCenterX = canvasWidth / 2;
+            var viewCenterY = canvasHeight / 2;
 
-                if (i>0)
+            int middleIndex = this.CarouselSliderList.Count / 2;
+
+            //直线方程的K值
+            double k = SliderScaleHeightDiff / this.SliderWidth; // 斜率等于对边比邻边
+
+            var canvasTop = canvasHeight / 2 - this.SliderHeight / 2;
+            var x = -this.SliderWidth / 2;
+            var y = this.SliderHeight;
+            var b = y - k * x;
+            //得到整个图像最大长度的一半
+            var halfLength = Math.Abs(-b / k);
+
+            for (int i = 0; i < this.CarouselSliderList.Count; i++)
+            {
+
+                var item = this.CarouselSliderList[i];
+                item.Width = this.SliderWidth;
+                item.Height = this.SliderHeight;
+                item.CanvasTop = canvasTop;
+                double percent = 0;
+                double transferX = 0;
+                if (i < middleIndex)
                 {
-                    rsCarouselSlider = new RSCarouselSlider();
+                    var distanceFromMiddle = Math.Abs(i - middleIndex) * item.Width + item.Width * 0.5;
+                    item.ZIndex = i;
+                    item.CanvasLeft = viewCenterX - distanceFromMiddle;
+                    percent = (distanceFromMiddle - item.Width * 0.5) / halfLength;
+                }
+                else if (i == middleIndex)
+                {
+                    item.ZIndex = i;
+                    item.CanvasLeft = viewCenterX - item.Width * 0.5;
+                }
+                else
+                {
+                    item.ZIndex = this.CarouselSliderList.Count - i - 1;
+                    item.CanvasLeft = viewCenterX + Math.Abs(i - middleIndex - 1) * item.Width + item.Width * 0.5;
+                    percent = Math.Abs(i - middleIndex) * item.Width / halfLength;
+                }
+                item.Scale = this.MaxScale - percent;
+                item.Scale = Math.Max(this.MinScale, item.Scale);
+
+                var widthScale = item.Width * item.Scale;
+                item.ScaleWidthDif = item.Width - widthScale;
+            }
+
+          
+
+          
+
+            foreach (var item in this.CarouselSliderList)
+            {
+                if (item.RSCarouselSlider == null)
+                {
+                    RSCarouselSlider rsCarouselSlider = new RSCarouselSlider();
                     rsCarouselSlider.Name = item.Name;
                     rsCarouselSlider.Background = (Brush)new BrushConverter().ConvertFrom(item.Background);
                     rsCarouselSlider.BlurRadius = 5;
@@ -133,49 +193,145 @@ namespace RS.Widgets.Controls
                     rsCarouselSlider.DragDelta += RsCarouselSlider_DragDelta;
                     rsCarouselSlider.Width = this.SliderWidth;
                     rsCarouselSlider.Height = this.SliderHeight;
-                    DataList2.Add(rsCarouselSlider);
-                    this.PART_Canvas.Children.Add(rsCarouselSlider);
+                    rsCarouselSlider.Tag = item;
+                    item.RSCarouselSlider = rsCarouselSlider;
+                    Canvas.SetLeft(rsCarouselSlider, item.CanvasLeft);
+                    Canvas.SetTop(rsCarouselSlider, item.CanvasTop);
+                    Panel.SetZIndex(rsCarouselSlider, item.ZIndex);
+                    this.PART_Canvas.Children.Add(item.RSCarouselSlider);
+
                 }
+
+                TransformGroup transformGroup = new TransformGroup();
+                item.RSCarouselSlider.RenderTransformOrigin = new Point(0.5, 0.5);
+                ScaleTransform scaleTransform = new ScaleTransform()
+                {
+                    ScaleX = item.Scale,
+                    ScaleY = item.Scale,
+                };
+                transformGroup.Children.Add(scaleTransform);
+                //TranslateTransform translateTransform = new TranslateTransform()
+                //{
+                //    X = transformX,
+                //};
+                //transformGroup.Children.Add(translateTransform);
+                item.RSCarouselSlider.RenderTransform = transformGroup;
             }
-           
+
+            //double canvasLeft = 0;
+            //double transformXTotal = 0;
+
+            //for (int i = 0; i < RightDataList.Count; i++)
+            //{
+            //    var item = RightDataList[i];
+            //    //如果是最中间这个不进行模糊
+            //    if (i == 0)
+            //    {
+            //        item.RSCarouselSlider.BlurRadius = 0;
+            //    }
+            //    this.SliderWidthAndHeightLimit(item.RSCarouselSlider);
+            //    this.SetCanvasLocation(item.RSCarouselSlider, RightDataList.Count, i, true, ref canvasLeft);
+            //    this.CalcuTransform(item.RSCarouselSlider, RightDataList.Count, i, true, ref transformXTotal);
+            //}
+
+            //transformXTotal = 0;
+
+            //for (int i = 0; i < LeftDataList.Count; i++)
+            //{
+            //    var item = LeftDataList[i];
+            //    this.SliderWidthAndHeightLimit(item.RSCarouselSlider);
+            //    this.SetCanvasLocation(item.RSCarouselSlider, LeftDataList.Count, i, false, ref canvasLeft);
+            //    this.CalcuTransform(item.RSCarouselSlider, LeftDataList.Count, i, false, ref transformXTotal);
+            //}
+
+        }
+
+        public double MaxScale = 1;
+        public double MinScale = 0.2;
 
 
+        /// <summary>
+        /// 计算缩放比例
+        /// </summary>
+        private void CalcuTransform(RSCarouselSlider item, int count, int i, bool isRightSide, ref double transformXTotal)
+        {
             //直接设置画布的总长度
             double drawMapWidth = 4000D;
-
-            double canvasLeft = 0;
-            double marginLeft = 20;
-            double maxScale = 1;
-            double minScale = 0.2;
-
-            double transformXTotal = 0;
+            double marginRight = 30;
+            double transformX = 0D;
             var halfDrawMapWidth = drawMapWidth / 2;
-            for (int i = 0; i < DataList1.Count; i++)
-            {
-                var item = DataList1[i];
 
-                //如果是最中间这个不进行模糊
+            var percent = (isRightSide ? i : i + 1) * this.SliderWidth / halfDrawMapWidth;
+            var scale = MaxScale - percent;
+            //缩放最小值0.2
+            scale = Math.Max(MinScale, scale);
+            var widthScale = item.Width * scale;
+            var widthDif = item.Width - widthScale;
+
+            if (isRightSide)
+            {
+                transformX = -widthDif / 2 - transformXTotal;
+                if (i == 1)
+                {
+                    transformX = transformX + marginRight;
+                }
+                else if (i > 1)
+                {
+                    transformX = transformX - marginRight;
+                }
+            }
+            else
+            {
+                transformX = widthDif / 2 + transformXTotal;
+
                 if (i == 0)
                 {
-                    item.BlurRadius = 0;
+                    transformX = transformX - marginRight;
                 }
-
-                //需要重新计算每一个Slider的默认长宽
-                var sliderWidth = item.Width;
-                var sliderHeight = item.Height;
-                if (sliderHeight > canvasHeight)
+                else
                 {
-                    item.Height = canvasHeight;
+                    transformX = transformX + marginRight;
                 }
-                if (sliderWidth > canvasWidth)
-                {
-                    item.Width = canvasWidth;
-                }
+            }
 
-                //canvasTop数值一致
-                var canvasTop = canvasHeight / 2 - item.Height / 2;
+            TransformGroup transformGroup = new TransformGroup();
+            item.RenderTransformOrigin = new Point(0.5, 0.5);
+            ScaleTransform scaleTransform = new ScaleTransform()
+            {
+                ScaleX = scale,
+                ScaleY = scale
+            };
+            transformGroup.Children.Add(scaleTransform);
+            TranslateTransform translateTransform = new TranslateTransform()
+            {
+                X = transformX,
+            };
+            transformGroup.Children.Add(translateTransform);
+            item.RenderTransform = transformGroup;
 
-                //canvasLeft动态计算
+            transformXTotal += widthDif;
+        }
+
+        /// <summary>
+        /// 轮廓图之间的高度差
+        /// </summary>
+        public int SliderHeightDif = 20;
+        /// <summary>
+        /// 计算每个控件在Canvas里左上角的坐标
+        /// </summary>
+        private void SetCanvasLocation(RSCarouselSlider item, int count, int i, bool isRightSide, ref double canvasLeft)
+        {
+            //获取容器的宽度和高度
+            var canvasWidth = this.PART_Canvas.ActualWidth;
+            var canvasHeight = this.PART_Canvas.ActualHeight;
+
+            //canvasTop数值一致
+            var canvasTop = canvasHeight / 2 - item.Height / 2;
+            int ZIndex = 0;
+            if (isRightSide)
+            {
+                ZIndex = count - i;
+
                 if (i == 0)
                 {
                     canvasLeft = canvasWidth / 2 - item.Width / 2;
@@ -184,70 +340,10 @@ namespace RS.Widgets.Controls
                 {
                     canvasLeft = canvasLeft + item.Width;
                 }
-
-                Canvas.SetLeft(item, canvasLeft);
-                Canvas.SetTop(item, canvasTop);
-                Panel.SetZIndex(item, DataList1.Count - i);
-                //获取Slider的中心点
-                var percent = (i * this.SliderWidth) / halfDrawMapWidth;
-                var scale = maxScale - percent;
-                //缩放最小值0.2
-                scale = Math.Max(minScale, scale);
-
-                item.RenderTransformOrigin = new Point(0.5, 0.5);
-
-                TransformGroup transformGroup = new TransformGroup();
-                ScaleTransform scaleTransform = new ScaleTransform()
-                {
-                    ScaleX = scale,
-                    ScaleY = scale
-                };
-                transformGroup.Children.Add(scaleTransform);
-
-                var widthScale = item.Width * scale;
-                var widthDif = item.Width - widthScale;
-
-                var transformX = -widthDif / 2 - transformXTotal;
-
-                if (i == 1)
-                {
-                    transformX = transformX + marginLeft;
-                }
-                else if (i > 1)
-                {
-                    transformX = transformX - marginLeft;
-                }
-
-                TranslateTransform translateTransform = new TranslateTransform()
-                {
-                    X = transformX,
-                };
-                transformGroup.Children.Add(translateTransform);
-                item.RenderTransform = transformGroup;
-
-                transformXTotal += widthDif;
             }
-
-            transformXTotal = 0;
-
-            for (int i = 0; i < DataList2.Count; i++)
+            else
             {
-                var item = DataList2[i];
-
-                //需要重新计算每一个Slider的默认长宽
-                if (item.Height > canvasHeight)
-                {
-                    item.Height = canvasHeight;
-                }
-                if (item.Width > canvasWidth)
-                {
-                    item.Width = canvasWidth;
-                }
-
-                //canvasTop数值一致
-                var canvasTop = canvasHeight / 2 - item.Height / 2;
-
-                //canvasLeft动态计算
+                ZIndex = count - i - 1;
                 if (i == 0)
                 {
                     canvasLeft = canvasWidth / 2 - item.Width / 2 - item.Width;
@@ -256,61 +352,79 @@ namespace RS.Widgets.Controls
                 {
                     canvasLeft = canvasLeft - item.Width;
                 }
+            }
+            Canvas.SetLeft(item, canvasLeft);
+            Canvas.SetTop(item, canvasTop);
+            Panel.SetZIndex(item, ZIndex);
+        }
 
-                Canvas.SetLeft(item, canvasLeft);
-                Canvas.SetTop(item, canvasTop);
-                Panel.SetZIndex(item, DataList2.Count - i - 1);
-                //获取Slider的中心点
-                var percent = ((i + 1) * this.SliderWidth) / halfDrawMapWidth;
-                var scale = maxScale - percent;
-                //缩放最小值0.2
-                scale = Math.Max(minScale, scale);
 
-                item.RenderTransformOrigin = new Point(0.5, 0.5);
+        /// <summary>
+        /// 重新计算Slider的宽和高
+        /// </summary>
+        /// <param name="item"></param>
+        private void SliderWidthAndHeightLimit(RSCarouselSlider item)
+        {
+            //获取容器的宽度和高度
+            var canvasWidth = this.PART_Canvas.ActualWidth;
+            var canvasHeight = this.PART_Canvas.ActualHeight;
+            //需要重新计算每一个Slider的默认长宽
+            if (item.Height > canvasHeight)
+            {
+                item.Height = canvasHeight;
+            }
+            if (item.Width > canvasWidth)
+            {
+                item.Width = canvasWidth;
+            }
+        }
 
-                TransformGroup transformGroup = new TransformGroup();
-                ScaleTransform scaleTransform = new ScaleTransform()
+
+        private void RsCarouselSlider_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var rsCarouselSlider = sender as RSCarouselSlider;
+
+            //获取容器的宽度和高度
+            var canvasWidth = this.PART_Canvas.ActualWidth;
+            var canvasHeight = this.PART_Canvas.ActualHeight;
+            //获取水平移动距离 这里可以直接通过水平移动值的正负判断是向左还是向右
+            //负值向左，正值向右
+            var horizontalChange = e.HorizontalChange;
+
+            double drawMapWidth = 4000D;
+            var halfDrawMapWidth = drawMapWidth / 2;
+            var viewCenterX = canvasWidth / 2;
+            var viewCenterY = canvasHeight / 2;
+
+
+            var allDataList = RightDataList.Concat(LeftDataList).ToList();
+
+            List<CarouselSlider> rightDataList = new List<CarouselSlider>();
+            List<CarouselSlider> leftDataList = new List<CarouselSlider>();
+
+            foreach (var item in allDataList)
+            {
+                var getLeft = Canvas.GetLeft(item.RSCarouselSlider);
+                var getTop = Canvas.GetTop(item.RSCarouselSlider);
+                getLeft += horizontalChange;
+                //获取中心点
+                var centerX = getLeft + item.RSCarouselSlider.Width / 2;
+                var centerY = getTop + item.RSCarouselSlider.Height / 2;
+                item.RSCarouselSlider.CenterPoint = new Point(centerX, centerY);
+                var centerXDif = centerX - viewCenterX;
+                if (centerXDif > 0)
                 {
-                    ScaleX = scale,
-                    ScaleY = scale
-                };
-                transformGroup.Children.Add(scaleTransform);
-
-                var widthScale = item.Width * scale;
-                var widthDif = item.Width - widthScale;
-
-                var transformX = widthDif / 2 + transformXTotal;
-
-                if (i == 0)
-                {
-                    transformX = transformX - marginLeft;
+                    rightDataList.Add(item);
                 }
                 else
                 {
-                    transformX = transformX + marginLeft;
+                    leftDataList.Add(item);
                 }
-                TranslateTransform translateTransform = new TranslateTransform()
-                {
-                    X = transformX,
-                };
-                transformGroup.Children.Add(translateTransform);
-                item.RenderTransform = transformGroup;
-                transformXTotal += widthDif;
             }
 
-            RereshCarouselSliderPosition();
-        }
+            this.RightDataList = rightDataList.OrderBy(t => t.RSCarouselSlider.CenterPoint.X).ToList();
+            this.LeftDataList = leftDataList.OrderByDescending(t => t.RSCarouselSlider.CenterPoint.X).ToList();
 
-
-        private void RereshCarouselSliderPosition()
-        {
-
-
-        }
-
-        private void RsCarouselSlider_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-            var sf = 1;
         }
 
         public override void OnApplyTemplate()

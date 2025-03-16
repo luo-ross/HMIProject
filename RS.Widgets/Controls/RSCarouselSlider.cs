@@ -17,8 +17,7 @@ namespace RS.Widgets.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSCarouselSlider), new FrameworkPropertyMetadata(typeof(RSCarouselSlider)));
         }
 
-
-        public int Id { get; set; }
+        public Point CenterPoint { get; set; }
 
 
         [Description("图像资源绝对路径")]
