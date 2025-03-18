@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RS.Widgets.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace RS.SetupApp.Controls
     /// <summary>
     /// QiyiMessageBox.xaml 的交互逻辑
     /// </summary>
-    public partial class QiyiMessageBox : Window
+    public partial class QiyiMessageBox : RSWindow
     {
         public QiyiMessageBox()
         {

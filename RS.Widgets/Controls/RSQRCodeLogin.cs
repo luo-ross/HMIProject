@@ -21,7 +21,6 @@ using ZXing.QrCode;
 
 namespace RS.Widgets.Controls
 {
-
     public class QRCodeLoginTask : IDisposable
     {
         private DispatcherTimer QueryQRCodeLoginStatusDispatcherTimer;
@@ -32,6 +31,8 @@ namespace RS.Widgets.Controls
         public RSQRCodeLogin.QRCodeAuthLoginSuccessEventHandler OnQRCodeAuthLoginSuccess;
         public RSQRCodeLogin.QueryQRCodeLoginStatusEventHandler OnQueryQRCodeLoginStatus;
         private bool IsEndQRCodeLogin = false;
+
+      
         public QRCodeLoginTask(RSQRCodeLogin rSQRCodeLogin)
         {
             RSQRCodeLogin = rSQRCodeLogin;
@@ -91,7 +92,7 @@ namespace RS.Widgets.Controls
             QueryQRCodeLoginStatusDispatcherTimer?.Stop();
             QueryQRCodeLoginStatusDispatcherTimer = null;
         }
-
+    
 
         private async void QueryQRCodeLoginStatusDispatcherTimer_Tick(object? sender, EventArgs e)
         {

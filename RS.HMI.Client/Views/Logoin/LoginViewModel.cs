@@ -146,6 +146,108 @@ namespace RS.HMI.Client.Views.Logoin
                         ImageSource = "/Assets/img5.jpg",
                         Location = "The Yucatan,Mexico ",
                     });
+
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider1",
+                        Caption = "native".ToUpper(),
+                        Background = "#1b7402",
+                        Description = "The most popular yachting destination",
+                        ImageSource = "/Assets/img1.jpg",
+                        Location = "Whitsunday Islands,Australia ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider2",
+                        Caption = "domestic".ToUpper(),
+                        Background = "#62667f",
+                        Description = "Enjoy the exotic of sunny Hawaii",
+                        ImageSource = "/Assets/img2.jpg",
+                        Location = "Maui,Hawaii ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider3",
+                        Caption = "subtropical".ToUpper(),
+                        Background = "#087ac4",
+                        Description = "The Island of Eternal Spring",
+                        ImageSource = "/Assets/img3.jpg",
+                        Location = "Lanzarote,Spanien ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider4",
+                        Caption = "history".ToUpper(),
+                        Background = "#b45205",
+                        Description = "Awesome Eiffel Tower",
+                        ImageSource = "/Assets/img4.jpg",
+                        Location = "Paris,France ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider5",
+                        Caption = "Mayans".ToUpper(),
+                        Background = "#087ac4",
+                        Description = "One of the safest states in Mexico",
+                        ImageSource = "/Assets/img5.jpg",
+                        Location = "The Yucatan,Mexico ",
+                    });
+
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider1",
+                        Caption = "native".ToUpper(),
+                        Background = "#1b7402",
+                        Description = "The most popular yachting destination",
+                        ImageSource = "/Assets/img1.jpg",
+                        Location = "Whitsunday Islands,Australia ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider2",
+                        Caption = "domestic".ToUpper(),
+                        Background = "#62667f",
+                        Description = "Enjoy the exotic of sunny Hawaii",
+                        ImageSource = "/Assets/img2.jpg",
+                        Location = "Maui,Hawaii ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider3",
+                        Caption = "subtropical".ToUpper(),
+                        Background = "#087ac4",
+                        Description = "The Island of Eternal Spring",
+                        ImageSource = "/Assets/img3.jpg",
+                        Location = "Lanzarote,Spanien ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider4",
+                        Caption = "history".ToUpper(),
+                        Background = "#b45205",
+                        Description = "Awesome Eiffel Tower",
+                        ImageSource = "/Assets/img4.jpg",
+                        Location = "Paris,France ",
+                    });
+
+                    carouselSliderList.Add(new CarouselSlider()
+                    {
+                        Name = "SwiperSlider5",
+                        Caption = "Mayans".ToUpper(),
+                        Background = "#087ac4",
+                        Description = "One of the safest states in Mexico",
+                        ImageSource = "/Assets/img5.jpg",
+                        Location = "The Yucatan,Mexico ",
+                    });
                 }
 
 

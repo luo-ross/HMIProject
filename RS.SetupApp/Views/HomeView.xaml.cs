@@ -1,30 +1,16 @@
 ﻿using IWshRuntimeLibrary;
 using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
-using NPOI.POIFS.FileSystem;
 using Ookii.Dialogs.Wpf;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
-using RS.Commons.Helper;
 using RS.SetupApp.Controls;
 using RS.SetupApp.Models;
 using RS.Widgets.Controls;
-using RS.Widgets.Models;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Resources;
-using System.Security;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms.Design;
 using System.Windows.Interop;
-using System.Windows.Media;
-using ZXing;
-using ZXing.Aztec.Internal;
 using File = System.IO.File;
 
 

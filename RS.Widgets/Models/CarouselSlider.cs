@@ -4,11 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace RS.Widgets.Models
 {
     public class CarouselSlider
     {
+        /// <summary>
+        /// 记录索引
+        /// </summary>
+        public int Index { get; set; }
         public string Name { get; set; }
 
         public string Caption { get; set; }
@@ -19,8 +24,11 @@ namespace RS.Widgets.Models
 
         public string Location { get; set; }
 
-        public double Scale { get; set; }
+        public double Scale { get; set; } = 1;
 
+        /// <summary>
+        /// 缩放后的宽度差
+        /// </summary>
         public double ScaleWidthDif { get; set; }
 
         public double TransformX { get; set; }
@@ -30,6 +38,7 @@ namespace RS.Widgets.Models
         public double CanvasTop { get; set; }
 
         public double Width { get; set; }
+
         public double Height { get; set; }
         public int ZIndex { get; set; }
 
@@ -38,6 +47,15 @@ namespace RS.Widgets.Models
         /// </summary>
         public string Background { get; set; }
 
+        /// <summary>
+        /// 模糊程度
+        /// </summary>
+        public double Blur { get; set; }
+
         public RSCarouselSlider RSCarouselSlider { get; set; }
+
+        public ScaleTransform ScaleTransform { get; set; }
+
+        public TranslateTransform TranslateTransform { get; set; }
     }
 }

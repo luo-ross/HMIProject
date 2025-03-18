@@ -26,8 +26,7 @@ namespace RS.HMI.Client
             //var homeView = AppHost.Services.GetRequiredService<HomeView>();
             //homeView.Show();
         }
-
-      
+     
 
         private void App_OnConfigIocServices(HostApplicationBuilder builder)
         {

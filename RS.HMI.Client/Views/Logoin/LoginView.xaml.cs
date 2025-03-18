@@ -13,6 +13,7 @@ using RS.Commons.Extensions;
 using RS.HMI.IBLL;
 using System.Drawing;
 using System.Windows.Forms;
+using System;
 
 namespace RS.HMI.Client.Views.Logoin
 {
@@ -42,10 +43,10 @@ namespace RS.HMI.Client.Views.Logoin
 
         private void LoginView_Closed(object? sender, EventArgs e)
         {
-
+        
         }
 
-        private  void LoginView_Loaded(object sender, RoutedEventArgs e)
+        private void LoginView_Loaded(object sender, RoutedEventArgs e)
         {
             //var operateResult = await this.InvokeLoadingActionAsync(async () =>
             //{

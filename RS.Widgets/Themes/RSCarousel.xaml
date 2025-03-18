@@ -12,7 +12,17 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
-                            <Canvas x:Name="PART_Canvas" />
+                            <Canvas x:Name="PART_Canvas" Background="LightSkyBlue" />
+
+                            <Border
+                                Width="1"
+                                HorizontalAlignment="Center"
+                                Background="#fff" />
+
+                            <Border
+                                Height="1"
+                                VerticalAlignment="Center"
+                                Background="#fff" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

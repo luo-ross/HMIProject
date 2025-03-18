@@ -30,7 +30,10 @@ namespace RS.Widgets.Controls
 
         private void RSWindowBase_Loaded(object sender, RoutedEventArgs e)
         {
-            this.RefreshWindowSizeAndLocation();
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.RefreshWindowSizeAndLocation();
+            }
         }
 
         private void RSWindowBase_Activated(object? sender, EventArgs e)
@@ -119,6 +122,20 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty BorderClipRectProperty =
             DependencyProperty.Register("BorderClipRect", typeof(Geometry), typeof(RSWindowBase), new PropertyMetadata(null));
+
+
+        [Description("是否显示窗体关闭放大缩小按钮")]
+        [Browsable(true)]
+        public bool IsHidenWinCommandBtn
+        {
+            get { return (bool)GetValue(IsHidenWinCommandBtnProperty); }
+            set { SetValue(IsHidenWinCommandBtnProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsHidenWinCommandBtnProperty =
+            DependencyProperty.Register("IsHidenWinCommandBtn", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
+
+
 
         /// <summary>
         /// 获取裁剪边框

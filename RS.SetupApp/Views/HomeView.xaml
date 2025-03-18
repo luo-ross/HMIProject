@@ -9,17 +9,13 @@
     Title="HomeView"
     Width="640"
     Height="460"
-    Foreground="#fff"
+    Background="#ffffff"
+    BorderCornerRadius="8"
+    Foreground="#333333"
     IsFitSystem="True"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <rs:RSWindow.Background>
-        <RadialGradientBrush GradientOrigin="0.5,0" RadiusX="0.8">
-            <GradientStop Offset="0" Color="#102020" />
-            <GradientStop Offset="0.8" Color="#111214" />
-        </RadialGradientBrush>
-    </rs:RSWindow.Background>
     <rs:RSWindow.DataContext>
         <local:HomeViewModel />
     </rs:RSWindow.DataContext>
@@ -80,8 +76,8 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="Foreground" Value="#fff" />
-                <Setter Property="Background" Value="#3e3f40" />
+                <!--<Setter Property="Foreground" Value="#333333" />-->
+                <!--<Setter Property="Background" Value="#3e3f40" />-->
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -99,11 +95,9 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#515253" />
+                                    <!--<Setter Property="Background" Value="#515253" />-->
                                     <Setter Property="Cursor" Value="Hand" />
                                 </Trigger>
-
-
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
@@ -111,7 +105,7 @@
             </Style>
 
             <Style x:Key="RSApp.Styles.HyplinkStyle" TargetType="{x:Type Hyperlink}">
-                <Setter Property="Foreground" Value="#75ffffff" />
+                <Setter Property="Foreground" Value="#333333" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="TextDecorations" Value="None" />
                 <Style.Triggers>
@@ -129,7 +123,7 @@
                 <Setter Property="BorderBrush" Value="Transparent" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Foreground" Value="#75ffffff" />
+                <Setter Property="Foreground" Value="#333333" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -168,7 +162,7 @@
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Cursor" Value="Hand" />
-                                    <Setter Property="Foreground" Value="#ffffff" />
+                                    <Setter Property="Foreground" Value="#333333" />
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter TargetName="PART_CheckBorder" Property="BorderBrush" Value="#06B025" />
@@ -188,7 +182,7 @@
                 <Setter Property="BorderBrush" Value="Transparent" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Foreground" Value="#ffffff" />
+                <Setter Property="Foreground" Value="#333333" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -223,11 +217,10 @@
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Cursor" Value="Hand" />
-                                    <Setter Property="Foreground" Value="#ffffff" />
-                                    <Setter TargetName="PART_CheckIcon" Property="Fill" Value="#ffffff" />
+                                    <Setter TargetName="PART_CheckIcon" Property="Fill" Value="#333333" />
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="PART_CheckIcon" Property="Fill" Value="#ffffff" />
+                                    <Setter TargetName="PART_CheckIcon" Property="Fill" Value="#333333" />
                                     <Setter TargetName="PART_CheckIcon" Property="RenderTransform">
                                         <Setter.Value>
                                             <RotateTransform Angle="180" />
@@ -244,7 +237,6 @@
 
 
             <Style x:Key="RSApp.Styles.TextBlockStyle" TargetType="{x:Type TextBlock}">
-                <Setter Property="Foreground" Value="#45ffffff" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Margin" Value="5,0,0,0" />
@@ -263,7 +255,6 @@
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="14"
-                        Foreground="#75ffffff"
                         Text="及" />
                     <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
                         <Hyperlink
@@ -288,10 +279,7 @@
                     Grid.Row="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-                    <TextBlock
-                        FontSize="18"
-                        Foreground="#FFF"
-                        Text="请阅读并同意" />
+                    <TextBlock FontSize="18" Text="请阅读并同意" />
                 </StackPanel>
                 <StackPanel
                     Grid.Row="1"
@@ -299,7 +287,6 @@
                     HorizontalAlignment="Center">
                     <ContentControl Template="{StaticResource UserAgreementAndPrivacyPolicyTemplate}" />
                 </StackPanel>
-
                 <StackPanel
                     Grid.Row="2"
                     Margin="0,20,0,0"
@@ -348,7 +335,6 @@
                     <TextBlock
                         Margin="45,0,45,0"
                         FontSize="14"
-                        Foreground="#FFF"
                         Text="标注软件正在运行中，继续将自动关闭程序，你确定要继续安装吗？"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
@@ -394,7 +380,7 @@
     <Grid>
         <Grid x:Name="PART_InstallStartPage">
             <Grid.RowDefinitions>
-                <RowDefinition Height="370" />
+                <RowDefinition Height="350" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
@@ -439,17 +425,18 @@
                                 VerticalAlignment="Center"
                                 FontSize="35"
                                 FontWeight="Bold"
-                                Foreground="#ffffff"
                                 Text="标注软件" />
                         </Grid>
                         <StackPanel
                             Width="210"
+                            Margin="0,30,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
                             <Button
                                 x:Name="BtnInsall"
                                 Click="BtnInsall_Click"
-                                Content="立即安装">
+                                Content="立即安装"
+                                Foreground="#fff">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource RSApp.Styles.InsallButtonStyle}" TargetType="{x:Type Button}">
                                         <Style.Triggers>
@@ -519,7 +506,8 @@
                         </Grid.ColumnDefinitions>
                         <Border
                             Padding="8,8,8,8"
-                            Background="#292a2b"
+                            BorderBrush="#eee"
+                            BorderThickness="1,1,0,1"
                             CornerRadius="5,0,0,5">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -531,7 +519,7 @@
                                     Height="15"
                                     VerticalAlignment="Center"
                                     Data="M912 208H427.872l-50.368-94.176A63.936 63.936 0 0 0 321.056 80H112c-35.296 0-64 28.704-64 64v736c0 35.296 28.704 64 64 64h800c35.296 0 64-28.704 64-64v-608c0-35.296-28.704-64-64-64z m-800-64h209.056l68.448 128H912v97.984c-0.416 0-0.8-0.128-1.216-0.128H113.248c-0.416 0-0.8 0.128-1.248 0.128V144z m0 736v-96l1.248-350.144 798.752 1.216V784h0.064v96H112z"
-                                    Fill="#85ffffff"
+                                    Fill="#949494"
                                     Stretch="Fill" />
 
                                 <TextBox
@@ -541,9 +529,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="Transparent"
                                     BorderThickness="0"
-                                    CaretBrush="#fff"
                                     FontSize="14"
-                                    Foreground="#85ffffff"
                                     Text="{Binding InstallDir, UpdateSourceTrigger=PropertyChanged}"
                                     TextChanged="TxtInstallDir_TextChanged" />
                             </Grid>
@@ -636,7 +622,6 @@
                     VerticalAlignment="Center"
                     FontSize="14"
                     FontWeight="Bold"
-                    Foreground="#ffffff"
                     Text="标注软件" />
             </StackPanel>
 
@@ -656,7 +641,6 @@
                         Grid.Row="0"
                         Margin="0,0,0,10"
                         FontSize="14"
-                        Foreground="#fff"
                         Text="{Binding RunningTooltip}" />
                     <ProgressBar
                         Grid.Row="1"
@@ -683,7 +667,6 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="25"
-                    Foreground="#fff"
                     Text="安装完成，欢迎来到标注软件" />
 
                 <Button

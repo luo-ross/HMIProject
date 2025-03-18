@@ -13,7 +13,7 @@ namespace RS.WPFApp.Views.Areas
 {
     public class AnnotationViewModel : ModelBase
     {
-
+       
         public AnnotationViewModel()
         {
             this.UpdateOpacityDes();

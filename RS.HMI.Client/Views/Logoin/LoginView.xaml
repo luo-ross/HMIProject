@@ -12,10 +12,10 @@
     Height="495"
     BorderCornerRadius="10"
     IsFitSystem="True"
-    ResizeMode="NoResize"
-    WindowState="Maximized"
     IsMaxsizedFullScreen="False"
+    ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <rs:RSWindow.DataContext>
         <local:LoginViewModel />
