@@ -211,7 +211,7 @@ namespace RS.WPFApp.Views
         /// </summary>
         private void BtnForgetPassword_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo processStartInfo = new ProcessStartInfo($"{App.HostAddress}/password/new");
+            ProcessStartInfo processStartInfo = new ProcessStartInfo($"{App.AppHostAddress}/password/new");
             processStartInfo.UseShellExecute = true;
             Process.Start(processStartInfo);
         }

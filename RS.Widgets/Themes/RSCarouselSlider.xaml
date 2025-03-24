@@ -11,7 +11,8 @@
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="15" />
         <Setter Property="Width" Value="300" />
         <Setter Property="Height" Value="400" />
-        <Setter Property="Cursor" Value="Hand" />
+        <!--<Setter Property="Cursor" Value="Hand" />-->
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Foreground" Value="#fff" />
         <Setter Property="Background" Value="#62667f" />
         <Setter Property="Template">

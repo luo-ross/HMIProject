@@ -62,6 +62,22 @@ namespace RS.HMI.Client.Views.Logoin
 
 
 
+        private double offsetX;
+        public double OffsetX
+        {
+            get
+            {
+               
+                return offsetX;
+            }
+            set
+            {
+                this.OnPropertyChanged(ref offsetX, value);
+            }
+        }
+
+
+
         private ObservableCollection<Advertisement> advertisementLink;
         /// <summary>
         /// 广告信息

@@ -24,7 +24,7 @@ namespace RS.WPFApp
         protected override void OnStartup(StartupEventArgs e)
         {
             //配置服务
-            this.OnConfigServices += App_OnConfigServices;
+            this.OnConfigIocServices += App_OnConfigServices;
             base.OnStartup(e);
             //var loginView = AppHost.Services.GetRequiredService<LoginView>();
             //loginView.Show();

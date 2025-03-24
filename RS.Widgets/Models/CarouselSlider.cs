@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace RS.Widgets.Models
 {
@@ -37,6 +39,9 @@ namespace RS.Widgets.Models
 
         public double CanvasTop { get; set; }
 
+        public double CenterX { get; set; }
+        public double CenterY { get; set; }
+
         public double Width { get; set; }
 
         public double Height { get; set; }
@@ -56,6 +61,7 @@ namespace RS.Widgets.Models
 
         public ScaleTransform ScaleTransform { get; set; }
 
-        public TranslateTransform TranslateTransform { get; set; }
+ 
+        public TranslateTransform3D TranslateTransform3D { get; set; }
     }
 }

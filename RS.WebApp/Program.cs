@@ -17,6 +17,7 @@ using RS.WebApp.BLL;
 using RS.WebApp.DAL;
 using RS.WebApp.Filters;
 using System.Text;
+using System.Text.Encodings.Web;
 
 namespace RS.WebApp
 {
@@ -71,6 +72,8 @@ namespace RS.WebApp
                 configure.Filters.Add<GlobalFilter>();
             }).AddJsonOptions(configure =>
             {
+                //设置编码形式，防止中文乱码
+                configure.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 configure.JsonSerializerOptions.PropertyNamingPolicy = null;
                 configure.JsonSerializerOptions.Converters.Add(new DateTimeConvert());
             });
@@ -161,7 +164,7 @@ namespace RS.WebApp
             //注册日志服务
             builder.Services.RegisterLog4netService();
 
-            //注册方法连接服务
+            //注册方法拦截服务
             builder.Services.RegisterInterceptorService();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

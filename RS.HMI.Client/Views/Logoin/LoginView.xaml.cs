@@ -1,19 +1,20 @@
-﻿using RS.Commons;
-using RS.HMI.Client.Views.Home;
-using RS.Widgets.Models;
-using RS.Widgets.Controls;
-using System.Diagnostics;
-using System.Windows;
-using RS.Widgets.Enums;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RS.Commons;
 using RS.Commons.Attributs;
+using RS.Commons.Extensions;
+using RS.HMI.Client.Views.Home;
+using RS.HMI.IBLL;
 using RS.Models;
 using RS.RESTfulApi;
-using RS.Commons.Extensions;
-using RS.HMI.IBLL;
-using System.Drawing;
-using System.Windows.Forms;
-using System;
+using RS.Widgets.Controls;
+using RS.Widgets.Enums;
+using RS.Widgets.Models;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace RS.HMI.Client.Views.Logoin
 {
@@ -43,11 +44,14 @@ namespace RS.HMI.Client.Views.Logoin
 
         private void LoginView_Closed(object? sender, EventArgs e)
         {
-        
+
         }
 
         private void LoginView_Loaded(object sender, RoutedEventArgs e)
         {
+        
+            InitData(this.ViewModel.CarouselSliderList.Count / 2);
+
             //var operateResult = await this.InvokeLoadingActionAsync(async () =>
             //{
             //    var getSessionModelResult = await this.GeneralService.GetSessionModelAsync();
@@ -64,6 +68,127 @@ namespace RS.HMI.Client.Views.Logoin
             //    LoadingType = LoadingType.RotatingAnimation,
             //});
         }
+
+        public void InitData(int middleIndex)
+        {
+            // 期望在屏幕上显示的尺寸
+            double targetWidth = 300;
+            double targetHeight = 400;
+            this.MV.Children.Clear();
+            for (int i = 0; i < this.ViewModel.CarouselSliderList.Count; i++)
+            {
+                var item = this.ViewModel.CarouselSliderList[i];
+
+                Viewport2DVisual3D viewport2DVisual3D = new Viewport2DVisual3D();
+                // 创建长方形的几何模型
+                MeshGeometry3D rectangleGeometry = new MeshGeometry3D();
+                rectangleGeometry.Positions = new Point3DCollection()
+                {
+                new Point3D(-targetWidth / 2, -targetHeight / 2, 0),
+                new Point3D(targetWidth / 2, -targetHeight / 2, 0),
+                new Point3D(targetWidth / 2, targetHeight / 2, 0),
+                new Point3D(-targetWidth / 2, targetHeight / 2, 0)
+                };
+                rectangleGeometry.TriangleIndices = new Int32Collection() { 0, 1, 2, 2, 3, 0 };
+                rectangleGeometry.TextureCoordinates = new PointCollection();
+                rectangleGeometry.TextureCoordinates.Add(new System.Windows.Point(0, 1));
+                rectangleGeometry.TextureCoordinates.Add(new System.Windows.Point(1, 1));
+                rectangleGeometry.TextureCoordinates.Add(new System.Windows.Point(1, 0));
+                rectangleGeometry.TextureCoordinates.Add(new System.Windows.Point(0, 0));
+
+                // 创建 DiffuseMaterial 并设置属性
+                DiffuseMaterial diffuseMaterial = new DiffuseMaterial();
+                diffuseMaterial.Brush = System.Windows.Media.Brushes.Blue;
+                Viewport2DVisual3D.SetIsVisualHostMaterial(diffuseMaterial, true);
+                viewport2DVisual3D.Geometry = rectangleGeometry;
+                viewport2DVisual3D.Material = diffuseMaterial;
+                RSCarouselSlider rsCarouselSlider = new RSCarouselSlider();
+                rsCarouselSlider.Name = item.Name;
+                rsCarouselSlider.Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFrom(item.Background);
+                rsCarouselSlider.Caption = item.Caption;
+                rsCarouselSlider.Description = item.Description;
+                rsCarouselSlider.ImageSource = item.ImageSource;
+                rsCarouselSlider.Location = item.Location;
+                rsCarouselSlider.Focusable = false;
+                rsCarouselSlider.Width = targetWidth;
+                rsCarouselSlider.Height = targetHeight;
+                rsCarouselSlider.Tag = item;
+                rsCarouselSlider.BlurRadius = item.Blur;
+                viewport2DVisual3D.Visual = rsCarouselSlider;
+                Transform3DGroup transform3DGroup = new Transform3DGroup();
+                TranslateTransform3D translateTransform3D = new TranslateTransform3D()
+                {
+                    OffsetX = (targetWidth + 60) * (i - middleIndex),
+                    OffsetY = 0,
+                    OffsetZ = -100 * Math.Abs(i - middleIndex),
+                };
+                viewport2DVisual3D.Transform = transform3DGroup;
+                transform3DGroup.Children.Add(translateTransform3D);
+
+                item.TranslateTransform3D = translateTransform3D;
+                this.MV.Children.Add(viewport2DVisual3D);
+            }
+
+        }
+
+
+        private double? StartPosition = double.MinValue;
+
+        private void viewport3D_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            StartPosition = double.MinValue;
+        }
+
+        private bool isDragging;
+        private void viewport3D_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            StartPosition = e.GetPosition(this.viewport3D).X;
+        }
+        private void viewport3D_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            //if (e.LeftButton == MouseButtonState.Pressed && StartPosition != double.MinValue)
+            //{
+            //    var currentPosition = e.GetPosition(this);
+            //    var i = currentPosition.X - StartPosition;
+            //    //向右移动
+            //    if (i > 0)
+            //    {
+            //        this.ViewModel.OffsetX -= 30;
+            //    }
+            //    else
+            //    {
+            //        this.ViewModel.OffsetX += 30;
+            //    }
+            //    // 更新起点位置为当前位置，使移动更加平滑
+            //    StartPosition = currentPosition.X;
+            //}
+        }
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.ViewModel == null)
+            {
+                return;
+            }
+            InitData(3);
+            this.Test.OffsetX = e.NewValue;
+        }
+
+
+
+
+        private double CalculateCameraDistance(double actualWidth, double targetWidth, double aspectRatio)
+        {
+            // 假设视场角为 60 度作为初始计算
+            double initialFov = 60;
+            double initialFovRadians = initialFov * (Math.PI / 180);
+            double initialDistance = (actualWidth / 2) / Math.Tan(initialFovRadians / 2);
+
+            // 根据目标宽度调整距离
+            double scale = targetWidth / actualWidth;
+            return initialDistance / scale;
+        }
+
+
 
         /// <summary>
         /// 超级连接跳转
@@ -213,5 +338,7 @@ namespace RS.HMI.Client.Views.Logoin
                 return new QRCodeLoginStatusModel();
             });
         }
+
+
     }
 }
