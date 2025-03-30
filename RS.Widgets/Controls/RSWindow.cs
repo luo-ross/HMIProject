@@ -36,7 +36,7 @@ namespace RS.Widgets.Controls
                 {
                     Owner = this,
                     Width = 350,
-                    Height = 250
+                    Height = 230
                 };
             }
         }
@@ -96,12 +96,25 @@ namespace RS.Widgets.Controls
             // 初始化定时器
             rsWindow.InfoBarTimer = new DispatcherTimer();
             // 设置定时器的间隔为 3 秒
-            rsWindow.InfoBarTimer.Interval = TimeSpan.FromSeconds(5);
+            rsWindow.InfoBarTimer.Interval = TimeSpan.FromMilliseconds(rsWindow.InfoBarCloseDelay);
             // 为定时器的 Tick 事件添加处理程序
             rsWindow.InfoBarTimer.Tick += rsWindow.InfoBarTimer_Tick;
             // 启动定时器
             rsWindow.InfoBarTimer.Start();
         }
+
+
+        [Description("消息提示自动关闭时间 单位毫秒")]
+        public int InfoBarCloseDelay
+        {
+            get { return (int)GetValue(InfoBarCloseDelayProperty); }
+            set { SetValue(InfoBarCloseDelayProperty, value); }
+        }
+
+        public static readonly DependencyProperty InfoBarCloseDelayProperty =
+            DependencyProperty.Register("InfoBarCloseDelay", typeof(int), typeof(RSWindow), new PropertyMetadata(3000));
+
+
 
         private void InfoBarTimer_Tick(object? sender, EventArgs e)
         {

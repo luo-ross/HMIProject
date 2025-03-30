@@ -5,7 +5,7 @@ using RS.WebApp.IBLL;
 using System.Collections;
 
 
-namespace RS.WebApp.Controllers
+namespace RS.WebApp.Areas.WebApi.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
@@ -14,11 +14,11 @@ namespace RS.WebApp.Controllers
         private readonly IGeneralService GeneralService;
         private readonly ICryptographyService CryptographyService;
         private readonly ILogService LogService;
-        public GeneralController(IGeneralService generalService, ICryptographyService cryptographyService,ILogService logService) 
+        public GeneralController(IGeneralService generalService, ICryptographyService cryptographyService, ILogService logService)
         {
-            this.GeneralService = generalService;
-            this.LogService = logService;
-            this.CryptographyService = cryptographyService;
+            GeneralService = generalService;
+            LogService = logService;
+            CryptographyService = cryptographyService;
         }
 
         /// <summary>

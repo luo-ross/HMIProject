@@ -7,7 +7,7 @@ using RS.Models;
 using RS.WebApp.IBLL;
 
 
-namespace RS.WebApp.Controllers
+namespace RS.WebApp.Areas.WebApi.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
@@ -22,8 +22,8 @@ namespace RS.WebApp.Controllers
         private readonly ILogService LogService;
         public UserController(IUserService userService, ILogService logService)
         {
-            this.UserService = userService;
-            this.LogService = logService;
+            UserService = userService;
+            LogService = logService;
         }
 
         /// <summary>
@@ -34,10 +34,8 @@ namespace RS.WebApp.Controllers
         [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> GetUser()
         {
-            return await UserService.GetUsersAsync(this.SessionId);
+            return await UserService.GetUsersAsync(SessionId);
         }
-
-
 
         /// <summary>
         /// 验证登录
@@ -47,7 +45,7 @@ namespace RS.WebApp.Controllers
         [HttpPost()]
         public async Task<OperateResult> ValidLogin(AESEncryptModel aesEncryptModel)
         {
-            return await UserService.ValidLoginAsync(aesEncryptModel, this.SessionId);
+            return await UserService.ValidLoginAsync(aesEncryptModel, SessionId);
         }
 
     }

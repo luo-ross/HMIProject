@@ -57,11 +57,11 @@ namespace RS.Widgets.Models
         /// </summary>
         public double Blur { get; set; }
 
-        public RSCarouselSlider RSCarouselSlider { get; set; }
 
         public ScaleTransform ScaleTransform { get; set; }
 
  
         public TranslateTransform3D TranslateTransform3D { get; set; }
+        public int DefaultOffsetZ { get; set; }
     }
 }

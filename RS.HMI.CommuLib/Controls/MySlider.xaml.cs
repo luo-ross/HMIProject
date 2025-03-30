@@ -5,16 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace RS.Widgets.Controls
+namespace RS.HMI.CommuLib.Controls
 {
-    public class RSCarouselSlider : Thumb
+    public partial class MySlider : UserControl
     {
-        static RSCarouselSlider()
+        public MySlider()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSCarouselSlider), new FrameworkPropertyMetadata(typeof(RSCarouselSlider)));
+            InitializeComponent();
         }
 
         public Point CenterPoint { get; set; }
@@ -28,7 +35,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty ImageSourceProperty =
-            DependencyProperty.Register("ImageSource", typeof(string), typeof(RSCarouselSlider), new PropertyMetadata(null));
+            DependencyProperty.Register("ImageSource", typeof(string), typeof(MySlider), new PropertyMetadata(null));
 
 
 
@@ -40,8 +47,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty CaptionProperty =
-            DependencyProperty.Register("Caption", typeof(string), typeof(RSCarouselSlider), new PropertyMetadata(null));
-
+            DependencyProperty.Register("Caption", typeof(string), typeof(MySlider), new PropertyMetadata(null));
 
 
         [Description("描述")]
@@ -52,7 +58,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register("Description", typeof(string), typeof(RSCarouselSlider), new PropertyMetadata(null));
+            DependencyProperty.Register("Description", typeof(string), typeof(MySlider), new PropertyMetadata(null));
 
 
         [Description("地点")]
@@ -63,18 +69,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty LocationProperty =
-            DependencyProperty.Register("Location", typeof(string), typeof(RSCarouselSlider), new PropertyMetadata(null));
-
-
-        [Description("模糊度")]
-        public double BlurRadius
-        {
-            get { return (double)GetValue(BlurRadiusProperty); }
-            set { SetValue(BlurRadiusProperty, value); }
-        }
-
-        public static readonly DependencyProperty BlurRadiusProperty =
-            DependencyProperty.Register("BlurRadius", typeof(double), typeof(RSCarouselSlider), new PropertyMetadata(0D));
+            DependencyProperty.Register("Location", typeof(string), typeof(MySlider), new PropertyMetadata(null));
 
 
         public override void OnApplyTemplate()

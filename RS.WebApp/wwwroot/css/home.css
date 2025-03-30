@@ -1,0 +1,125 @@
+html {
+  font-size: 14px;
+}
+
+header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 50px;
+    display: flex;
+    background: #192b3f !important;
+    color: #fff;
+    align-items: center;
+    justify-content: start;
+}
+
+    header div {
+        display: flex;
+        width: 100%;
+        justify-content: start;
+        align-items: center;
+    }
+
+.txt-company-title {
+    padding: 0px 45px 0px 45px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+}
+
+    .txt-company-title:hover {
+        text-decoration: none;
+        color: #fff;
+        opacity: 0.8;
+    }
+
+.grid-right {
+    width: auto;
+    padding: 0px 45px 0px 45px;
+}
+
+.btn-login, .btn-signin {
+    white-space: nowrap;
+    padding: 0px 20px 0px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+}
+
+    .btn-login:hover, .btn-signin:hover {
+        text-decoration: none;
+        color: #fff;
+        opacity: 0.8;
+    }
+
+
+
+a {
+    color: #288cff;
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects
+}
+
+.footer {
+    background: #fff;
+    color: #6c757d
+}
+
+.bg-tertiary {
+    background-color: #192b3f !important
+}
+
+.footer-dark .heading {
+    color: #fff
+}
+
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: .0625rem solid rgba(0,0,0,0.1)
+}
+
+.footer .nav .nav-item .nav-link, .footer .footer-link {
+    color: #6c757d !important;
+    text-decoration: none;
+}
+
+.footer .list-unstyled li a {
+    display: inline-block;
+    padding: .125rem 0;
+}
+
+.text-muted {
+    color: #adb5bd !important;
+}
+
+.font-weight-700 {
+    font-weight: 700 !important;
+}
+
+.footer-dark .heading {
+    color: #fff;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+@media (min-width: 992px) {
+    .ml-lg-auto, .mx-lg-auto {
+        margin-left: auto !important;
+    }
+}
+
+.company-des {
+    margin-right: 25px;
+}

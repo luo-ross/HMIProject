@@ -4,7 +4,7 @@ using RS.WebApp.IBLL;
 using RS.Commons;
 using RS.Models;
 
-namespace RS.WebApp.Controllers
+namespace RS.WebApp.Areas.WebApi.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
@@ -18,8 +18,8 @@ namespace RS.WebApp.Controllers
         private readonly ILogService LogService;
         public RegisterController(IRegisterService registerService, ILogService logService)
         {
-            this.RegisterService = registerService;
-            this.LogService = logService;
+            RegisterService = registerService;
+            LogService = logService;
         }
 
         #region 注册邮箱验证业务处理
@@ -32,7 +32,7 @@ namespace RS.WebApp.Controllers
         [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetEmailVerification(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterService.GetEmailVerificationAsync(aesEncryptModel, this.SessionId);
+            var handleResult = await RegisterService.GetEmailVerificationAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
 
@@ -45,7 +45,7 @@ namespace RS.WebApp.Controllers
         [Authorize]
         public async Task<OperateResult> EmailVerificationValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterService.EmailVerificationValidAsync(aesEncryptModel, this.SessionId);
+            var handleResult = await RegisterService.EmailVerificationValidAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
 
@@ -61,7 +61,7 @@ namespace RS.WebApp.Controllers
         [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetSMSVerification(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterService.GetSMSVerificationAsync(aesEncryptModel, this.SessionId);
+            var handleResult = await RegisterService.GetSMSVerificationAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
 
@@ -74,7 +74,7 @@ namespace RS.WebApp.Controllers
         [Authorize]
         public async Task<OperateResult> SMSVerificationValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterService.SMSVerificationValidAsync(aesEncryptModel, this.SessionId);
+            var handleResult = await RegisterService.SMSVerificationValidAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
         #endregion

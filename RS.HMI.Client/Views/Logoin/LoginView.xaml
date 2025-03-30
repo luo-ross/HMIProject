@@ -8,14 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/HMIProject"
     Title="LoginView"
-    Width="1000"
-    Height="495"
+    Width="850"
+    Height="500"
     BorderCornerRadius="10"
     IsFitSystem="True"
     IsMaxsizedFullScreen="False"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
-    WindowState="Maximized"
     mc:Ignorable="d">
     <rs:RSWindow.DataContext>
         <local:LoginViewModel />
@@ -165,322 +164,27 @@
     </rs:RSWindow.Resources>
     <Grid>
         <Grid Background="Transparent">
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="4*" />
-            </Grid.ColumnDefinitions>-->
-            <!--<Border x:Name="AdvertisingPageHost" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="AdvertisingPageHost" Grid.ColumnSpan="2">
                 <Border.Background>
                     <ImageBrush ImageSource="https://img.tukuppt.com/bg_grid/00/45/55/G2iLF9SGJO.jpg!/fh/350" />
                 </Border.Background>
-            </Border>-->
+            </Border>
+
             <!--<rs:RSCarousel
-                Grid.ColumnSpan="2"
-                Background="#2196f3"
-                CarouselSliderList="{Binding CarouselSliderList}" />-->
-
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Slider
-                Margin="0,50,0,0"
-                Maximum="2000"
-                Minimum="-2000"
-                SmallChange="16"
-                ValueChanged="Slider_ValueChanged" />
-
-
-
-
-            <Viewport3D
-                x:Name="viewport3D"
                 Grid.Row="1"
-                ClipToBounds="True"
-                MouseMove="viewport3D_MouseMove"
-                PreviewMouseLeftButtonDown="viewport3D_PreviewMouseLeftButtonDown"
-                PreviewMouseLeftButtonUp="viewport3D_PreviewMouseLeftButtonUp">
-                <Viewport3D.Camera>
-                    <PerspectiveCamera
-                        x:Name="perspectiveCamera"
-                        FarPlaneDistance="1000"
-                        FieldOfView="100"
-                        LookDirection="0,0,-1"
-                        NearPlaneDistance="1"
-                        Position="0,0,500"
-                        UpDirection="0,1,0">
-                        <PerspectiveCamera.Transform>
-                            <Transform3DGroup>
-                                <TranslateTransform3D
-                                    x:Name="Test"
-                                    OffsetX="{Binding OffsetX}"
-                                    OffsetY="0"
-                                    OffsetZ="0" />
-                            </Transform3DGroup>
-                        </PerspectiveCamera.Transform>
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <AmbientLight Color="White" />
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <ModelVisual3D x:Name="MV">
-                    <ModelVisual3D.Children>
-                        <!--<Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC2"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="0" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-                        </Viewport2DVisual3D>
-                        <Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC3"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="-480" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-
-                        </Viewport2DVisual3D>
-                        <Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC4"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="-240" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-
-
-                        </Viewport2DVisual3D>
-                        <Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC5"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="0" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-
-
-                        </Viewport2DVisual3D>
-                        <Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC1"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="-240" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-
-                        </Viewport2DVisual3D>
-                        <Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC2"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="-480" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-                        </Viewport2DVisual3D>
-                        <Viewport2DVisual3D>
-                            <Viewport2DVisual3D.Geometry>
-                                <MeshGeometry3D
-                                    Positions="-150,-200,0 150,-200,0 150,200,0 -150,200,0"
-                                    TextureCoordinates="0,1 1,1 1,0 0,0"
-                                    TriangleIndices="0,1,2 2,3,0" />
-                            </Viewport2DVisual3D.Geometry>
-                            <Viewport2DVisual3D.Material>
-                                <DiffuseMaterial Brush="Blue" Viewport2DVisual3D.IsVisualHostMaterial="True" />
-                            </Viewport2DVisual3D.Material>
-                            <Viewport2DVisual3D.Visual>
-                                <rs:RSCarouselSlider
-                                    Width="300"
-                                    Height="400"
-                                    Background="#62667f"
-                                    Caption="DOMESTIC3"
-                                    Description="Enjoy the exotic of sunny Hawaii"
-                                    ImageSource="Assets/img1.jpg"
-                                    Location="Maui,Hawaii" />
-                            </Viewport2DVisual3D.Visual>
-
-                            <Viewport2DVisual3D.Transform>
-                                <Transform3DGroup>
-                                    <TranslateTransform3D
-                                        OffsetX="0"
-                                        OffsetY="0"
-                                        OffsetZ="-720" />
-                                    <ScaleTransform3D
-                                        ScaleX="1"
-                                        ScaleY="1"
-                                        ScaleZ="1" />
-                                </Transform3DGroup>
-                            </Viewport2DVisual3D.Transform>
-                        </Viewport2DVisual3D>-->
-
-                    </ModelVisual3D.Children>
-                </ModelVisual3D>
-            </Viewport3D>
-
-
+                AxisXDistance="40"
+                CameraPosition="0,0,150"
+                CarouselSliderList="{Binding RSCarouselSliderList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                OffsetZ="30" />-->
 
             <rs:RSUserControl
                 x:Name="LoginForm"
                 Grid.Column="1"
-                Background="#fff"
-                Visibility="Collapsed">
+                Background="#fff">
                 <Grid>
                     <Border x:Name="PART_PasswordLoginArea" Padding="28,30,28,50">
                         <Grid VerticalAlignment="Center">

@@ -8,10 +8,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace RS.WebApp.Controllers
+namespace RS.WebApp.Areas.SystemManage.Controllers
 {
-
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Area("SystemManage")]
     public class SecurityController : BaseController
     {
         private readonly ISecurityService SecurityService;
@@ -20,18 +20,25 @@ namespace RS.WebApp.Controllers
 
         public SecurityController(ISecurityService securityService, IHttpContextAccessor httpContextAccessor, ILogService logService)
         {
-            this.SecurityService = securityService;
-            this.HttpContextAccessor = httpContextAccessor;
-            this.LogService = logService;
+            SecurityService = securityService;
+            HttpContextAccessor = httpContextAccessor;
+            LogService = logService;
+        }
+     
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+        public IActionResult SignUp()
+        {
+            return View();
         }
 
-        [Route("password/new")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Route("password/edit")]
         public async Task<IActionResult> Form([FromQuery] string email, [FromQuery] string token)
         {
             ////验证密码重置会话是否存在
@@ -45,16 +52,14 @@ namespace RS.WebApp.Controllers
             return View();
         }
 
-        [Route("password/reset")]
         [HttpPost]
         public async Task<OperateResult> PasswordResetAsync([FromBody] PasswordResetModel passwordResetModel)
         {
-            return await this.SecurityService.PasswordResetAsync(this.HostWithScheme, passwordResetModel);
+            return await SecurityService.PasswordResetAsync(HostWithScheme, passwordResetModel);
         }
 
-        [Route("password/confirm")]
         [HttpPost]
-        public async Task<OperateResult> PasswordConfirmAsync([FromBody]PasswordConfirmModel passwordConfirmModel)
+        public async Task<OperateResult> PasswordConfirmAsync([FromBody] PasswordConfirmModel passwordConfirmModel)
         {
 
             return OperateResult.CreateSuccessResult();

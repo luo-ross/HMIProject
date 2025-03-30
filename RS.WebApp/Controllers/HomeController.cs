@@ -17,6 +17,7 @@ namespace RS.WebApp.Controllers
             LogService = logService;
         }
 
+     
         public IActionResult Index()
         {
             return View();

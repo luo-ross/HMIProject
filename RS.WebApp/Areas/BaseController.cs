@@ -9,7 +9,7 @@ using RS.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http.Extensions;
 
-namespace RS.WebApp.Controllers
+namespace RS.WebApp.Areas
 {
     /// <summary>
     /// WebApi控制器基类
@@ -34,13 +34,13 @@ namespace RS.WebApp.Controllers
         {
             get
             {
-                var host = HttpContext.Request.Host.Value;   
-                var hostWithScheme = HttpContext.Request.Scheme + "://" + host; 
+                var host = HttpContext.Request.Host.Value;
+                var hostWithScheme = HttpContext.Request.Scheme + "://" + host;
                 return hostWithScheme;
             }
         }
 
-     
+
 
     }
 }

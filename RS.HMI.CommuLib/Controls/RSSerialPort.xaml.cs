@@ -83,6 +83,7 @@ namespace RS.HMI.CommuLib.Controls
         }
 
         #region Command事件
+
         //DataId更改事件
         public static readonly DependencyProperty CellValueEditChangedCommandProperty =
             DependencyProperty.Register(nameof(CellValueEditChangedCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));

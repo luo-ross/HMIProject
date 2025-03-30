@@ -297,6 +297,14 @@ namespace RS.WebApp
               name: "default",
               pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            // 配置区域路由
+            AppHost.MapAreaControllerRoute(
+                name: "SystemManageRoute",
+                areaName: "SystemManage",
+                pattern: "SystemManage/{controller=Home}/{action=Index}/{id?}"
+            );
+
+
             //UseStaticFiles 的作用
             //静态文件服务：UseStaticFiles 中间件能够处理对静态文件的请求
             //并直接从文件系统中读取这些文件的内容，然后将其作为响应返回给客户端。
@@ -331,10 +339,10 @@ namespace RS.WebApp
             //UseRouting 负责将请求映射到终结点，而 UseEndpoints 则负责执行这些终结点。
             //灵活性：UseEndpoints 提供了灵活的配置选项
             //允许开发者为不同类型的处理器（如 MVC 控制器、Razor 页面、SignalR 集线器等）定义路由规则。
-            AppHost.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            //AppHost.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //});
 
             //初始化RSA非对称秘钥
             InitRSASecurityKeyData(AppHost);

@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <!-- Bootstrap CSS -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-box {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+        }
+
+        .form-control {
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #fff;
+        }
+
+            .form-control:focus {
+                background-color: #2a2a2a;
+                border-color: #4a4a4a;
+                color: #fff;
+                box-shadow: none;
+            }
+
+        .btn-social {
+            background-color: transparent;
+            border: 1px solid #3a3a3a;
+            color: #fff;
+        }
+
+            .btn-social:hover {
+                background-color: #2a2a2a;
+                border-color: #4a4a4a;
+                color: #fff;
+            }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+            .divider::before,
+            .divider::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                width: 45%;
+                height: 1px;
+                background-color: #3a3a3a;
+            }
+
+            .divider::before {
+                left: 0;
+            }
+
+            .divider::after {
+                right: 0;
+            }
+
+            .divider span {
+                background-color: #1a1a1a;
+                padding: 0 10px;
+                color: #888;
+            }
+    </style>
+</head>
+<body class="text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="login-box p-4">
+                    <h1 class="text-center h4 mb-4">登录</h1>
+                    <form>
+                        <div class="mb-3">
+                            <label for="email" class="form-label text-secondary">邮箱</label>
+                            <input type="email" class="form-control" id="email" placeholder="请输入你的邮箱">
+                        </div>
+                        <button type="submit" class="btn btn-light w-100 mb-3">继续</button>
+                    </form>
+
+                    <p class="text-center text-secondary mt-4 mb-0">
+                       还没有账号? <a href="/SystemManage/Security/SignUp" class="text-white text-decoration-none">注册</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html> 

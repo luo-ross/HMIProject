@@ -2,7 +2,7 @@
 using RS.Commons;
 using RS.WebApp.IBLL;
 
-namespace RS.WebApp.Controllers
+namespace RS.WebApp.Areas.WebApi.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
@@ -13,9 +13,9 @@ namespace RS.WebApp.Controllers
         private readonly ILogService LogService;
         public MarketingController(IGeneralService generalService, ICryptographyService cryptographyService, ILogService logService)
         {
-            this.GeneralService = generalService;
-            this.LogService = logService;
-            this.CryptographyService = cryptographyService;
+            GeneralService = generalService;
+            LogService = logService;
+            CryptographyService = cryptographyService;
         }
 
         [HttpGet]

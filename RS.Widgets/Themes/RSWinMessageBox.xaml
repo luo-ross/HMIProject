@@ -58,7 +58,7 @@
 
                                     <TextBox
                                         Grid.Column="1"
-                                        Margin="0"
+                                        Margin="15,0,0,0"
                                         Padding="3"
                                         VerticalAlignment="Stretch"
                                         rs:ControlsHelper.CornerRadius="0"

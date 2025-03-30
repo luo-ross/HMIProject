@@ -27,7 +27,7 @@ namespace RS.Widgets.Controls
         {
             this.Width = 600;
             this.Height = 350;
-            this.BorderCornerRadius = new CornerRadius(10);
+            this.BorderCornerRadius = new CornerRadius(5);
             this.Owner = owner;
             if (this.Owner == null)
             {

@@ -13,11 +13,64 @@ using System.Windows.Input;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.Windows.Media;
+using MathNet.Numerics;
+using System.Windows.Media.Media3D;
+using System.Windows;
+using RS.HMI.CommuLib.Controls;
 
 namespace RS.HMI.Client.Views.Logoin
 {
     public class LoginViewModel : NotifyBase
     {
+        public LoginViewModel()
+        {
+            InitCarouselSlider();
+        }
+
+
+        private void InitCarouselSlider()
+        {
+            for (int i = 0; i < this.CarouselSliderList.Count; i++)
+            {
+                var item = this.CarouselSliderList[i];
+                MySlider mySlider = new MySlider();
+                mySlider.Name = item.Name;
+                mySlider.Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFrom(item.Background);
+                mySlider.Caption = item.Caption;
+                mySlider.Description = item.Description;
+                mySlider.ImageSource = item.ImageSource;
+                mySlider.Location = item.Location;
+                mySlider.Focusable = false;
+                mySlider.Tag = item;
+
+                RSCarouselSliderList.Add(mySlider);
+            }
+
+            this.OnPropertyChanged(nameof(RSCarouselSliderList));
+        }
+
+        private ObservableCollection<FrameworkElement> rsCarouselSliderList;
+        /// <summary>
+        /// 测试数据集
+        /// </summary>
+        public ObservableCollection<FrameworkElement> RSCarouselSliderList
+        {
+            get
+            {
+                if (rsCarouselSliderList == null)
+                {
+                    rsCarouselSliderList = new ObservableCollection<FrameworkElement>();
+                }
+                return rsCarouselSliderList;
+            }
+            set
+            {
+                this.OnPropertyChanged(ref rsCarouselSliderList, value);
+            }
+        }
+
+
+
         private LoginModel loginModel;
         /// <summary>
         /// 登录实体
@@ -67,7 +120,7 @@ namespace RS.HMI.Client.Views.Logoin
         {
             get
             {
-               
+
                 return offsetX;
             }
             set
@@ -101,30 +154,32 @@ namespace RS.HMI.Client.Views.Logoin
 
 
 
-        private ObservableCollection<CarouselSlider> carouselSliderList;
+        private List<CarouselSlider> carouselSliderList;
         /// <summary>
         /// 轮播数据集
         /// </summary>
-        public ObservableCollection<CarouselSlider> CarouselSliderList
+        public List<CarouselSlider> CarouselSliderList
         {
             get
             {
                 if (carouselSliderList == null)
                 {
-                    carouselSliderList = new ObservableCollection<CarouselSlider>();
+                    carouselSliderList = new List<CarouselSlider>();
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 0,
                         Name = "SwiperSlider1",
                         Caption = "native".ToUpper(),
                         Background = "#1b7402",
                         Description = "The most popular yachting destination",
-                        ImageSource= "/Assets/img1.jpg",
-                        Location= "Whitsunday Islands,Australia ",
+                        ImageSource = "/Assets/img1.jpg",
+                        Location = "Whitsunday Islands,Australia ",
                     });
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 1,
                         Name = "SwiperSlider2",
                         Caption = "domestic".ToUpper(),
                         Background = "#62667f",
@@ -135,6 +190,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 2,
                         Name = "SwiperSlider3",
                         Caption = "subtropical".ToUpper(),
                         Background = "#087ac4",
@@ -145,6 +201,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 3,
                         Name = "SwiperSlider4",
                         Caption = "history".ToUpper(),
                         Background = "#b45205",
@@ -155,6 +212,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 4,
                         Name = "SwiperSlider5",
                         Caption = "Mayans".ToUpper(),
                         Background = "#087ac4",
@@ -166,6 +224,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 5,
                         Name = "SwiperSlider1",
                         Caption = "native".ToUpper(),
                         Background = "#1b7402",
@@ -176,6 +235,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 6,
                         Name = "SwiperSlider2",
                         Caption = "domestic".ToUpper(),
                         Background = "#62667f",
@@ -186,6 +246,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 7,
                         Name = "SwiperSlider3",
                         Caption = "subtropical".ToUpper(),
                         Background = "#087ac4",
@@ -196,6 +257,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 8,
                         Name = "SwiperSlider4",
                         Caption = "history".ToUpper(),
                         Background = "#b45205",
@@ -206,6 +268,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 9,
                         Name = "SwiperSlider5",
                         Caption = "Mayans".ToUpper(),
                         Background = "#087ac4",
@@ -217,6 +280,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 10,
                         Name = "SwiperSlider1",
                         Caption = "native".ToUpper(),
                         Background = "#1b7402",
@@ -227,6 +291,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 11,
                         Name = "SwiperSlider2",
                         Caption = "domestic".ToUpper(),
                         Background = "#62667f",
@@ -237,6 +302,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 12,
                         Name = "SwiperSlider3",
                         Caption = "subtropical".ToUpper(),
                         Background = "#087ac4",
@@ -247,6 +313,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 13,
                         Name = "SwiperSlider4",
                         Caption = "history".ToUpper(),
                         Background = "#b45205",
@@ -257,6 +324,7 @@ namespace RS.HMI.Client.Views.Logoin
 
                     carouselSliderList.Add(new CarouselSlider()
                     {
+                        Index = 14,
                         Name = "SwiperSlider5",
                         Caption = "Mayans".ToUpper(),
                         Background = "#087ac4",
@@ -266,15 +334,16 @@ namespace RS.HMI.Client.Views.Logoin
                     });
                 }
 
-
-
                 return carouselSliderList;
             }
             set
             {
-                this.OnPropertyChanged(ref carouselSliderList, value);
+                carouselSliderList = value;
             }
         }
+
+
+
 
 
     }
