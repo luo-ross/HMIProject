@@ -1,22 +1,4 @@
 $(function () {
-    //$(".form").validate({
-    //    rules: {
-    //        password1: {
-    //            required: true,
-    //            minlength: 8
-    //        },
-    //        password2: {
-    //            required: true,
-    //            minlength: 8,
-    //            equalTo: "#password1"
-    //        },
-    //    },
-    //    messages: {
-    //        password2: {
-    //            equalTo: "2次输入密码不一致"
-    //        },
-    //    }
-    //});
     $(".btn-passconfirm").click(function () {
         debugger;
         var form = $(".form");

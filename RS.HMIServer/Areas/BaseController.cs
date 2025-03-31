@@ -1,13 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using RS.HMIServer.IBLL;
-using RS.HMIServer.Models;
-using RS.Commons;
-using RS.Commons.Attributs;
-using RS.Commons.Interceptors;
-using RS.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http.Extensions;
 
 namespace RS.HMIServer.Areas
 {

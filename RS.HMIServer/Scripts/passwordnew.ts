@@ -1,5 +1,4 @@
-﻿
-$(function () {
+﻿$(function () {
     $(".btn-passnew").click(() => {
         $.ajax({
             url: "/password/reset",
