@@ -1,0 +1,247 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>9afc1c85-f399-4ebd-b2a1-130ed0c30190</UserSecretsId>
+		<PreserveCompilationContext>true</PreserveCompilationContext>
+		<SatelliteResourceLanguages>zh</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Remove="Configs\log4net.config" />
+		<Content Remove="HtmlTemplates\PasswordReset.cshtml" />
+		<Content Remove="HtmlTemplates\RegisterVerification.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Configs\log4net.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="HtmlTemplates\PasswordReset.cshtml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="HtmlTemplates\RegisterVerification.cshtml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="wwwroot\lib\crypto-js-develop\src\aes.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\blowfish.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\cipher-core.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\core.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\enc-base64.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\enc-base64url.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\enc-utf16.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\evpkdf.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\format-hex.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\hmac.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\lib-typedarrays.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\md5.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\mode-cfb.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\mode-ctr-gladman.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\mode-ctr.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\mode-ecb.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\mode-ofb.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\pad-ansix923.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\pad-iso10126.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\pad-iso97971.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\pad-nopadding.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\pad-zeropadding.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\pbkdf2.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\rabbit-legacy.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\rabbit.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\rc4.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\ripemd160.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\sha1.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\sha224.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\sha256.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\sha3.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\sha384.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\sha512.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\tripledes.js" />
+		<None Include="wwwroot\lib\crypto-js-develop\src\x64-core.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ar.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ar.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_az.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_az.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_bg.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_bg.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_bn_BD.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_bn_BD.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ca.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ca.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_cs.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_cs.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_da.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_da.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_de.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_de.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_el.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_el.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_es.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_es.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_es_AR.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_es_AR.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_es_PE.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_es_PE.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_et.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_et.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_eu.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_eu.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_fa.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_fa.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_fi.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_fi.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_fr.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_fr.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ge.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ge.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_gl.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_gl.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_he.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_he.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_hr.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_hr.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_hu.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_hu.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_hy_AM.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_hy_AM.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_id.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_id.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_is.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_is.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_it.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_it.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ja.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ja.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ka.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ka.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_kk.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_kk.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ko.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ko.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_lt.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_lt.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_lv.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_lv.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_mk.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_mk.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_my.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_my.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_nl.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_nl.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_no.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_no.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_pl.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_pl.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_pt_BR.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_pt_BR.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_pt_PT.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_pt_PT.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ro.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ro.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ru.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ru.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sd.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sd.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_si.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_si.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sk.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sk.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sl.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sl.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sr.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sr.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sr_lat.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sr_lat.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sv.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_sv.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_th.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_th.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_tj.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_tj.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_tr.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_tr.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_uk.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_uk.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ur.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_ur.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_vi.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_vi.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_zh.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_zh.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_zh_TW.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\messages_zh_TW.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_de.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_de.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_es_CL.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_es_CL.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_fi.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_fi.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_it.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_it.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_nl.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_nl.min.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_pt.js" />
+		<None Include="wwwroot\lib\jquery-validation\dist\localization\methods_pt.min.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.4.5">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="IdGen" Version="3.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+		<PackageReference Include="RazorLight" Version="2.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RS.HMIServer.Entity\RS.HMIServer.Entity.csproj" />
+		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+		<ProjectReference Include="..\RS.Models\RS.Models.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.BLL\RS.HMIServer.BLL.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.DAL\RS.HMIServer.DAL.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.IBLL\RS.HMIServer.IBLL.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.IDAL\RS.HMIServer.IDAL.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.Models\RS.HMIServer.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\PublishProfiles\FolderProfile.pubxml">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Keys-Repository\" />
+	</ItemGroup>
+
+</Project>
