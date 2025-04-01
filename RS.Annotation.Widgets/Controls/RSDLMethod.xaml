@@ -1,0 +1,103 @@
+﻿<RadioButton
+    x:Class="RS.Annotation.Widgets.Controls.RSDLMethod"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.Annotation.Widgets.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <RadioButton.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type local:RSDLMethod}">
+                <Setter Property="IsThreeState" Value="False" />
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="#eee" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type local:RSDLMethod}">
+                            <Border
+                                x:Name="PART_Border"
+                                Margin="0,5,0,5"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Path
+                                        x:Name="PART_IconPath"
+                                        Grid.Column="0"
+                                        Width="50"
+                                        Height="50"
+                                        Fill="#06b025"
+                                        Stretch="Fill" />
+
+                                    <Border Grid.Column="1" Padding="15,0,0,0">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="0">
+                                                <TextBlock
+                                                    FontSize="16"
+                                                    Foreground="#000000"
+                                                    Text="{TemplateBinding MethodName}" />
+                                            </Border>
+                                            <Border Grid.Row="1" Padding="0,5,0,0">
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    Foreground="#434343"
+                                                    Text="{TemplateBinding Description}"
+                                                    TextWrapping="WrapWithOverflow" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Background" Value="#eee" />
+                                    <Setter Property="BorderBrush" Value="#06b025" />
+                                </Trigger>
+                                <Trigger Property="Tasks" Value="Detect">
+                                    <Setter TargetName="PART_IconPath" Property="Data" Value="{StaticResource RSApp.Icons.DLTasks.Detect}" />
+                                </Trigger>
+                                <Trigger Property="Tasks" Value="Segment">
+                                    <Setter TargetName="PART_IconPath" Property="Data" Value="{StaticResource RSApp.Icons.DLTasks.Segment}" />
+                                </Trigger>
+                                <Trigger Property="Tasks" Value="Classify">
+                                    <Setter TargetName="PART_IconPath" Property="Data" Value="{StaticResource RSApp.Icons.DLTasks.Classify}" />
+                                </Trigger>
+                                <Trigger Property="Tasks" Value="Pose">
+                                    <Setter TargetName="PART_IconPath" Property="Data" Value="{StaticResource RSApp.Icons.DLTasks.Pose}" />
+                                </Trigger>
+                                <Trigger Property="Tasks" Value="OBB">
+                                    <Setter TargetName="PART_IconPath" Property="Data" Value="{StaticResource RSApp.Icons.DLTasks.OBB}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+
+    </RadioButton.Resources>
+    <Grid />
+</RadioButton>

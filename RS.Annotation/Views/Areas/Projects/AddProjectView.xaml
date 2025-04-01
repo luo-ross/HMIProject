@@ -1,0 +1,176 @@
+﻿<rs:RSUserControl
+    x:Class="RS.Annotation.Views.Areas.AddProjectView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.Annotation.Views.Areas"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    Width="700"
+    Height="550"
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <rs:RSUserControl.DataContext>
+        <local:ProjectsViewModel />
+    </rs:RSUserControl.DataContext>
+    <Border Background="#FFF">
+        <GroupBox Margin="0">
+            <GroupBox.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource RSApp.Styles.TextBlockStyle}" Text="创建新项目" />
+                </Grid>
+            </GroupBox.Header>
+            <Grid Background="#fff">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Border Padding="5,3,5,3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <TextBlock
+                                Foreground="#949494"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="项目名称" />
+                            <TextBox
+                                Padding="0,3,5,3"
+                                rs:TextBoxHelper.Watermark="请输入项目名称"
+                                Style="{StaticResource RSApp.Styles.TextBoxStyle}"
+                                Text="{Binding ProjectModelAdd.ProjectName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                            <TextBlock
+                                Foreground="#949494"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="项目文件路径" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    Margin="3,3,0,3"
+                                    rs:ControlsHelper.CornerRadius="3,0,0,3"
+                                    rs:TextBoxHelper.IsShowClearButton="False"
+                                    rs:TextBoxHelper.Watermark="请选择项目存储路径"
+                                    IsReadOnly="True"
+                                    Style="{StaticResource RSApp.Styles.TextBoxStyle}"
+                                    Text="{Binding ProjectModelAdd.ProjectPath, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                                <Button
+                                    x:Name="BtnChooseProjectPath"
+                                    Grid.Column="1"
+                                    Margin="0"
+                                    rs:ControlsHelper.CornerRadius="0"
+                                    BorderBrush="#eee"
+                                    BorderThickness="0,1,1,1"
+                                    Click="BtnChooseProjectPath_Click"
+                                    Content="选择"
+                                    Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                            </Grid>
+
+                            <TextBlock
+                                Foreground="#949494"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="深度学习类型选择" />
+                        </StackPanel>
+                        <ScrollViewer Grid.Row="1">
+                            <StackPanel>
+                                <rs:RSDLMethod
+                                    x:Name="TaskDetect"
+                                    Click="TaskMethod_Click"
+                                    Description="目标检测是一项设计识别图像或视频流中对象的位置和类别的任务。对象检测器的输出是一组包围图像中对象的边界框，以及每个框的类别标签和置信度得分。当您需要识别场景中感兴趣的对象，但不需要确切知道对象的位置或者确切形状时，对象检测是一个不错的选择。"
+                                    GroupName="DeepLearningMethod"
+                                    IsChecked="True"
+                                    MethodName="目标检测(Object Detection)"
+                                    Tasks="Detect" />
+
+                                <rs:RSDLMethod
+                                    x:Name="TaskSegment"
+                                    Click="TaskMethod_Click"
+                                    Description="实例分割比对象检测更进一步，涉及识别图像中的单个对象并将其与图像的其余部分分割开来。实例分割模型的输出是一组掩膜或轮廓，它们勾勒出图像中的每个对象，以及每个对象的类标签和置信度得分。当您不仅需要知道对象再图像中的位置，还需要知道它们的确切形状时，实例分割非常有用。"
+                                    GroupName="DeepLearningMethod"
+                                    MethodName="实例分割(Instance Segmentatation)"
+                                    Tasks="Segment" />
+
+                                <rs:RSDLMethod
+                                    x:Name="TaskClassify"
+                                    Click="TaskMethod_Click"
+                                    Description="图像分类是三项任务中最简单的一项，涉及将整个图像分类到一组预定义的类中。图像分类器的输出是单个类标签和置信度得分。当您需要知道图像属于哪个类，而不需要知道该类对象的位置或其确切形状时，图像分类非常有用。"
+                                    GroupName="DeepLearningMethod"
+                                    MethodName="图像分类(Image Classification)"
+                                    Tasks="Classify" />
+
+                                <rs:RSDLMethod
+                                    x:Name="TaskPose"
+                                    Click="TaskMethod_Click"
+                                    Description="姿态估计是一项涉及识别图像中特定点(通常称为关键点)位置的任务。关键点可以表示对象的各个部分，如关节、地标或其他独特特征。关键点的位置通常表示为一组2D[x,y]或3D[x,y,可见]坐标。姿态估计模型的输出是一组点，表示图像对象上的关键点，通常还有每个点的置信度得分。当您需要识别场景中对象的特定部分及其相互关系时，姿态估计是一个不错的选择。"
+                                    GroupName="DeepLearningMethod"
+                                    MethodName="姿态估计(Pose Estimation)"
+                                    Tasks="Pose" />
+
+                                <rs:RSDLMethod
+                                    x:Name="TaskOBB"
+                                    Click="TaskMethod_Click"
+                                    Description="定向目标检测比对象检测更进一步，引入了一个额外的角度，以便再图像中更准确地定位对象。定向对象检测器的输出是一组旋转的边界框，它们精确地包围了图像中的对象，以及每个框的类标签和置信度得分。当您需要识别场景中感兴趣的对象，但不需要确切知道对象的位置或确切形状时，带旋转的对象检测是一个不错的选择。"
+                                    GroupName="DeepLearningMethod"
+                                    MethodName="定向目标检测(Oriented Bounding Boxes Object Detection)"
+                                    Tasks="OBB" />
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <StackPanel Grid.Row="2">
+                            <TextBlock
+                                Foreground="#949494"
+                                Style="{StaticResource RSApp.Styles.TextBlockStyle}"
+                                Text="备注信息" />
+                            <TextBox
+                                Height="70"
+                                VerticalAlignment="Top"
+                                VerticalContentAlignment="Top"
+                                rs:TextBoxHelper.Watermark="请输入备注信息"
+                                Style="{StaticResource RSApp.Styles.TextBoxStyle}"
+                                Text="{Binding ProjectModelAdd.Description}" />
+                        </StackPanel>
+                    </Grid>
+
+                </Border>
+                <Border
+                    Grid.Row="1"
+                    Padding="0,3,0,3"
+                    Background="#eee">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button
+                                x:Name="BtnClose"
+                                Click="BtnClose_Click"
+                                Content="取消"
+                                Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                            <Button
+                                x:Name="BtnOK"
+                                Click="BtnOK_Click"
+                                Content="确定"
+                                Style="{StaticResource RSApp.Styles.PrimaryButton}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </GroupBox>
+    </Border>
+
+</rs:RSUserControl>

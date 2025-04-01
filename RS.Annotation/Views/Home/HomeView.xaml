@@ -1,0 +1,515 @@
+﻿<rs:RSWindow
+    x:Class="RS.Annotation.Views.Home.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:areas="clr-namespace:RS.Annotation.Views.Areas"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.Annotation.Views.Home"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    x:Name="this"
+    Title="HomeView"
+    MinWidth="1024"
+    MinHeight="600"
+    Background="#FFF"
+    CaptionHeight="50"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <rs:RSWindow.DataContext>
+        <local:HomeViewModel />
+    </rs:RSWindow.DataContext>
+    <rs:RSWindow.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </ResourceDictionary>
+    </rs:RSWindow.Resources>
+    <rs:RSWindow.CaptionContent>
+        <Border
+            Grid.Row="0"
+            Height="{Binding ElementName=this, Path=CaptionHeight}"
+            Padding="20,0,0,0"
+            Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Path
+                        Width="25"
+                        Height="25"
+                        Data="M484.564075 66.781157c-2.092476 0-4.184953 0.133562-6.32195 0.400687L155.488794 105.291624A57.832482 57.832482 0 0 0 105.291624 155.488794l-38.132041 322.775592c-1.847612 15.626791 3.227756 30.719332 13.890481 41.382056L504.420339 942.994457c9.460664 9.438404 22.304906 15.070281 36.284428 14.179865a56.430078 56.430078 0 0 0 38.777592-16.828851L940.345471 579.437838A56.430078 56.430078 0 0 0 957.196583 540.660247a49.017369 49.017369 0 0 0-14.179866-36.239908L519.646442 81.027804A49.262233 49.262233 0 0 0 484.564075 66.781157m54.87185 957.196583a115.219756 115.219756 0 0 1-82.252125-33.769005L33.835786 566.86072C8.614769 541.661964-3.405839 506.512815 0.890415 470.45099L38.955675 147.653138c6.678116-56.318776 52.378687-102.019347 108.697463-108.675203l322.775592-38.13204c35.995044-4.251734 71.233234 7.768875 96.43199 32.989891l423.348015 423.348014a115.219756 115.219756 0 0 1 33.724484 84.923372 122.877329 122.877329 0 0 1-36.37347 84.567205L626.674377 987.559749a122.899589 122.899589 0 0 1-84.589466 36.39573h-2.648986 M366.784374 686.955501a33.435099 33.435099 0 0 1-23.618269-57.008848L629.968914 343.143845a33.390578 33.390578 0 1 1 47.214278 47.214278L390.402643 677.160931a33.279277 33.279277 0 0 1-23.596008 9.79457M491.999043 812.14791a33.435099 33.435099 0 0 1-23.618269-57.008848l203.816091-203.816091a33.390578 33.390578 0 1 1 47.214278 47.214278l-203.79383 203.838352a33.279277 33.279277 0 0 1-23.596009 9.794569 M312.424513 247.62453c-17.29632 0-33.568662 6.744897-45.811874 18.965848a64.443816 64.443816 0 0 0-18.965849 45.811874c0 17.29632 6.744897 33.568662 18.965849 45.789613 24.486424 24.486424 67.137323 24.486424 91.623747 0.022261 12.220952-12.243212 18.965849-28.493294 18.965849-45.811874 0-17.31858-6.744897-33.568662-18.965849-45.811874a64.443816 64.443816 0 0 0-45.811873-18.965848m0 196.336601a130.690724 130.690724 0 0 1-93.026152-38.510467 130.690724 130.690724 0 0 1-38.532728-93.048412c0-35.149149 13.690137-68.183561 38.532728-93.048412a130.757505 130.757505 0 0 1 93.026152-38.510467c35.149149 0 68.183561 13.690137 93.026151 38.532728a130.690724 130.690724 0 0 1 38.532728 93.048412 130.690724 130.690724 0 0 1-38.532728 93.003891 130.690724 130.690724 0 0 1-93.026151 38.532727"
+                        Fill="#1296db"
+                        Stretch="Fill" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="15"
+                        FontWeight="Bold"
+                        Text="标注软件" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    Orientation="Horizontal"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                    <RadioButton
+                        x:Name="RadBtnPorjectView"
+                        Content="项目管理"
+                        IsChecked="True"
+                        Style="{StaticResource RSApp.Styles.NavTabButtonStyle}" />
+                    <RadioButton x:Name="RadBtnPicturesView" Content="图像管理">
+                        <RadioButton.Style>
+                            <Style BasedOn="{StaticResource RSApp.Styles.NavTabButtonStyle}" TargetType="{x:Type RadioButton}">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=ViewModel.ProjectModelSelect, ElementName=ProjectView}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </RadioButton.Style>
+                    </RadioButton>
+                    <RadioButton x:Name="RadAnnotationView" Content="标注中心">
+                        <RadioButton.Style>
+                            <Style BasedOn="{StaticResource RSApp.Styles.NavTabButtonStyle}" TargetType="{x:Type RadioButton}">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=ViewModel.ImgModelSelect, ElementName=PicturesView}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=ViewModel.ImgModelSelect.IsCanRead, ElementName=PicturesView}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=ViewModel.ImgModelSelect.IsCanRead, ElementName=PicturesView}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </RadioButton.Style>
+                    </RadioButton>
+                </StackPanel>
+
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button
+                            x:Name="BtnSavae"
+                            Margin="8,0,8,0"
+                            rs:ControlsHelper.IconData="M579.7 291.4c18.8 0 34.1-15.3 34.1-34.1v-34.1c0-18.8-15.4-34.1-34.1-34.1-18.8 0-34.1 15.3-34.1 34.1v34.1c0 18.7 15.4 34.1 34.1 34.1z M944.7 216.3L808.2 79.9c-6.8-6.8-15.3-10.2-23.9-10.2H170.4c-56.3 0-102.3 46-102.3 102.3v682.1c0 56.3 46 102.3 102.3 102.3H852.5c56.3 0 102.3-46 102.3-102.3V240.2c0.1-8.5-3.3-17-10.1-23.9zM358 137.9h307v182.5c0 11.9-10.2 22.2-22.2 22.2H380.2c-11.9 0-22.2-10.2-22.2-22.2V137.9z m358.1 750.3H306.9V652.9c0-20.5 17.1-37.5 37.5-37.5h334.2c20.5 0 37.5 17 37.5 37.5v235.3z m170.6-34.1c0 18.8-15.3 34.1-34.1 34.1h-66.5V652.9c0-58-47.7-105.7-105.7-105.7h-336c-58 0-105.7 47.7-105.7 105.7v235.3h-68.2c-18.8 0-34.1-15.3-34.1-34.1V172c0-18.8 15.3-34.1 34.1-34.1h119.4v182.5c0 49.5 40.9 90.4 90.4 90.4h262.6c49.5 0 90.4-40.9 90.4-90.4V137.9h37.5l116 116v600.2z"
+                            Click="BtnSavae_Click"
+                            ToolTip="项目保存">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=ProjectView, Path=ViewModel.ProjectModelSelect}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button
+                            x:Name="BtnSavaeAs"
+                            Margin="8,0,8,0"
+                            Padding="0"
+                            rs:ControlsHelper.IconData="M808.996571 694.857143l-94.537142-94.573714L766.171429 548.571429l181.028571 181.028571-181.028571 181.028571-51.712-51.748571L805.302857 768H365.714286v-73.142857h443.282285z m32.146286 32.146286v5.193142l2.596572-2.596571-2.596572-2.596571zM292.571429 146.285714H146.285714v731.428572h365.714286v73.142857H146.285714a73.142857 73.142857 0 0 1-73.142857-73.142857V146.285714a73.142857 73.142857 0 0 1 73.142857-73.142857h621.714286l182.857143 182.857143v256h-73.142857V292.571429l-146.285715-146.285715v292.571429a73.142857 73.142857 0 0 1-73.142857 73.142857h-292.571428a73.142857 73.142857 0 0 1-73.142857-73.142857V146.285714z m73.142857 292.571429h292.571428V146.285714h-292.571428v292.571429z m146.285714-219.428572h73.142857v146.285715h-73.142857V219.428571z"
+                            Click="BtnSavaeAs_Click"
+                            ToolTip="项目另存为">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=ProjectView, Path=ViewModel.ProjectModelSelect}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+    </rs:RSWindow.CaptionContent>
+    <Border Background="#F1F2F7">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0">
+                <Grid>
+                    <areas:ProjectsView
+                        x:Name="ProjectView"
+                        x:FieldModifier="public"
+                        Visibility="{Binding ElementName=RadBtnPorjectView, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <areas:PicturesView
+                        x:Name="PicturesView"
+                        x:FieldModifier="public"
+                        ProjectModelSelect="{Binding ElementName=ProjectView, Path=ViewModel.ProjectModelSelect}"
+                        ProjectsView="{Binding ElementName=PicturesView, BindsDirectlyToSource=True}"
+                        Visibility="{Binding ElementName=RadBtnPicturesView, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <areas:AnnotationView
+                        x:Name="AnnotationView"
+                        x:FieldModifier="public"
+                        ImgModelSelect="{Binding ViewModel.ImgModelSelect, ElementName=PicturesView}"
+                        PicturesView="{Binding ElementName=PicturesView, BindsDirectlyToSource=True}"
+                        ProjectsView="{Binding ElementName=ProjectView, BindsDirectlyToSource=True}"
+                        Visibility="{Binding ElementName=RadAnnotationView, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
+            </Border>
+            <Border
+                Grid.Row="1"
+                Padding="0,0,5,0"
+                Background="#FFF"
+                CornerRadius="0,0,5,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource RSApp.Styles.TextBlockStyle}" Text="COPYRIGHT @ 2024 XXX有限公司 ALL RIGHTS RESERVED" />
+
+                    <TextBlock Grid.Column="2" Style="{StaticResource RSApp.Styles.TextBlockStyle}">
+                        <Run Text="Version:" />
+                        <Run Text="{Binding Version}" />
+                    </TextBlock>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--<ScrollViewer>
+            <Grid>
+                <StackPanel>
+                    <WrapPanel WindowChrome.IsHitTestVisibleInChrome="True">
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Standard"
+                            Content="Primary" />
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Standard"
+                            Content="Secondary" />
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Standard"
+                            Content="Success" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Standard"
+                            Content="Warning" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Standard"
+                            Content="Danger" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Standard"
+                            Content="Info" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Standard"
+                            Content="Light" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Standard"
+                            Content="Dark" />
+                    </WrapPanel>
+
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Outline"
+                            Content="Primary" />
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Outline"
+                            Content="Secondary" />
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Outline"
+                            Content="Success" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Outline"
+                            Content="Warning" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Outline"
+                            Content="Danger" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Outline"
+                            Content="Info" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Outline"
+                            Content="Light" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Outline"
+                            Content="Dark" />
+                    </WrapPanel>
+
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Ghost"
+                            Content="Primary" />
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Ghost"
+                            Content="Secondary" />
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Ghost"
+                            Content="Success" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Ghost"
+                            Content="Warning" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Ghost"
+                            Content="Danger" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Ghost"
+                            Content="Info" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Ghost"
+                            Content="Light" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Ghost"
+                            Content="Dark" />
+                    </WrapPanel>
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Square"
+                            Content="Primary" />
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Square"
+                            Content="Secondary" />
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Square"
+                            Content="Success" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Square"
+                            Content="Warning" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Square"
+                            Content="Danger" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Square"
+                            Content="Info" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Square"
+                            Content="Light" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Square"
+                            Content="Dark" />
+                    </WrapPanel>
+
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Pill"
+                            Content="Primary" />
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Pill"
+                            Content="Secondary" />
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Pill"
+                            Content="Success" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Pill"
+                            Content="Warning" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Pill"
+                            Content="Danger" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Pill"
+                            Content="Info" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Pill"
+                            Content="Light" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Pill"
+                            Content="Dark" />
+                    </WrapPanel>
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Blue"
+                            BtnType="Standard"
+                            Content="Blue" />
+                        <rs:RSButton
+                            BtnColorType="Azure"
+                            BtnType="Standard"
+                            Content="Azure" />
+                        <rs:RSButton
+                            BtnColorType="Indigo"
+                            BtnType="Standard"
+                            Content="Indigo" />
+                        <rs:RSButton
+                            BtnColorType="Purple"
+                            BtnType="Standard"
+                            Content="Purple" />
+                        <rs:RSButton
+                            BtnColorType="Pink"
+                            BtnType="Standard"
+                            Content="Pink" />
+                        <rs:RSButton
+                            BtnColorType="Red"
+                            BtnType="Standard"
+                            Content="Red" />
+                        <rs:RSButton
+                            BtnColorType="Orange"
+                            BtnType="Standard"
+                            Content="Orange" />
+                        <rs:RSButton
+                            BtnColorType="Yellow"
+                            BtnType="Standard"
+                            Content="Yellow" />
+
+                        <rs:RSButton
+                            BtnColorType="Lime"
+                            BtnType="Standard"
+                            Content="Lime" />
+
+                        <rs:RSButton
+                            BtnColorType="Green"
+                            BtnType="Standard"
+                            Content="Green" />
+
+                        <rs:RSButton
+                            BtnColorType="Teal"
+                            BtnType="Standard"
+                            Content="Teal" />
+
+                        <rs:RSButton
+                            BtnColorType="Cyan"
+                            BtnType="Standard"
+                            Content="Cyan" />
+                    </WrapPanel>
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Icon"
+                            IconData="M447.36 761.28h102.976V512h68.672l9.12-85.888H550.4l0.064-43.008c0-22.432 2.144-34.4 34.272-34.4h42.976V262.688h-68.736c-82.592 0-111.616 41.664-111.616 111.776v51.552h-51.424V512h51.488v249.28zM512 64c247.424 0 448 200.576 448 448 0 247.392-200.576 448-448 448-247.456 0-448-200.608-448-448C64 264.576 264.544 64 512 64z" />
+
+
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+
+
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Icon"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                    </WrapPanel>
+
+
+                    <WrapPanel>
+                        <rs:RSButton
+                            BtnColorType="Primary"
+                            BtnType="Social"
+                            Content="FaceBook"
+                            IconData="M447.36 761.28h102.976V512h68.672l9.12-85.888H550.4l0.064-43.008c0-22.432 2.144-34.4 34.272-34.4h42.976V262.688h-68.736c-82.592 0-111.616 41.664-111.616 111.776v51.552h-51.424V512h51.488v249.28zM512 64c247.424 0 448 200.576 448 448 0 247.392-200.576 448-448 448-247.456 0-448-200.608-448-448C64 264.576 264.544 64 512 64z" />
+
+
+                        <rs:RSButton
+                            BtnColorType="Secondary"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+
+
+                        <rs:RSButton
+                            BtnColorType="Success"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Warning"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Danger"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Info"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Light"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                        <rs:RSButton
+                            BtnColorType="Dark"
+                            BtnType="Social"
+                            Content="Google"
+                            IconData="M522.24 438.826667V614.4h290.389333c-11.733333 75.306667-87.722667 220.757333-290.389333 220.757333-174.72 0-317.397333-144.597333-317.397333-323.157333s142.72-323.157333 317.397333-323.157333c99.413333 0 166.016 42.197333 204.16 78.890666l138.837333-133.888C776.064 50.602667 660.437333 0 522.24 0c-283.093333 0-512 228.906667-512 512s228.906667 512 512 512c295.509333 0 491.52-207.744 491.52-500.309333 0-33.621333-3.626667-59.306667-8.064-84.864H522.24z" />
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>-->
+    </Border>
+</rs:RSWindow>

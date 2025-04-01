@@ -25,7 +25,7 @@
 10、在节点DefaultIcon 中找到（默认）双击打开设置值(就是Icon的路径) 比如D:\icon.ico 备注:完整路径
 11、在节点open 中找到 (默认) 双击打开设置值为 RsdlFile
 12、在节点open 中右键添加字符串名称 FriendlyAppName 设置值为RsdlFile
-13、在节点command 中找到 (默认) 双击打开设置启动程序全路径 比如D:\RS.WPFApp.exe %1 
+13、在节点command 中找到 (默认) 双击打开设置启动程序全路径 比如D:\RS.Annotation.exe %1 
 备注：
 这里%1就是代表打开程序后会给程序里的main方法里的参数arg[] 传递参数。
 这个参数值就是打开当前文件的全路径

@@ -1,0 +1,25 @@
+﻿<rs:RSWindow
+    x:Class="RS.Annotation.Views.Charts.SingnalChartView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.Annotation.Views.Charts"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    Title="SingnalChartView"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <rs:RSWindow.DataContext>
+        <local:SingnalChartViewModel />
+    </rs:RSWindow.DataContext>
+    <Border>
+        <Grid>
+            <rs:RSPlotChart
+                x:Name="PlotChart"
+                Background="Transparent"
+                BorderBrush="Red"
+                BorderThickness="1" />
+        </Grid>
+    </Border>
+</rs:RSWindow>

@@ -322,7 +322,7 @@ namespace RS.SetupApp.Views
         {
             //检查当前运行进程里是否有我们的程序正在运行
             //假如有运行的话我就提示用户线先关闭程序再进行安装
-            string targetProcessName = "RS.WPFApp";
+            string targetProcessName = "RS.Annotation";
             (bool isRunning, Process process) = CheckProgressIsRunning(targetProcessName);
             if (isRunning)
             {
@@ -656,7 +656,7 @@ namespace RS.SetupApp.Views
 
         private string GetTargetExePath()
         {
-            return Path.Join(this.InstallActualPath, "RS.WPFApp.exe");
+            return Path.Join(this.InstallActualPath, "RS.Annotation.exe");
         }
 
         /// <summary>
