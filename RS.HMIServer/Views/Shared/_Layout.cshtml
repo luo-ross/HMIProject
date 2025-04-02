@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome-4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+
+    <style>
+        body {
+            background: #f4f6fa;
+        }
+    </style>
 </head>
 <body class="d-flex flex-column h-100">
-  
+
     <header>
         <div>
             <a class="txt-company-title">与贝科技</a>
@@ -20,12 +26,6 @@
             </a>
         </div>
     </header>
-    <style>
-        .main {
-            min-height: 620px;
-            background: #fff !important;
-        }
-    </style>
 
     <main class="main">
         @RenderBody()

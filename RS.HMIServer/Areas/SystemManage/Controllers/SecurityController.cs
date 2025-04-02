@@ -12,6 +12,7 @@ namespace RS.HMIServer.Areas.SystemManage.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [Area("SystemManage")]
+    [Route("/[area]/[controller]/[action]")]
     public class SecurityController : BaseController
     {
         private readonly ISecurityService SecurityService;
@@ -24,17 +25,9 @@ namespace RS.HMIServer.Areas.SystemManage.Controllers
             HttpContextAccessor = httpContextAccessor;
             LogService = logService;
         }
-     
-        public IActionResult SignIn()
-        {
-            return View();
-        }
-        public IActionResult SignUp()
-        {
-            return View();
-        }
+      
 
-        public IActionResult Index()
+        public IActionResult ForgetPassword()
         {
             return View();
         }
@@ -48,7 +41,6 @@ namespace RS.HMIServer.Areas.SystemManage.Controllers
             //    //不存在跳转到密码重置主页
             //    return RedirectToAction("Index");
             //}
-
             return View();
         }
 

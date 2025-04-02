@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewData["Title"]</title>
+    <!-- CSS files -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        html {
+            width: 100%;
+            height: 100%;
+            font-size: 14px;
+            color: #333 !important;
+            background-color: #f4f6fa;
+        }
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset; 
+} 
+input[type=text]:focus, input[type=password]:focus, textarea:focus { 
+-webkit-box-shadow: 0 0 0 1000px white inset;
+    border:none;
+    box-shadow:none;
+}
+
+
+        a {
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+
+            a:hover {
+                color: #333;
+            }
+
+            a:hover, button:hover {
+                opacity: 0.8;
+            }
+
+            a:active, button:active {
+                opacity: 0.7;
+            }
+
+        body {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-content {
+            position: relative;
+            display: flex;
+            width: 800px;
+            height: 450px;
+            background: url('/imgs/loginbg.jpg');
+            background-size: cover;
+            border-radius: 5px;
+            box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .login-left {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .login-right {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            flex-direction: column;
+            justify-content: start;
+            padding: 60px 25px 0px 25px;
+        }
+
+        .form-row {
+            display: flex;
+            width: 100%;
+            height: auto;
+        }
+
+        .form-input-border {
+            border: 1px solid #eee;
+            display: flex;
+            width: 100%;
+            border-radius: 5px;
+            margin: 2px 3px;
+            overflow: hidden;
+        }
+
+        .svg-icon {
+            fill: #adc1cc;
+            margin: 5px;
+            width: 25px;
+            height: 25px;
+        }
+
+        .form-input {
+            border: none;
+            vertical-align: middle;
+            width: 100%;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        :focus-visible {
+            outline: none;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #949494;
+        }
+
+        ::-ms-reveal {
+            display: none
+        }
+
+        .btn-password-openclose {
+            background: #ffffffff;
+            border: none;
+            cursor: pointer;
+        }
+
+
+
+        .form-row {
+            margin: 5px 0px;
+        }
+
+        .img-border {
+            width: 150px;
+        }
+
+        .img-verify {
+            width: 100%;
+            cursor: pointer;
+        }
+
+
+        .btn-login, .btn-register, .btn-passwordfind {
+            width: 100%;
+            padding: 8px 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #198cff;
+            color: #fff;
+            margin: 35px 3px 0px 3px;
+        }
+
+            .btn-login:hover, .btn-register:hover {
+                opacity: 0.8;
+            }
+
+            .btn-login:active, .btn-register:active {
+                opacity: 0.7;
+            }
+
+        .tab-border {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 45px;
+        }
+
+            .tab-border input[type="radio"] {
+                display: none;
+            }
+
+            .tab-border label {
+                cursor: pointer;
+                color: #333;
+                margin: 0px 15px;
+                position: relative;
+            }
+
+                .tab-border label:hover {
+                    opacity: 0.8;
+                }
+
+            .tab-border input[type="radio"]:checked + label::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -15px;
+                width: 100%;
+                height: 2px;
+                background-color: #198cff;
+            }
+
+        .btn-qrcode-login, .btn-password-login {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            margin: 3px 0px 0px 3px;
+        }
+
+        .icon-qrcode {
+            width: 50px;
+            height: 50px;
+        }
+
+        .btn-qrcode-login:hover {
+            opacity: 0.8;
+        }
+
+        .btn-forget-password {
+            display: flex;
+            width: 100%;
+            justify-content: flex-end;
+            color: #949494;
+            margin: 10px 0px 0px 0px;
+        }
+
+        
+        .error-message {
+            position: absolute;
+            width: 100%;
+            min-height: 30px;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+        }
+        
+        </style>
+</head>
+<body>
+    <div class="login-content">
+        <div class="login-left img">
+        </div>
+        <div class="login-right">
+            @RenderBody()
+        </div>
+
+        <div class="error-message d-none">
+          这是提示消息
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/login.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

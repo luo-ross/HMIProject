@@ -58,6 +58,7 @@ namespace RS.HMIServer
 
             builder.Services.AddHttpContextAccessor();
 
+
             //AddControllersWithViews 是 ASP.NET Core MVC 框架中的一个服务扩展方法
             //它用于在应用程序的服务集合（IServiceCollection）中添加对 MVC 控制器的支持,并且这些控制器支持视图（Views）。
             //这个方法通常在你的 ASP.NET Core 应用程序的启动配置中使用，特别是在使用 MVC 架构时。
@@ -295,13 +296,13 @@ namespace RS.HMIServer
             //每个路由规则都包括一个名称、一个 URL 模式和一个默认值集合，用于指定当 URL 与模式匹配时应该调用的控制器和操作。
             AppHost.MapControllerRoute(
               name: "default",
-              pattern: "{controller=Home}/{action=Index}/{id?}");
+              pattern: "{controller=Login}/{action=Index}/{id?}");
 
             // 配置区域路由
             AppHost.MapAreaControllerRoute(
                 name: "SystemManageRoute",
                 areaName: "SystemManage",
-                pattern: "SystemManage/{controller=Home}/{action=Index}/{id?}"
+                pattern: "SystemManage/{controller=Login}/{action=Index}/{id?}"
             );
 
 
@@ -346,6 +347,7 @@ namespace RS.HMIServer
 
             //初始化RSA非对称秘钥
             InitRSASecurityKeyData(AppHost);
+
 
             //运行应用程序并阻止调用线程，直到主机关闭。
             AppHost.Run();

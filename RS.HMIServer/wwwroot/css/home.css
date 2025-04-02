@@ -1,5 +1,6 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    background: #f4f6fa;
 }
 
 header {
@@ -9,8 +10,6 @@ header {
     right: 0;
     height: 50px;
     display: flex;
-    background: #192b3f !important;
-    color: #fff;
     align-items: center;
     justify-content: start;
 }
@@ -26,12 +25,10 @@ header {
     padding: 0px 45px 0px 45px;
     cursor: pointer;
     text-decoration: none;
-    color: #fff;
 }
 
     .txt-company-title:hover {
         text-decoration: none;
-        color: #fff;
         opacity: 0.8;
     }
 
@@ -45,12 +42,10 @@ header {
     padding: 0px 20px 0px 20px;
     cursor: pointer;
     text-decoration: none;
-    color: #fff;
 }
 
     .btn-login:hover, .btn-signin:hover {
         text-decoration: none;
-        color: #fff;
         opacity: 0.8;
     }
 
@@ -64,17 +59,10 @@ a {
 }
 
 .footer {
-    background: #fff;
-    color: #6c757d
+    color: #656d77;
 }
 
-.bg-tertiary {
-    background-color: #192b3f !important
-}
 
-.footer-dark .heading {
-    color: #fff
-}
 
 
 hr {
@@ -85,7 +73,6 @@ hr {
 }
 
 .footer .nav .nav-item .nav-link, .footer .footer-link {
-    color: #6c757d !important;
     text-decoration: none;
 }
 
@@ -94,17 +81,12 @@ hr {
     padding: .125rem 0;
 }
 
-.text-muted {
-    color: #adb5bd !important;
-}
+
 
 .font-weight-700 {
     font-weight: 700 !important;
 }
 
-.footer-dark .heading {
-    color: #fff;
-}
 
 .nav {
     display: flex;

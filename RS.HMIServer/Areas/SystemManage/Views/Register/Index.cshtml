@@ -1,0 +1,64 @@
+﻿@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "上位机-注册";
+   var clientId= ViewData["ClientId"] = Guid.NewGuid().ToString();
+    var timestamp = ViewData["Timestamp"];
+
+    var password1ViewData = new ViewDataDictionary(ViewData)
+            {
+                ["Id"] = 1,
+                ["PlaceHolder"] = "请输入密码",
+            };
+
+    var password2ViewData = new ViewDataDictionary(ViewData)
+            {
+                ["Id"] = 2,
+                ["PlaceHolder"] = "请再次输入密码",
+            };
+}
+
+<style>
+
+    .btn-verifyrequest {
+        border: none;
+        width: 130px;
+        border-radius: 5px;
+        margin: 2px 3px;
+        color: #949494;
+    }
+
+        .btn-verifyrequest:hover {
+            opacity: 0.8;
+        }
+
+        .btn-verifyrequest:active {
+            opacity: 0.7;
+        }
+
+    .btn-register {
+        margin: 10px 3px 2px 3px;
+    }</style>
+
+<div class="tab-border">
+    <input type="radio" id="radio-login" name="tab" value="radio-login">
+    <label class="label-tab label-login" for="radio-login" data-url="/Login/Index?timestamp=@timestamp">登录</label>
+    <input type="radio" checked id="radio-register" name="tab" value="radio-register">
+    <label class="label-tab label-register" for="radio-register">注册</label>
+</div>
+
+@Html.Partial("_EmailPartial")
+@Html.Partial("_PasswordPartial", null, password1ViewData)
+@Html.Partial("_PasswordPartial", null, password2ViewData)
+
+<div class="form-row">
+    @Html.Partial("_VerifyPartial")
+    <button class="btn-verifyrequest">获取验证码</button>
+</div>
+<div class="form-row">
+    <button type="button" class="btn-register">注册</button>
+</div>
+
+@section Scripts {
+    <script src="~/js/register.js"></script>
+}
+

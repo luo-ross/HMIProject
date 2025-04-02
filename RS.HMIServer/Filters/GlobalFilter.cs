@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RS.Commons;
 using RS.Commons.Attributs;
-
+using RS.HMIServer.Areas;
 using System.Net;
 
 namespace RS.HMIServer.Filters
@@ -40,6 +40,13 @@ namespace RS.HMIServer.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            //动态给每一个请求添加时间戳
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var controller = context.Controller as BaseController;
+            if (controller != null)
+            {
+                controller.ViewData["Timestamp"] = timestamp;
+            }
             var filterConfig = GetFilterConfig(context);
             if (filterConfig != null && !filterConfig.IsActionFilter)
             {
@@ -68,7 +75,6 @@ namespace RS.HMIServer.Filters
         private FilterConfig GetFilterConfig(FilterContext context)
         {
             var filterConfig = (FilterConfig)context.ActionDescriptor.EndpointMetadata.FirstOrDefault(t => t.GetType() == typeof(FilterConfig));
-
             return filterConfig;
         }
 

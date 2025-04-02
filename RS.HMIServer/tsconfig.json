@@ -6,7 +6,7 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es5",
-    "outDir": "wwwroot/js"
+    "outDir": "wwwroot/js",
   },
   "include": [
     "Scripts/*"

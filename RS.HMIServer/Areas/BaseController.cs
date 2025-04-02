@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Security.Claims;
 
 namespace RS.HMIServer.Areas
@@ -8,6 +9,11 @@ namespace RS.HMIServer.Areas
     /// </summary>
     public abstract class BaseController : Controller
     {
+        public BaseController()
+        {
+            
+        }
+
         /// <summary>
         /// 获取会话Id
         /// </summary>

@@ -1,4 +1,7 @@
-﻿$(function () {
+﻿
+
+
+$(function () {
     $(".btn-passconfirm").click(() => {
         debugger
         var form = $(".form");

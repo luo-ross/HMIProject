@@ -230,7 +230,7 @@
                                                 Padding="3,5,3,5"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
                                                 rs:TextBoxHelper.IsShowClearButton="True"
-                                                rs:TextBoxHelper.Watermark="请输入用户名"
+                                                rs:TextBoxHelper.Watermark="请输入邮箱"
                                                 MaxLength="30"
                                                 Style="{StaticResource RSApp.Styles.IconTextBox}"
                                                 Text="{Binding LoginModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
