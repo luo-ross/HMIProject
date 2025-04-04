@@ -17,13 +17,13 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         /// <summary>
         /// 用户服务接口
         /// </summary>
-        private readonly IUserService UserService;
+        private readonly IUserBLL UserBLL;
 
-        private readonly ILogService LogService;
-        public UserController(IUserService userService, ILogService logService)
+        private readonly ILogBLL LogBLL;
+        public UserController(IUserBLL userBLL, ILogBLL logBLL)
         {
-            UserService = userService;
-            LogService = logService;
+            UserBLL = userBLL;
+            LogBLL = logBLL;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> GetUser()
         {
-            return await UserService.GetUsersAsync(SessionId);
+            return await UserBLL.GetUsersAsync(SessionId);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [HttpPost()]
         public async Task<OperateResult> ValidLogin(AESEncryptModel aesEncryptModel)
         {
-            return await UserService.ValidLoginAsync(aesEncryptModel, SessionId);
+            return await UserBLL.ValidLoginAsync(aesEncryptModel, SessionId);
         }
 
     }

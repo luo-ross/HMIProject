@@ -11,14 +11,14 @@ using System.Collections;
 
 namespace RS.Annotation.BLL
 {
-    [ServiceInjectConfig(typeof(IGeneralService), ServiceLifetime.Transient, IsInterceptor = true)]
-    internal class GeneralService : IGeneralService
+    [ServiceInjectConfig(typeof(IGeneralBLL), ServiceLifetime.Transient, IsInterceptor = true)]
+    internal class GeneralBLL : IGeneralBLL
     {
         private readonly IMemoryCache MemoryCache;
-        private readonly ICryptographyService CryptographyService;
-        public GeneralService(ICryptographyService cryptographyService, IMemoryCache memoryCache)
+        private readonly ICryptographyBLL CryptographyBLL;
+        public GeneralBLL(ICryptographyBLL cryptographyBLL, IMemoryCache memoryCache)
         {
-            CryptographyService = cryptographyService;
+            CryptographyBLL = cryptographyBLL;
             MemoryCache = memoryCache;
         }
 
@@ -41,7 +41,7 @@ namespace RS.Annotation.BLL
             SessionRequestModel sessionRequestModel = new SessionRequestModel()
             {
                 RsaPublicKey = rSAPublicKey,
-                Nonce = CryptographyService.CreateRandCode(10),
+                Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
                 AudienceType = AudienceType.WindowsAudience,
             };
@@ -55,7 +55,7 @@ namespace RS.Annotation.BLL
             };
 
             //获取会话的Hash数据
-            var getRSAHashResult = CryptographyService.GetRSAHash(arrayList);
+            var getRSAHashResult = CryptographyBLL.GetRSAHash(arrayList);
             if (!getRSAHashResult.IsSuccess)
             {
                 return getRSAHashResult;
@@ -69,7 +69,7 @@ namespace RS.Annotation.BLL
             }
 
             //进行RSA数据签名
-            var rsaSignDataResult = CryptographyService.RSASignData(getRSAHashResult.Data, rsaPrivateKey);
+            var rsaSignDataResult = CryptographyBLL.RSASignData(getRSAHashResult.Data, rsaPrivateKey);
             if (!rsaSignDataResult.IsSuccess)
             {
                 return rsaSignDataResult;
@@ -96,7 +96,7 @@ namespace RS.Annotation.BLL
             };
 
             //获取会话的Hash数据
-            getRSAHashResult = CryptographyService.GetRSAHash(arrayList);
+            getRSAHashResult = CryptographyBLL.GetRSAHash(arrayList);
             if (!getRSAHashResult.IsSuccess)
             {
                 return getRSAHashResult;
@@ -104,7 +104,7 @@ namespace RS.Annotation.BLL
 
             //获取签名
             var signature = Convert.FromBase64String(sessionResultModel.MsgSignature);
-            var verifyDataResult = CryptographyService.RSAVerifyData(getRSAHashResult.Data, signature, sessionResultModel.RsaPublicKey);
+            var verifyDataResult = CryptographyBLL.RSAVerifyData(getRSAHashResult.Data, signature, sessionResultModel.RsaPublicKey);
 
             if (!verifyDataResult.IsSuccess)
             {
@@ -112,7 +112,7 @@ namespace RS.Annotation.BLL
             }
 
             //解密AesKey
-            var rsaDecryptResult = CryptographyService.RSADecrypt(sessionResultModel.SessionModel.AesKey, rsaPrivateKey);
+            var rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AesKey, rsaPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;
@@ -120,7 +120,7 @@ namespace RS.Annotation.BLL
             sessionResultModel.SessionModel.AesKey = rsaDecryptResult.Data;
 
             //解密AppId
-            rsaDecryptResult = CryptographyService.RSADecrypt(sessionResultModel.SessionModel.AppId, rsaPrivateKey);
+            rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AppId, rsaPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.IBLL
 {
-    public interface IGeneralService
+    public interface IGeneralBLL
     {
         /// <summary>
         /// 获取会话

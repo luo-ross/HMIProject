@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.IBLL
 {
-    public interface IGeneralService
+    public interface IGeneralBLL
     {
         /// <summary>
         /// 生成JWTToken
@@ -21,7 +21,14 @@ namespace RS.HMIServer.IBLL
         /// <param name="claimList">声明列表</param>
         /// <returns></returns>
         OperateResult<string> GenerateJWTToken(string audienceType, List<Claim> claimList);
-        Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel);
+       
+        /// <summary>
+        /// 获取客户端和服务端的加密会话
+        /// </summary>
+        /// <param name="sessionRequestModel"></param>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel, string sessionId);
 
         /// <summary>
         /// 获取AES解密数据
@@ -40,5 +47,10 @@ namespace RS.HMIServer.IBLL
         /// <param name="sessionId">会话Id</param>
         /// <returns></returns>
         Task<OperateResult<AESEncryptModel>> GetAESEncryptAsync<T>(T encryptModelShould, string sessionId);
+
+
+        Task<OperateResult<string>> GetClientIdAsync(LoginClientModel loginClientModel);
+        Task<OperateResult> ValidCliendIdAsync(LoginClientModel loginClientModel, string clientId);
+
     }
 }

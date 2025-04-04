@@ -51,6 +51,8 @@ namespace RS.Commons
 
         /// <summary>
         /// 错误代码
+        /// 0-100_0000 代表warning 可以返回给用户
+        /// 100_0000以后 代表异常 不可以返回给用户
         /// </summary>
         public int ErrorCode { get; set; }
 
@@ -138,6 +140,7 @@ namespace RS.Commons
                 Message = errorOperateResult.Message
             };
         }
+
     }
 
     /// <summary>

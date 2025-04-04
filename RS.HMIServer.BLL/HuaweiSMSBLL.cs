@@ -522,10 +522,10 @@ namespace RS.HMIServer.BLL
     /// <summary>
     /// 阿里云短信发送服务
     /// </summary>
-    internal class HuaweiSMSService : ISMSService
+    internal class HuaweiSMSBLL : ISMSBLL
     {
         private readonly IConfiguration Configuration;
-        public HuaweiSMSService(IConfiguration configuration)
+        public HuaweiSMSBLL(IConfiguration configuration)
         {
             Configuration = configuration;
         }

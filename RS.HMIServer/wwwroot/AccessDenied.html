@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务暂时不可用</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⚠️</div>
+        <h1>访问被拒绝</h1>
+        <p>检测到异常访问行为，为了系统安全，暂时无法访问。</p>
+        <p>如有疑问，请联系系统管理员。</p>
+        <p>访问时间：<span id="accessTime"></span></p>
+    </div>
+    <script>
+        // 显示访问时间
+        document.getElementById('accessTime').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html> 

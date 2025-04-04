@@ -13,10 +13,9 @@ namespace RS.HMIServer.Filters
     /// </summary>
     public class GlobalFilter : IExceptionFilter, IAuthorizationFilter, IActionFilter, IResourceFilter
     {
-        private readonly ILogService LogService;
-        public GlobalFilter(ILogService logService)
+        private readonly ILogBLL LogBLL;        public GlobalFilter(ILogBLL logBLL)
         {
-            LogService = logService;
+            LogBLL = logBLL;
         }
 
         /// <summary>
@@ -34,24 +33,34 @@ namespace RS.HMIServer.Filters
         }
 
         /// <summary>
-        /// Action开始时出发
+        /// Action开始时触发
         /// </summary>
         /// <param name="context">请求上下文</param>
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            //动态给每一个请求添加时间戳
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            var controller = context.Controller as BaseController;
-            if (controller != null)
-            {
-                controller.ViewData["Timestamp"] = timestamp;
-            }
             var filterConfig = GetFilterConfig(context);
             if (filterConfig != null && !filterConfig.IsActionFilter)
             {
                 return;
             }
+
+            //动态给每一个请求添加时间戳
+            var timeStamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var controller = context.Controller as BaseController;
+            if (controller != null)
+            {
+                controller.ViewData["TimeStamp"] = timeStamp;
+            }
+
+            //这里主要是获取到clientId给到view视图可能会用到
+            if (context.HttpContext.Request.Query.TryGetValue("ClientId", out var clientId))
+            {
+                controller.ViewData["ClientId"] = clientId;
+            }
+
+
+
         }
 
         /// <summary>
@@ -84,7 +93,7 @@ namespace RS.HMIServer.Filters
         /// <param name="context">请求上下文</param>
         public void OnException(ExceptionContext context)
         {
-            LogService.LogCritical(context.Exception, context.ActionDescriptor.DisplayName);
+            LogBLL.LogCritical(context.Exception, context.ActionDescriptor.DisplayName);
             OperateResult operateResult = OperateResult.CreateFailResult<object>("内部错误，暂时无法访问");
             operateResult.ErrorCode = 99999;
             context.Result = new JsonResult(operateResult)

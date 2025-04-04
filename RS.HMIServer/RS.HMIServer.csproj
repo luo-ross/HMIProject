@@ -13,6 +13,7 @@
 		<Content Remove="Configs\log4net.config" />
 		<Content Remove="HtmlTemplates\PasswordReset.cshtml" />
 		<Content Remove="HtmlTemplates\RegisterVerification.cshtml" />
+		<Content Remove="wwwroot\ServerError.html" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,6 +26,8 @@
 		<None Include="HtmlTemplates\RegisterVerification.cshtml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Include="wwwroot\ServerError.html" />
+		<None Include="wwwroot\AccessDenied.html" />
 		<None Include="wwwroot\lib\crypto-js-develop\src\aes.js" />
 		<None Include="wwwroot\lib\crypto-js-develop\src\blowfish.js" />
 		<None Include="wwwroot\lib\crypto-js-develop\src\cipher-core.js" />

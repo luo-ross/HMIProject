@@ -9,18 +9,18 @@ namespace RS.Commons
     /// <summary>
     /// 日志服务
     /// </summary>
-    [ServiceInjectConfig(typeof(ILogService), ServiceLifetime.Singleton)]
-    public class LogService : ILogService
+    [ServiceInjectConfig(typeof(ILogBLL), ServiceLifetime.Singleton)]
+    public class LogBLL : ILogBLL
     {
-        private ILogger<LogService> Logger;
+        private ILogger<LogBLL> Logger;
         private static ConcurrentBag<LogModel> LogModelDataSource;
         private Thread HandleLogThread;
         private bool IsEndLogEvent;
-        static LogService()
+        static LogBLL()
         {
             LogModelDataSource = new ConcurrentBag<LogModel>();
         }
-        public LogService(ILogger<LogService> logger)
+        public LogBLL(ILogger<LogBLL> logger)
         {
             Logger = logger;
             HandleLogThread = new Thread(HandleLogEvent);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.IBLL
 {
-    public interface IUserService
+    public interface IUserBLL
     {
         /// <summary>
         /// 获取用户列表

@@ -7,10 +7,10 @@ namespace RS.Commons.Interceptors
     /// </summary>
     public class ExceptionInterceptor : IInterceptor, IAsyncInterceptor
     {
-        private readonly ILogService LogService;
-        public ExceptionInterceptor(ILogService logService)
+        private readonly ILogBLL LogBLL;
+        public ExceptionInterceptor(ILogBLL logBLL)
         {
-            LogService = logService;
+            LogBLL = logBLL;
         }
 
         public void Intercept(IInvocation invocation)
@@ -38,7 +38,7 @@ namespace RS.Commons.Interceptors
                     returnTypeInstance.ErrorCode = 9999;
                     invocation.ReturnValue = returnTypeInstance;
                 }
-                LogService.LogCritical(ex, $"{invocation.Method.Name}产生异常未处理");
+                LogBLL.LogCritical(ex, $"{invocation.Method.Name}产生异常未处理");
             }
         }
 
@@ -68,7 +68,7 @@ namespace RS.Commons.Interceptors
                     taskCompletionSource.GetType().GetMethod("TrySetResult").Invoke(taskCompletionSource, new[] { returnTypeInstance });
                     invocation.ReturnValue = taskCompletionSource.Task;
                 }
-                LogService.LogCritical(task.Exception, $"{invocation.Method.Name}产生异常未处理");
+                LogBLL.LogCritical(task.Exception, $"{invocation.Method.Name}产生异常未处理");
             }
 
         }

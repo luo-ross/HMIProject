@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.IBLL
 {
-    public interface IEmailService
+    public interface IEmailBLL
     {
         /// <summary>
         /// 发送邮箱验证码

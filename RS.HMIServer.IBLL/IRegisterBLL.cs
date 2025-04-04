@@ -13,7 +13,7 @@ namespace RS.HMIServer.IBLL
     /// <summary>
     /// 注册服务接口
     /// </summary>
-    public interface IRegisterService
+    public interface IRegisterBLL
     {
 
         /// <summary>

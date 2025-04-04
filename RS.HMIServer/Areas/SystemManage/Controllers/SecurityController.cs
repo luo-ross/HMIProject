@@ -15,15 +15,15 @@ namespace RS.HMIServer.Areas.SystemManage.Controllers
     [Route("/[area]/[controller]/[action]")]
     public class SecurityController : BaseController
     {
-        private readonly ISecurityService SecurityService;
+        private readonly ISecurityBLL SecurityBLL;
         private readonly IHttpContextAccessor HttpContextAccessor;
-        private readonly ILogService LogService;
+        private readonly ILogBLL LogBLL;
 
-        public SecurityController(ISecurityService securityService, IHttpContextAccessor httpContextAccessor, ILogService logService)
+        public SecurityController(ISecurityBLL securityBLL, IHttpContextAccessor httpContextAccessor, ILogBLL logBLL)
         {
-            SecurityService = securityService;
+            SecurityBLL = securityBLL;
             HttpContextAccessor = httpContextAccessor;
-            LogService = logService;
+            LogBLL = logBLL;
         }
       
 
@@ -35,7 +35,7 @@ namespace RS.HMIServer.Areas.SystemManage.Controllers
         public async Task<IActionResult> Form([FromQuery] string email, [FromQuery] string token)
         {
             ////验证密码重置会话是否存在
-            //var operateResult = await this.SecurityService.PasswordResetSessionValidAsync(email, token);
+            //var operateResult = await this.SecurityBLL.PasswordResetSessionValidAsync(email, token);
             //if (!operateResult.IsSuccess)
             //{
             //    //不存在跳转到密码重置主页
@@ -47,7 +47,7 @@ namespace RS.HMIServer.Areas.SystemManage.Controllers
         [HttpPost]
         public async Task<OperateResult> PasswordResetAsync([FromBody] PasswordResetModel passwordResetModel)
         {
-            return await SecurityService.PasswordResetAsync(HostWithScheme, passwordResetModel);
+            return await SecurityBLL.PasswordResetAsync(HostWithScheme, passwordResetModel);
         }
 
         [HttpPost]

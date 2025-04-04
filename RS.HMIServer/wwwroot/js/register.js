@@ -1,11 +1,10 @@
 $(function () {
-    $('.btn-register').on('click', function () {
-        //尝试主动清除消息
-        ClearMsg();
-        var $email = $("#input-email");
-        var $passwordinput = $("#input-password1");
-        var $passwordconfirm = $("#input-password2");
-        var $verify = $("#input-verify");
+    var $email = $("#input-email");
+    var $email = $("#input-email");
+    var $passwordinput = $("#input-password1");
+    var $passwordconfirm = $("#input-password2");
+    var $verify = $("#input-verify");
+    $('.btn-register-next').on('click', function () {
         //获取邮箱
         var email = $email.val();
         //获取密码输入
@@ -15,8 +14,7 @@ $(function () {
         //获取验证码
         var verify = $verify.val();
         // 验证邮箱
-        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (isEmptyOrNull(email) || !emailRegex.test(email.toString())) {
+        if (!emailValid(email)) {
             ShowWarningMsg("邮箱输入不正确?");
             $email.focus();
             return;
@@ -57,9 +55,35 @@ $(function () {
             type: "POST",
             contentType: "application/json",
             dataType: "json",
-            data: toJson({
-                email: $("#email").val()
-            }),
+            data: JSON.stringify({}),
+            complete: function (e) {
+            },
+            success: function (operateResult) {
+                if (!operateResult.IsSuccess) {
+                    alert(operateResult.Message);
+                }
+            },
+            error: function (e) {
+            },
+        });
+    });
+    $('.btn-verifyrequest').click(function () {
+        //获取邮箱
+        var email = $email.val();
+        // 验证邮箱
+        if (!emailValid(email)) {
+            ShowWarningMsg("邮箱输入不正确或者未输入?");
+            $email.focus();
+            return;
+        }
+        ;
+        //发起Ajax请求WebAPI请求
+        $.ajax({
+            url: "/SystemManage/Security/GetEmailVerify",
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({}),
             complete: function (e) {
             },
             success: function (operateResult) {
@@ -72,47 +96,4 @@ $(function () {
         });
     });
 });
-function isEmptyOrNull(str) {
-    return str === null || str === undefined || $.trim(str) === '';
-}
-function ShowErrorMsg(msg) {
-    ShowMsg('error', msg);
-}
-function ShowInfoMsg(msg) {
-    ShowMsg('info', msg);
-}
-function ShowWarningMsg(msg) {
-    ShowMsg('warning', msg);
-}
-function ShowDangerMsg(msg) {
-    ShowMsg('danger', msg);
-}
-function ShowSuccessMsg(msg) {
-    ShowMsg('success', msg);
-}
-function ClearMsg() {
-    if (timerId > 0) {
-        clearTimeout(timerId);
-        timerId = -1;
-    }
-    var $errormessage = $('body').find(".error-message");
-    $errormessage.removeAttr('class');
-    $errormessage.attr('class', 'error-message d-none');
-}
-var timerId;
-function ShowMsg(msgtype, msg) {
-    var $errormessage = $('body').find(".error-message");
-    $errormessage.removeAttr('class');
-    $errormessage.attr('class', 'error-message alert-' + msgtype);
-    $errormessage.text(msg);
-    if (timerId > 0) {
-        clearTimeout(timerId);
-        timerId = -1;
-    }
-    timerId = setTimeout(function () {
-        $errormessage.removeAttr('class');
-        $errormessage.attr('class', 'error-message d-none');
-        timerId = -1;
-    }, 3000);
-}
 //# sourceMappingURL=register.js.map

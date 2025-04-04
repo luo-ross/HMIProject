@@ -3,7 +3,7 @@
     /// <summary>
     /// 日志服务接口
     /// </summary>
-    public interface ILogService
+    public interface ILogBLL
     {
 
         /// <summary>

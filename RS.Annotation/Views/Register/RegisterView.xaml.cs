@@ -19,14 +19,14 @@ namespace RS.Annotation.Views
     public partial class RegisterView : RSUserControl
     {
         public RegisterViewModel ViewModel { get; set; }
-        private readonly IGeneralService RegisterService;
-        private readonly ICryptographyService CryptographyService;
+        private readonly IGeneralBLL RegisterBLL;
+        private readonly ICryptographyBLL CryptographyBLL;
         public RegisterView()
         {
             InitializeComponent();
             this.ViewModel = this.DataContext as RegisterViewModel;
-            this.RegisterService = App.AppHost?.Services.GetService<IGeneralService>();
-            this.CryptographyService = App.AppHost?.Services.GetService<ICryptographyService>();
+            this.RegisterBLL = App.AppHost?.Services.GetService<IGeneralBLL>();
+            this.CryptographyBLL = App.AppHost?.Services.GetService<ICryptographyBLL>();
         }
 
 
@@ -114,7 +114,7 @@ namespace RS.Annotation.Views
             {
                 Email = this.ViewModel.EmailRegisterModel.Email,
                 //这里需要将秘密进行SHA256加密
-                Password = this.CryptographyService.GetSHA256HashCode(this.ViewModel.EmailRegisterModel.Password),
+                Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.EmailRegisterModel.Password),
             });
             if (!getEmailVerificationResult.IsSuccess)
             {

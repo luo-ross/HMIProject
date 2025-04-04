@@ -24,7 +24,7 @@ namespace RS.Commons.Extensions
         public static async Task<OperateResult<TResult>> AESHttpGetAsync<TResult>(this string apiUrl, string clientName)
         {
             //获取加解密服务
-            var cryptographyService = ServiceProviderExtensions.GetService<ICryptographyService>();
+            var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
 
             var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName);
             if (!getHttpGetJsonResult.IsSuccess)
@@ -39,7 +39,7 @@ namespace RS.Commons.Extensions
             }
 
             //AES对称解密数据
-            var aesDecryptResult = cryptographyService.AESDecrypt<TResult>(objectResult.Data);
+            var aesDecryptResult = cryptographyBLL.AESDecrypt<TResult>(objectResult.Data);
             if (!aesDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesDecryptResult);
@@ -101,9 +101,9 @@ namespace RS.Commons.Extensions
         public static async Task<OperateResult<TResult>> AESHttpPostAsync<TPost, TResult>(this string apiUrl, string clientName, TPost postModel) where TPost : class
         {
            
-            var cryptographyService = ServiceProviderExtensions.GetService<ICryptographyService>();
+            var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
             //AES对称加密数据
-            var aesEncryptResult = cryptographyService.AESEncrypt(postModel);
+            var aesEncryptResult = cryptographyBLL.AESEncrypt(postModel);
             if (!aesEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesEncryptResult);
@@ -117,7 +117,7 @@ namespace RS.Commons.Extensions
             }
 
             //AES对称解密数据
-            var aesDecryptResult = cryptographyService.AESDecrypt<TResult>(aesEncryptModelResult.Data);
+            var aesDecryptResult = cryptographyBLL.AESDecrypt<TResult>(aesEncryptModelResult.Data);
             if (!aesDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesDecryptResult);
@@ -135,9 +135,9 @@ namespace RS.Commons.Extensions
         /// <returns></returns>
         public static async Task<OperateResult> AESHttpPostAsync<TPost>(this string apiUrl, string clientName, TPost postModel) where TPost : class
         {
-            var cryptographyService = ServiceProviderExtensions.GetService<ICryptographyService>();
+            var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
             //AES对称加密数据
-            var aesEncryptResult = cryptographyService.AESEncrypt(postModel);
+            var aesEncryptResult = cryptographyBLL.AESEncrypt(postModel);
             if (!aesEncryptResult.IsSuccess)
             {
                 return aesEncryptResult;

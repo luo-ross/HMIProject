@@ -13,7 +13,7 @@ namespace RS.HMIServer.IBLL
     /// <summary>
     /// 安全服务接口
     /// </summary>
-    public interface ISecurityService
+    public interface ISecurityBLL
     {
         /// <summary>
         /// 密码重置

@@ -20,26 +20,26 @@ namespace RS.HMIServer.BLL
         public static IServiceCollection RegisterBLLService(this IServiceCollection services, IConfiguration configuration)
         {
             //动态配置选择哪一种邮箱发送服务
-            string emailService = configuration["ConnectionStrings:EmailService"];
-            switch (emailService)
+            string emailBLL = configuration["ConnectionStrings:EmailBLL"];
+            switch (emailBLL)
             {
                 case "Tencent":
-                    services.AddSingleton<IEmailService, TencentEmailService>();
+                    services.AddSingleton<IEmailBLL, TencentEmailBLL>();
                     break;
             }
 
             //动态配置选择哪一种短信发送服务
-            string sMSService = configuration["ConnectionStrings:SMSService"];
+            string sMSService = configuration["ConnectionStrings:SMSBLL"];
             switch (sMSService)
             {
                 case "Ali":
-                    services.AddSingleton<ISMSService, AliSMSService>();
+                    services.AddSingleton<ISMSBLL, AliSMSBLL>();
                     break;
                 case "Huawei":
-                    services.AddSingleton<ISMSService, HuaweiSMSService>();
+                    services.AddSingleton<ISMSBLL, HuaweiSMSBLL>();
                     break;
                 case "Tencent":
-                    services.AddSingleton<ISMSService, TencentSMSService>();
+                    services.AddSingleton<ISMSBLL, TencentSMSBLL>();
                     break;
             }
 

@@ -21,8 +21,8 @@ namespace RS.HMIServer.BLL
     /// <summary>
     /// 账号注册服务
     /// </summary>
-    [ServiceInjectConfig(typeof(IRegisterService), ServiceLifetime.Transient, IsInterceptor = true)]
-    internal class RegisterService : IRegisterService
+    [ServiceInjectConfig(typeof(IRegisterBLL), ServiceLifetime.Transient, IsInterceptor = true)]
+    internal class RegisterBLL : IRegisterBLL
     {
         /// <summary>
         /// 注册数据仓储接口
@@ -32,22 +32,22 @@ namespace RS.HMIServer.BLL
         /// <summary>
         /// 邮箱服务
         /// </summary>
-        private readonly IEmailService EmailService;
+        private readonly IEmailBLL EmailService;
 
         /// <summary>
         /// 通用服务
         /// </summary>
-        private readonly IGeneralService GeneralService;
+        private readonly IGeneralBLL GeneralBLL;
 
         /// <summary>
         /// 短信服务
         /// </summary>
-        private readonly ISMSService SMSService;
+        private readonly ISMSBLL SMSBLL;
 
         /// <summary>
         /// 密码服务
         /// </summary>
-        private readonly ICryptographyService CryptographyService;
+        private readonly ICryptographyBLL CryptographyBLL;
 
 
 
@@ -55,16 +55,16 @@ namespace RS.HMIServer.BLL
         /// 注册服务构造函数
         /// </summary>
         /// <param name="registerDAL">注册数据仓储</param>
-        /// <param name="emailService">邮箱服务</param>
-        /// <param name="generalService">通用服务</param>
+        /// <param name="emailBLL">邮箱服务</param>
+        /// <param name="generalBLL">通用服务</param>
         /// <param name="sMSService">短信服务</param>
-        public RegisterService(IRegisterDAL registerDAL, IEmailService emailService, IGeneralService generalService, ISMSService sMSService, ICryptographyService cryptographyService)
+        public RegisterBLL(IRegisterDAL registerDAL, IEmailBLL emailBLL, IGeneralBLL generalBLL, ISMSBLL sMSService, ICryptographyBLL cryptographyBLL)
         {
             this.RegisterDAL = registerDAL;
-            this.EmailService = emailService;
-            this.GeneralService = generalService;
-            this.SMSService = sMSService;
-            this.CryptographyService = cryptographyService;
+            this.EmailService = emailBLL;
+            this.GeneralBLL = generalBLL;
+            this.SMSBLL = sMSService;
+            this.CryptographyBLL = cryptographyBLL;
         }
 
 
@@ -77,7 +77,7 @@ namespace RS.HMIServer.BLL
         public async Task<OperateResult<AESEncryptModel>> GetEmailVerificationAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //进行数据解密
-            var getAESDecryptResult = await this.GeneralService.GetAESDecryptAsync<EmailRegisterPostModel>(aesEncryptModel, sessionId);
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<EmailRegisterPostModel>(aesEncryptModel, sessionId);
             if (!getAESDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
@@ -98,7 +98,7 @@ namespace RS.HMIServer.BLL
             }
 
             //邮箱地址哈希值作为会话主键
-            string token = this.CryptographyService.GetMD5HashCode(emailRegisterPostModel.Email);
+            string token = this.CryptographyBLL.GetMD5HashCode(emailRegisterPostModel.Email);
 
             RegisterSessionModel registerSessionModel = new RegisterSessionModel();
 
@@ -165,7 +165,7 @@ namespace RS.HMIServer.BLL
             };
 
             //AES对称加密
-            var getAESEncryptResult = await this.GeneralService.GetAESEncryptAsync(verificationResultModel, sessionId);
+            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verificationResultModel, sessionId);
             if (!getAESEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
@@ -183,7 +183,7 @@ namespace RS.HMIServer.BLL
         public async Task<OperateResult> EmailVerificationValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //获取解密数据
-            var getAESDecryptResult = await this.GeneralService.GetAESDecryptAsync<RegisterVerificationValidModel>(aesEncryptModel, sessionId);
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerificationValidModel>(aesEncryptModel, sessionId);
             if (!getAESDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<RegisterSessionModel>(getAESDecryptResult);
@@ -217,7 +217,7 @@ namespace RS.HMIServer.BLL
         public async Task<OperateResult<AESEncryptModel>> GetSMSVerificationAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //进行数据解密
-            var getAESDecryptResult = await this.GeneralService.GetAESDecryptAsync<SMSRegisterPostModel>(aesEncryptModel, sessionId);
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<SMSRegisterPostModel>(aesEncryptModel, sessionId);
             if (!getAESDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
@@ -230,7 +230,7 @@ namespace RS.HMIServer.BLL
             DateTime expireTime = DateTime.Now.AddSeconds(120);
 
             //发送注册短信验证码
-            var sendVerificationResult = await this.SMSService.SendRegisterVerificationAsync(smsRegisterPostModel.CountryCode, smsRegisterPostModel.Phone, verification);
+            var sendVerificationResult = await this.SMSBLL.SendRegisterVerificationAsync(smsRegisterPostModel.CountryCode, smsRegisterPostModel.Phone, verification);
             if (!sendVerificationResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(sendVerificationResult);
@@ -251,7 +251,7 @@ namespace RS.HMIServer.BLL
             };
 
             //返回加密数据
-            var getAESEncryptResult = await this.GeneralService.GetAESEncryptAsync(verificationResultModel, sessionId);
+            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verificationResultModel, sessionId);
             if (!getAESEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
@@ -268,7 +268,7 @@ namespace RS.HMIServer.BLL
         public async Task<OperateResult> SMSVerificationValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //获取解密数据
-            var getAESDecryptResult = await this.GeneralService.GetAESDecryptAsync<RegisterVerificationValidModel>(aesEncryptModel, sessionId);
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerificationValidModel>(aesEncryptModel, sessionId);
             if (!getAESDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<RegisterSessionModel>(getAESDecryptResult);

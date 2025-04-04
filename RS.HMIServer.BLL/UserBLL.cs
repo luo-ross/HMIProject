@@ -9,8 +9,8 @@ using TencentCloud.Ciam.V20220331.Models;
 
 namespace RS.HMIServer.BLL
 {
-    [ServiceInjectConfig(typeof(IUserService), ServiceLifetime.Transient, IsInterceptor = true)]
-    internal class UserService : IUserService
+    [ServiceInjectConfig(typeof(IUserBLL), ServiceLifetime.Transient, IsInterceptor = true)]
+    internal class UserBLL : IUserBLL
     {
         /// <summary>
         /// 用户数据仓储接口
@@ -20,25 +20,25 @@ namespace RS.HMIServer.BLL
         /// <summary>
         /// 邮箱服务接口
         /// </summary>
-        private readonly IEmailService EmailService;
+        private readonly IEmailBLL EmailBLL;
 
         /// <summary>
         /// 通用服务接口
         /// </summary>
-        private readonly IGeneralService GeneralService;
+        private readonly IGeneralBLL GeneralBLL;
 
         /// <summary>
         /// 加解密服务接口
         /// </summary>
-        private readonly ICryptographyService CryptographyService;
-        private readonly ISMSService SMSService;
-        public UserService(IUserDAL userDAL, IEmailService emailService, IGeneralService generalService, ICryptographyService cryptographyService, ISMSService sMSService)
+        private readonly ICryptographyBLL CryptographyBLL;
+        private readonly ISMSBLL SMSBLL;
+        public UserBLL(IUserDAL userDAL, IEmailBLL emailBLL, IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL, ISMSBLL sMSService)
         {
             this.UserDAL = userDAL;
-            this.EmailService = emailService;
-            this.GeneralService = generalService;
-            this.CryptographyService = cryptographyService;
-            this.SMSService = sMSService;
+            this.EmailBLL = emailBLL;
+            this.GeneralBLL = generalBLL;
+            this.CryptographyBLL = cryptographyBLL;
+            this.SMSBLL = sMSService;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace RS.HMIServer.BLL
             }
 
             //获取加密数据
-            var getAESEncryptResult = await this.GeneralService.GetAESEncryptAsync(getUsersResult.Data, sessionId);
+            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(getUsersResult.Data, sessionId);
             if (!getAESEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
@@ -74,7 +74,7 @@ namespace RS.HMIServer.BLL
         public async Task<OperateResult> ValidLoginAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //进行数据解密
-            var getAESDecryptResult = await this.GeneralService.GetAESDecryptAsync<LoginValidModel>(aesEncryptModel, sessionId);
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<LoginValidModel>(aesEncryptModel, sessionId);
             if (!getAESDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
@@ -104,7 +104,7 @@ namespace RS.HMIServer.BLL
             }
 
             //生成新密码
-            var newPassword = this.CryptographyService.GetSHA256HashCode($"{loginValidModel.Password}-{logOnEntity.Salt}");
+            var newPassword = this.CryptographyBLL.GetSHA256HashCode($"{loginValidModel.Password}-{logOnEntity.Salt}");
             
             //比较密码是否相同
             if (!newPassword.Equals(logOnEntity.Password))

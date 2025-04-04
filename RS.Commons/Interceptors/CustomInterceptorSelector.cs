@@ -9,10 +9,10 @@ namespace RS.Commons.Interceptors
     /// </summary>
     public class CustomInterceptorSelector : IInterceptorSelector
     {
-        private readonly ILogService LogService;
-        public CustomInterceptorSelector(ILogService logService)
+        private readonly ILogBLL LogBLL;
+        public CustomInterceptorSelector(ILogBLL logBLL)
         {
-            LogService = logService;
+            LogBLL = logBLL;
         }
 
         /// <summary>

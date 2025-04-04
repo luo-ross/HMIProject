@@ -8,14 +8,14 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
     [Route("/api/v1/[controller]/[action]")]
     public class MarketingController : Controller
     {
-        private readonly IGeneralService GeneralService;
-        private readonly ICryptographyService CryptographyService;
-        private readonly ILogService LogService;
-        public MarketingController(IGeneralService generalService, ICryptographyService cryptographyService, ILogService logService)
+        private readonly IGeneralBLL GeneralBLL;
+        private readonly ICryptographyBLL CryptographyBLL;
+        private readonly ILogBLL LogBLL;
+        public MarketingController(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL, ILogBLL logBLL)
         {
-            GeneralService = generalService;
-            LogService = logService;
-            CryptographyService = cryptographyService;
+            GeneralBLL = generalBLL;
+            LogBLL = logBLL;
+            CryptographyBLL = cryptographyBLL;
         }
 
         [HttpGet]

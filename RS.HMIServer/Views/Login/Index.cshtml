@@ -1,11 +1,12 @@
 ﻿@{
     Layout = "_LoginLayout";
     ViewData["Title"] = "上位机-登录";
-    var timestamp = ViewData["Timestamp"];
+    var clientId = ViewData["ClientId"];
+    var timeStamp = ViewData["TimeStamp"];
 }
 
 
-<a class="btn-qrcode-login" href="/Login/QRCode?timestamp=@timestamp">
+<a class="btn-qrcode-login" href="/Login/QRCode?ClientId=@clientId&Timestamp=@timeStamp">
     <svg t="1743521881584" class="icon-qrcode" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9539" width="64" height="64">
         <defs>
             <linearGradient id="myGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -22,7 +23,7 @@
     <label class="label-tab label-login" for="radio-login">登录</label>
 
     <input type="radio" id="radio-register" name="tab" value="radio-register">
-    <label class="label-tab label-register" for="radio-register" data-url="/SystemManage/Register/Init?timestamp=@timestamp">注册</label>
+    <label class="label-tab label-register" for="radio-register" data-url="/SystemManage/Register/Index?ClientId=@clientId&Timestamp=@timeStamp">注册</label>
 </div>
 
 @Html.Partial("_EmailPartial")
@@ -30,7 +31,7 @@
 <div class="form-row">
     @Html.Partial("_VerifyPartial")
     <div class="form-input-border img-border">
-        <img class="img-verify" src="/imgs/verify.jpg?timestamp=@timestamp" />
+        <img class="img-verify" src="/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />
     </div>
 </div>
 <div class="form-row">
@@ -38,5 +39,5 @@
 </div>
 
 <div class="form-row">
-    <a class="btn-forget-password" target="_blank" href="/SystemManage/Security/ForgetPassword?timestamp=@timestamp">忘记了密码？</a>
+    <a class="btn-forget-password" target="_blank" href="/SystemManage/Security/ForgetPassword?ClientId=@clientId&Timestamp=@timeStamp">忘记了密码？</a>
 </div>

@@ -5,11 +5,11 @@
     "RSAppRedis:Host": "127.0.0.1",
     "RSAppRedis:Password": "123456",
     "RSAppRedis:Port": "6379",
-    "EmailService:Host": "smtp.qq.com",
-    "EmailService:Password": "eyimtaeslsdsdfsdf",
-    "EmailService:Port": "587",
-    "EmailService:UserName": "你的邮箱号@qq.com",
-    "EmailService": "Tencent",
+    "EmailBLL:Host": "smtp.qq.com",
+    "EmailBLL:Password": "eyimtaeslsdsdfsdf",
+    "EmailBLL:Port": "587",
+    "EmailBLL:UserName": "你的邮箱号@qq.com",
+    "EmailBLL": "Tencent",
     "GlobalRsaPrivateKeyFileName": "key-FFD06E4F-0219-4C2F-AABC-0F97BAFF4792.bin",
     "GlobalRsaPublicKeyFileName": "key-C84193C7-CE9C-4898-86A5-F6B624440E88.bin",
     "JWTConfig:Audiences:0": "AndriodAudience",
@@ -23,7 +23,7 @@
     "RSAppSqlSever": "Data Source=.;Initial Catalog=RSApplication;User ID=sa;Encrypt=True;Trust Server Certificate=True;Password=123456",
     "SMSConfig:AccessKeyId": "123456",
     "SMSConfig:AccessKeySecret": "123123123",
-    "SMSService": "Aliyun"
+    "SMSBLL": "Aliyun"
   },
   "Logging": {
     "LogLevel": {

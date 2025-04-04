@@ -34,7 +34,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 主机地址
         /// </summary>
-        public static string AppHostAddress = "http://localhost:9000";
+        public static string AppHostAddress = "http://localhost:7109";
 
         /// <summary>
         /// 秘钥存储路径
@@ -72,7 +72,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 日志服务
         /// </summary>
-        private ILogService LogService;
+        private ILogBLL LogBLL;
         /// <summary>
         /// 缓存服务
         /// </summary>
@@ -80,7 +80,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 加密服务
         /// </summary>
-        private ICryptographyService CryptographyService;
+        private ICryptographyBLL CryptographyBLL;
         #endregion
 
 
@@ -207,7 +207,7 @@ namespace RS.Widgets.Controls
             SessionRequestModel sessionRequestModel = new SessionRequestModel()
             {
                 RsaPublicKey = rSAPublicKey,
-                Nonce = CryptographyService.CreateRandCode(10),
+                Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
                 AudienceType = AudienceType.WindowsAudience,
             };
@@ -221,7 +221,7 @@ namespace RS.Widgets.Controls
             };
 
             //获取会话的Hash数据
-            var getRSAHashResult = CryptographyService.GetRSAHash(arrayList);
+            var getRSAHashResult = CryptographyBLL.GetRSAHash(arrayList);
             if (!getRSAHashResult.IsSuccess)
             {
                 return getRSAHashResult;
@@ -235,7 +235,7 @@ namespace RS.Widgets.Controls
             }
 
             //进行RSA数据签名
-            var rsaSignDataResult = CryptographyService.RSASignData(getRSAHashResult.Data, rsaPrivateKey);
+            var rsaSignDataResult = CryptographyBLL.RSASignData(getRSAHashResult.Data, rsaPrivateKey);
             if (!rsaSignDataResult.IsSuccess)
             {
                 return rsaSignDataResult;
@@ -262,7 +262,7 @@ namespace RS.Widgets.Controls
             };
 
             //获取会话的Hash数据
-            getRSAHashResult = CryptographyService.GetRSAHash(arrayList);
+            getRSAHashResult = CryptographyBLL.GetRSAHash(arrayList);
             if (!getRSAHashResult.IsSuccess)
             {
                 return getRSAHashResult;
@@ -270,7 +270,7 @@ namespace RS.Widgets.Controls
 
             //获取签名
             var signature = Convert.FromBase64String(sessionResultModel.MsgSignature);
-            var verifyDataResult = CryptographyService.RSAVerifyData(getRSAHashResult.Data, signature, sessionResultModel.RsaPublicKey);
+            var verifyDataResult = CryptographyBLL.RSAVerifyData(getRSAHashResult.Data, signature, sessionResultModel.RsaPublicKey);
 
             if (!verifyDataResult.IsSuccess)
             {
@@ -278,7 +278,7 @@ namespace RS.Widgets.Controls
             }
 
             //解密AesKey
-            var rsaDecryptResult = CryptographyService.RSADecrypt(sessionResultModel.SessionModel.AesKey, rsaPrivateKey);
+            var rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AesKey, rsaPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;
@@ -286,7 +286,7 @@ namespace RS.Widgets.Controls
             sessionResultModel.SessionModel.AesKey = rsaDecryptResult.Data;
 
             //解密AppId
-            rsaDecryptResult = CryptographyService.RSADecrypt(sessionResultModel.SessionModel.AppId, rsaPrivateKey);
+            rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AppId, rsaPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;
@@ -356,10 +356,10 @@ namespace RS.Widgets.Controls
         /// </summary>
         private void InitRSASecurityKeyData()
         {
-            var cryptographyService = AppHost.Services.GetRequiredService<ICryptographyService>();
+            var cryptographyBLL = AppHost.Services.GetRequiredService<ICryptographyBLL>();
             var memoryCache = AppHost.Services.GetRequiredService<IMemoryCache>();
             //如果是第一就会创建公钥和私钥
-            (byte[] rsaPrivateKey, byte[] rsaPublicKey) = cryptographyService.GenerateRSAKey();
+            (byte[] rsaPrivateKey, byte[] rsaPublicKey) = cryptographyBLL.GenerateRSAKey();
             memoryCache.Set<string>(MemoryCacheKey.GlobalRSAPublicKey, Convert.ToBase64String(rsaPublicKey));
             memoryCache.Set<byte[]>(MemoryCacheKey.GlobalRSAPrivateKey, rsaPrivateKey);
         }
@@ -377,7 +377,7 @@ namespace RS.Widgets.Controls
         //主线程未处理异常
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            LogService.LogCritical(e.Exception, "App_DispatcherUnhandledException");
+            LogBLL.LogCritical(e.Exception, "App_DispatcherUnhandledException");
             e.Handled = true;
         }
 
@@ -386,14 +386,14 @@ namespace RS.Widgets.Controls
         {
             if (e.ExceptionObject is Exception ex)
             {
-                LogService.LogCritical(ex, "CurrentDomain_UnhandledException");
+                LogBLL.LogCritical(ex, "CurrentDomain_UnhandledException");
             }
         }
 
         //未处理的Task内异常
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            LogService.LogCritical(e.Exception, "TaskScheduler_UnobservedTaskException");
+            LogBLL.LogCritical(e.Exception, "TaskScheduler_UnobservedTaskException");
         }
         #endregion
 
@@ -412,13 +412,13 @@ namespace RS.Widgets.Controls
             RSWinInfoBar = AppHost.Services.GetRequiredService<RSWinInfoBar>();
 
             // 获取日志服务
-            LogService = AppHost.Services.GetRequiredService<ILogService>();
+            LogBLL = AppHost.Services.GetRequiredService<ILogBLL>();
 
             //获取缓存服务
             MemoryCache = AppHost.Services.GetRequiredService<IMemoryCache>();
 
             //获取加密服务
-            CryptographyService = AppHost.Services.GetRequiredService<ICryptographyService>();
+            CryptographyBLL = AppHost.Services.GetRequiredService<ICryptographyBLL>();
 
             //初始化RSA 秘钥
             this.InitRSASecurityKeyData();

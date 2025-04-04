@@ -11,10 +11,10 @@ namespace RS.HMIServer.BLL
     /// <summary>
     /// 阿里云短信发送服务
     /// </summary>
-    internal class AliSMSService : ISMSService
+    internal class AliSMSBLL : ISMSBLL
     {
         private readonly IConfiguration Configuration;
-        public AliSMSService(IConfiguration configuration)
+        public AliSMSBLL(IConfiguration configuration)
         {
             Configuration = configuration;
         }

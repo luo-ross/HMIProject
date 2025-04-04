@@ -13,19 +13,20 @@ using RS.Models;
 using System.Collections;
 using System.Security.Claims;
 using System.Text;
+using RS.HMIServer.Models;
 
 namespace RS.HMIServer.BLL
 {
-    [ServiceInjectConfig(typeof(IGeneralService), ServiceLifetime.Transient, IsInterceptor = true)]
-    internal class GeneralService : IGeneralService
+    [ServiceInjectConfig(typeof(IGeneralBLL), ServiceLifetime.Transient, IsInterceptor = true)]
+    internal class GeneralBLL : IGeneralBLL
     {
         private readonly IConfiguration Configuration;
-        private readonly ICryptographyService CryptographyService;
+        private readonly ICryptographyBLL CryptographyBLL;
         private readonly IMemoryCache MemoryCache;
         private readonly IGeneralDAL GeneralDAL;
-        public GeneralService(ICryptographyService cryptographyService, IMemoryCache memoryCache, IConfiguration configuration, IGeneralDAL generalDAL)
+        public GeneralBLL(ICryptographyBLL cryptographyBLL, IMemoryCache memoryCache, IConfiguration configuration, IGeneralDAL generalDAL)
         {
-            CryptographyService = cryptographyService;
+            CryptographyBLL = cryptographyBLL;
             MemoryCache = memoryCache;
             Configuration = configuration;
             GeneralDAL = generalDAL;
@@ -55,6 +56,78 @@ namespace RS.HMIServer.BLL
         }
 
 
+
+
+        public async Task<OperateResult<string>> GetClientIdAsync(LoginClientModel loginClientModel)
+        {
+            string clientIPHash = GetClientIPHashCode(loginClientModel);
+            loginClientModel.ClientIPHash = clientIPHash;
+            OperateResult<string> saveClientIdResult = await this.GeneralDAL.SaveClientIdAsync(loginClientModel);
+            return saveClientIdResult;
+        }
+
+        public async Task<OperateResult> ValidCliendIdAsync(LoginClientModel loginClientModel, string clientId)
+        {
+            //计算IP的哈希值
+            string clientIPHash = GetClientIPHashCode(loginClientModel);
+            loginClientModel.ClientIPHash = clientIPHash;
+            //通过用户提供个ClientId查询是否是服务端发放的
+            OperateResult<LoginClientModel> getLoginClientModelResult = await this.GeneralDAL.GetLoginClientModelAsync(clientId);
+            if (!getLoginClientModelResult.IsSuccess)
+            {
+                return getLoginClientModelResult;
+            }
+
+            //如果是服务端发放的 那么久获取这个存储起来的访问数据
+            var loginClientModelExist = getLoginClientModelResult.Data;
+
+            //验证这个ClientId是否是窃取的
+            var isSameLoginClientModelResult = await this.IsSameLoginClientModelAsync(loginClientModel, loginClientModelExist);
+            //如果验证不通过 说明是盗取的
+            if (!isSameLoginClientModelResult.IsSuccess)
+            {
+                return isSameLoginClientModelResult;
+            }
+            //到这里说明验证通过了 这个ClientId是有效的
+
+            return await this.GeneralDAL.IsClientIPExistAsync(loginClientModel, clientId);
+        }
+
+        private string GetClientIPHashCode(LoginClientModel loginClientModel)
+        {
+            return this.CryptographyBLL.GetMD5HashCode($"{loginClientModel.RemoteIpAddress}{loginClientModel.LocalIpAddress}{loginClientModel.XForwardedFor}");
+        }
+
+        public async Task<OperateResult> IsSameLoginClientModelAsync(LoginClientModel loginClientModel, LoginClientModel loginClientModelExist)
+        {
+            //比较IP哈希是否相同
+            if (!loginClientModel.ClientIPHash.Equals(loginClientModelExist.ClientIPHash))
+            {
+                return OperateResult.CreateFailResult();
+            }
+
+            //LocalIpAddress
+            if (!loginClientModel.LocalIpAddress.Equals(loginClientModelExist.LocalIpAddress))
+            {
+                return OperateResult.CreateFailResult();
+            }
+
+            //RemoteIpAddress
+            if (!loginClientModel.RemoteIpAddress.Equals(loginClientModelExist.RemoteIpAddress))
+            {
+                return OperateResult.CreateFailResult();
+            }
+
+            //XForwardedFor
+            if (loginClientModel.XForwardedFor != null && !loginClientModel.XForwardedFor.Equals(loginClientModelExist.XForwardedFor))
+            {
+                return OperateResult.CreateFailResult();
+            }
+
+            return OperateResult.CreateSuccessResult();
+        }
+
+
         public async Task<OperateResult<T>> GetAESDecryptAsync<T>(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //通过SessionId获取SessionModel
@@ -66,7 +139,7 @@ namespace RS.HMIServer.BLL
             var sessionModel = getSessionModelResult.Data;
 
             //对数据解密
-            var aesDecryptResult = CryptographyService.AESDecrypt<T>(aesEncryptModel, sessionModel);
+            var aesDecryptResult = CryptographyBLL.AESDecrypt<T>(aesEncryptModel, sessionModel);
             if (!aesDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<T>(aesDecryptResult);
@@ -88,7 +161,7 @@ namespace RS.HMIServer.BLL
 
 
             //对返回的数据进行加密
-            var aesEncryptResult = CryptographyService.AESEncrypt(encryptModelShould, sessionModel);
+            var aesEncryptResult = CryptographyBLL.AESEncrypt(encryptModelShould, sessionModel);
             if (!aesEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(aesEncryptResult);
@@ -96,7 +169,7 @@ namespace RS.HMIServer.BLL
             return aesEncryptResult;
         }
 
-        public async Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel)
+        public async Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel, string sessionId)
         {
             //获取服务端公钥
             MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAPublicKey, out string serverRSAPublicKey);
@@ -106,10 +179,10 @@ namespace RS.HMIServer.BLL
             }
 
             //生成AES对称秘钥
-            string aesKey = CryptographyService.GenerateAESKey();
+            string aesKey = CryptographyBLL.GenerateAESKey();
 
             //通过客户端传递过来的公钥加密AES秘钥
-            var rsaEncryptResult = CryptographyService.RSAEncrypt(aesKey, sessionRequestModel.RsaPublicKey);
+            var rsaEncryptResult = CryptographyBLL.RSAEncrypt(aesKey, sessionRequestModel.RsaPublicKey);
             if (!rsaEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaEncryptResult);
@@ -120,7 +193,7 @@ namespace RS.HMIServer.BLL
             string appId = Guid.NewGuid().ToString();
 
             //RSA非对称加密
-            rsaEncryptResult = CryptographyService.RSAEncrypt(appId, sessionRequestModel.RsaPublicKey);
+            rsaEncryptResult = CryptographyBLL.RSAEncrypt(appId, sessionRequestModel.RsaPublicKey);
             if (!rsaEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaEncryptResult);
@@ -131,7 +204,7 @@ namespace RS.HMIServer.BLL
             SessionResultModel sessionResultModel = new SessionResultModel()
             {
                 RsaPublicKey = serverRSAPublicKey,
-                Nonce = CryptographyService.CreateRandCode(10),
+                Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
                 SessionModel = new SessionModel()
                 {
@@ -140,7 +213,6 @@ namespace RS.HMIServer.BLL
                 }
             };
 
-            string sessionId = Guid.NewGuid().ToString();
             var claimList = new List<Claim>
             {
                 new Claim(ClaimTypes.Sid, sessionId)
@@ -157,8 +229,8 @@ namespace RS.HMIServer.BLL
 
 
             //把创建好的会话数据写入到Redis进行存储
-            string aesKeyProtect = CryptographyService.ProtectData(aesKey);
-            string appIdProtect = CryptographyService.ProtectData(appId);
+            string aesKeyProtect = CryptographyBLL.ProtectData(aesKey);
+            string appIdProtect = CryptographyBLL.ProtectData(appId);
             var saveSessionModelResult = await GeneralDAL.SaveSessionModelAsync(new SessionModel()
             {
                 AppId = appIdProtect,
@@ -183,7 +255,7 @@ namespace RS.HMIServer.BLL
             };
 
             //获取会话的Hash数据
-            var getHashResult = CryptographyService.GetRSAHash(arrayList);
+            var getHashResult = CryptographyBLL.GetRSAHash(arrayList);
             if (!getHashResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(getHashResult);
@@ -197,7 +269,7 @@ namespace RS.HMIServer.BLL
             }
 
             //进行RSA数据签名
-            var rsaSignDataResult = CryptographyService.RSASignData(getHashResult.Data, serverRSAPrivateKey);
+            var rsaSignDataResult = CryptographyBLL.RSASignData(getHashResult.Data, serverRSAPrivateKey);
             if (!rsaSignDataResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaSignDataResult);

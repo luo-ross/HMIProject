@@ -18,15 +18,15 @@ namespace RS.Commons
     /// <summary>
     /// 数据加解密服务实现类
     /// </summary>
-    [ServiceInjectConfig(typeof(ICryptographyService), ServiceLifetime.Singleton)]
-    public class CryptographyService : ICryptographyService
+    [ServiceInjectConfig(typeof(ICryptographyBLL), ServiceLifetime.Singleton)]
+    public class CryptographyBLL : ICryptographyBLL
     {
-        private readonly ILogService LogService;
+        private readonly ILogBLL LogBLL;
         private readonly IDataProtector DataProtector;
         private readonly IMemoryCache MemoryCache;
-        public CryptographyService(ILogService logService, IDataProtectionProvider dataProtectionProvider, IMemoryCache memoryCache)
+        public CryptographyBLL(ILogBLL logBLL, IDataProtectionProvider dataProtectionProvider, IMemoryCache memoryCache)
         {
-            LogService = logService;
+            LogBLL = logBLL;
             DataProtector = dataProtectionProvider.CreateProtector("15B4D612-39AB-45AF-8CEF-BC4FAF711D1C");
             MemoryCache = memoryCache;
         }
@@ -243,7 +243,7 @@ namespace RS.Commons
                 }
                 catch (Exception ex)
                 {
-                    LogService.LogError(ex, "密钥导入失败");
+                    LogBLL.LogError(ex, "密钥导入失败");
                     return OperateResult.CreateFailResult<string>("密钥导入失败");
                 }
                 var encryptData = rsaEncrypt.Encrypt(Encoding.UTF8.GetBytes(encryptContent), RSAEncryptionPadding.Pkcs1);

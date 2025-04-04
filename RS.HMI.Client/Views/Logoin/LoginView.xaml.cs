@@ -22,17 +22,17 @@ namespace RS.HMI.Client.Views.Logoin
         /// 数据实体
         /// </summary>
         private readonly LoginViewModel ViewModel;
-        private readonly IGeneralService GeneralService;
-        private readonly ICryptographyService CryptographyService;
+        private readonly IGeneralBLL GeneralBLL;
+        private readonly ICryptographyBLL CryptographyBLL;
 
         /// <summary>
         /// 默认构造方法
         /// </summary>
-        public LoginView(IGeneralService generalService, ICryptographyService cryptographyService)
+        public LoginView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL)
         {
             InitializeComponent();
-            this.GeneralService = generalService;
-            this.CryptographyService = cryptographyService;
+            this.GeneralBLL = generalBLL;
+            this.CryptographyBLL = cryptographyBLL;
             this.ViewModel = this.DataContext as LoginViewModel;
             this.Closed += LoginView_Closed;
             this.Loaded += LoginView_Loaded;
@@ -110,7 +110,7 @@ namespace RS.HMI.Client.Views.Logoin
                   var validLoginResult = await RSAppAPI.User.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
                   {
                       UserName = this.ViewModel.LoginModel.Name,
-                      Password = this.CryptographyService.GetSHA256HashCode(this.ViewModel.LoginModel.Password),
+                      Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.LoginModel.Password),
                   });
 
                   if (!validLoginResult.IsSuccess)

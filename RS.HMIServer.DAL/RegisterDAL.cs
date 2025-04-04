@@ -29,12 +29,12 @@ namespace RS.HMIServer.DAL
         /// <summary>
         /// 密码服务接口
         /// </summary>
-        private readonly ICryptographyService CryptographyService;
-        public RegisterDAL(RSAppDbContext rsAppDb, RedisDbContext redisDbContext, ICryptographyService cryptographyService)
+        private readonly ICryptographyBLL CryptographyBLL;
+        public RegisterDAL(RSAppDbContext rsAppDb, RedisDbContext redisDbContext, ICryptographyBLL cryptographyBLL)
         {
             this.RSAppDb = rsAppDb;
             this.RegisterRedis = redisDbContext.GetRegisterRedis();
-            this.CryptographyService = cryptographyService;
+            this.CryptographyBLL = cryptographyBLL;
         }
 
 
@@ -148,7 +148,7 @@ namespace RS.HMIServer.DAL
             string salt = Guid.NewGuid().ToString();
 
             //重新生成密码
-            var password = this.CryptographyService.GetSHA256HashCode($"{registerSessionModel.Password}-{salt}");
+            var password = this.CryptographyBLL.GetSHA256HashCode($"{registerSessionModel.Password}-{salt}");
 
 
             //创建用户数据
@@ -212,7 +212,7 @@ namespace RS.HMIServer.DAL
         /// <returns>如果注册返回true 未注册 返回false</returns>
         public async Task<OperateResult> IsEmailRegisteredAsync(string emailAddress)
         {
-            string token = this.CryptographyService.GetMD5HashCode(emailAddress);
+            string token = this.CryptographyBLL.GetMD5HashCode(emailAddress);
 
             //从Redis查询是否已经注册过了
             var isKeyExists = await this.RegisterRedis.KeyExistsAsync($"Registerd:{token}");

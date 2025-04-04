@@ -8,7 +8,7 @@ namespace RS.Commons
     /// <summary>
     /// 数据加解密服务接口
     /// </summary>
-    public interface ICryptographyService
+    public interface ICryptographyBLL
     {
         #region AES加解密
         /// <summary>

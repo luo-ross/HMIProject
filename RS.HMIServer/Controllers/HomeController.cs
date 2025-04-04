@@ -10,11 +10,11 @@ namespace RS.HMIServer.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : BaseController
     {
-        private readonly ILogService LogService;
+        private readonly ILogBLL LogBLL;
 
-        public HomeController(ILogService logService)
+        public HomeController(ILogBLL logBLL)
         {
-            LogService = logService;
+            LogBLL = logBLL;
         }
 
         public IActionResult Index()

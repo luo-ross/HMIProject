@@ -24,29 +24,29 @@ namespace RS.HMIServer.BLL
     /// <summary>
     /// 安全服务
     /// </summary>
-    [ServiceInjectConfig(typeof(ISecurityService), ServiceLifetime.Transient, IsInterceptor = true)]
-    internal class SecurityService : ISecurityService
+    [ServiceInjectConfig(typeof(ISecurityBLL), ServiceLifetime.Transient, IsInterceptor = true)]
+    internal class SecurityBLL : ISecurityBLL
     {
 
         /// <summary>
         /// 邮箱服务
         /// </summary>
-        private readonly IEmailService EmailService;
+        private readonly IEmailBLL EmailBLL;
 
         /// <summary>
         /// 密码服务
         /// </summary>
-        private readonly ICryptographyService CryptographyService;
+        private readonly ICryptographyBLL CryptographyBLL;
 
         /// <summary>
         /// 注册数据仓储接口
         /// </summary>
         private readonly ISecurityDAL SecurityDAL;
 
-        public SecurityService(ISecurityDAL securityDAL, IEmailService emailService, ICryptographyService cryptographyService)
+        public SecurityBLL(ISecurityDAL securityDAL, IEmailBLL emailBLL, ICryptographyBLL cryptographyBLL)
         {
-            this.EmailService = emailService;
-            this.CryptographyService = cryptographyService;
+            this.EmailBLL = emailBLL;
+            this.CryptographyBLL = cryptographyBLL;
             this.SecurityDAL = securityDAL;
         }
 
@@ -97,7 +97,7 @@ namespace RS.HMIServer.BLL
                 Email = passwordResetModel.Email,
                 ResetLink = $"{hostWithScheme}/password/edit?email={Uri.EscapeDataString(passwordResetModel.Email)}&token={passwordResetToken}",
             };
-            operateResult = await this.EmailService.SendPassResetAsync(emailPasswordResetModel);
+            operateResult = await this.EmailBLL.SendPassResetAsync(emailPasswordResetModel);
             if (!operateResult.IsSuccess)
             {
                 return operateResult;

@@ -7,22 +7,22 @@ namespace RS.Commons.Interceptors
     /// </summary>
     public class ValidAuthInterceptor : IInterceptor
     {
-        private readonly ILogService LogService;
-        public ValidAuthInterceptor(ILogService logService)
+        private readonly ILogBLL LogBLL;
+        public ValidAuthInterceptor(ILogBLL logBLL)
         {
-            LogService = logService;
+            LogBLL = logBLL;
         }
 
         public void Intercept(IInvocation invocation)
         {
             try
             {
-                LogService.LogInformation($"鉴权拦截:{invocation.Method.Name} 触发");
+                LogBLL.LogInformation($"鉴权拦截:{invocation.Method.Name} 触发");
                 invocation.Proceed();
             }
             catch (Exception ex)
             {
-                LogService.LogCritical($"{invocation.Method.Name} 异常：{ex.ToString()}");
+                LogBLL.LogCritical($"{invocation.Method.Name} 异常：{ex.ToString()}");
             }
 
         }

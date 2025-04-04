@@ -13,7 +13,6 @@ using StackExchange.Redis;
 namespace RS.HMIServer.DAL
 {
 
-
     /// <summary>
     /// 用户数据逻辑层
     /// </summary>
@@ -23,11 +22,11 @@ namespace RS.HMIServer.DAL
         /// <summary>
         /// 鉴权Redis数据库
         /// </summary>
-        private readonly IDatabase RSApplicationRedis;
+        private readonly IDatabase AuthRedis;
         public UserDAL(RSAppDbContext rsAppDb, RedisDbContext redisDbContext)
         {
             this.RSAppDb = rsAppDb;
-            this.RSApplicationRedis = redisDbContext.GetAuthRedis();
+            this.AuthRedis = redisDbContext.GetAuthRedis();
         }
 
         /// <summary>

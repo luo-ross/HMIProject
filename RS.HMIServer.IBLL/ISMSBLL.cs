@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.IBLL
 {
-    public interface ISMSService
+    public interface ISMSBLL
     {
         /// <summary>
         /// 发送注册短信验证码

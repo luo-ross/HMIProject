@@ -25,6 +25,10 @@ namespace RS.HMIServer.IDAL
         /// <param name="sessionModelKey"></param>
         /// <returns></returns>
         Task<OperateResult<SessionModel>> GetSessionModelAsync(string sessionModelKey);
-        
+
+
+        Task<OperateResult<LoginClientModel>> GetLoginClientModelAsync(string clientId);
+        Task<OperateResult> IsClientIPExistAsync(LoginClientModel loginClientModel, string clientId);
+        Task<OperateResult<string>> SaveClientIdAsync(LoginClientModel loginClientModel);
     }
 }

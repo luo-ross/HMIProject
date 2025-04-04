@@ -19,14 +19,14 @@ namespace RS.Annotation.Views
     public partial class LoginView : RSWindow
     {
         public RSDesktop RSDesktop { get; set; }
-        private readonly IGeneralService GeneralService;
-        private readonly ICryptographyService CryptographyService;
+        private readonly IGeneralBLL GeneralBLL;
+        private readonly ICryptographyBLL CryptographyBLL;
         private readonly LoginViewModel ViewModel;
-        public LoginView(IGeneralService generalService, ICryptographyService cryptographyService)
+        public LoginView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL)
         {
             InitializeComponent();
-            this.GeneralService = generalService;
-            this.CryptographyService = cryptographyService;
+            this.GeneralBLL = generalBLL;
+            this.CryptographyBLL = cryptographyBLL;
             this.ViewModel = this.DataContext as LoginViewModel;
             this.Closed += LoginView_Closed;
             this.Loaded += RSWindow_Loaded;
@@ -38,7 +38,7 @@ namespace RS.Annotation.Views
             this.LoadingBg.Visibility = Visibility.Visible;
             Task.Factory.StartNew(async () =>
             {
-                var getSessionModelResult = await this.GeneralService.GetSessionModelAsync();
+                var getSessionModelResult = await this.GeneralBLL.GetSessionModelAsync();
                 if (!getSessionModelResult.IsSuccess)
                 {
                     this.Dispatcher.Invoke(async () =>
@@ -181,7 +181,7 @@ namespace RS.Annotation.Views
                 var validLoginResult = await RSAppAPI.User.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
                 {
                     UserName = this.ViewModel.PasswordLoginModel.UserName,
-                    Password = this.CryptographyService.GetSHA256HashCode(this.ViewModel.PasswordLoginModel.Password),
+                    Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.PasswordLoginModel.Password),
                 });
 
                 return validLoginResult;

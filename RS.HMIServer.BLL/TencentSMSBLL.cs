@@ -11,13 +11,13 @@ namespace RS.HMIServer.BLL
     /// <summary>
     /// 阿里云短信发送服务
     /// </summary>
-    internal class TencentSMSService : ISMSService
+    internal class TencentSMSBLL : ISMSBLL
     {
         /// <summary>
         /// 程序配置接口
         /// </summary>
         private readonly IConfiguration Configuration;
-        public TencentSMSService(IConfiguration configuration)
+        public TencentSMSBLL(IConfiguration configuration)
         {
             Configuration = configuration;
         }

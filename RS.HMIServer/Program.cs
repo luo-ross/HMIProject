@@ -18,6 +18,7 @@ using RS.HMIServer.DAL;
 using RS.HMIServer.Filters;
 using System.Text;
 using System.Text.Encodings.Web;
+using RS.HMIServer.Middlewares;
 
 namespace RS.HMIServer
 {
@@ -209,13 +210,6 @@ namespace RS.HMIServer
 
                 AppHost.UseDeveloperExceptionPage();
 
-                //UseExceptionHandler 是 ASP.NET Core 中的一个中间件（Middleware）
-                //用于全局处理应用程序中的异常。
-                //这个中间件可以捕获在 ASP.NET Core 请求处理管道中发生的未处理异常，并提供一个统一的处理机制
-                AppHost.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-
-
                 // UseHsts用于实现 HTTP 严格传输安全协议（HTTP Strict Transport Security，简称 HSTS）。
                 // HSTS 是一种安全功能，它允许网站通过 HTTP 响应头来告诉浏览器，在接下来的一段时间内（通常是几个月）
                 // 该网站的所有通信都必须通过 HTTPS 进行，而不是 HTTP。
@@ -248,18 +242,12 @@ namespace RS.HMIServer
                     if (exceptionHandlerPathFeature?.Error != null)
                     {
                         // 从DI中获取日志记录器  
-                        var logger = context.RequestServices.GetRequiredService<ILogService>();
+                        var logger = context.RequestServices.GetRequiredService<ILogBLL>();
 
                         // 记录异常  
                         logger.LogError(exceptionHandlerPathFeature.Error, "An unhandled exception has occurred.");
-                        // 发送HTTP 500响应  
-                        context.Response.ContentType = "application/json";
-                        OperateResult operateResult = OperateResult.CreateFailResult<object>("服务端出错了，暂时无法访问");
-                        operateResult.ErrorCode = 99999;
-                        await context.Response.WriteAsync(new JsonResult(operateResult)
-                        {
-                            StatusCode = StatusCodes.Status500InternalServerError,
-                        }.ToString());
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        context.Response.Redirect("/ServerError.html");
                     }
                 });
             });
@@ -296,7 +284,7 @@ namespace RS.HMIServer
             //每个路由规则都包括一个名称、一个 URL 模式和一个默认值集合，用于指定当 URL 与模式匹配时应该调用的控制器和操作。
             AppHost.MapControllerRoute(
               name: "default",
-              pattern: "{controller=Login}/{action=Index}/{id?}");
+              pattern: "{controller=Login}/{action=Default}/{id?}");
 
             // 配置区域路由
             AppHost.MapAreaControllerRoute(
@@ -348,6 +336,8 @@ namespace RS.HMIServer
             //初始化RSA非对称秘钥
             InitRSASecurityKeyData(AppHost);
 
+            ////拦截验证是否携带ClientId标识
+            //AppHost.UseMiddleware<ClientIdMiddleware>("/Login/Default");
 
             //运行应用程序并阻止调用线程，直到主机关闭。
             AppHost.Run();
@@ -363,7 +353,7 @@ namespace RS.HMIServer
             {
                 throw new ArgumentNullException(nameof(appHost));
             }
-            var cryptographyService = appHost.Services.GetRequiredService<ICryptographyService>();
+            var cryptographyBLL = appHost.Services.GetRequiredService<ICryptographyBLL>();
             var configuration = appHost.Services.GetRequiredService<IConfiguration>();
             var memoryCache = appHost.Services.GetRequiredService<IMemoryCache>();
 
@@ -374,11 +364,11 @@ namespace RS.HMIServer
             GlobalRsaPrivateKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRsaPrivateKeyFileName);
 
             //如果是第一就会创建公钥和私钥
-            cryptographyService.InitServerRSAKey(GlobalRsaPublicKeySavePath, GlobalRsaPrivateKeySavePath);
+            cryptographyBLL.InitServerRSAKey(GlobalRsaPublicKeySavePath, GlobalRsaPrivateKeySavePath);
 
             //加载公钥和私钥
-            var rsaPublicKey = cryptographyService.GetRSAPublicKey(GlobalRsaPublicKeySavePath).Data;
-            var rsaPrivateKey = cryptographyService.GetRSAPrivateKey(GlobalRsaPrivateKeySavePath).Data;
+            var rsaPublicKey = cryptographyBLL.GetRSAPublicKey(GlobalRsaPublicKeySavePath).Data;
+            var rsaPrivateKey = cryptographyBLL.GetRSAPrivateKey(GlobalRsaPrivateKeySavePath).Data;
             memoryCache.Set(MemoryCacheKey.GlobalRSAPublicKey, rsaPublicKey);
             memoryCache.Set(MemoryCacheKey.GlobalRSAPrivateKey, rsaPrivateKey);
         }

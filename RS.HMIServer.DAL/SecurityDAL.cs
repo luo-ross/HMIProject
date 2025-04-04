@@ -31,13 +31,13 @@ namespace RS.HMIServer.DAL
         /// <summary>
         /// 密码服务
         /// </summary>
-        private readonly ICryptographyService CryptographyService;
+        private readonly ICryptographyBLL CryptographyBLL;
 
 
-        public SecurityDAL(RSAppDbContext rsAppDb, ICryptographyService cryptographyService, RedisDbContext redisDbContext)
+        public SecurityDAL(RSAppDbContext rsAppDb, ICryptographyBLL cryptographyBLL, RedisDbContext redisDbContext)
         {
             this.RSAppDb = rsAppDb;
-            this.CryptographyService = cryptographyService;
+            this.CryptographyBLL = cryptographyBLL;
             this.PasswordResetRedis = redisDbContext.GetPasswordResetRedis();
         }
 
@@ -50,7 +50,7 @@ namespace RS.HMIServer.DAL
         public async Task<OperateResult> CreatePasswordResetSessionAsync(string token, PasswordResetSessionModel passwordResetSessionModel)
         {
             //检查秘密重置会话是否已经存在
-            var emailHashCode = this.CryptographyService.GetMD5HashCode(passwordResetSessionModel.Email);
+            var emailHashCode = this.CryptographyBLL.GetMD5HashCode(passwordResetSessionModel.Email);
             var isSessionExist = this.PasswordResetRedis.KeyExists(emailHashCode);
             if (isSessionExist)
             {

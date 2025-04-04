@@ -1,20 +1,8 @@
 ﻿@{
     Layout = "_LoginLayout";
-    ViewData["Title"] = "上位机-注册";
+    ViewData["Title"] = "上位机-安全中心";
     var clientId = ViewData["ClientId"];
     var timeStamp = ViewData["TimeStamp"];
-
-    var password1ViewData = new ViewDataDictionary(ViewData)
-            {
-                ["Id"] = 1,
-                ["PlaceHolder"] = "请输入密码",
-            };
-
-    var password2ViewData = new ViewDataDictionary(ViewData)
-            {
-                ["Id"] = 2,
-                ["PlaceHolder"] = "请再次输入密码",
-            };
 }
 
 <style>
@@ -58,29 +46,20 @@
     }
 </style>
 
-<div class="tab-border">
-    <input type="radio" id="radio-login" name="tab" value="radio-login">
-    <label class="label-tab label-login" for="radio-login" data-url="/Login/Index?ClientId=@clientId&Timestamp=@timeStamp">登录</label>
-    <input type="radio" checked id="radio-register" name="tab" value="radio-register">
-    <label class="label-tab label-register" for="radio-register">注册</label>
-</div>
 
-@Html.Partial("_EmailPartial")
-@Html.Partial("_PasswordPartial", null, password1ViewData)
-@Html.Partial("_PasswordPartial", null, password2ViewData)
+<a class="btn-return">返回</a>
 
-@* <div class="form-row">
+<div class="form-row">
     @Html.Partial("_VerifyPartial")
-
     <button class="btn-verifyrequest">
         <div class="verifyrequest-desborder">
             <div class="div-des">获取验证码</div>
             <div class="div-verifytime d-none">60</div>
         </div>
     </button>
-</div> *@
+</div>
 <div class="form-row">
-    <button type="button" class="btn-register-next">下一步</button>
+    <button type="button" class="btn-emailverify">邮箱验证</button>
 </div>
 
 @section Scripts {

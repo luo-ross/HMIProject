@@ -20,7 +20,7 @@ namespace RS.HMIServer.BLL
     /// <summary>
     /// 腾讯邮箱发送服务
     /// </summary>
-    internal class TencentEmailService : IEmailService
+    internal class TencentEmailBLL : IEmailBLL
     {
         /// <summary>
         /// 程序配置接口
@@ -37,7 +37,7 @@ namespace RS.HMIServer.BLL
         /// 邮件发送客户端
         /// </summary>
         private SmtpClient SmtpClient { get; set; }
-        public TencentEmailService(IConfiguration configuration, IRazorLightEngine razorLightEngine)
+        public TencentEmailBLL(IConfiguration configuration, IRazorLightEngine razorLightEngine)
         {
             this.Configuration = configuration;
             this.RazorLightEngine = razorLightEngine;
@@ -73,10 +73,10 @@ namespace RS.HMIServer.BLL
 
         private (string userName, string password, string host, int port) GetEmailConfig()
         {
-            string userName = Configuration["ConnectionStrings:EmailService:UserName"];
-            string password = Configuration["ConnectionStrings:EmailService:Password"];
-            string host = Configuration["ConnectionStrings:EmailService:Host"];
-            int port = int.Parse(Configuration["ConnectionStrings:EmailService:Port"]);
+            string userName = Configuration["ConnectionStrings:EmailBLL:UserName"];
+            string password = Configuration["ConnectionStrings:EmailBLL:Password"];
+            string host = Configuration["ConnectionStrings:EmailBLL:Host"];
+            int port = int.Parse(Configuration["ConnectionStrings:EmailBLL:Port"]);
             return (userName, password, host, port);
         }
 

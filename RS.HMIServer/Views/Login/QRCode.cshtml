@@ -1,7 +1,8 @@
 ﻿@{
     Layout = "_LoginLayout";
     ViewData["Title"] = "上位机-二维码登录";
-    var timestamp = ViewData["Timestamp"];
+    var clientId = ViewData["ClientId"];
+    var timeStamp = ViewData["TimeStamp"];
 }
 
 <style>
@@ -80,7 +81,7 @@
     }
 </style>
 <div class="qr-content">
-    <a class="btn-password-login" href="/Login/Index?timestamp=@timestamp">
+    <a class="btn-password-login" href="/Login/Index?ClientId=@clientId&Timestamp=@timeStamp">
         <svg t="1743605634370" class="icon-qrcode" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9813" width="64" height="64">
             <defs>
                 <linearGradient id="myGradient" x1="0%" y1="0%" x2="100%" y2="100%">

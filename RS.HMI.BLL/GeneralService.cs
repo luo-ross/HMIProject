@@ -11,14 +11,14 @@ using System.Collections;
 
 namespace RS.HMI.BLL
 {
-    [ServiceInjectConfig(typeof(IGeneralService), ServiceLifetime.Transient, IsInterceptor = true)]
-    internal class GeneralService : IGeneralService
+    [ServiceInjectConfig(typeof(IGeneralBLL), ServiceLifetime.Transient, IsInterceptor = true)]
+    internal class GeneralBLL : IGeneralBLL
     {
         private readonly IMemoryCache MemoryCache;
-        private readonly ICryptographyService CryptographyService;
-        public GeneralService(ICryptographyService cryptographyService, IMemoryCache memoryCache)
+        private readonly ICryptographyBLL CryptographyBLL;
+        public GeneralBLL(ICryptographyBLL cryptographyBLL, IMemoryCache memoryCache)
         {
-            CryptographyService = cryptographyService;
+            CryptographyBLL = cryptographyBLL;
             MemoryCache = memoryCache;
         }
     }
