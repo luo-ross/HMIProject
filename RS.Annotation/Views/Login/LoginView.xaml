@@ -10,6 +10,7 @@
     Title="LoginView"
     Width="720"
     Height="500"
+    BorderCornerRadius="10"
     IsFitSystem="True"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"

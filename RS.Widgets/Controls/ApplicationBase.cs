@@ -195,18 +195,26 @@ namespace RS.Widgets.Controls
         /// <returns></returns>
         private async Task<OperateResult> GetSessionModelAsync()
         {
-            //获取客户端公钥
-            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAPublicKey, out string rSAPublicKey);
-            if (string.IsNullOrEmpty(rSAPublicKey))
+            //获取客户端加密公钥
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAEncryptPublicKey, out string globalRSAEncryptPublicKey);
+            if (string.IsNullOrEmpty(globalRSAEncryptPublicKey))
             {
-                return OperateResult.CreateFailResult("获取客户端公钥失败！");
+                return OperateResult.CreateFailResult("获取客户端加密公钥失败！");
+            }
+
+            //获取客户端签名公钥
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPublicKey, out string globalRSASignPublicKey);
+            if (string.IsNullOrEmpty(globalRSAEncryptPublicKey))
+            {
+                return OperateResult.CreateFailResult("获取客户端签名公钥失败！");
             }
 
 
             //创建会话请求
             SessionRequestModel sessionRequestModel = new SessionRequestModel()
             {
-                RsaPublicKey = rSAPublicKey,
+                RSAEncryptPublicKey = globalRSAEncryptPublicKey,
+                RSASignPublicKey = globalRSASignPublicKey,
                 Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
                 AudienceType = AudienceType.WindowsAudience,
@@ -215,7 +223,8 @@ namespace RS.Widgets.Controls
             //数据按照顺序组成数组
             ArrayList arrayList = new ArrayList
             {
-                sessionRequestModel.RsaPublicKey,
+                sessionRequestModel.RSASignPublicKey,
+                sessionRequestModel.RSAEncryptPublicKey,
                 sessionRequestModel.TimeStamp,
                 sessionRequestModel.Nonce
             };
@@ -228,14 +237,14 @@ namespace RS.Widgets.Controls
             }
 
             //获取客户端私钥
-            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAPrivateKey, out byte[]? rsaPrivateKey);
-            if (rsaPrivateKey == null || rsaPrivateKey.Length == 0)
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPrivateKey, out byte[]? globalRSASignPrivateKey);
+            if (globalRSASignPrivateKey == null || globalRSASignPrivateKey.Length == 0)
             {
                 return OperateResult.CreateFailResult("获取客户端私钥失败！");
             }
 
             //进行RSA数据签名
-            var rsaSignDataResult = CryptographyBLL.RSASignData(getRSAHashResult.Data, rsaPrivateKey);
+            var rsaSignDataResult = CryptographyBLL.RSASignData(getRSAHashResult.Data, globalRSASignPrivateKey);
             if (!rsaSignDataResult.IsSuccess)
             {
                 return rsaSignDataResult;
@@ -256,7 +265,8 @@ namespace RS.Widgets.Controls
                 sessionResultModel.SessionModel.AesKey,
                 sessionResultModel.SessionModel.Token,
                 sessionResultModel.SessionModel.AppId,
-                sessionResultModel.RsaPublicKey,
+                sessionResultModel.RSASignPublicKey,
+                sessionResultModel.RSAEncryptPublicKey,
                 sessionResultModel.TimeStamp,
                 sessionResultModel.Nonce
             };
@@ -270,7 +280,7 @@ namespace RS.Widgets.Controls
 
             //获取签名
             var signature = Convert.FromBase64String(sessionResultModel.MsgSignature);
-            var verifyDataResult = CryptographyBLL.RSAVerifyData(getRSAHashResult.Data, signature, sessionResultModel.RsaPublicKey);
+            var verifyDataResult = CryptographyBLL.RSAVerifyData(getRSAHashResult.Data, signature, sessionResultModel.RSASignPublicKey);
 
             if (!verifyDataResult.IsSuccess)
             {
@@ -278,7 +288,7 @@ namespace RS.Widgets.Controls
             }
 
             //解密AesKey
-            var rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AesKey, rsaPrivateKey);
+            var rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AesKey, globalRSASignPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;
@@ -286,7 +296,7 @@ namespace RS.Widgets.Controls
             sessionResultModel.SessionModel.AesKey = rsaDecryptResult.Data;
 
             //解密AppId
-            rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AppId, rsaPrivateKey);
+            rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AppId, globalRSASignPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;
@@ -297,7 +307,8 @@ namespace RS.Widgets.Controls
             MemoryCache.Set(MemoryCacheKey.SessionModelKey, sessionResultModel.SessionModel);
 
             //将服务端公钥存储在缓存里
-            MemoryCache.Set(MemoryCacheKey.GlobalRSAPublicKey, sessionResultModel.RsaPublicKey);
+            MemoryCache.Set(MemoryCacheKey.ServerGlobalRSASignPublicKey, sessionResultModel.RSASignPublicKey);
+            MemoryCache.Set(MemoryCacheKey.ServerGlobalRSAEncryptPublicKey, sessionResultModel.RSAEncryptPublicKey);
 
             return OperateResult.CreateSuccessResult();
         }
@@ -359,9 +370,12 @@ namespace RS.Widgets.Controls
             var cryptographyBLL = AppHost.Services.GetRequiredService<ICryptographyBLL>();
             var memoryCache = AppHost.Services.GetRequiredService<IMemoryCache>();
             //如果是第一就会创建公钥和私钥
-            (byte[] rsaPrivateKey, byte[] rsaPublicKey) = cryptographyBLL.GenerateRSAKey();
-            memoryCache.Set<string>(MemoryCacheKey.GlobalRSAPublicKey, Convert.ToBase64String(rsaPublicKey));
-            memoryCache.Set<byte[]>(MemoryCacheKey.GlobalRSAPrivateKey, rsaPrivateKey);
+            (byte[] rsaSigningPrivateKey, byte[] rsaSigningPublicKey) = cryptographyBLL.GenerateRSAKey();
+            (byte[] rsaEncryptionPrivateKey, byte[] rsaEncryptionPublicKey) = cryptographyBLL.GenerateRSAKey();
+            memoryCache.Set<string>(MemoryCacheKey.GlobalRSASignPublicKey, Convert.ToBase64String(rsaSigningPublicKey));
+            memoryCache.Set<byte[]>(MemoryCacheKey.GlobalRSASignPrivateKey, rsaSigningPrivateKey);
+            memoryCache.Set<string>(MemoryCacheKey.GlobalRSAEncryptPublicKey, Convert.ToBase64String(rsaEncryptionPublicKey));
+            memoryCache.Set<byte[]>(MemoryCacheKey.GlobalRSAEncryptPrivateKey, rsaEncryptionPrivateKey);
         }
 
 

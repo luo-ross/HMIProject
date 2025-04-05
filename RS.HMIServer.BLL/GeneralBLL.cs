@@ -171,18 +171,24 @@ namespace RS.HMIServer.BLL
 
         public async Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel, string sessionId)
         {
-            //获取服务端公钥
-            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAPublicKey, out string serverRSAPublicKey);
-            if (string.IsNullOrEmpty(serverRSAPublicKey))
+            //获取服务端签名公钥
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPublicKey, out string globalRSASignPublicKey);
+            if (string.IsNullOrEmpty(globalRSASignPublicKey))
             {
-                return OperateResult.CreateFailResult<SessionResultModel>("获取服务端公钥失败！");
+                return OperateResult.CreateFailResult<SessionResultModel>("获取服务端签名公钥失败！");
+            }
+            //获取服务端加密公钥
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAEncryptPublicKey, out string globalRSAEncryptPublicKey);
+            if (string.IsNullOrEmpty(globalRSAEncryptPublicKey))
+            {
+                return OperateResult.CreateFailResult<SessionResultModel>("获取服务端加解公钥失败！");
             }
 
             //生成AES对称秘钥
             string aesKey = CryptographyBLL.GenerateAESKey();
 
-            //通过客户端传递过来的公钥加密AES秘钥
-            var rsaEncryptResult = CryptographyBLL.RSAEncrypt(aesKey, sessionRequestModel.RsaPublicKey);
+            //通过客户端传递过来的加密公钥加密数据
+            var rsaEncryptResult = CryptographyBLL.RSAEncrypt(aesKey, sessionRequestModel.RSAEncryptPublicKey);
             if (!rsaEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaEncryptResult);
@@ -193,7 +199,7 @@ namespace RS.HMIServer.BLL
             string appId = Guid.NewGuid().ToString();
 
             //RSA非对称加密
-            rsaEncryptResult = CryptographyBLL.RSAEncrypt(appId, sessionRequestModel.RsaPublicKey);
+            rsaEncryptResult = CryptographyBLL.RSAEncrypt(appId, sessionRequestModel.RSAEncryptPublicKey);
             if (!rsaEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaEncryptResult);
@@ -203,14 +209,15 @@ namespace RS.HMIServer.BLL
             //创建返回值
             SessionResultModel sessionResultModel = new SessionResultModel()
             {
-                RsaPublicKey = serverRSAPublicKey,
+                RSASignPublicKey = globalRSASignPublicKey,
+                RSAEncryptPublicKey = globalRSAEncryptPublicKey,
                 Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
                 SessionModel = new SessionModel()
                 {
                     AesKey = aesKeyEncrypt,
                     AppId = appIdEncrypt,
-                }
+                },
             };
 
             var claimList = new List<Claim>
@@ -235,7 +242,7 @@ namespace RS.HMIServer.BLL
             {
                 AppId = appIdProtect,
                 AesKey = aesKeyProtect,
-                Token = token,
+                Token = token
             }, sessionId);
 
             if (!saveSessionModelResult.IsSuccess)
@@ -249,7 +256,8 @@ namespace RS.HMIServer.BLL
                 sessionResultModel.SessionModel.AesKey,
                 sessionResultModel.SessionModel.Token,
                 sessionResultModel.SessionModel.AppId,
-                sessionResultModel.RsaPublicKey,
+                sessionResultModel.RSASignPublicKey,
+                sessionResultModel.RSAEncryptPublicKey,
                 sessionResultModel.TimeStamp,
                 sessionResultModel.Nonce
             };
@@ -262,22 +270,19 @@ namespace RS.HMIServer.BLL
             }
 
             //获取服务私钥
-            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAPrivateKey, out byte[] serverRSAPrivateKey);
-            if (serverRSAPrivateKey == null || serverRSAPrivateKey.Length == 0)
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPrivateKey, out byte[] globalRSASignPrivateKey);
+            if (globalRSASignPrivateKey == null || globalRSASignPrivateKey.Length == 0)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>("获取服务私钥失败！");
             }
 
             //进行RSA数据签名
-            var rsaSignDataResult = CryptographyBLL.RSASignData(getHashResult.Data, serverRSAPrivateKey);
+            var rsaSignDataResult = CryptographyBLL.RSASignData(getHashResult.Data, globalRSASignPrivateKey);
             if (!rsaSignDataResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaSignDataResult);
             }
             sessionResultModel.MsgSignature = rsaSignDataResult.Data;
-
-
-
             return OperateResult.CreateSuccessResult(sessionResultModel);
         }
     }

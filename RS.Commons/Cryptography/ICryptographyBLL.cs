@@ -124,7 +124,7 @@ namespace RS.Commons
         /// <param name="signature">数据签名</param>
         /// <param name="rsaPublicKey">RSA公钥</param>
         /// <returns></returns>
-        OperateResult RSAVerifyData(byte[] hash, byte[] signature, string rsaPublicKey);
+        OperateResult RSAVerifyData(byte[] hash, byte[] signature, string rsaSigningPublicKey);
         #endregion
 
         #region 使用DataProtect保存数据

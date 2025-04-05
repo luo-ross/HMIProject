@@ -1,19 +1,67 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 function toJson(obj) {
     return JSON.stringify(obj);
 }
 function getQueryParam(name) {
     // 获取URL的查询字符串部分，并去除开头的?  
-    var queryString = window.location.search.substring(1);
+    let queryString = window.location.search.substring(1);
     // 将查询字符串分割成键值对数组  
-    var params = queryString.split('&').map(function (pair) { return pair.split('='); });
+    let params = queryString.split('&').map(pair => pair.split('='));
     // 遍历键值对数组，找到指定的参数名并返回其值  
-    for (var _i = 0, params_1 = params; _i < params_1.length; _i++) {
-        var _a = params_1[_i], key = _a[0], value = _a[1];
+    for (let [key, value] of params) {
         if (decodeURIComponent(key) === name) {
             return decodeURIComponent(value) || null; // 返回解码后的值，如果没有值则返回null  
         }
     }
     return null; // 如果没有找到指定的参数，则返回null  
+}
+function AjaxPostAsync(url, model, success, complete, error) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield $.ajax({
+            url: url,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(model),
+            complete: function (e) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield (complete === null || complete === void 0 ? void 0 : complete(e));
+                });
+            },
+            success: function (operateResult) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield (success === null || success === void 0 ? void 0 : success(operateResult));
+                });
+            },
+            error: function (e) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    return yield (error === null || error === void 0 ? void 0 : error(e));
+                });
+            },
+        });
+    });
+}
+// 使用jQuery的Ajax与async/await结合
+function makeAjaxRequestAsync(url, data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: resolve,
+                error: reject
+            });
+        });
+    });
 }
 function createRandCode(len) {
     var randomString = '';
@@ -26,7 +74,7 @@ function createRandCode(len) {
     return randomString;
 }
 function emailValid(email) {
-    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (isEmptyOrNull(email) || !emailRegex.test(email.toString())) {
         return false;
     }
@@ -57,9 +105,12 @@ function ClearMsg() {
     $errormessage.removeAttr('class');
     $errormessage.attr('class', 'error-message d-none');
 }
-var timerId;
+let timerId;
 function ShowMsg(msgtype, msg) {
     var $errormessage = $('body').find(".error-message");
+    if ($errormessage.length == 0) {
+        return;
+    }
     $errormessage.removeAttr('class');
     $errormessage.attr('class', 'error-message alert-' + msgtype);
     $errormessage.text(msg);

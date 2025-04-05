@@ -4,7 +4,7 @@ $(function () {
     var $passwordinput = $("#input-password1");
     var $passwordconfirm = $("#input-password2");
     var $verify = $("#input-verify");
-    $('.btn-register-next').on('click', function () {
+    $('.btn-register').on('click', function () {
         //获取邮箱
         var email = $email.val();
         //获取密码输入

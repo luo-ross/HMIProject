@@ -441,11 +441,11 @@ namespace RS.Commons.Helper
         /// <summary>
         /// 生成 RSA 公钥和私钥
         /// </summary>
-        public static RsaKey GenerateRsaKeys()
+        public static RSAKey GenerateRSAKeys()
         {
             using (var rsa = new RSACryptoServiceProvider())
             {
-                return new RsaKey()
+                return new RSAKey()
                 {
                     PublicKey = rsa.ToXmlString(false),
                     PrivateKey = rsa.ToXmlString(true)
@@ -497,7 +497,7 @@ namespace RS.Commons.Helper
         /// <param name="content"> 待解密的内容 </param>
         /// <param name="encoding"></param>
         /// <returns> 解密后的字符串 </returns>
-        public static string RsaDecrypt(string privatekey, string content, Encoding encoding = null)
+        public static string RSADecrypt(string privatekey, string content, Encoding encoding = null)
         {
 
             encoding = encoding ?? DefaultEncoding;
@@ -537,7 +537,7 @@ namespace RS.Commons.Helper
 
     }
 
-    public struct RsaKey
+    public struct RSAKey
     {
         /// <summary>
         /// 公钥

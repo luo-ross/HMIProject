@@ -1,5 +1,5 @@
 $(function () {
-    $(".btn-passconfirm").click(function () {
+    $(".btn-passconfirm").click(() => {
         debugger;
         var form = $(".form");
         if (!form.valid()) {

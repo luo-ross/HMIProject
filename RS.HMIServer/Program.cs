@@ -35,14 +35,24 @@ namespace RS.HMIServer
         private static readonly string KeysRepository = "Keys-Repository";
 
         /// <summary>
-        /// RSA非对称秘钥公钥保存路径
+        /// RSA非对称秘钥加密公钥保存路径
         /// </summary>
-        private static string? GlobalRsaPublicKeySavePath { get; set; }
+        private static string? GlobalRSAEncryptPublicKeySavePath { get; set; }
 
         /// <summary>
-        /// RSA非对称秘钥私钥保存路径
+        /// RSA非对称秘钥加密私钥保存路径
         /// </summary>
-        private static string? GlobalRsaPrivateKeySavePath { get; set; }
+        private static string? GlobalRSAEncryptPrivateKeySavePath { get; set; }
+
+        /// <summary>
+        /// RSA非对称秘钥签名公钥保存路径
+        /// </summary>
+        private static string? GlobalRSASignPublicKeySavePath { get; set; }
+
+        /// <summary>
+        /// RSA非对称秘钥签名私钥保存路径
+        /// </summary>
+        private static string? GlobalRSASignPrivateKeySavePath { get; set; }
 
 
         public static void Main(string[] args)
@@ -284,7 +294,7 @@ namespace RS.HMIServer
             //每个路由规则都包括一个名称、一个 URL 模式和一个默认值集合，用于指定当 URL 与模式匹配时应该调用的控制器和操作。
             AppHost.MapControllerRoute(
               name: "default",
-              pattern: "{controller=Login}/{action=Default}/{id?}");
+              pattern: "{controller=Login}/{action=Index}/{id?}");
 
             // 配置区域路由
             AppHost.MapAreaControllerRoute(
@@ -357,20 +367,32 @@ namespace RS.HMIServer
             var configuration = appHost.Services.GetRequiredService<IConfiguration>();
             var memoryCache = appHost.Services.GetRequiredService<IMemoryCache>();
 
-            string globalRsaPublicKeyFileName = configuration["ConnectionStrings:GlobalRsaPublicKeyFileName"];
-            string globalRsaPrivateKeyFileName = configuration["ConnectionStrings:GlobalRsaPrivateKeyFileName"];
+            string globalRSASignPublicKeyFileName = configuration["ConnectionStrings:GlobalRSASignPublicKeyFileName"];
+            string globalRSASignPrivateKeyFileName = configuration["ConnectionStrings:GlobalRSASignPrivateKeyFileName"];
+            string globalRSAEncryptPublicKeyFileName = configuration["ConnectionStrings:GlobalRSAEncryptPublicKeyFileName"];
+            string globalRSAEncryptPrivateKeyFileName = configuration["ConnectionStrings:GlobalRSAEncryptPrivateKeyFileName"];
 
-            GlobalRsaPublicKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRsaPublicKeyFileName);
-            GlobalRsaPrivateKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRsaPrivateKeyFileName);
+            GlobalRSASignPublicKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSASignPublicKeyFileName);
+            GlobalRSASignPrivateKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSASignPrivateKeyFileName);
+            GlobalRSAEncryptPublicKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSAEncryptPublicKeyFileName);
+            GlobalRSAEncryptPrivateKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSAEncryptPrivateKeyFileName);
 
-            //如果是第一就会创建公钥和私钥
-            cryptographyBLL.InitServerRSAKey(GlobalRsaPublicKeySavePath, GlobalRsaPrivateKeySavePath);
+            //创建签名密钥对
+            cryptographyBLL.InitServerRSAKey(GlobalRSASignPublicKeySavePath, GlobalRSASignPrivateKeySavePath);
+            //创建加密密钥
+            cryptographyBLL.InitServerRSAKey(GlobalRSAEncryptPublicKeySavePath, GlobalRSAEncryptPrivateKeySavePath);
 
             //加载公钥和私钥
-            var rsaPublicKey = cryptographyBLL.GetRSAPublicKey(GlobalRsaPublicKeySavePath).Data;
-            var rsaPrivateKey = cryptographyBLL.GetRSAPrivateKey(GlobalRsaPrivateKeySavePath).Data;
-            memoryCache.Set(MemoryCacheKey.GlobalRSAPublicKey, rsaPublicKey);
-            memoryCache.Set(MemoryCacheKey.GlobalRSAPrivateKey, rsaPrivateKey);
+            var rsaSigningPublicKey = cryptographyBLL.GetRSAPublicKey(GlobalRSASignPublicKeySavePath).Data;
+            var rsaSigningPrivateKey = cryptographyBLL.GetRSAPrivateKey(GlobalRSASignPrivateKeySavePath).Data;
+            var rsaEncryptionPublicKey = cryptographyBLL.GetRSAPublicKey(GlobalRSAEncryptPublicKeySavePath).Data;
+            var rsaEncryptionPrivateKey = cryptographyBLL.GetRSAPrivateKey(GlobalRSAEncryptPrivateKeySavePath).Data;
+
+
+            memoryCache.Set(MemoryCacheKey.GlobalRSASignPublicKey, rsaSigningPublicKey);
+            memoryCache.Set(MemoryCacheKey.GlobalRSASignPrivateKey, rsaSigningPrivateKey);
+            memoryCache.Set(MemoryCacheKey.GlobalRSAEncryptPublicKey, rsaEncryptionPublicKey);
+            memoryCache.Set(MemoryCacheKey.GlobalRSAEncryptPrivateKey, rsaEncryptionPrivateKey);
         }
     }
 }

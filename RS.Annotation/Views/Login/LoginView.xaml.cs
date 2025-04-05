@@ -36,23 +36,7 @@ namespace RS.Annotation.Views
         private async void RSWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.LoadingBg.Visibility = Visibility.Visible;
-            Task.Factory.StartNew(async () =>
-            {
-                var getSessionModelResult = await this.GeneralBLL.GetSessionModelAsync();
-                if (!getSessionModelResult.IsSuccess)
-                {
-                    this.Dispatcher.Invoke(async () =>
-                    {
-                        await this.MessageBox.ShowAsync(getSessionModelResult.Message);
-                    });
-                }
-                this.Dispatcher.Invoke(() =>
-                {
-                    this.LoadingBg.Visibility = Visibility.Collapsed;
-                    //this.IsCloseBtnVisible = Visibility.Visible;
-                });
-
-            });
+           
         }
 
         private void LoginView_Closed(object? sender, EventArgs e)

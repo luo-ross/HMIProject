@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Tls.Crypto.Impl;
 using RS.Commons.Attributs;
 using RS.Commons.Cryptography;
 using RS.Commons.Enums;
 using RS.Commons.Extensions;
 using RS.Models;
+using System;
 using System.Collections;
 using System.Net;
 using System.Security.Cryptography;
@@ -18,6 +25,7 @@ namespace RS.Commons
     /// <summary>
     /// 数据加解密服务实现类
     /// </summary>
+    /// <remarks>别使用RSACryptoServiceProvider一堆Bug 比如无法解析RSAEncryptionPadding.OaepSHA256 </remarks>
     [ServiceInjectConfig(typeof(ICryptographyBLL), ServiceLifetime.Singleton)]
     public class CryptographyBLL : ICryptographyBLL
     {
@@ -216,8 +224,8 @@ namespace RS.Commons
             {
                 //keysize设置2048 的时候数据长度不可以大于256 如果大于256 我就需要进行分片加解密
                 rsa.KeySize = 2048;
-                var privateKey = rsa.ExportRSAPrivateKey();
-                var publicKey = rsa.ExportRSAPublicKey();
+                var privateKey = rsa.ExportPkcs8PrivateKey();
+                var publicKey = rsa.ExportSubjectPublicKeyInfo();
                 return (privateKey, publicKey);
             }
         }
@@ -228,9 +236,10 @@ namespace RS.Commons
         /// <param name="encryptContent"></param>
         /// <param name="rsaPublicKey"></param>
         /// <returns></returns>
-        public OperateResult<string> RSAEncrypt(string encryptContent, string rsaPublicKey)
+        public OperateResult<string> RSAEncrypt(string encryptContent, string rsaEcryptionPublicKey)
         {
-            using (RSACryptoServiceProvider rsaEncrypt = new RSACryptoServiceProvider())
+         
+            using (var rsaEncrypt = RSA.Create())
             {
                 if (string.IsNullOrEmpty(encryptContent))
                 {
@@ -238,16 +247,22 @@ namespace RS.Commons
                 }
                 try
                 {
-                    var publicKey = Convert.FromBase64String(rsaPublicKey);
-                    rsaEncrypt.ImportRSAPublicKey(publicKey, out int bytesRead);
+                    byte[] publicKeyBytes = Convert.FromBase64String(rsaEcryptionPublicKey);
+                    // 导入SPKI格式的公钥
+                    rsaEncrypt.ImportSubjectPublicKeyInfo(publicKeyBytes, out int bytesRead);
+                    // 将待加密内容转换为字节数组
+                    byte[] dataToEncrypt = Encoding.UTF8.GetBytes(encryptContent);
+                    // 使用RSA-OAEP填充进行加密
+                    byte[] encryptedData = rsaEncrypt.Encrypt(dataToEncrypt, RSAEncryptionPadding.OaepSHA256);
+                    // 将加密结果转换为Base64字符串
+                    string base64Encrypted = Convert.ToBase64String(encryptedData);
+                    return OperateResult.CreateSuccessResult(base64Encrypted);
                 }
                 catch (Exception ex)
                 {
-                    LogBLL.LogError(ex, "密钥导入失败");
-                    return OperateResult.CreateFailResult<string>("密钥导入失败");
+                    LogBLL.LogError(ex, "加密失败");
+                    return OperateResult.CreateFailResult<string>("加密失败");
                 }
-                var encryptData = rsaEncrypt.Encrypt(Encoding.UTF8.GetBytes(encryptContent), RSAEncryptionPadding.Pkcs1);
-                return OperateResult.CreateSuccessResult(Convert.ToBase64String(encryptData));
             }
         }
 
@@ -257,12 +272,12 @@ namespace RS.Commons
         /// <param name="encryptContent">加密内容</param>
         /// <param name="rsaPrivateKey">RSA私钥</param>
         /// <returns></returns>
-        public OperateResult<string> RSADecrypt(string encryptContent, byte[] rsaPrivateKey)
+        public OperateResult<string> RSADecrypt(string encryptContent, byte[] rsaEcryptionPrivateKey)
         {
-            using (RSACryptoServiceProvider rsaDecrypt = new RSACryptoServiceProvider())
+            using (var rsaDecrypt = RSA.Create())
             {
-                rsaDecrypt.ImportRSAPrivateKey(rsaPrivateKey, out int bytesRead);
-                var decryptData = rsaDecrypt.Decrypt(Convert.FromBase64String(encryptContent), RSAEncryptionPadding.Pkcs1);
+                rsaDecrypt.ImportPkcs8PrivateKey(rsaEcryptionPrivateKey, out int bytesRead);
+                var decryptData = rsaDecrypt.Decrypt(Convert.FromBase64String(encryptContent), RSAEncryptionPadding.OaepSHA256);
                 return OperateResult.CreateSuccessResult(Encoding.UTF8.GetString(decryptData));
             }
         }
@@ -325,14 +340,22 @@ namespace RS.Commons
         /// <param name="hash">哈希值</param>
         /// <param name="rsaPrivateKey">RSA私钥</param>
         /// <returns></returns>
-        public OperateResult<string> RSASignData(byte[] hash, byte[] rsaPrivateKey)
+        public OperateResult<string> RSASignData(byte[] hash, byte[] rsaSigningPrivateKey)
         {
-            using (RSACryptoServiceProvider rsaSign = new RSACryptoServiceProvider())
+            try
             {
-                rsaSign.ImportRSAPrivateKey(rsaPrivateKey, out int bytesRead);
-                var signData = rsaSign.SignData(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-                return OperateResult.CreateSuccessResult(Convert.ToBase64String(signData));
+                using (var rsaSign = RSA.Create())
+                {
+                    rsaSign.ImportPkcs8PrivateKey(rsaSigningPrivateKey, out int bytesRead);
+                    var signData = rsaSign.SignData(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    return OperateResult.CreateSuccessResult(Convert.ToBase64String(signData));
+                }
             }
+            catch (Exception ex)
+            {
+                return OperateResult.CreateFailResult<string>("数据签名失败");
+            }
+
         }
 
         /// <summary>
@@ -372,18 +395,26 @@ namespace RS.Commons
         /// <param name="signature">数据签名</param>
         /// <param name="rsaPublicKey">RSA公钥</param>
         /// <returns></returns>
-        public OperateResult RSAVerifyData(byte[] hash, byte[] signature, string rsaPublicKey)
+        public OperateResult RSAVerifyData(byte[] hash, byte[] signature, string rsaSigningPublicKey)
         {
-            using (RSACryptoServiceProvider rsaVerify = new RSACryptoServiceProvider())
+            try
             {
-                rsaVerify.ImportRSAPublicKey(Convert.FromBase64String(rsaPublicKey), out int bytesRead);
-                if (!rsaVerify.VerifyData(hash, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+                using (var rsaVerify = RSA.Create())
                 {
-                    return OperateResult.CreateFailResult("签名验证失败");
+                    //这里是pkcs#8的导入
+                    rsaVerify.ImportSubjectPublicKeyInfo(Convert.FromBase64String(rsaSigningPublicKey), out int bytesRead);
+                    if (!rsaVerify.VerifyData(hash, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+                    {
+                        return OperateResult.CreateFailResult("签名验证失败");
+                    }
+                    return OperateResult.CreateSuccessResult();
                 }
-
-                return OperateResult.CreateSuccessResult();
             }
+            catch (Exception ex)
+            {
+                return OperateResult.CreateFailResult("签名验证失败");
+            }
+
         }
 
         #endregion

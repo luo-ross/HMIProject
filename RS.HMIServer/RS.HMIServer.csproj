@@ -245,6 +245,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Keys-Repository\" />
+	  <Folder Include="wwwroot\lib\axios\" />
 	</ItemGroup>
 
 </Project>

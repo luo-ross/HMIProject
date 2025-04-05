@@ -5,11 +5,19 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es5",
+    "target": "es6",
     "outDir": "wwwroot/js",
+  
+    "module": "es6",
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
   },
   "include": [
-    "Scripts/*"
+    "Scripts/*",
+    "node_modules/*"
   ],
   "exclude": [
     "node_modules",

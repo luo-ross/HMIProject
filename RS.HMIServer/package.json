@@ -4,8 +4,8 @@
   "private": true,
   "devDependencies": {
     "@types/bootstrap": "5.2.10",
+    "@types/crypto-js": "4.2.2",
     "@types/jquery": "3.5.1",
-    "@types/jquery.validation": "1.17.0",
-    "@types/crypto-js": "4.2.2"
+    "@types/jquery.validation": "1.17.0"
   }
 }

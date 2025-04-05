@@ -43,7 +43,8 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
             //验证签名
             ArrayList arrayList = new ArrayList
             {
-                sessionRequestModel.RsaPublicKey,
+                sessionRequestModel.RSASignPublicKey,
+                sessionRequestModel.RSAEncryptPublicKey,
                 sessionRequestModel.TimeStamp,
                 sessionRequestModel.Nonce
             };
@@ -56,7 +57,6 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
             }
 
             //获取签名
-
             if (string.IsNullOrEmpty(sessionRequestModel.MsgSignature)
                 || string.IsNullOrWhiteSpace(sessionRequestModel.MsgSignature))
             {
@@ -71,7 +71,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
             {
                 return OperateResult.CreateFailResult<SessionResultModel>("数据签名格式不正确!");
             }
-            var verifyDataResult = CryptographyBLL.RSAVerifyData(getHashResult.Data, signature, sessionRequestModel.RsaPublicKey);
+            var verifyDataResult = CryptographyBLL.RSAVerifyData(getHashResult.Data, signature, sessionRequestModel.RSASignPublicKey);
 
             if (!verifyDataResult.IsSuccess)
             {
@@ -98,16 +98,12 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
 
             var sessionId = operateResult.Data;
 
-
             //获取会话
             var getSessionModelResult = await GeneralBLL.GetSessionModelAsync(sessionRequestModel, sessionId);
             if (!getSessionModelResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(getSessionModelResult);
             }
-
-
-
 
 
             return OperateResult.CreateSuccessResult(getSessionModelResult.Data);

@@ -12,9 +12,14 @@ namespace RS.Models
     public class SessionRequestModel : SignModel
     {
         /// <summary>
-        /// 客户端发送给服务端的
+        /// 签名验签公钥
         /// </summary>
-        public string RsaPublicKey { get; set; }
+        public string RSASignPublicKey { get; set; }
+
+        /// <summary>
+        /// 加解密公钥
+        /// </summary>
+        public string RSAEncryptPublicKey { get; set; }
 
         /// <summary>
         /// 客户端类型

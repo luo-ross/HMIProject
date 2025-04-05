@@ -12,9 +12,14 @@ namespace RS.Models
     public class SessionResultModel : SignModel
     {
         /// <summary>
-        /// 服务端回传给客户端的公钥
+        /// 服务端回传给客户端的加密公钥
         /// </summary>
-        public string RsaPublicKey { get; set; }
+        public string RSAEncryptPublicKey { get; set; }
+
+        /// <summary>
+        /// 服务端回传给客户端的签名公钥
+        /// </summary>
+        public string RSASignPublicKey { get; set; }
 
         /// <summary>
         /// 会话实体

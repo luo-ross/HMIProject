@@ -13,7 +13,8 @@ namespace RS.HMIServer.Filters
     /// </summary>
     public class GlobalFilter : IExceptionFilter, IAuthorizationFilter, IActionFilter, IResourceFilter
     {
-        private readonly ILogBLL LogBLL;        public GlobalFilter(ILogBLL logBLL)
+        private readonly ILogBLL LogBLL; 
+        public GlobalFilter(ILogBLL logBLL)
         {
             LogBLL = logBLL;
         }

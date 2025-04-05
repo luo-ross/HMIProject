@@ -14,25 +14,48 @@ namespace RS.Models
     {
         static MemoryCacheKey()
         {
-            GlobalRSAPublicKey = Guid.NewGuid().ToString();
-            GlobalRSAPrivateKey = Guid.NewGuid().ToString();
+            GlobalRSASignPublicKey = Guid.NewGuid().ToString();
+            GlobalRSASignPrivateKey = Guid.NewGuid().ToString();
+            GlobalRSAEncryptPublicKey = Guid.NewGuid().ToString();
+            GlobalRSAEncryptPrivateKey = Guid.NewGuid().ToString();
             SessionModelKey = Guid.NewGuid().ToString();
         }
 
         /// <summary>
         /// RSA全局公钥
         /// </summary>
-        public static readonly string GlobalRSAPublicKey;
+        public static readonly string GlobalRSASignPublicKey;
 
         /// <summary>
         /// RSA全局私钥
         /// </summary>
-        public static readonly string GlobalRSAPrivateKey;
+        public static readonly string GlobalRSASignPrivateKey;
+
+        /// <summary>
+        /// RSA全局公钥
+        /// </summary>
+        public static readonly string GlobalRSAEncryptPublicKey;
+
+        /// <summary>
+        /// RSA全局私钥
+        /// </summary>
+        public static readonly string GlobalRSAEncryptPrivateKey;
 
         /// <summary>
         /// 会话
         /// </summary>
         public static readonly string SessionModelKey;
-     
+
+
+        /// <summary>
+        /// 服务端RSA全局公钥
+        /// </summary>
+        public static readonly string ServerGlobalRSASignPublicKey;
+
+        /// <summary>
+        /// 服务端RSA全局私钥
+        /// </summary>
+        public static readonly string ServerGlobalRSAEncryptPublicKey;
+
     }
 }
