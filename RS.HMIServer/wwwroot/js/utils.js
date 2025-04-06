@@ -7,121 +7,142 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-function toJson(obj) {
-    return JSON.stringify(obj);
-}
-function getQueryParam(name) {
-    // 获取URL的查询字符串部分，并去除开头的?  
-    let queryString = window.location.search.substring(1);
-    // 将查询字符串分割成键值对数组  
-    let params = queryString.split('&').map(pair => pair.split('='));
-    // 遍历键值对数组，找到指定的参数名并返回其值  
-    for (let [key, value] of params) {
-        if (decodeURIComponent(key) === name) {
-            return decodeURIComponent(value) || null; // 返回解码后的值，如果没有值则返回null  
+/**
+ * 通用工具类
+ */
+export class CommonUtils {
+    /**
+     * 对象转JSON字符串
+     */
+    static toJson(obj) {
+        return JSON.stringify(obj);
+    }
+    /**
+     * 获取URL查询参数
+     */
+    static getQueryParam(name) {
+        const queryString = window.location.search.substring(1);
+        const params = new URLSearchParams(queryString);
+        return params.get(name);
+    }
+    /**
+     * 发送POST请求
+     */
+    static ajaxPost(url, model, success, complete, error) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response;
+            try {
+                const response = yield fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(model)
+                });
+                const data = yield response.json();
+                if (success) {
+                    return yield success(data);
+                }
+                return {
+                    isSuccess: true,
+                    data: data,
+                    message: ''
+                };
+            }
+            catch (err) {
+                if (error) {
+                    return yield error(err);
+                }
+                return {
+                    isSuccess: false,
+                    data: null,
+                    message: '请求失败'
+                };
+            }
+            finally {
+                if (complete) {
+                    return yield complete(response);
+                }
+            }
+        });
+    }
+    /**
+     * 生成随机数字字符串
+     */
+    static createRandCode(len) {
+        return Array.from({ length: len }, () => Math.floor(Math.random() * 10)).join('');
+    }
+    /**
+     * 邮箱验证
+     */
+    static emailValid(email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return !this.isEmptyOrNull(email) && emailRegex.test(email);
+    }
+    /**
+     * 判断字符串是否为空
+     */
+    static isEmptyOrNull(str) {
+        return str === null || str === undefined || str.toString().trim() === '';
+    }
+    /**
+     * 显示错误消息
+     */
+    static showErrorMsg(msg) {
+        this.showMsg('error', msg);
+    }
+    /**
+     * 显示信息消息
+     */
+    static showInfoMsg(msg) {
+        this.showMsg('info', msg);
+    }
+    /**
+     * 显示警告消息
+     */
+    static showWarningMsg(msg) {
+        this.showMsg('warning', msg);
+    }
+    /**
+     * 显示成功消息
+     */
+    static showSuccessMsg(msg) {
+        this.showMsg('success', msg);
+    }
+    /**
+     * 清除消息
+     */
+    static clearMsg() {
+        if (this.timerId > 0) {
+            clearTimeout(this.timerId);
+            this.timerId = -1;
+        }
+        const messageElement = document.querySelector('.error-message');
+        if (messageElement) {
+            messageElement.className = 'error-message d-none';
         }
     }
-    return null; // 如果没有找到指定的参数，则返回null  
-}
-function AjaxPostAsync(url, model, success, complete, error) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield $.ajax({
-            url: url,
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(model),
-            complete: function (e) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    return yield (complete === null || complete === void 0 ? void 0 : complete(e));
-                });
-            },
-            success: function (operateResult) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    return yield (success === null || success === void 0 ? void 0 : success(operateResult));
-                });
-            },
-            error: function (e) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    return yield (error === null || error === void 0 ? void 0 : error(e));
-                });
-            },
-        });
-    });
-}
-// 使用jQuery的Ajax与async/await结合
-function makeAjaxRequestAsync(url, data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: JSON.stringify(data),
-                contentType: 'application/json',
-                success: resolve,
-                error: reject
-            });
-        });
-    });
-}
-function createRandCode(len) {
-    var randomString = '';
-    // 生成指定长度的随机数字字符串
-    for (var i = 0; i < len; i++) {
-        // 生成0到9之间的随机数
-        var randomDigit = Math.floor(Math.random() * 10);
-        randomString += randomDigit;
+    /**
+     * 显示消息
+     */
+    static showMsg(type, msg) {
+        const messageElement = document.querySelector('.error-message');
+        if (!messageElement)
+            return;
+        // 清除之前的定时器
+        if (this.timerId > 0) {
+            clearTimeout(this.timerId);
+            this.timerId = -1;
+        }
+        // 设置消息样式和内容
+        messageElement.className = `error-message alert-${type}`;
+        messageElement.textContent = msg;
+        // 设置新的定时器
+        this.timerId = window.setTimeout(() => {
+            messageElement.className = 'error-message d-none';
+            this.timerId = -1;
+        }, 3000);
     }
-    return randomString;
 }
-function emailValid(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (isEmptyOrNull(email) || !emailRegex.test(email.toString())) {
-        return false;
-    }
-    ;
-    return true;
-}
-function isEmptyOrNull(str) {
-    return str === null || str === undefined || $.trim(str) === '';
-}
-function ShowErrorMsg(msg) {
-    ShowMsg('danger', msg);
-}
-function ShowInfoMsg(msg) {
-    ShowMsg('info', msg);
-}
-function ShowWarningMsg(msg) {
-    ShowMsg('warning', msg);
-}
-function ShowSuccessMsg(msg) {
-    ShowMsg('success', msg);
-}
-function ClearMsg() {
-    if (timerId > 0) {
-        clearTimeout(timerId);
-        timerId = -1;
-    }
-    var $errormessage = $('body').find(".error-message");
-    $errormessage.removeAttr('class');
-    $errormessage.attr('class', 'error-message d-none');
-}
-let timerId;
-function ShowMsg(msgtype, msg) {
-    var $errormessage = $('body').find(".error-message");
-    if ($errormessage.length == 0) {
-        return;
-    }
-    $errormessage.removeAttr('class');
-    $errormessage.attr('class', 'error-message alert-' + msgtype);
-    $errormessage.text(msg);
-    if (timerId > 0) {
-        clearTimeout(timerId);
-        timerId = -1;
-    }
-    timerId = setTimeout(function () {
-        $errormessage.removeAttr('class');
-        $errormessage.attr('class', 'error-message d-none');
-        timerId = -1;
-    }, 3000);
-}
+CommonUtils.timerId = -1;
 //# sourceMappingURL=utils.js.map
