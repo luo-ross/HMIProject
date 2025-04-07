@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import "axios";
 //可以在该js里直接调用
 var getRSASignKeyResult;
 var getRSAEncryptKeyResult;

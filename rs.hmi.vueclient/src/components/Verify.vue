@@ -9,45 +9,17 @@
            maxlength="4"
            type="text"
            class="form-input form-input-verify"
-           placeholder="验证码"
-           :value="verify"
-           @input="handleVerifyInput" />
+           :placeholder="placeholder"
+           v-model="verify"/>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue'
-
-  // 定义props
-  const props = defineProps({
-    id: {
-      type: String,
-      default: 'input-verify'
-    },
-    placeholder: {
-      type: String,
-      default: '请输入验证码'
-    },
-    verify: {
-      type: String,
-      default: ''
-    },
-    token: {
-      type: String,
-      default: ''
-    }
-  })
-
-  // 定义emit
-  const emit = defineEmits<{
-    (e: 'update:verify', value: string): void,
-  }>()
-
-  // 处理验证码输入事件
-  const handleVerifyInput = (event: Event) => {
-    const target = event.target as HTMLInputElement
-    emit('update:verify', target.value)
-  }
+  const placeholder = defineModel('placeholder',{
+    default: '请输入验证码'
+  });
+  const verify = defineModel('verify');
 </script>
 
 

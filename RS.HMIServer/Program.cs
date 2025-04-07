@@ -67,6 +67,8 @@ namespace RS.HMIServer
             //该实例用于配置应用程序的各个方面，包括日志记录、依赖注入（DI）容器中的服务注册等。
             var builder = WebApplication.CreateBuilder(args);
 
+          
+
             builder.Services.AddHttpContextAccessor();
 
 
@@ -346,8 +348,16 @@ namespace RS.HMIServer
             //初始化RSA非对称秘钥
             InitRSASecurityKeyData(AppHost);
 
-            ////拦截验证是否携带ClientId标识
-            //AppHost.UseMiddleware<ClientIdMiddleware>("/Login/Default");
+
+            //// 在Program.cs或Startup.cs中
+            //AppHost.UseCors(builder => builder
+            //    .WithOrigins(
+            //        "http://localhost:54293/",
+            //        "http://localhost:54296/"
+            //    )
+            //    .AllowAnyMethod()    // 允许任何HTTP方法
+            //    .AllowAnyHeader());  // 允许任何请求头
+
 
             //运行应用程序并阻止调用线程，直到主机关闭。
             AppHost.Run();

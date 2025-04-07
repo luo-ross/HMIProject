@@ -4,48 +4,50 @@ import {
   type Data,
   type GernerateKeyResult,
   type OperateResult
-} from '../scripts/utils'
+} from '../scripts/Utils'
 
+import WebApi from '../scripts/AxiosConfig'
+export class Cryptography {
 
+  public GetRSASignKeyResult: GernerateKeyResult | null = null;
+  public GetRSAEncryptKeyResult: GernerateKeyResult | null = null;
+  public AESKeyDecryptResult: string | null = null;
+  public AppIdDecryptResult: string | null = null;
+  public CommonUtils;
+  private static Instance: Cryptography;
+  private Cryptography: Cryptography | null = null;
 
-export class cryptography {
+  private constructor() {
+    this.CommonUtils = new CommonUtils();
+  }
 
-  public getRSASignKeyResult: GernerateKeyResult | null = null;
-  public getRSAEncryptKeyResult: GernerateKeyResult | null = null;
-  public aesKeyDecryptResult: string | null = null;
-  public appIdDecryptResult: string | null = null;
-  private static instance: cryptography;
-  private cryptography: cryptography | null = null;
-
-  private constructor() { }
-
-  public static getInstance(): cryptography {
-    if (!cryptography.instance) {
-      cryptography.instance = new cryptography();
+  public static GetInstance(): Cryptography {
+    if (!Cryptography.Instance) {
+      Cryptography.Instance = new Cryptography();
     }
-    return cryptography.instance;
+    return Cryptography.Instance;
   }
 
   // 获取用户名
-  public async initDefaultKeys(): Promise<void> {
+  public async InitDefaultKeys(): Promise<void> {
 
-    this.getRSASignKeyResult = await this.getRSAKeyAsync("Sign");
+    this.GetRSASignKeyResult = await this.GetRSAKeyAsync("Sign");
     //如果缓存里没有，则从新创建
-    if (!this.getRSASignKeyResult.IsSuccess) {
+    if (!this.GetRSASignKeyResult.IsSuccess) {
       //创建签名密钥
-      this.getRSASignKeyResult = await this.generateRSAKeysAsync("Sign", "RSASSA-PKCS1-v1_5", ["sign", "verify"]);
-      if (!this.getRSASignKeyResult.IsSuccess) {
-        CommonUtils.showErrorMsg(this.getRSASignKeyResult.Message);
+      this.GetRSASignKeyResult = await this.GenerateRSAKeysAsync("Sign", "RSASSA-PKCS1-v1_5", ["sign", "verify"]);
+      if (!this.GetRSASignKeyResult.IsSuccess) {
+        this.CommonUtils.ShowDangerMsg(this.GetRSASignKeyResult.Message);
         return;
       }
     }
 
-    this.getRSAEncryptKeyResult = await this.getRSAKeyAsync("Encrypt");
-    if (!this.getRSAEncryptKeyResult.IsSuccess) {
+    this.GetRSAEncryptKeyResult = await this.GetRSAKeyAsync("Encrypt");
+    if (!this.GetRSAEncryptKeyResult.IsSuccess) {
       //创建加密密钥
-      this.getRSAEncryptKeyResult = await this.generateRSAKeysAsync("Encrypt", "RSA-OAEP", ["encrypt", "decrypt"]);
-      if (!this.getRSAEncryptKeyResult.IsSuccess) {
-        CommonUtils.showErrorMsg(this.getRSAEncryptKeyResult.Message);
+      this.GetRSAEncryptKeyResult = await this.GenerateRSAKeysAsync("Encrypt", "RSA-OAEP", ["encrypt", "decrypt"]);
+      if (!this.GetRSAEncryptKeyResult.IsSuccess) {
+        this.CommonUtils.ShowDangerMsg(this.GetRSAEncryptKeyResult.Message);
         return;
       }
     }
@@ -55,10 +57,10 @@ export class cryptography {
     //创建会话请求
     const sessionRequestModel = new SessionRequestModel();
 
-    sessionRequestModel.RSAEncryptPublicKey = this.getRSASignKeyResult.PublicKey;
-    sessionRequestModel.RSASignPublicKey = this.getRSASignKeyResult.PublicKey;
-    sessionRequestModel.RSAEncryptPublicKey = this.getRSAEncryptKeyResult.PublicKey;
-    sessionRequestModel.Nonce = CommonUtils.createRandCode(10).toString();
+    sessionRequestModel.RSAEncryptPublicKey = this.GetRSASignKeyResult.PublicKey;
+    sessionRequestModel.RSASignPublicKey = this.GetRSASignKeyResult.PublicKey;
+    sessionRequestModel.RSAEncryptPublicKey = this.GetRSAEncryptKeyResult.PublicKey;
+    sessionRequestModel.Nonce = this.CommonUtils.CreateRandCode(10).toString();
     sessionRequestModel.TimeStamp = timestamp.toString();
     sessionRequestModel.AudienceType = "WebAudience";
 
@@ -70,31 +72,54 @@ export class cryptography {
     ];
 
     //获取会话的Hash数据
-    const getRSAHashResult = await this.getRSAHashAsync(arrayList);
+    const getRSAHashResult = await this.GetRSAHashAsync(arrayList);
     if (!getRSAHashResult.IsSuccess) {
-      CommonUtils.showErrorMsg(getRSAHashResult.Message);
+      this.CommonUtils.ShowDangerMsg(getRSAHashResult.Message);
       return;
     }
 
-    const rsaSignDataResult = await this.rsaSignDataAsync(getRSAHashResult.Data, this.getRSASignKeyResult?.PrivateKey);
+    const rsaSignDataResult = await this.RSASignDataAsync(getRSAHashResult.Data, this.GetRSASignKeyResult?.PrivateKey);
     if (!rsaSignDataResult.IsSuccess) {
-      CommonUtils.showErrorMsg(rsaSignDataResult.Message);
+      this.CommonUtils.ShowDangerMsg(rsaSignDataResult.Message);
       return;
     }
     sessionRequestModel.MsgSignature = rsaSignDataResult.Data;
 
-    const result = await CommonUtils.ajaxPost("/api/v1/General/GetSessionModel", sessionRequestModel);
-    const getSessionModelResult = await this.getSessionModel(result);
+    //const result = await this.CommonUtils.AjaxPost("/api/v1/General/GetSessionModel", sessionRequestModel);
+
+    //await fetch("http://localhost:54293/api/v1/General/GetSessionModel", {
+    //  method: 'POST',
+    //  headers: {
+    //    'Content-Type': 'application/json'
+    //  },
+    //  body: JSON.stringify(SessionRequestModel)
+    //});
+
+  
+      
+    const result = await WebApi.post<SessionRequestModel, OperateResult<Data>>('/api/v1/General/GetSessionModel', sessionRequestModel, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+
+
+
+
+
+
+    const getSessionModelResult = await this.GetSessionModel(result);
 
     if (!getSessionModelResult.IsSuccess) {
-      CommonUtils.showErrorMsg(getSessionModelResult.Message);
+      this.CommonUtils.ShowDangerMsg(getSessionModelResult.Message);
       return;
     }
 
     return;
   }
 
-  public async getRSAKeyAsync(keyName: string): Promise<GernerateKeyResult> {
+  public async GetRSAKeyAsync(keyName: string): Promise<GernerateKeyResult> {
 
     try {
       // 检查参数
@@ -138,7 +163,7 @@ export class cryptography {
     }
   }
 
-  public async getSessionModel(operateResult: OperateResult<Data>)
+  public async GetSessionModel(operateResult: OperateResult<Data>)
     : Promise<OperateResult<string>> {
     if (!operateResult.IsSuccess) {
       return {
@@ -166,7 +191,7 @@ export class cryptography {
     ];
 
     //获取会话的Hash数据
-    const getRSAHashResult = await this.getRSAHashAsync(arrayList);
+    const getRSAHashResult = await this.GetRSAHashAsync(arrayList);
     if (!getRSAHashResult.IsSuccess) {
       return {
         IsSuccess: false,
@@ -176,7 +201,7 @@ export class cryptography {
     }
 
     //验证签名
-    const rsaVerifyDataResult = await this.rsaVerifyDataAsync(
+    const rsaVerifyDataResult = await this.RSAVerifyDataAsync(
       getRSAHashResult.Data,
       data?.MsgSignature,
       data?.RSASignPublicKey
@@ -187,14 +212,14 @@ export class cryptography {
 
 
     //验证通过后对AesKey进行解密 用客户端自己的私钥进行解密
-    const aesKeyDecryptResult = await this.rsaDecryptAsync(aesKey, this.getRSAEncryptKeyResult?.PrivateKey)
+    const aesKeyDecryptResult = await this.RSADecryptAsync(aesKey, this.GetRSAEncryptKeyResult?.PrivateKey)
     if (!aesKeyDecryptResult.IsSuccess) {
       return aesKeyDecryptResult;
     }
 
 
     //验证通过后解密AppId 用客户端自己的私钥进行解密
-    const appIdDecryptResult = await this.rsaDecryptAsync(appId, this.getRSAEncryptKeyResult?.PrivateKey)
+    const appIdDecryptResult = await this.RSADecryptAsync(appId, this.GetRSAEncryptKeyResult?.PrivateKey)
     if (!appIdDecryptResult.IsSuccess) {
       return appIdDecryptResult;
     }
@@ -213,7 +238,7 @@ export class cryptography {
   //签名用算法RSASSA-PKCS1-v1_5
   //加解密用RSA-OAEP
   //RSA-PSS 这个算法没用过 愿意测试自己搞一搞
-  public async generateRSAKeysAsync(
+  public async GenerateRSAKeysAsync(
     keyName: string,
     name: string,
     keykeyUsages: ReadonlyArray<KeyUsage>):
@@ -250,7 +275,7 @@ export class cryptography {
         IsSuccess: true,
         PublicKey: rSAPublicKey,
         PrivateKey: rSAPrivateKey,
-        Message: null,
+        Message: "Success",
       };
     } catch {
       return {
@@ -262,7 +287,7 @@ export class cryptography {
     }
   }
 
-  public async getRSAHashAsync(arrayList: (string | undefined | null)[]):
+  public async GetRSAHashAsync(arrayList: (string | undefined | null)[]):
     Promise<OperateResult<ArrayBuffer>> {
     try {
       // 对数组进行排序
@@ -299,7 +324,7 @@ export class cryptography {
     }
   }
 
-  public async rsaSignDataAsync(
+  public async RSASignDataAsync(
     hash: ArrayBuffer | null,
     rsaSigningPrivateKey: string | null | undefined):
     Promise<{ IsSuccess: boolean, Data: string | null, Message: string }> {
@@ -372,7 +397,7 @@ export class cryptography {
 
 
   //这里验证签名是用服务端的签名公钥
-  public async rsaVerifyDataAsync(
+  public async RSAVerifyDataAsync(
     hash: ArrayBuffer | null,
     signature: string | null | undefined,
     rsaSigningPrivateKey: string | null | undefined,
@@ -459,7 +484,7 @@ export class cryptography {
 
 
 
-  public async rsaEncryptAsync(
+  public async RSAEncryptAsync(
     encryptContent: string,
     rsaEncryptionPublicKey: string
   ): Promise<{ IsSuccess: boolean, Data: string | null, Message: string }> {
@@ -536,10 +561,10 @@ export class cryptography {
   }
 
 
-  public async rsaDecryptAsync(
+  public async RSADecryptAsync(
     encryptContent: string | null | undefined,
     rsaEncryptionPrivateKey: string | null | undefined,
-  ): Promise<{ IsSuccess: boolean, Data: string | null, Message: string | null }> {
+  ): Promise<{ IsSuccess: boolean, Data: string | null, Message: string }> {
     try {
       // 检查参数
       if (!encryptContent || typeof encryptContent !== 'string') {

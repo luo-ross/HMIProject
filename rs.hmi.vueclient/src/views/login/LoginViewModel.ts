@@ -1,79 +1,62 @@
 import { ref } from 'vue'
 import { UserModel } from '../../models/UserModel'
-import { cryptography } from '../../scripts/cryptography'
+import { Cryptography } from '../../scripts/Cryptography'
+import {
+  CommonUtils,
+} from '../../scripts/Utils'
 export class LoginViewModel {
-  private userModel: UserModel
-  public cryptography: cryptography;
-
-  public email = ref('')
-  public password = ref('')
-  public verify = ref('')
-  public token = ref('')
-  public loading = ref(false)
-  public errorMessage = ref('')
-
-
+  private UserModel: UserModel
+  public Cryptography: Cryptography;
+  public CommonUtils: CommonUtils;
+  //邮箱
+  public Email = ref('')
+  public Password = ref('')
+  public Verify = ref('')
+  public Loading = ref(false)
+  public Message;
+  public MessageType;
   constructor() {
-    this.userModel = UserModel.getInstance();
-    this.cryptography = cryptography.getInstance();
+    this.UserModel = UserModel.getInstance();
+    this.Cryptography = Cryptography.GetInstance();
+    this.CommonUtils = new CommonUtils();
+    this.Message = this.CommonUtils.Message;
+    this.MessageType = this.CommonUtils.MessageType;
     this.Init();
   }
 
   public async Init() {
-    await this.cryptography.initDefaultKeys();
+
+    
+
+
+
+    await this.Cryptography.InitDefaultKeys();
   }
 
-  public async handleLogin(): Promise<void> {
-    debugger
+  public async HandleLogin(): Promise<void> {
 
-    this.email.value = "123123123123123";
-    if (!this.validateForm()) {
+    //这里进行客户端简单的表单验证
+    if (!this.ValidateForm()) {
       return
     }
-
-    //this.loading.value = true
-    //this.errorMessage.value = ''
-
-    //try {
-    //  // 使用邮箱或用户名登录
-    //  const loginId = this.email.value || this.username.value
-
-    //  const success = await this.userModel.login(
-    //    loginId,
-    //    this.password.value
-    //  )
-
-    //  if (success) {
-    //    // 登录成功后跳转到home.html
-    //    window.location.href = '/home.html'
-    //  } else {
-    //    this.errorMessage.value = '用户名/邮箱或密码错误'
-    //  }
-    //} catch (error) {
-    //  this.errorMessage.value = '登录失败,请重试'
-    //  console.error('登录失败:', error)
-    //} finally {
-    //  this.loading.value = false
-    //}
   }
 
-  private validateForm(): boolean {
-    //if (!this.username.value && !this.email.value) {
-    //  this.errorMessage.value = '请输入用户名或邮箱'
-    //  return false
-    //}
-    //if (!this.password.value) {
-    //  this.errorMessage.value = '请输入密码'
-    //  return false
-    //}
-    //if (!this.verifyCode.value) {
-    //  this.errorMessage.value = '请输入验证码'
-    //  return false
-    //}
-    //if (!this.verifyToken.value) {
-    //  this.errorMessage.value = '请输入验证令牌'
-    //  return false
-    //}
+  private ValidateForm(): boolean {
+    if (!this.Email.value && !this.CommonUtils.EmailValid(this.Email.value)) {
+      this.CommonUtils.ShowWarningMsg('邮箱输入不正确');
+      return false;
+    }
+    if (!this.Password.value || this.Password.value === ' ' || this.Password.value.length < 8) {
+      this.CommonUtils.ShowWarningMsg('请输入密码');
+      return false
+    }
+    if (!this.Verify.value) {
+      this.CommonUtils.ShowWarningMsg('请输入验证码');
+      return false
+    }
     return true
   }
+
+
+
 } 

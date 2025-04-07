@@ -1,8 +1,10 @@
 <template>
   <div class="div-main">
-    <div class="error-message d-none" v-if="viewModel.errorMessage">
-      {{ viewModel.errorMessage }}
-    </div>
+
+    <Message v-model:Message="ViewModel.Message.value"
+             v-model:MessageType="ViewModel.MessageType.value"
+             ></Message>
+
     <div class="login-content">
       <div class="login-left img">
       </div>
@@ -27,35 +29,25 @@
           <label class="label-tab label-register" for="radio-register" data-url="/SystemManage/Register/Index?ClientId=@clientId&Timestamp=@timeStamp">注册</label>
         </div>
 
-        <!-- 使用InputEmail组件，实现双向绑定 -->
-        <InputEmail id="login"
-                    placeholder="请输入邮箱"
-                    :email="viewModel.email.value"
-                    @update:email="viewModel.email.value = $event"
-                    @keyup.enter="viewModel.handleLogin" />
+       
+        <InputEmail placeholder="请输入邮箱"
+                    v-model:Email="ViewModel.Email.value" />
 
-        <!-- 使用InputPassword组件，实现双向绑定 -->
-        <InputPassword id="login"
-                       placeholder="请输入密码"
-                       :password="viewModel.password.value"
-                       @update:password="viewModel.password.value = $event"
-                       @keyup.enter="viewModel.handleLogin" />
+     
+        <InputPassword placeholder="请输入密码"
+                       v-model:Password="ViewModel.Password.value" />
 
 
         <div class="form-row">
-          <Verify id="login"
-                  placeholder="请输入验证码"
-                  :verify="viewModel.verify.value"
-                  :token="viewModel.token.value"
-                  @update:verify="viewModel.verify.value = $event"
-                  @update:token="viewModel.token.value = $event" />
+          <Verify placeholder="请输入验证码"
+                  v-model:Verify="ViewModel.Verify.value" />
           <div class="form-input-border img-border">
-            <img class="img-verify" src="/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />
+            <!--<img class="img-verify" src="~/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />-->
           </div>
         </div>
 
         <div class="form-row">
-          <button type="button" class="btn-login" @click="viewModel.handleLogin">登录</button>
+          <button type="button" class="btn-login" @click="ViewModel.HandleLogin">登录</button>
         </div>
 
         <div class="form-row">
@@ -67,12 +59,13 @@
 </template>
 
 <script setup lang="ts">
+  import Message from '../../components/Message.vue'
   import InputEmail from '../../components/InputEmail.vue'
   import InputPassword from '../../components/InputPassword.vue'
   import Verify from '../../components/Verify.vue'
   import { ref } from 'vue'
   import { LoginViewModel } from './LoginViewModel'
-  const viewModel = new LoginViewModel()
+  const ViewModel = new LoginViewModel()
 </script>
 
 

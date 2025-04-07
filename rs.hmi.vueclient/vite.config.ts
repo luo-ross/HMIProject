@@ -1,27 +1,63 @@
 import { defineConfig } from 'vite';
 import plugin from '@vitejs/plugin-vue';
 import { resolve } from 'path';
+import { env } from 'process';
+
+const target = env.ASPNETCORE_HTTPS_PORT ? `http://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+  env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:7109';
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [plugin()],
-    server: {
-        port: 54293,
+  plugins: [plugin()],
+  server: {
+    port: parseInt(env.DEV_SERVER_PORT || '54293'),
+    //proxy: {
+    //  '/api': {
+    //    target: 'http://localhost:7109',
+    //    changeOrigin: true,
+    //    rewrite: (path) => path.replace(/^\/api/, '')
+    //  }
+    //}
+    //proxy: {
+    //  // 这里的 /api 是代理的路径前缀，可根据实际情况修改
+    //  '/api': {
+    //    target: 'http://localhost:7109',
+    //    changeOrigin: true,
+    //    rewrite: (path) => path.replace(/^\/api/, ''),
+    //    secure: false,
+    //  }
+    //}
+    //proxy: {
+    //  '/api': {
+    //    target: 'http://localhost:7109',
+    //    changeOrigin: true,
+    //    rewrite: (path) => path.replace(/^\/api/, '')
+    //  }
+    //}
+    proxy: {
+      '/api/v1/': {
+        target,
+        secure: false,
+        changeOrigin: true,
+      }
     },
-    build: {
-        rollupOptions: {
-            input: {
-                main: resolve(__dirname, 'index.html'),
-            },
-        },
-        outDir: 'dist',
-        assetsDir: 'assets',
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
     },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-        },
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
     },
-    // 配置静态资源目录
-    publicDir: 'public',
+  },
+  // 配置静态资源目录
+  publicDir: 'public',
+
 })

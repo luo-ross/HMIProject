@@ -1,34 +1,14 @@
 <template>
-  <!--<div class="input-group">
-    <span class="input-group-text">
-      <i class="bi bi-lock"></i>
-    </span>
-    <input
-      :id="inputId"
-      autocomplete="off"
-      maxlength="20"
-      type="password"
-      class="form-control"
-      :placeholder="placeholder"
-      v-model="passwordValue"
-      @input="handleInput"
-    />
-    <button class="btn btn-outline-secondary" :data-id="inputId" @click="togglePasswordVisibility" type="button">
-      <i class="bi" :class="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
-    </button>
-  </div>-->
-
   <div class="form-row">
     <div class="form-input-border">
       <svg t="1743515136362" class="svg-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5610" width="64" height="64"><path d="M275.75 320.75v-5.625 5.625C275.75 174.5 382.625 62 512 62c123.75 0 236.25 106.875 236.25 230.625v28.125h84.375c56.25 0 101.25 50.625 101.25 106.875v427.5c0 61.875-45 106.875-101.25 106.875H191.375c-56.25 0-101.25-50.625-101.25-106.875V427.625c0-61.875 45-106.875 101.25-106.875h84.375z m56.25 0h360v-28.125C692 213.875 618.875 118.25 512 118.25 410.75 118.25 332 208.25 332 320.75v-5.625 5.625z m-140.625 56.25c-22.5 0-45 22.5-45 50.625v427.5c0 28.125 22.5 50.625 45 50.625h641.25c22.5 0 45-22.5 45-50.625V427.625c0-28.125-22.5-50.625-45-50.625H191.375z m320.625 393.75c-67.5 0-129.375-56.25-129.375-123.75s56.25-123.75 129.375-123.75c67.5 0 129.375 56.25 129.375 123.75S579.5 770.75 512 770.75z m0-196.875c-39.375 0-73.125 33.75-73.125 67.5s33.75 67.5 73.125 67.5 73.125-33.75 73.125-67.5S551.375 573.875 512 573.875z" p-id="5611"></path></svg>
-      <input :id="inputId"
+      <input :id="computedId"
              autocomplete="off"
              maxlength="20"
              type="password"
              class="form-input form-input-password"
              :placeholder="placeholder"
-             :value="password"
-             @input="handlePasswordInput"
+             v-model="password"
              />
       <button class="btn-password-openclose" data-id="@id">
         <svg id="svg-eyeopen" t="1743517360528" class="svg-icon svg-icon-eye eyeopen d-none" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3461" width="64" height="64"><path d="M332.8 729.6l34.133333-34.133333c42.666667 12.8 93.866667 21.333333 145.066667 21.333333 162.133333 0 285.866667-68.266667 375.466667-213.333333-46.933333-72.533333-102.4-128-166.4-162.133334l29.866666-29.866666c72.533333 42.666667 132.266667 106.666667 183.466667 192-98.133333 170.666667-243.2 256-426.666667 256-59.733333 4.266667-119.466667-8.533333-174.933333-29.866667z m-115.2-64c-51.2-38.4-93.866667-93.866667-132.266667-157.866667 98.133333-170.666667 243.2-256 426.666667-256 38.4 0 76.8 4.266667 110.933333 12.8l-34.133333 34.133334c-25.6-4.266667-46.933333-4.266667-76.8-4.266667-162.133333 0-285.866667 68.266667-375.466667 213.333333 34.133333 51.2 72.533333 93.866667 115.2 128l-34.133333 29.866667z m230.4-46.933333l29.866667-29.866667c8.533333 4.266667 21.333333 4.266667 29.866666 4.266667 46.933333 0 85.333333-38.4 85.333334-85.333334 0-12.8 0-21.333333-4.266667-29.866666l29.866667-29.866667c12.8 17.066667 17.066667 38.4 17.066666 64 0 72.533333-55.466667 128-128 128-17.066667-4.266667-38.4-12.8-59.733333-21.333333zM384 499.2c4.266667-68.266667 55.466667-119.466667 123.733333-123.733333 0 4.266667-123.733333 123.733333-123.733333 123.733333zM733.866667 213.333333l29.866666 29.866667-512 512-34.133333-29.866667L733.866667 213.333333z" p-id="3462"></path></svg>
@@ -41,46 +21,54 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-// 定义props
-const props = defineProps({
-  id: {
-    type: String,
-    default: ''
-  },
-  placeholder: {
-    type: String,
+  const placeholder = defineModel('placeholder',{
     default: '请输入密码'
-  },
-  password: {
-    type: String,
-    default: '13123123123'
-  }
-})
+  });
+  const password = defineModel('password');
+  const id = defineModel('id');
 
-// 定义emit
-const emit = defineEmits(['update:password'])
+  // 计算属性：生成input的id
+  const computedId = computed(() => {
+    return id ? `input-password${id}` : 'input-password'
+  })
 
-// 计算属性：生成input的id
-const inputId = computed(() => {
-  return props.id ? `input-password${props.id}` : 'input-password'
-})
+// 定义props
+//const props = defineProps({
+//  id: {
+//    type: String,
+//    default: ''
+//  },
+//  placeholder: {
+//    type: String,
+//    default: '请输入密码'
+//  },
+//  password: {
+//    type: String,
+//    default: '13123123123'
+//  }
+//})
 
-// 密码可见性状态
-const showPassword = ref(false)
+//// 定义emit
+//const emit = defineEmits(['update:password'])
 
-// 切换密码可见性
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-  const input = document.getElementById(inputId.value) as HTMLInputElement
-  if (input) {
-    input.type = showPassword.value ? 'text' : 'password'
-  }
-}
 
-// 处理输入事件
-const handlePasswordInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  emit('update:password', target.value)
-}
+
+//// 密码可见性状态
+//const showPassword = ref(false)
+
+//// 切换密码可见性
+//const togglePasswordVisibility = () => {
+//  showPassword.value = !showPassword.value
+//  const input = document.getElementById(inputId.value) as HTMLInputElement
+//  if (input) {
+//    input.type = showPassword.value ? 'text' : 'password'
+//  }
+//}
+
+//// 处理输入事件
+//const handlePasswordInput = (event: Event) => {
+//  const target = event.target as HTMLInputElement
+//  emit('update:password', target.value)
+//}
 </script>
 
