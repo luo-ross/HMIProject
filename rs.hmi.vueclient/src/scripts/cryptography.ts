@@ -19,6 +19,7 @@ export class Cryptography {
 
   private constructor() {
     this.CommonUtils = new CommonUtils();
+    this.InitDefaultKeys();
   }
 
   public static GetInstance(): Cryptography {
@@ -29,7 +30,7 @@ export class Cryptography {
   }
 
   // 获取用户名
-  public async InitDefaultKeys(): Promise<void> {
+  private async InitDefaultKeys(): Promise<void> {
 
     this.GetRSASignKeyResult = await this.GetRSAKeyAsync("Sign");
     //如果缓存里没有，则从新创建
@@ -97,16 +98,7 @@ export class Cryptography {
 
   
       
-    const result = await WebApi.post<SessionRequestModel, OperateResult<Data>>('/api/v1/General/GetSessionModel', sessionRequestModel, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-
-
-
-
+    const result = await WebApi.post<SessionRequestModel, OperateResult<Data>>('/api/v1/General/GetSessionModel', sessionRequestModel);
 
 
     const getSessionModelResult = await this.GetSessionModel(result);
@@ -179,6 +171,14 @@ export class Cryptography {
     const appId = sessionModel?.AppId;
     const token = sessionModel?.Token;
 
+    if (token==null) {
+      return {
+        IsSuccess: false,
+        Data: null,
+        Message: "未获取到正确的Token"
+      };
+    }
+
     //数据按照顺序组成数组
     const arrayList = [
       aesKey,
@@ -211,19 +211,38 @@ export class Cryptography {
     }
 
 
+    //验证通过后解密AppId 用客户端自己的私钥进行解密
+    const appIdDecryptResult = await this.RSADecryptAsync(appId, this.GetRSAEncryptKeyResult?.PrivateKey)
+    if (!appIdDecryptResult.IsSuccess) {
+      return appIdDecryptResult;
+    }
+    if (appIdDecryptResult.Data == null) {
+      return {
+        IsSuccess: false,
+        Data: null,
+        Message: "未正确获取到AppId"
+      };
+    }
+
     //验证通过后对AesKey进行解密 用客户端自己的私钥进行解密
     const aesKeyDecryptResult = await this.RSADecryptAsync(aesKey, this.GetRSAEncryptKeyResult?.PrivateKey)
     if (!aesKeyDecryptResult.IsSuccess) {
       return aesKeyDecryptResult;
     }
 
-
-    //验证通过后解密AppId 用客户端自己的私钥进行解密
-    const appIdDecryptResult = await this.RSADecryptAsync(appId, this.GetRSAEncryptKeyResult?.PrivateKey)
-    if (!appIdDecryptResult.IsSuccess) {
-      return appIdDecryptResult;
+    if (aesKeyDecryptResult.Data == null) {
+      return {
+        IsSuccess: false,
+        Data: null,
+        Message: "未正确获取到AesKey"
+      };
     }
 
+    //最后将appid aeskey token 存储到sessionStorage里
+    //这里也可以采取存储加密的AppId AesKey 和Token
+    sessionStorage.setItem('AppId', appIdDecryptResult.Data);
+    sessionStorage.setItem('AesKey', aesKeyDecryptResult.Data);
+    sessionStorage.setItem('Token', token);
 
     return {
       IsSuccess: true,
@@ -564,7 +583,7 @@ export class Cryptography {
   public async RSADecryptAsync(
     encryptContent: string | null | undefined,
     rsaEncryptionPrivateKey: string | null | undefined,
-  ): Promise<{ IsSuccess: boolean, Data: string | null, Message: string }> {
+  ): Promise<OperateResult<string>> {
     try {
       // 检查参数
       if (!encryptContent || typeof encryptContent !== 'string') {

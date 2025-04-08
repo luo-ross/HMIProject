@@ -12,29 +12,6 @@ export default defineConfig({
   plugins: [plugin()],
   server: {
     port: parseInt(env.DEV_SERVER_PORT || '54293'),
-    //proxy: {
-    //  '/api': {
-    //    target: 'http://localhost:7109',
-    //    changeOrigin: true,
-    //    rewrite: (path) => path.replace(/^\/api/, '')
-    //  }
-    //}
-    //proxy: {
-    //  // 这里的 /api 是代理的路径前缀，可根据实际情况修改
-    //  '/api': {
-    //    target: 'http://localhost:7109',
-    //    changeOrigin: true,
-    //    rewrite: (path) => path.replace(/^\/api/, ''),
-    //    secure: false,
-    //  }
-    //}
-    //proxy: {
-    //  '/api': {
-    //    target: 'http://localhost:7109',
-    //    changeOrigin: true,
-    //    rewrite: (path) => path.replace(/^\/api/, '')
-    //  }
-    //}
     proxy: {
       '/api/v1/': {
         target,

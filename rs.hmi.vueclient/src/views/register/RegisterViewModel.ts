@@ -1,29 +1,26 @@
 import { ref } from 'vue'
-import { UserModel } from '../../models/UserModel'
+import { useRouter } from 'vue-router'
 import { Cryptography } from '../../scripts/Cryptography'
 import {
   CommonUtils,
 } from '../../scripts/Utils'
 import type { InputExpose } from '../../types/components'
 
-export class LoginViewModel {
-  private UserModel: UserModel
+export class RegisterViewModel {
   public Cryptography: Cryptography;
   public CommonUtils: CommonUtils;
-  //邮箱
+
   public Email = ref('')
   public Password = ref('')
-  public Verify = ref('')
-  public Loading = ref(false)
-  public Message;
-  public MessageType;
-  
+  public PasswordConfirm = ref('')
+  public Message = ref('')
+  public MessageType = ref('')
+  private router = useRouter()
   private EmailInputRef: InputExpose | null = null;
   private PasswordInputRef: InputExpose | null = null;
-  private VerifyInputRef: InputExpose | null = null;
+  private PasswordConfirmInputRef: InputExpose | null = null;
 
   constructor() {
-    this.UserModel = UserModel.getInstance();
     this.Cryptography = Cryptography.GetInstance();
     this.CommonUtils = new CommonUtils();
     this.Message = this.CommonUtils.Message;
@@ -38,11 +35,11 @@ export class LoginViewModel {
     this.PasswordInputRef = ref;
   }
 
-  public SetVerifyInputRef(ref: InputExpose) {
-    this.VerifyInputRef = ref;
+  public SetPasswordConfirmInputRef(ref: InputExpose) {
+    this.PasswordConfirmInputRef = ref;
   }
 
-  public async HandleLogin(): Promise<void> {
+  public async HandleRegisterNext(): Promise<void> {
     //这里进行客户端简单的表单验证
     if (!this.ValidateForm()) {
       return
@@ -57,17 +54,24 @@ export class LoginViewModel {
       }
       return false;
     }
-    if (!this.Password.value || this.Password.value === ' ' ) {
+    if (!this.Password.value ) {
       this.CommonUtils.ShowWarningMsg('请输入密码');
       if (this.PasswordInputRef) {
         this.PasswordInputRef.Focus();
       }
       return false
     }
-    if (!this.Verify.value) {
-      this.CommonUtils.ShowWarningMsg('请输入验证码');
-      if (this.VerifyInputRef) {
-        this.VerifyInputRef.Focus();
+    if (!this.PasswordConfirm.value) {
+      this.CommonUtils.ShowWarningMsg('请输入确认密码');
+      if (this.PasswordConfirmInputRef) {
+        this.PasswordConfirmInputRef.Focus();
+      }
+      return false
+    }
+    if (!(this.Password.value === this.PasswordConfirm.value)) {
+      this.CommonUtils.ShowWarningMsg('请输入密码');
+      if (this.PasswordConfirmInputRef) {
+        this.PasswordConfirmInputRef.Focus();
       }
       return false
     }

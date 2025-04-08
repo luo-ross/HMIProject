@@ -26,21 +26,24 @@
           <label class="label-tab label-login" for="radio-login">登录</label>
 
           <input type="radio" id="radio-register" name="tab" value="radio-register">
-          <label class="label-tab label-register" for="radio-register" data-url="/SystemManage/Register/Index?ClientId=@clientId&Timestamp=@timeStamp">注册</label>
+          <label class="label-tab label-register" for="radio-register" @click="HandleRegister">注册</label>
         </div>
 
        
-        <InputEmail placeholder="请输入邮箱"
-                    v-model:Email="ViewModel.Email.value" />
+        <InputEmail Placeholder="请输入邮箱"
+                    v-model:Email="ViewModel.Email.value"
+                    ref="EmailInputRef" />
 
      
-        <InputPassword placeholder="请输入密码"
-                       v-model:Password="ViewModel.Password.value" />
+        <InputPassword Placeholder="请输入密码"
+                       v-model:Password="ViewModel.Password.value"
+                       ref="PasswordInputRef" />
 
 
         <div class="form-row">
-          <Verify placeholder="请输入验证码"
-                  v-model:Verify="ViewModel.Verify.value" />
+          <Verify Placeholder="请输入验证码"
+                  v-model:Verify="ViewModel.Verify.value"
+                  ref="VerifyInputRef" />
           <div class="form-input-border img-border">
             <!--<img class="img-verify" src="~/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />-->
           </div>
@@ -63,9 +66,25 @@
   import InputEmail from '../../components/InputEmail.vue'
   import InputPassword from '../../components/InputPassword.vue'
   import Verify from '../../components/Verify.vue'
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { LoginViewModel } from './LoginViewModel'
+  import { useRouter } from 'vue-router'
+  
+  const Router = useRouter()
   const ViewModel = new LoginViewModel()
+  const EmailInputRef = ref()
+  const PasswordInputRef = ref()
+  const VerifyInputRef = ref()
+
+  onMounted(() => {
+    ViewModel.SetEmailInputRef(EmailInputRef.value)
+    ViewModel.SetPasswordInputRef(PasswordInputRef.value)
+    ViewModel.SetVerifyInputRef(VerifyInputRef.value)
+  })
+
+  const HandleRegister = () => {
+   Router.push('/register/index')
+  }
 </script>
 
 

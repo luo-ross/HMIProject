@@ -1,14 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/login/LoginView.vue'
+import RegisterView from '../views/register/RegisterView.vue'
 import HomeView from '../views/home/HomeView.vue'
 
-
-const router = createRouter({
+const Router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       redirect: '/login/index'
+    },
+    {
+      path: '/register/index',
+      name: 'register',
+      component: RegisterView,
+      meta: {
+        layout: 'blank'
+      }
     },
     {
       path: '/home',
@@ -37,13 +45,24 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token') // 这里简单判断是否登录
-  if (to.path !== '/login/index' && !isAuthenticated) {
-    next({ path: '/login/index' })
-  } else {
+Router.beforeEach((to, from, next) => {
+  // 白名单路由直接放行
+  const whiteList = ['/login/index']
+  if (whiteList.includes(to.path)) {
     next()
+    return
   }
+
+  // 检查认证信息
+  const appId = sessionStorage.getItem('AppId');
+  const aesKey = sessionStorage.getItem('AesKey');
+  const token = sessionStorage.getItem('Token');
+
+  if (!token || !appId || !aesKey) {
+    next({ path: '/login/index' })
+    return
+  }
+  next()
 })
 
-export default router 
+export default Router 
