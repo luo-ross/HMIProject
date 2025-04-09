@@ -15,7 +15,7 @@ namespace RS.Commons
         /// 获取会话数据
         /// </summary>
         /// <returns></returns>
-        OperateResult<SessionModel> GetSessionModel();
+        OperateResult<SessionModel> GetSessionModelFromStorage();
 
         /// <summary>
         /// AES对称解密
@@ -23,7 +23,7 @@ namespace RS.Commons
         /// <typeparam name="TResult">解密实体类型</typeparam>
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <returns></returns>
-        OperateResult<TResult> AESDecrypt<TResult>(AESEncryptModel aesEncryptModel);
+        OperateResult<TResult> AESDecryptSimple<TResult>(AESEncryptModel aesEncryptModel);
 
         /// <summary>
         /// AES对称数据解密
@@ -32,7 +32,7 @@ namespace RS.Commons
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionModel">会话实体类</param>
         /// <returns></returns>
-        OperateResult<TResult> AESDecrypt<TResult>(AESEncryptModel aesEncryptModel, SessionModel sessionModel);
+        OperateResult<TResult> AESDecryptGeneric<TResult>(AESEncryptModel aesEncryptModel, SessionModel sessionModel);
 
         /// <summary>
         /// 生成AES对称密钥
@@ -46,7 +46,7 @@ namespace RS.Commons
         /// <typeparam name="T">待加密数据类型</typeparam>
         /// <param name="encryptModelShould">待加密数据</param>
         /// <returns></returns>
-        OperateResult<AESEncryptModel> AESEncrypt<T>(T encryptModelShould);
+        OperateResult<AESEncryptModel> AESEncryptSimple<T>(T encryptModelShould);
 
         /// <summary>
         /// AES对称加密
@@ -55,7 +55,7 @@ namespace RS.Commons
         /// <param name="encryptModelShould">待加密数据</param>
         /// <param name="sessionModel">会话实体</param>
         /// <returns></returns>
-        OperateResult<AESEncryptModel> AESEncrypt<T>(T encryptModelShould, SessionModel sessionModel);
+        OperateResult<AESEncryptModel> AESEncryptGeneric<T>(T encryptModelShould, SessionModel sessionModel);
         #endregion
 
         #region RSA加解密
@@ -156,7 +156,7 @@ namespace RS.Commons
         /// <param name="input">密文</param>
         /// <param name="encodingAESKey">AES对称密钥</param>
         /// <returns></returns>
-        string AESDecrypt(string input, string encodingAESKey, ref string appid);
+        string AESDecryptWithAppId(string input, string encodingAESKey, ref string appid);
 
         /// <summary>
         /// AES堆成加密
@@ -165,7 +165,7 @@ namespace RS.Commons
         /// <param name="encodingAESKey">AES对称密钥</param>
         /// <param name="appid">应用主键</param>
         /// <returns></returns>
-        string AESEncrypt(string input, string encodingAESKey, string appid);
+        string AESEncryptWithAppId(string input, string encodingAESKey, string appid);
 
         /// <summary>
         /// 创建随机数

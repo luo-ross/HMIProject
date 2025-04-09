@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/login/LoginView.vue'
 import RegisterView from '../views/register/RegisterView.vue'
 import HomeView from '../views/home/HomeView.vue'
-
+import { Cryptography} from '../scripts/Cryptography'
 const Router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -53,12 +53,13 @@ Router.beforeEach((to, from, next) => {
     return
   }
 
-  // 检查认证信息
-  const appId = sessionStorage.getItem('AppId');
-  const aesKey = sessionStorage.getItem('AesKey');
-  const token = sessionStorage.getItem('Token');
-
-  if (!token || !appId || !aesKey) {
+  // 获取 aesKey, appId, token
+  const getSessionModelResult = Cryptography.GetSessionModelFromStorage();
+  if (!getSessionModelResult.IsSuccess) {
+    return;
+  }
+  const sessionModel = getSessionModelResult.Data;
+  if (!sessionModel?.AppId || !sessionModel.AesKey || !sessionModel.Token) {
     next({ path: '/login/index' })
     return
   }

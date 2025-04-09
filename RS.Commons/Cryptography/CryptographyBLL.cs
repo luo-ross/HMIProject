@@ -44,7 +44,7 @@ namespace RS.Commons
         /// 获取会话数据
         /// </summary>
         /// <returns></returns>
-        public OperateResult<SessionModel> GetSessionModel()
+        public OperateResult<SessionModel> GetSessionModelFromStorage()
         {
             //先从内存里获取Aes秘钥
             MemoryCache.TryGetValue(MemoryCacheKey.SessionModelKey, out SessionModel sessionModel);
@@ -80,10 +80,10 @@ namespace RS.Commons
         /// <typeparam name="TResult">解密实体类型</typeparam>
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <returns></returns>
-        public OperateResult<TResult> AESDecrypt<TResult>(AESEncryptModel aesEncryptModel)
+        public OperateResult<TResult> AESDecryptSimple<TResult>(AESEncryptModel aesEncryptModel)
         {
             //获取 aesKey,  appId,  token
-            var getSessionModelResult = GetSessionModel();
+            var getSessionModelResult = GetSessionModelFromStorage();
             if (!getSessionModelResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(getSessionModelResult);
@@ -91,7 +91,7 @@ namespace RS.Commons
             var sessionModel = getSessionModelResult.Data;
 
             //返回AES对称解密数据
-            return AESDecrypt<TResult>(aesEncryptModel, sessionModel);
+            return AESDecryptGeneric<TResult>(aesEncryptModel, sessionModel);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace RS.Commons
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionModel">会话实体类</param>
         /// <returns></returns>
-        public OperateResult<TResult> AESDecrypt<TResult>(AESEncryptModel aesEncryptModel, SessionModel sessionModel)
+        public OperateResult<TResult> AESDecryptGeneric<TResult>(AESEncryptModel aesEncryptModel, SessionModel sessionModel)
         {
             //验证签名
             var verifySignatureResult = this.VerifySignature(sessionModel.Token, aesEncryptModel.TimeStamp, aesEncryptModel.Nonce, aesEncryptModel.Encrypt, aesEncryptModel.MsgSignature);
@@ -115,7 +115,7 @@ namespace RS.Commons
             string sMsg;
             try
             {
-                sMsg = this.AESDecrypt(aesEncryptModel.Encrypt, sessionModel.AesKey, ref appid);
+                sMsg = this.AESDecryptWithAppId(aesEncryptModel.Encrypt, sessionModel.AesKey, ref appid);
             }
             catch (FormatException)
             {
@@ -152,10 +152,10 @@ namespace RS.Commons
         /// <typeparam name="T">待加密数据类型</typeparam>
         /// <param name="encryptModelShould">待加密数据</param>
         /// <returns></returns>
-        public OperateResult<AESEncryptModel> AESEncrypt<T>(T encryptModelShould)
+        public OperateResult<AESEncryptModel> AESEncryptSimple<T>(T encryptModelShould)
         {
             //获取 aesKey,  appId,  token
-            var getSessionModelResult = GetSessionModel();
+            var getSessionModelResult = GetSessionModelFromStorage();
             if (!getSessionModelResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getSessionModelResult);
@@ -163,7 +163,7 @@ namespace RS.Commons
             var sessionModel = getSessionModelResult.Data;
 
             //返回AES对称加密数据
-            return AESEncrypt(encryptModelShould, sessionModel);
+            return AESEncryptGeneric(encryptModelShould, sessionModel);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace RS.Commons
         /// <param name="encryptModelShould">待加密数据</param>
         /// <param name="sessionModel">会话实体</param>
         /// <returns></returns>
-        public OperateResult<AESEncryptModel> AESEncrypt<T>(T encryptModelShould, SessionModel sessionModel)
+        public OperateResult<AESEncryptModel> AESEncryptGeneric<T>(T encryptModelShould, SessionModel sessionModel)
         {
 
             if (encryptModelShould == null)
@@ -188,7 +188,7 @@ namespace RS.Commons
             string raw = "";
             try
             {
-                raw = this.AESEncrypt(replyMsg, sessionModel.AesKey, sessionModel.AppId);
+                raw = this.AESEncryptWithAppId(replyMsg, sessionModel.AesKey, sessionModel.AppId);
             }
             catch (Exception)
             {
@@ -463,7 +463,7 @@ namespace RS.Commons
         /// <param name="input">密文</param>
         /// <param name="encodingAESKey">AES对称密钥</param>
         /// <returns></returns>
-        public string AESDecrypt(string input, string encodingAESKey, ref string appid)
+        public string AESDecryptWithAppId(string input, string encodingAESKey, ref string appid)
         {
             byte[] Key;
             Key = Convert.FromBase64String(encodingAESKey + "=");
@@ -490,7 +490,7 @@ namespace RS.Commons
         /// <param name="encodingAESKey">AES对称密钥</param>
         /// <param name="appid">应用主键</param>
         /// <returns></returns>
-        public string AESEncrypt(string input, string encodingAESKey, string appid)
+        public string AESEncryptWithAppId(string input, string encodingAESKey, string appid)
         {
             byte[] Key;
             Key = Convert.FromBase64String(encodingAESKey + "=");
@@ -655,7 +655,7 @@ namespace RS.Commons
             string msgDecrypt = "";
             try
             {
-                msgDecrypt = AESDecrypt(aesEncrypt, encodingAESKey, ref appIdDecrypt);
+                msgDecrypt = AESDecryptWithAppId(aesEncrypt, encodingAESKey, ref appIdDecrypt);
             }
             catch (FormatException)
             {
@@ -691,7 +691,7 @@ namespace RS.Commons
             string msgEncrypt = "";
             try
             {
-                msgEncrypt = AESEncrypt(replyMsg, encodingAESKey, appId);
+                msgEncrypt = AESEncryptWithAppId(replyMsg, encodingAESKey, appId);
             }
             catch (Exception)
             {

@@ -39,7 +39,7 @@ namespace RS.Commons.Extensions
             }
 
             //AES对称解密数据
-            var aesDecryptResult = cryptographyBLL.AESDecrypt<TResult>(objectResult.Data);
+            var aesDecryptResult = cryptographyBLL.AESDecryptSimple<TResult>(objectResult.Data);
             if (!aesDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesDecryptResult);
@@ -103,7 +103,7 @@ namespace RS.Commons.Extensions
            
             var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
             //AES对称加密数据
-            var aesEncryptResult = cryptographyBLL.AESEncrypt(postModel);
+            var aesEncryptResult = cryptographyBLL.AESEncryptSimple(postModel);
             if (!aesEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesEncryptResult);
@@ -117,7 +117,7 @@ namespace RS.Commons.Extensions
             }
 
             //AES对称解密数据
-            var aesDecryptResult = cryptographyBLL.AESDecrypt<TResult>(aesEncryptModelResult.Data);
+            var aesDecryptResult = cryptographyBLL.AESDecryptSimple<TResult>(aesEncryptModelResult.Data);
             if (!aesDecryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesDecryptResult);
@@ -137,7 +137,7 @@ namespace RS.Commons.Extensions
         {
             var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
             //AES对称加密数据
-            var aesEncryptResult = cryptographyBLL.AESEncrypt(postModel);
+            var aesEncryptResult = cryptographyBLL.AESEncryptSimple(postModel);
             if (!aesEncryptResult.IsSuccess)
             {
                 return aesEncryptResult;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { Cryptography } from '../scripts/Cryptography'
 // 创建全局 axios 实例
 const WebApi = axios.create({
   baseURL: 'http://localhost:54293', // 替换为你的实际 API 基础 URL
@@ -21,16 +21,27 @@ WebApi.interceptors.request.use(config => {
   if (path == filterPath) {
     return config;
   }
-  
-  const token = sessionStorage.getItem('token');
-  if (!token) {
+
+
+  // 获取 aesKey, appId, token
+  const getSessionModelResult = Cryptography.GetSessionModelFromStorage();
+  if (!getSessionModelResult.IsSuccess) {
+    return Promise.reject(new Error('未获取到会话权限'));
+  }
+
+  const sessionModel = getSessionModelResult.Data;
+  debugger
+  if (!sessionModel?.Token) {
     return Promise.reject(new Error('必须提供token'));
   }
   // 如果不是获取会话的请求，添加认证信息
   if (path !== filterPath) {
     // 设置请求头
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+    if (sessionModel?.Token) {
+      // 设置全局默认请求头
+      config.headers.Authorization = `Bearer ${sessionModel.Token}`;
+      //axios.defaults.headers.common['Authorization'] = `Bearer ${sessionModel.Token}`;
+      /*config.headers['Authorization'] = `Bearer ${sessionModel?.Token}`;*/
     }
   }
 
@@ -56,9 +67,6 @@ WebApi.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           // token过期或无效，清除认证信息
-          sessionStorage.removeItem('token');
-          sessionStorage.removeItem('appid');
-          sessionStorage.removeItem('aeskey');
           break;
         case 403:
           console.error('权限不足');
