@@ -20,7 +20,7 @@ namespace RS.HMIServer.BLL
         public static IServiceCollection RegisterBLLService(this IServiceCollection services, IConfiguration configuration)
         {
             //动态配置选择哪一种邮箱发送服务
-            string emailBLL = configuration["ConnectionStrings:EmailBLL"];
+            string emailBLL = configuration["ConnectionStrings:EmailService"];
             switch (emailBLL)
             {
                 case "Tencent":
@@ -29,7 +29,7 @@ namespace RS.HMIServer.BLL
             }
 
             //动态配置选择哪一种短信发送服务
-            string sMSService = configuration["ConnectionStrings:SMSBLL"];
+            string sMSService = configuration["ConnectionStrings:SMSService"];
             switch (sMSService)
             {
                 case "Ali":

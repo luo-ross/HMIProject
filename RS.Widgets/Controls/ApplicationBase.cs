@@ -123,6 +123,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         private async void ApplicationBase_OnServerConnect()
         {
+
             if (!ViewModel.IsGetSessionModelSuccess)
             {
                 //从服务端获取会话Token和数据交换密钥
@@ -163,7 +164,7 @@ namespace RS.Widgets.Controls
                     if (heartBeatCheckResult.IsSuccess)
                     {
                         ViewModel.IsServerConnectSuccess = true;
-                        OnServerConnect();
+                        OnServerConnect?.Invoke();
                     }
                     else
                     {
@@ -202,9 +203,17 @@ namespace RS.Widgets.Controls
                 return OperateResult.CreateFailResult("获取客户端加密公钥失败！");
             }
 
+            //获取客户端解密私钥
+            MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAEncryptPrivateKey, out byte[] globalRSAEncryptPrivateKey);
+            if (globalRSAEncryptPrivateKey==null)
+            {
+                return OperateResult.CreateFailResult("获取客户端加密私钥失败！");
+            }
+
+
             //获取客户端签名公钥
             MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPublicKey, out string globalRSASignPublicKey);
-            if (string.IsNullOrEmpty(globalRSAEncryptPublicKey))
+            if (string.IsNullOrEmpty(globalRSASignPublicKey))
             {
                 return OperateResult.CreateFailResult("获取客户端签名公钥失败！");
             }
@@ -236,7 +245,7 @@ namespace RS.Widgets.Controls
                 return getRSAHashResult;
             }
 
-            //获取客户端私钥
+            //获取客户端签名私钥
             MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPrivateKey, out byte[]? globalRSASignPrivateKey);
             if (globalRSASignPrivateKey == null || globalRSASignPrivateKey.Length == 0)
             {
@@ -288,7 +297,7 @@ namespace RS.Widgets.Controls
             }
 
             //解密AesKey
-            var rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AesKey, globalRSASignPrivateKey);
+            var rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AesKey, globalRSAEncryptPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;
@@ -296,7 +305,7 @@ namespace RS.Widgets.Controls
             sessionResultModel.SessionModel.AesKey = rsaDecryptResult.Data;
 
             //解密AppId
-            rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AppId, globalRSASignPrivateKey);
+            rsaDecryptResult = CryptographyBLL.RSADecrypt(sessionResultModel.SessionModel.AppId, globalRSAEncryptPrivateKey);
             if (!rsaDecryptResult.IsSuccess)
             {
                 return rsaDecryptResult;

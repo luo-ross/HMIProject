@@ -805,8 +805,8 @@ namespace RS.Commons
             //支持的块大小
             aes.BlockSize = 128;
             //填充模式
-            //aes.Padding = PaddingMode.PKCS7;
-            aes.Padding = PaddingMode.None;
+            aes.Padding = PaddingMode.PKCS7;
+            //aes.Padding = PaddingMode.None;
             aes.Mode = CipherMode.CBC;
             aes.Key = key;
             aes.IV = iv;
@@ -885,7 +885,8 @@ namespace RS.Commons
             aes.KeySize = 256;
             aes.BlockSize = 128;
             aes.Mode = CipherMode.CBC;
-            aes.Padding = PaddingMode.None;
+            //aes.Padding = PaddingMode.None;
+            aes.Padding = PaddingMode.PKCS7;
             aes.Key = key;
             aes.IV = iv;
             var decrypt = aes.CreateDecryptor(aes.Key, aes.IV);

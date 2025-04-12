@@ -18,6 +18,8 @@ namespace RS.Models
             GlobalRSASignPrivateKey = Guid.NewGuid().ToString();
             GlobalRSAEncryptPublicKey = Guid.NewGuid().ToString();
             GlobalRSAEncryptPrivateKey = Guid.NewGuid().ToString();
+            ServerGlobalRSASignPublicKey = Guid.NewGuid().ToString();
+            ServerGlobalRSAEncryptPublicKey = Guid.NewGuid().ToString();
             SessionModelKey = Guid.NewGuid().ToString();
         }
 

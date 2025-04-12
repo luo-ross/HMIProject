@@ -1,9 +1,9 @@
 <template>
   <div class="div-main">
 
-    <Message v-model:Message="ViewModel.Message.value"
-             v-model:MessageType="ViewModel.MessageType.value"
-             ></Message>
+    <RSMessage v-model:Message="ViewModel.Message"
+             v-model:MessageType="ViewModel.MessageType"
+             ></RSMessage>
 
     <div class="login-content">
       <div class="login-left img">
@@ -26,31 +26,41 @@
           <label class="label-tab label-login" for="radio-login">登录</label>
 
           <input type="radio" id="radio-register" name="tab" value="radio-register">
-          <label class="label-tab label-register" for="radio-register" @click="HandleRegister">注册</label>
+          <label class="label-tab label-register" for="radio-register" @click="ViewModel.RegisterCommand.Execute()">注册</label>
         </div>
 
        
-        <InputEmail Placeholder="请输入邮箱"
-                    v-model:Email="ViewModel.Email.value"
-                    ref="EmailInputRef" />
+        <RSEmail Placeholder="请输入邮箱"
+                    v-model:Email="ViewModel.Email"
+                    :ref="events => ViewModel.RSEmailEvnets= events"
+                     />
 
      
-        <InputPassword Placeholder="请输入密码"
-                       v-model:Password="ViewModel.Password.value"
-                       ref="PasswordInputRef" />
+        <RSPassword Placeholder="请输入密码"
+                       v-model:Password="ViewModel.Password"
+                       :ref="events => ViewModel.RSPasswordEvnets= events" />
 
 
         <div class="form-row">
-          <Verify Placeholder="请输入验证码"
-                  v-model:Verify="ViewModel.Verify.value"
-                  ref="VerifyInputRef" />
+          <RSVerify Placeholder="请输入验证码"
+                  v-model:Verify="ViewModel.Verify"
+                  :ref="events => ViewModel.RSVerifyEvnets = events" />
           <div class="form-input-border img-border">
             <!--<img class="img-verify" src="~/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />-->
           </div>
         </div>
 
         <div class="form-row">
-          <button type="button" class="btn-login" @click="ViewModel.HandleLogin">登录</button>
+          <button type="button" class="btn-login" 
+                  @click="ViewModel.LoginCommand.Execute()" 
+                  :disabled="!ViewModel.LoginCommand.CanExecute()"
+                  @mouseover="ViewModel.LoginCommand.SetCommandParameter({ 
+                    email: ViewModel.Email, 
+                    password: ViewModel.Password,
+                    verify: ViewModel.Verify 
+                  })">
+            登录
+          </button>
         </div>
 
         <div class="form-row">
@@ -62,29 +72,13 @@
 </template>
 
 <script setup lang="ts">
-  import Message from '../../components/Message.vue'
-  import InputEmail from '../../components/InputEmail.vue'
-  import InputPassword from '../../components/InputPassword.vue'
-  import Verify from '../../components/Verify.vue'
-  import { ref, onMounted } from 'vue'
+  import RSMessage from '../../Controls/RSMessage.vue'
+  import RSEmail from '../../Controls/RSEmail.vue'
+  import RSPassword from '../../Controls/RSPassword.vue'
+  import RSVerify from '../../Controls/RSVerify.vue'
   import { LoginViewModel } from './LoginViewModel'
-  import { useRouter } from 'vue-router'
-  
-  const Router = useRouter()
+
   const ViewModel = new LoginViewModel()
-  const EmailInputRef = ref()
-  const PasswordInputRef = ref()
-  const VerifyInputRef = ref()
-
-  onMounted(() => {
-    ViewModel.SetEmailInputRef(EmailInputRef.value)
-    ViewModel.SetPasswordInputRef(PasswordInputRef.value)
-    ViewModel.SetVerifyInputRef(VerifyInputRef.value)
-  })
-
-  const HandleRegister = () => {
-   Router.push('/register/index')
-  }
 </script>
 
 

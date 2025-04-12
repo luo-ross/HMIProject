@@ -1,44 +1,53 @@
-import { ref } from 'vue'
+//import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Cryptography, AESEncryptModel, EmailRegisterPostModel } from '../../scripts/Cryptography'
-import {
-  CommonUtils,
-  type OperateResult,
-} from '../../scripts/Utils'
-import type { InputExpose } from '../../types/components'
-import WebApi from '../../scripts/AxiosConfig'
+import { Cryptography } from '../../Commons/Cryptography/Cryptography';
+import { CommonUtils } from '../../Commons/Utils';
+import type { IEvents } from '../../Interfaces/IEvents';
+import { EmailRegisterPostModel } from '../../Models/EmailRegisterPostModel';
+import Axios from '../../Commons/Axios';
+import  { AESEncryptModel } from '../../Models/AESEncryptModel';
+import  { GenericOperateResult } from '../../Commons/OperateResult/OperateResult';
+import { ValidHelper } from '../../Commons/Helper/ValidHelper';
+import  { RegisterModel } from '../../Models/RegisterModel';
+import { MessageModel } from '../../Models/MessageModel';
 export class RegisterViewModel {
   public Cryptography: Cryptography;
   public CommonUtils: CommonUtils;
 
-  public Email = ref('')
-  public Password = ref('')
-  public PasswordConfirm = ref('')
-  public Message = ref('')
-  public MessageType = ref('')
+  public RegisterModel: RegisterModel;
+  public MessageModel: MessageModel;
+  //public Email = ref('')
+  //public Password = ref('')
+  //public PasswordConfirm = ref('')
+  //public Message = ref('')
+  //public MessageType = ref('')
+
   private router = useRouter()
-  private EmailInputRef: InputExpose | null = null;
-  private PasswordInputRef: InputExpose | null = null;
-  private PasswordConfirmInputRef: InputExpose | null = null;
+  public RSEmailRef: IEvents | null = null;
+  public RSPasswordRef: IEvents | null = null;
+  public RSPasswordConfirmRef: IEvents | null = null;
+
 
   constructor() {
     this.Cryptography = Cryptography.GetInstance();
     this.CommonUtils = new CommonUtils();
-    this.Message = this.CommonUtils.Message;
-    this.MessageType = this.CommonUtils.MessageType;
+    //this.Message = this.CommonUtils.Message;
+    //this.MessageType = this.CommonUtils.MessageType;
+    this.RegisterModel = new RegisterModel();
+    this.MessageModel = new MessageModel();
   }
 
-  public SetEmailInputRef(ref: InputExpose) {
-    this.EmailInputRef = ref;
-  }
+  //public SetRSEmailRef(ref: IEvents) {
+  //  this.RSEmailRef = ref;
+  //}
 
-  public SetPasswordInputRef(ref: InputExpose) {
-    this.PasswordInputRef = ref;
-  }
+  //public SetRSPasswordRef(ref: IEvents) {
+  //  this.RSPasswordRef = ref;
+  //}
 
-  public SetPasswordConfirmInputRef(ref: InputExpose) {
-    this.PasswordConfirmInputRef = ref;
-  }
+  //public SetRSPasswordConfirmRef(ref: IEvents) {
+  //  this.RSPasswordConfirmRef = ref;
+  //}
 
   public async HandleRegisterNext(): Promise<void> {
     //这里进行客户端简单的表单验证
@@ -47,10 +56,10 @@ export class RegisterViewModel {
     }
 
     //验证通过后 对密码进行加密处理
-    const passwordSHA256HashCode = await this.Cryptography.GetSHA256HashCode(this.PasswordConfirm.value);
+    const passwordSHA256HashCode = await this.Cryptography.GetSHA256HashCode(this.RegisterModel.PasswordConfirm);
     const emailRegisterPostModel = new EmailRegisterPostModel();
 
-    emailRegisterPostModel.Email = this.Email.value;
+    emailRegisterPostModel.Email = this.RegisterModel.Email;
     emailRegisterPostModel.Password = passwordSHA256HashCode.Data;
 
 
@@ -62,7 +71,7 @@ export class RegisterViewModel {
       return;
     }
 
-    const result = await WebApi.post<EmailRegisterPostModel, OperateResult<AESEncryptModel>>('/api/v1/Register/GetEmailVerification', emailRegisterPostModel);
+    const result = await Axios.post<EmailRegisterPostModel, GenericOperateResult<AESEncryptModel>>('/api/v1/Register/GetEmailVerification', aesEncryptResult.Data);
 
     if (!result.IsSuccess || result.Data==null) {
       return;
@@ -76,31 +85,31 @@ export class RegisterViewModel {
   }
 
   private ValidateForm(): boolean {
-    if (!this.Email.value && !this.CommonUtils.EmailValid(this.Email.value)) {
+    if (!this.RegisterModel.Email && !ValidHelper.IsEmail(this.RegisterModel.Email)) {
       this.CommonUtils.ShowWarningMsg('邮箱输入不正确');
-      if (this.EmailInputRef) {
-        this.EmailInputRef.Focus();
+      if (this.RSEmailRef) {
+        this.RSEmailRef.Focus();
       }
       return false;
     }
-    if (!this.Password.value) {
+    if (!this.RegisterModel.Password) {
       this.CommonUtils.ShowWarningMsg('请输入密码');
-      if (this.PasswordInputRef) {
-        this.PasswordInputRef.Focus();
+      if (this.RSPasswordRef) {
+        this.RSPasswordRef.Focus();
       }
       return false
     }
-    if (!this.PasswordConfirm.value) {
+    if (!this.RegisterModel.PasswordConfirm) {
       this.CommonUtils.ShowWarningMsg('请输入确认密码');
-      if (this.PasswordConfirmInputRef) {
-        this.PasswordConfirmInputRef.Focus();
+      if (this.RSPasswordConfirmRef) {
+        this.RSPasswordConfirmRef.Focus();
       }
       return false
     }
-    if (!(this.Password.value === this.PasswordConfirm.value)) {
+    if (!(this.RegisterModel.Password === this.RegisterModel.PasswordConfirm)) {
       this.CommonUtils.ShowWarningMsg('2次密码输入不一致');
-      if (this.PasswordConfirmInputRef) {
-        this.PasswordConfirmInputRef.Focus();
+      if (this.RSPasswordConfirmRef) {
+        this.RSPasswordConfirmRef.Focus();
       }
       return false
     }

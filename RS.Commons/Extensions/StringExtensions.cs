@@ -87,6 +87,7 @@ namespace RS.Commons.Extensions
         /// <returns>截取后的字符串</returns>
         public static string Truncate(this string str, int length)
         {
+         
             if (string.IsNullOrEmpty(str)) return str;
             return str.Length <= length ? str : str.Substring(0, length) + "...";
         }

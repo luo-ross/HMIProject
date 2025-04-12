@@ -35,7 +35,7 @@ namespace RS.Annotation.Views
 
         private async void RSWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.LoadingBg.Visibility = Visibility.Visible;
+            //this.LoadingBg.Visibility = Visibility.Visible;
            
         }
 
