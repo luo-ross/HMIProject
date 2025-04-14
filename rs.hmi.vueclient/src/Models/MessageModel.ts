@@ -1,4 +1,4 @@
-import  { MessageType } from "../Commons/Enums/MessageType";
+import { MessageEnum } from "../Commons/Enums/MessageEnum";
 
 /**
  * 消息类
@@ -12,5 +12,5 @@ export class MessageModel  {
   /**
   * 消息类型
   */
-  public MessageType: MessageType = MessageType.Success;
+  public MessageType: MessageEnum = MessageEnum.Success;
 }

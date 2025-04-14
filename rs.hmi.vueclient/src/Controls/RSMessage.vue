@@ -1,3 +1,17 @@
+<style scoped>
+  .error-message {
+    width: 100%;
+    min-height: 30px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    padding: 5px 15px;
+    position: absolute;
+    top: 0px;
+    z-index: 11111;
+  }
+</style>
+
 <template>
   <div class="error-message alert-danger" v-if="MessageType === 'danger'">
     {{ Message }}
@@ -33,13 +47,108 @@
     {{ Message }}
   </div>
   <div class="error-message d-none" v-else>
-  
+
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  //3.4以后版本使用
+  import IMessageEvents from '../Interfaces/IMessageEvents'
+  import { MessageEnum } from '../Commons/Enums/MessageEnum'
+
   const Message = defineModel('Message');
   const MessageType = defineModel('MessageType');
+
+  let TimerId: number = -1;
+  function ShowDangerMsg(msg: string): void {
+    ShowMsg(MessageEnum.Danger, msg);
+  }
+
+  function ShowDarkMsg(msg: string): void {
+    ShowMsg(MessageEnum.Dark, msg);
+  }
+
+  function ShowDismissibleMsg(msg: string): void {
+    ShowMsg(MessageEnum.Dismissible, msg);
+  }
+
+  function ShowHeadingMsg(msg: string): void {
+    ShowMsg(MessageEnum.Heading, msg);
+  }
+
+
+  function ShowInfoMsg(msg: string): void {
+    ShowMsg(MessageEnum.Info, msg);
+  }
+
+
+  function ShowLightMsg(msg: string): void {
+    ShowMsg(MessageEnum.Light, msg);
+  }
+
+
+  function ShowLinkMsg(msg: string): void {
+    ShowMsg(MessageEnum.Link, msg);
+  }
+
+
+  function ShowPrimaryMsg(msg: string): void {
+    ShowMsg(MessageEnum.Primary, msg);
+  }
+
+
+  function ShowSecondaryMsg(msg: string): void {
+    ShowMsg(MessageEnum.Secondary, msg);
+  }
+
+
+  function ShowSuccessMsg(msg: string): void {
+    ShowMsg(MessageEnum.Success, msg);
+  }
+
+  /**
+   * 显示信息消息
+   */
+  function ShowWarningMsg(msg: string): void {
+    ShowMsg(MessageEnum.Warning, msg);
+  }
+
+  /**
+   * 清除消息
+   */
+  function ClearMsg(): void {
+    Message.value = '';
+    MessageType.value = '';
+  }
+
+  /**
+   * 显示消息
+   */
+  function ShowMsg(type: MessageType, msg: string): void {
+    ClearMsg();
+    Message.value = msg;
+    MessageType.value = type;
+    TimerId = setTimeout(() => {
+      ClearMsg();
+      TimerId = -1;
+    }, 3000);
+  }
+
+
+  // 暴露方法给父组件
+  defineExpose<IMessageEvents>({
+    ShowDangerMsg,
+    ShowDarkMsg,
+    ShowDismissibleMsg,
+    ShowHeadingMsg,
+    ShowInfoMsg,
+    ShowLightMsg,
+    ShowLinkMsg,
+    ShowPrimaryMsg,
+    ShowSecondaryMsg,
+    ShowSuccessMsg,
+    ShowWarningMsg,
+    ShowMsg,
+    ClearMsg,
+  });
 </script>

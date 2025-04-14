@@ -1,7 +1,7 @@
 /**
  * 消息类型枚举
  */
-export enum MessageType {
+export enum MessageEnum {
   Danger = 'danger',
   Dark = 'dark',
   Dismissible = 'dismissible',

@@ -14,8 +14,6 @@ namespace RS.HMI.Client.Views.Home
         public HomeViewModel()
         {
             this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
-
-
         }
 
 
@@ -29,10 +27,6 @@ namespace RS.HMI.Client.Views.Home
                 this.OnPropertyChanged(ref isEnglish, value);
             }
         }
-
-
-
-
 
         private bool CanBtnClick(object arg)
         {

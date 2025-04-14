@@ -1,82 +1,10 @@
-<style scoped>
-  .loading {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    position: relative;
-  }
 
-  .progress-border {
-    display: flex;
-    width: 100%;
-    position: absolute;
-    height:100%;
-    background-color:#00000008;
-  }
-
-    .progress {
-      width: 100%;
-      position: absolute;
-      justify-content: center;
-      align-items: center;
-      min-height: 2px;
-      left: 0px;
-      top: 0px;
-      right: 0px;
-      border-radius: 0px;
-      height: auto;
-    }
-
-  .progress-bar {
-    height: 100%;
-    background-color: #0d6efd;
-    transition: width 0.6s ease;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-
-
-  .progress-bar-animated {
-    animation: progress-bar-stripes 1s linear infinite;
-  }
-
-  .progress-bar-indeterminate {
-    width: 30%;
-    animation: indeterminate-progress 1.5s ease-in-out infinite;
-  }
-
-  @keyframes progress-bar-stripes {
-    from {
-      background-position: 1rem 0;
-    }
-
-    to {
-      background-position: 0 0;
-    }
-  }
-
-  @keyframes indeterminate-progress {
-    0% {
-      left: -30%;
-    }
-
-    100% {
-      left: 100%;
-    }
-  }
-
-  .loading-text {
-    color: #6c757d;
-    font-size: 0.875rem;
-    padding: 2px 0px 2px 0px;
-  }
-</style>
 <template>
   <div class="loading">
     <slot></slot>
-    <div class="progress-border  d-none">
-
+    <div class="progress-border"
+         :class="{'d-none': !IsLoading }"
+         >
       <div class="progress">
         <div v-if="!IsAutoIncrement"
              class="progress-bar progress-bar-animated progress-bar-indeterminate"
@@ -103,6 +31,9 @@
 
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+  import { Func } from '../Events/Func'
+  import { ILoadingEvents } from '../Interfaces/ILoadingEvents'
+  import { SimpleOperateResult } from '../Commons/OperateResult/OperateResult'
 
   const IsLoading = defineModel('IsLoading', {
     type: Boolean,
@@ -135,7 +66,23 @@
   });
 
 
+  async function InvokeLoadingActionAsync(func: Func<Promise<SimpleOperateResult>>): Promis<SimpleOperateResult> {
 
+    try {
+
+      IsLoading.value = true;
+
+    
+      const operateResult = await func?.();
+
+      IsLoading.value = false;
+      return operateResult;
+    } catch (e) {
+
+    }
+  }
+
+  
   //// 定义 Test 事件
   //const emit = defineEmits<{
   //  (e: 'test', value: string): void
@@ -145,10 +92,10 @@
   //const triggerTest = (value: string) => {
   //  emit('test', value);
   //};
-  //// 导出方法供父组件调用
-  //defineExpose({
-  //  triggerTest
-  //});
+  // 导出方法供父组件调用
+  defineExpose<ILoadingEvents>({
+    InvokeLoadingActionAsync
+  });
 </script>
 
 

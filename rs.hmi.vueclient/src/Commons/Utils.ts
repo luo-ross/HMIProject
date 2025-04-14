@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { MessageType } from './Enums/MessageType';
+import { MessageEnum } from './Enums/MessageEnum';
 
 /**
  * 通用工具类
@@ -35,60 +35,58 @@ export class CommonUtils {
     ).join('');
   }
 
-  /**
-   * 显示错误消息
-   */
+  
   public ShowDangerMsg(msg: string): void {
-    this.ShowMsg(MessageType.Danger, msg);
+    this.ShowMsg(MessageEnum.Danger, msg);
   }
 
   public ShowDarkMsg(msg: string): void {
-    this.ShowMsg(MessageType.Dark, msg);
+    this.ShowMsg(MessageEnum.Dark, msg);
   }
 
   public ShowDismissibleMsg(msg: string): void {
-    this.ShowMsg(MessageType.Dismissible, msg);
+    this.ShowMsg(MessageEnum.Dismissible, msg);
   }
 
   public ShowHeadingMsg(msg: string): void {
-    this.ShowMsg(MessageType.Heading, msg);
+    this.ShowMsg(MessageEnum.Heading, msg);
   }
 
 
   public ShowInfoMsg(msg: string): void {
-    this.ShowMsg(MessageType.Info, msg);
+    this.ShowMsg(MessageEnum.Info, msg);
   }
 
 
   public ShowLightMsg(msg: string): void {
-    this.ShowMsg(MessageType.Light, msg);
+    this.ShowMsg(MessageEnum.Light, msg);
   }
 
 
   public ShowLinkMsg(msg: string): void {
-    this.ShowMsg(MessageType.Link, msg);
+    this.ShowMsg(MessageEnum.Link, msg);
   }
 
 
   public ShowPrimaryMsg(msg: string): void {
-    this.ShowMsg(MessageType.Primary, msg);
+    this.ShowMsg(MessageEnum.Primary, msg);
   }
 
 
   public ShowSecondaryMsg(msg: string): void {
-    this.ShowMsg(MessageType.Secondary, msg);
+    this.ShowMsg(MessageEnum.Secondary, msg);
   }
 
 
   public ShowSuccessMsg(msg: string): void {
-    this.ShowMsg(MessageType.Success, msg);
+    this.ShowMsg(MessageEnum.Success, msg);
   }
 
   /**
    * 显示信息消息
    */
   public ShowWarningMsg(msg: string): void {
-    this.ShowMsg(MessageType.Warning, msg);
+    this.ShowMsg(MessageEnum.Warning, msg);
   }
 
 
@@ -103,7 +101,7 @@ export class CommonUtils {
   /**
    * 显示消息
    */
-  private ShowMsg(type: MessageType, msg: string): void {
+  private ShowMsg(type: MessageEnum, msg: string): void {
     this.ClearMsg();
     this.Message.value = msg;
     this.MessageType.value = type;

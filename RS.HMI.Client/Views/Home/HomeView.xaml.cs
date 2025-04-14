@@ -12,6 +12,7 @@ namespace RS.HMI.Client.Views.Home
     public partial class HomeView : RSWindow
     {
         public HomeViewModel ViewModel { get; set; }
+
         public HomeView()
         {
             InitializeComponent();
@@ -25,7 +26,7 @@ namespace RS.HMI.Client.Views.Home
             var height = this.PART_ContentHost.ActualHeight;
             this.PART_ContentHost.Clip = this.GetBorderClipRect(new CornerRadius(10), width, height);
         }
-
+        
         private unsafe void Button_Click(object sender, RoutedEventArgs e)
         {
 
@@ -35,5 +36,7 @@ namespace RS.HMI.Client.Views.Home
         {
             //await this.MessageBox.ShowAsync($@"搜索事件触发, 查询条件{this.ViewModel.Test}");
         }
+    
+    
     }
 }

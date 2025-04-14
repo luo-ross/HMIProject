@@ -19,6 +19,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Threading;
 

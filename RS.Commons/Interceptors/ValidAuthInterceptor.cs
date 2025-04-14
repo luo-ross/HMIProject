@@ -24,7 +24,6 @@ namespace RS.Commons.Interceptors
             {
                 LogBLL.LogCritical($"{invocation.Method.Name} 异常：{ex.ToString()}");
             }
-
         }
     }
 }

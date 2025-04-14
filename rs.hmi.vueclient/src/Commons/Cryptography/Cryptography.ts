@@ -60,9 +60,9 @@ export class Cryptography {
    * @param hashContent 哈希内容
    * @returns 返回哈希值的十六进制字符串
    */
-  public async GetSHA256HashCode(hashContent: string|null): Promise<GenericOperateResult<string>> {
+  public async GetSHA256HashCode(hashContent: string | null): Promise<GenericOperateResult<string>> {
     try {
-      if (hashContent==null) {
+      if (hashContent == null) {
         return GenericOperateResult.CreateFailResult('哈希内容不能为空');
       }
       // 将字符串转换为 UTF-8 编码的字节数组
@@ -84,7 +84,7 @@ export class Cryptography {
 
   // 获取用户名
   private async InitDefaultKeysAsync(): Promise<SimpleOperateResult> {
-   
+
     const initRSASecurityKeyDataResult = await this.InitRSASecurityKeyDataAsync();
     if (!initRSASecurityKeyDataResult.IsSuccess) {
       //this.CommonUtils.ShowDangerMsg(initRSASecurityKeyDataResult.Message);
@@ -951,7 +951,11 @@ export class Cryptography {
    * @param sessionModel 会话实体类
    * @returns 返回解密后的实体
    */
-  public async AESDecryptGeneric<TResult>(aesEncryptModel: AESEncryptModel, sessionModel: SessionModel): Promise<GenericOperateResult<TResult>> {
+  public async AESDecryptGeneric<TResult>(aesEncryptModel: AESEncryptModel|null, sessionModel: SessionModel): Promise<GenericOperateResult<TResult>> {
+    if (aesEncryptModel==null) {
+      return GenericOperateResult.CreateFailResult('加密数据为null');
+    }
+
     // 验证签名
     const verifySignatureResult = await this.VerifySignature(
       sessionModel.Token,
@@ -997,7 +1001,7 @@ export class Cryptography {
    * @param aesEncryptModel AES加密数据
    * @returns 返回解密后的实体
    */
-  public async AESDecryptSimple<TResult>(aesEncryptModel: AESEncryptModel): Promise<GenericOperateResult<TResult>> {
+  public async AESDecryptSimple<TResult>(aesEncryptModel: AESEncryptModel|null): Promise<GenericOperateResult<TResult>> {
     // 获取 aesKey, appId, token
     const getSessionModelResult = Cryptography.GetSessionModelFromStorage();
     if (!getSessionModelResult.IsSuccess) {

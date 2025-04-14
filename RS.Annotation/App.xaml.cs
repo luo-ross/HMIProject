@@ -18,7 +18,7 @@ namespace RS.Annotation
         /// </summary>
         public App()
         {
-           
+         
         }
 
         protected override void OnStartup(StartupEventArgs e)
