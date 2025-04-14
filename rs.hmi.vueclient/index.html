@@ -294,7 +294,7 @@
             align-items: center;
         }
 
-        .progress-border {
+        .loading-border {
             display: flex;
             width: 100%;
             position: absolute;
@@ -361,6 +361,36 @@
         }
 
 
+        .icon-loading {
+            width: 35px;
+            height: 35px;
+           
+        }
+
+
+        .circle-rotate-progress-animated {
+           
+            animation: circle-rotate-progress 1.2s linear infinite;
+        }
+     
+
+        @keyframes circle-rotate-progress {
+            from {
+                transform-origin: center;
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform-origin: center;
+                transform:  rotate(360deg);
+            }
+        }
+
+        .rotate-loading {
+            justify-content:center;
+            align-items:center;
+        }
+       
     </style>
 </head>
 <body>

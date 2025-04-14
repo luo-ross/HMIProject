@@ -2,9 +2,9 @@
 <template>
   <div class="loading">
     <slot></slot>
-    <div class="progress-border"
-         :class="{'d-none': !IsLoading }"
-         >
+
+    <div v-if="LoadingType === 'ProgressBar'" class="loading-border"
+         :class="{'d-none': !IsLoading }">
       <div class="progress">
         <div v-if="!IsAutoIncrement"
              class="progress-bar progress-bar-animated progress-bar-indeterminate"
@@ -26,6 +26,12 @@
         </div>
       </div>
     </div>
+    <div v-else-if="LoadingType === 'Rotate'"
+        class="loading-border rotate-loading"
+         :class="{'d-none': !IsLoading }"
+         >
+      <IconLoading FillColor="#1296db" class="icon-loading  circle-rotate-loading circle-rotate-progress-animated"></IconLoading>
+    </div>
   </div>
 </template>
 
@@ -34,6 +40,11 @@
   import { Func } from '../Events/Func'
   import { ILoadingEvents } from '../Interfaces/ILoadingEvents'
   import { SimpleOperateResult } from '../Commons/OperateResult/OperateResult'
+  import IconLoading from '../Controls/Icons/IconLoading.vue'
+  import { LoadingEnum } from '../Commons/Enums/LoadingEnum'
+  const LoadingType = defineModel('LoadingType', {
+    default: 'Rotate'
+  });
 
   const IsLoading = defineModel('IsLoading', {
     type: Boolean,
@@ -72,7 +83,7 @@
 
       IsLoading.value = true;
 
-    
+
       const operateResult = await func?.();
 
       IsLoading.value = false;
@@ -82,7 +93,7 @@
     }
   }
 
-  
+
   //// 定义 Test 事件
   //const emit = defineEmits<{
   //  (e: 'test', value: string): void

@@ -7,7 +7,7 @@
     <div class="register-content">
       <div class="register-left img">
       </div>
-      <RSLoading :ref="events => ViewModel.RSLoadingEvents= events">
+      <RSLoading LoadingType="Rotate" :ref="events => ViewModel.RSLoadingEvents= events">
         <div class="register-right">
           <div class="tab-border">
             <input type="radio" id="radio-login" name="tab" value="radio-login">

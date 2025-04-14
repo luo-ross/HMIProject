@@ -3,7 +3,7 @@
  */
 export enum LoadingEnum {
   //进度条类型
-  ProgressBar = 0,
-  //图标旋转
-  IconRotate = 1,
+  ProgressBar = 'ProgressBar',
+  //旋转
+  Rotate = 'Rotate',
 }
