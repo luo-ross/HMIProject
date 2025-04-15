@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.Models
 {
-    public class EmailRegisterVerificationModel
+    public class EmailRegisterVerifyModel
     {
         public string Email { get; set; }
-        public string Verification { get; set; }
+        public string Verify { get; set; }
     }
 }

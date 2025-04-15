@@ -1,6 +1,6 @@
 import type { Action } from "../Events/Action";
 
-export interface IEvents {
+export interface IInputEvents {
   /**
   * 获取焦点
   */

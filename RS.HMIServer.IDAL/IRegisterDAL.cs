@@ -17,23 +17,23 @@ namespace RS.HMIServer.IDAL
         /// 更新注册会话
         /// </summary>
         /// <param name="token">注册会话Id</param>
-        /// <param name="verification">短信验证码</param>
+        /// <param name="verify">短信验证码</param>
         /// <param name="expireTime">验证码失效时间</param>
         /// <returns></returns>
-        Task<OperateResult> UpdateSessionAsync(string token, int verification, DateTime expireTime);
+        Task<OperateResult> UpdateEmailSessionAsync(string token, int verify, DateTime expireTime);
 
         /// <summary>
-        /// 获取注册会话数据
+        /// 获取邮箱注册会话数据
         /// </summary>
         /// <param name="token">注册会话Id</param>
         /// <returns></returns>
-        Task<OperateResult<RegisterSessionModel>> GetSessionAsync(string token);
+        Task<OperateResult<EmailRegisterSessionModel>> GetEmailSessionAsync(string emailHashCode);
 
         /// <summary>
         /// 注册账号
         /// </summary>
-        /// <returns></returns>
-        Task<OperateResult> RegisterAccountAsync(RegisterSessionModel registerSessionModel,string token);
+        /// <returns>返回用户注册主键</returns>
+        Task<OperateResult> EmailRegisterAccountAsync(EmailRegisterSessionModel registerSessionModel,string registerSessionId);
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace RS.HMIServer.IDAL
         /// <param name="registerSessionModel">注册会话类</param>
         /// <param name="expireTime">注册会话过期时间</param>
         /// <returns></returns>
-        Task<OperateResult> CreateSessionAsync(string token, RegisterSessionModel registerSessionModel, DateTime expireTime);
+        Task<OperateResult<string>> CreateEmailSessionAsync(string emailHashCode, EmailRegisterSessionModel registerSessionModel, DateTime expireTime);
 
 
         /// <summary>

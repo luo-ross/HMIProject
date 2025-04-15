@@ -1,30 +1,21 @@
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { LoginModel } from '../../Models/LoginModel';
-import { Cryptography } from '../../Commons/Cryptography/Cryptography';
-import { CommonUtils } from '../../Commons/Utils';
 import { ValidHelper } from '../../Commons/Helper/ValidHelper';
-import type { IEvents } from '../../Interfaces/IEvents';
+import type { IInputEvents } from '../../Interfaces/IInputEvents';
 import { RelayCommand } from '../../Events/RelayCommand';
-import { MessageModel } from '../../Models/MessageModel';
 import type { IMessageEvents } from '../../Interfaces/IMessageEvents';
 import { ViewModelBase } from '../../Models/ViewModelBase';
 
-
 export class LoginViewModel extends ViewModelBase {
   private loginModel = ref<LoginModel>(new LoginModel());
-  public Cryptography: Cryptography;
-  public CommonUtils: CommonUtils;
-  public MessageModel: MessageModel;
-  public Router = useRouter()
 
   //消息提示
   public RSMessageEvents: IMessageEvents | null = null;
 
   // 定义ref引用
-  public RSEmailEvents: IEvents | null = null;
-  public RSPasswordEvents: IEvents | null = null;
-  public RSVerifyEvents: IEvents | null = null;
+  public RSEmailEvents: IInputEvents | null = null;
+  public RSPasswordEvents: IInputEvents | null = null;
+  public RSVerifyEvents: IInputEvents | null = null;
 
   // 使用RelayCommand
   public LoginCommand: RelayCommand;
@@ -32,9 +23,7 @@ export class LoginViewModel extends ViewModelBase {
 
   constructor() {
     super();
-    this.Cryptography = Cryptography.GetInstance();
-    this.CommonUtils = new CommonUtils();
-    this.MessageModel = new MessageModel();
+
     // 初始化命令
     this.LoginCommand = new RelayCommand(
       () => this.HandleLogin(),
@@ -55,7 +44,7 @@ export class LoginViewModel extends ViewModelBase {
   }
 
   public HandleRegister(): void {
-    this.Router.push('/Register/Index')
+    this.Router.push('/Register')
   }
 
   public async HandleLogin(): Promise<void> {
@@ -69,14 +58,13 @@ export class LoginViewModel extends ViewModelBase {
   //  const email = this.LoginModel.Email;
   //  const password = this.LoginModel.Password;
   //  const verify = this.LoginModel.Verify;
-
   //  // 只进行基本的非空检查，不触发消息和焦点设置
   //  return email != null
   //    && password != null
   //    && verify != null;
   //}
 
-  private ValidateForm(): boolean {
+  public override  ValidateForm(): boolean {
     const email = this.LoginModel.Email;
     const password = this.LoginModel.Password;
     const verify = this.LoginModel.Verify;

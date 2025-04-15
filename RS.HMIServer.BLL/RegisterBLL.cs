@@ -1,20 +1,12 @@
-﻿using MassTransit;
-using Microsoft.Extensions.DependencyInjection;
-using NetTopologySuite.Utilities;
-using RS.HMIServer.Entity;
-using RS.HMIServer.DAL;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RS.Commons;
+using RS.Commons.Attributs;
+using RS.Commons.Extensions;
+using RS.Commons.Helper;
 using RS.HMIServer.IBLL;
 using RS.HMIServer.IDAL;
 using RS.HMIServer.Models;
-using RS.Commons;
-using RS.Commons.Attributs;
-using RS.Commons.Enums;
-using RS.Commons.Extensions;
 using RS.Models;
-using System;
-using System.Data.SqlTypes;
-using System.Net.Mail;
-using RS.Commons.Helper;
 
 namespace RS.HMIServer.BLL
 {
@@ -74,7 +66,7 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult<AESEncryptModel>> GetEmailVerificationAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult<AESEncryptModel>> GetEmailVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //进行数据解密
             var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<EmailRegisterPostModel>(aesEncryptModel, sessionId);
@@ -98,16 +90,18 @@ namespace RS.HMIServer.BLL
             }
 
             //邮箱地址哈希值作为会话主键
-            string token = this.CryptographyBLL.GetMD5HashCode(emailRegisterPostModel.Email);
+            string emailHashCode = this.CryptographyBLL.GetMD5HashCode(emailRegisterPostModel.Email);
 
-            RegisterSessionModel registerSessionModel = new RegisterSessionModel();
+            EmailRegisterSessionModel registerSessionModel = new EmailRegisterSessionModel();
 
             //查询是否已经存在会话
-            var getRegisterSessionResult = await this.RegisterDAL.GetSessionAsync(token);
-            //如果存在
+            var getRegisterSessionResult = await this.RegisterDAL.GetEmailSessionAsync(emailHashCode);
+
+            //如果已经创建了注册会话
             if (getRegisterSessionResult.IsSuccess)
             {
                 registerSessionModel = getRegisterSessionResult.Data;
+
                 //判断会话Id是否相同
                 if (!sessionId.Equals(registerSessionModel.SessionId))
                 {
@@ -116,7 +110,7 @@ namespace RS.HMIServer.BLL
                 else
                 {
                     //把Redis注册会话主键移除 然后重新创建新的会话
-                    var removeRegisterSessionResult = await RegisterDAL.RemoveSessionAsync(token);
+                    var removeRegisterSessionResult = await RegisterDAL.RemoveSessionAsync(emailHashCode);
                     if (!removeRegisterSessionResult.IsSuccess)
                     {
                         return OperateResult.CreateFailResult<AESEncryptModel>(removeRegisterSessionResult);
@@ -125,7 +119,7 @@ namespace RS.HMIServer.BLL
             }
 
             //生成验证码
-            var verification = new Random(Guid.NewGuid().GetHashCode()).Next(100000, 999999);
+            var verify = new Random(Guid.NewGuid().GetHashCode()).Next(100000, 999999);
 
             //生成有效期
             DateTime expireTime = DateTime.Now.AddSeconds(120);
@@ -133,39 +127,41 @@ namespace RS.HMIServer.BLL
             //重新创建注册会话
             registerSessionModel.Email = emailRegisterPostModel.Email;
             registerSessionModel.Password = emailRegisterPostModel.Password;
-            registerSessionModel.EmailVerificataion = verification.ToString();
-            registerSessionModel.EmailVerificationExpireTime = expireTime.ToTimeStamp();
+            registerSessionModel.EmailVerificataion = verify.ToString();
+            registerSessionModel.EmailVerifyExpireTime = expireTime.ToTimeStamp();
             registerSessionModel.SessionId = sessionId;
 
             //将注册会话保存到Redis数据库 只有一个可以成功保存 
-            operateResult = await this.RegisterDAL.CreateSessionAsync(token, registerSessionModel, expireTime);
-            if (!operateResult.IsSuccess)
+            var createEmailSessionResult = await this.RegisterDAL.CreateEmailSessionAsync(emailHashCode, registerSessionModel, expireTime);
+            if (!createEmailSessionResult.IsSuccess)
             {
-                return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
+                return OperateResult.CreateFailResult<AESEncryptModel>(createEmailSessionResult);
             }
 
+            string emailRegisterSessionId = createEmailSessionResult.Data;
 
             //这里是通过邮箱服务发送验证码 （也可以剥离出来使用消息队列）
-            EmailRegisterVerificationModel emailRegisterVerificationModel = new EmailRegisterVerificationModel
+            EmailRegisterVerifyModel emailRegisterVerifyModel = new EmailRegisterVerifyModel
             {
                 Email = emailRegisterPostModel.Email,
-                Verification = $"{verification}",
+                Verify = $"{verify}",
             };
-            operateResult = await this.EmailService.SendVerificationAsync(emailRegisterVerificationModel);
+            //通过邮箱服务发送验证码
+            operateResult = await this.EmailService.SendVerifyAsync(emailRegisterVerifyModel);
             if (!operateResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
             }
 
-            //返回客户端验证码相关数据
-            var verificationResultModel = new RegisterVerificationModel()
+            //这里需要重新生成一个会话Id
+            var verifyResultModel = new RegisterVerifyModel()
             {
                 ExpireTime = expireTime.ToTimeStamp(),
-                Token = token
+                RegisterSessionId = emailRegisterSessionId
             };
 
             //AES对称加密
-            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verificationResultModel, sessionId);
+            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verifyResultModel, sessionId);
             if (!getAESEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
@@ -180,26 +176,40 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult> EmailVerificationValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult> EmailVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
             //获取解密数据
-            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerificationValidModel>(aesEncryptModel, sessionId);
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerifyValidModel>(aesEncryptModel, sessionId);
             if (!getAESDecryptResult.IsSuccess)
             {
-                return OperateResult.CreateFailResult<RegisterSessionModel>(getAESDecryptResult);
+                return OperateResult.CreateFailResult<EmailRegisterSessionModel>(getAESDecryptResult);
             }
-            var registerVerificationValidModel = getAESDecryptResult.Data;
+            var registerVerifyValidModel = getAESDecryptResult.Data;
 
-            //校验验证码获取会话数据
-            var verificationValidResult = await VerificationValidAsync(registerVerificationValidModel, sessionId, VerificationValidType.EmailValiType);
-            if (!verificationValidResult.IsSuccess)
+
+            //获取注册会话
+            var getRegisterSessionResult = await this.RegisterDAL.GetEmailSessionAsync(registerVerifyValidModel.RegisterSessionId);
+            if (!getRegisterSessionResult.IsSuccess)
             {
-                return verificationValidResult;
+                return getRegisterSessionResult;
             }
-            var registerSessionModel = verificationValidResult.Data;
+            var registerSessionModel = getRegisterSessionResult.Data;
+
+            //判断会话否相同
+            if (!sessionId.Equals(registerSessionModel.SessionId))
+            {
+                return OperateResult.CreateFailResult<PhoneRegisterSessionModel>($"请勿恶意发起注册！");
+            }
+
+            //验证验证码是否一致
+            if (!registerSessionModel.EmailVerificataion.Equals(registerVerifyValidModel.Verify))
+            {
+                //默认返回失败
+                return OperateResult.CreateFailResult<EmailRegisterSessionModel>("验证码错误！");
+            }
 
             //如果验证成功 就进入注册账号的逻辑
-            var registerAccountResult = await this.RegisterDAL.RegisterAccountAsync(registerSessionModel, registerVerificationValidModel.Token);
+            var registerAccountResult = await this.RegisterDAL.EmailRegisterAccountAsync(registerSessionModel, registerVerifyValidModel.RegisterSessionId);
             if (!registerAccountResult.IsSuccess)
             {
                 return registerAccountResult;
@@ -214,49 +224,51 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult<AESEncryptModel>> GetSMSVerificationAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult<AESEncryptModel>> GetSMSVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
-            //进行数据解密
-            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<SMSRegisterPostModel>(aesEncryptModel, sessionId);
-            if (!getAESDecryptResult.IsSuccess)
-            {
-                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
-            }
-            var smsRegisterPostModel = getAESDecryptResult.Data;
+            ////进行数据解密
+            //var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<SMSRegisterPostModel>(aesEncryptModel, sessionId);
+            //if (!getAESDecryptResult.IsSuccess)
+            //{
+            //    return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            //}
+            //var smsRegisterPostModel = getAESDecryptResult.Data;
 
-            //创建验证码
-            var verification = new Random(Guid.NewGuid().GetHashCode()).Next(100000, 999999);
-            //创建有效期
-            DateTime expireTime = DateTime.Now.AddSeconds(120);
+            ////创建验证码
+            //var verify = new Random(Guid.NewGuid().GetHashCode()).Next(100000, 999999);
+            ////创建有效期
+            //DateTime expireTime = DateTime.Now.AddSeconds(120);
 
-            //发送注册短信验证码
-            var sendVerificationResult = await this.SMSBLL.SendRegisterVerificationAsync(smsRegisterPostModel.CountryCode, smsRegisterPostModel.Phone, verification);
-            if (!sendVerificationResult.IsSuccess)
-            {
-                return OperateResult.CreateFailResult<AESEncryptModel>(sendVerificationResult);
-            }
+            ////发送注册短信验证码
+            //var sendVerifyResult = await this.SMSBLL.SendRegisterVerifyAsync(smsRegisterPostModel.CountryCode, smsRegisterPostModel.Phone, verify);
+            //if (!sendVerifyResult.IsSuccess)
+            //{
+            //    return OperateResult.CreateFailResult<AESEncryptModel>(sendVerifyResult);
+            //}
 
-            //更新注册会话
-            var updateRegisterSessionResult = await this.RegisterDAL.UpdateSessionAsync(smsRegisterPostModel.Token, verification, expireTime);
-            if (!updateRegisterSessionResult.IsSuccess)
-            {
-                return OperateResult.CreateFailResult<AESEncryptModel>(updateRegisterSessionResult);
-            }
+            ////更新注册会话
+            //var updateRegisterSessionResult = await this.RegisterDAL.UpdateSessionAsync(smsRegisterPostModel.Token, verify, expireTime);
+            //if (!updateRegisterSessionResult.IsSuccess)
+            //{
+            //    return OperateResult.CreateFailResult<AESEncryptModel>(updateRegisterSessionResult);
+            //}
 
-            //返回客户端验证码相关数据
-            var verificationResultModel = new RegisterVerificationModel()
-            {
-                ExpireTime = expireTime.ToTimeStamp(),
-                Token = smsRegisterPostModel.Token
-            };
+            ////返回客户端验证码相关数据
+            //var verifyResultModel = new RegisterVerifyModel()
+            //{
+            //    ExpireTime = expireTime.ToTimeStamp(),
+            //    Token = smsRegisterPostModel.Token
+            //};
 
-            //返回加密数据
-            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verificationResultModel, sessionId);
-            if (!getAESEncryptResult.IsSuccess)
-            {
-                return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
-            }
-            return getAESEncryptResult;
+            ////返回加密数据
+            //var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verifyResultModel, sessionId);
+            //if (!getAESEncryptResult.IsSuccess)
+            //{
+            //    return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
+            //}
+            //return getAESEncryptResult;
+
+            return OperateResult.CreateSuccessResult<AESEncryptModel>(null);
         }
 
         /// <summary>
@@ -265,79 +277,32 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult> SMSVerificationValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult> SMSVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
-            //获取解密数据
-            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerificationValidModel>(aesEncryptModel, sessionId);
-            if (!getAESDecryptResult.IsSuccess)
-            {
-                return OperateResult.CreateFailResult<RegisterSessionModel>(getAESDecryptResult);
-            }
-            var registerVerificationValidModel = getAESDecryptResult.Data;
+            ////获取解密数据
+            //var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerifyValidModel>(aesEncryptModel, sessionId);
+            //if (!getAESDecryptResult.IsSuccess)
+            //{
+            //    return OperateResult.CreateFailResult<EmailRegisterSessionModel>(getAESDecryptResult);
+            //}
+            //var registerVerifyValidModel = getAESDecryptResult.Data;
 
-            //校验验证码获取会话数据
-            var verificationValidResult = await VerificationValidAsync(registerVerificationValidModel, sessionId, VerificationValidType.SMSValidType);
-            if (!verificationValidResult.IsSuccess)
-            {
-                return verificationValidResult;
-            }
-            var registerSessionModel = verificationValidResult.Data;
+            ////校验验证码获取会话数据
+            //var verifyValidResult = await VerifyValidAsync(registerVerifyValidModel, sessionId, VerifyValidType.SMSValidType);
+            //if (!verifyValidResult.IsSuccess)
+            //{
+            //    return verifyValidResult;
+            //}
+            //var registerSessionModel = verifyValidResult.Data;
 
-            //如果验证成功 就进入注册账号的逻辑
-            var registerAccountResult = await this.RegisterDAL.RegisterAccountAsync(registerSessionModel, registerVerificationValidModel.Token);
-            if (!registerAccountResult.IsSuccess)
-            {
-                return registerAccountResult;
-            }
+            ////如果验证成功 就进入注册账号的逻辑
+            //var registerAccountResult = await this.RegisterDAL.RegisterAccountAsync(registerSessionModel, registerVerifyValidModel.Token);
+            //if (!registerAccountResult.IsSuccess)
+            //{
+            //    return registerAccountResult;
+            //}
 
             return OperateResult.CreateSuccessResult();
-        }
-
-
-        /// <summary>
-        /// 短信验证码验证
-        /// </summary>
-        /// <param name="aesEncryptModel">AES加密数据</param>
-        /// <param name="sessionId">会话主键</param>
-        /// <returns></returns>
-        private async Task<OperateResult<RegisterSessionModel>> VerificationValidAsync(RegisterVerificationValidModel registerVerificationValidModel, string sessionId, VerificationValidType verificationValidType)
-        {
-            //获取注册会话
-            var getRegisterSessionResult = await this.RegisterDAL.GetSessionAsync(registerVerificationValidModel.Token);
-            if (!getRegisterSessionResult.IsSuccess)
-            {
-                return getRegisterSessionResult;
-            }
-            var registerSessionModel = getRegisterSessionResult.Data;
-
-            //判断会话否相同
-            if (!sessionId.Equals(registerSessionModel.SessionId))
-            {
-                return OperateResult.CreateFailResult<RegisterSessionModel>($"请勿恶意发起注册！");
-            }
-
-            //验证逻辑
-            switch (verificationValidType)
-            {
-                case VerificationValidType.EmailValiType:
-                    //验证验证码是否一致
-                    if (!registerSessionModel.EmailVerificataion.Equals(registerVerificationValidModel.Verification))
-                    {
-                        //默认返回失败
-                        return OperateResult.CreateFailResult<RegisterSessionModel>("验证码错误！");
-                    }
-                    break;
-                case VerificationValidType.SMSValidType:
-                    //验证验证码是否一致
-                    if (!registerSessionModel.PhoneVerificataion.Equals(registerVerificationValidModel.Verification))
-                    {
-                        return OperateResult.CreateFailResult<RegisterSessionModel>("验证码错误！");
-                    }
-                    break;
-            }
-
-            return OperateResult.CreateSuccessResult(registerSessionModel);
-
         }
 
     }

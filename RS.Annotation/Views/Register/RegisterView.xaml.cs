@@ -38,25 +38,25 @@ namespace RS.Annotation.Views
                   OperateResult? operateResult = null;
                   switch (this.ViewModel.TaskStatus)
                   {
-                      case RegisterTaskStatus.GetEmailVerification:
+                      case RegisterTaskStatus.GetEmailVerify:
                           //this.ParentWin.SetLoadingText("正在获取邮箱验证码...");
-                          operateResult = await GetEmailVerificationAsync();
+                          operateResult = await GetEmailVerifyAsync();
                           break;
-                      case RegisterTaskStatus.EmailVerificationValid:
+                      case RegisterTaskStatus.EmailVerifyValid:
                           //this.ParentWin.SetLoadingText("正在校验验证码...");
-                          operateResult = await EmailVerificationValidAsync();
+                          operateResult = await EmailVerifyValidAsync();
                           if (operateResult.IsSuccess)
                           {
                               isReisterSuccess = true;
                           }
                           break;
-                      case RegisterTaskStatus.GetSMSVerification:
+                      case RegisterTaskStatus.GetSMSVerify:
                           //this.ParentWin.SetLoadingText("正在获取短信验证码...");
-                          operateResult = await GetSMSVerificationAsync();
+                          operateResult = await GetSMSVerifyAsync();
                           break;
-                      case RegisterTaskStatus.SMSVerificationValid:
+                      case RegisterTaskStatus.SMSVerifyValid:
                           //this.ParentWin.SetLoadingText("正在校验验证码...");
-                          operateResult = await SMSVerificationValidAsync();
+                          operateResult = await SMSVerifyValidAsync();
                           break;
                   }
                   return operateResult;
@@ -80,7 +80,7 @@ namespace RS.Annotation.Views
         /// 获取邮箱验证码
         /// </summary>
         /// <returns></returns>
-        private async Task<OperateResult> GetEmailVerificationAsync()
+        private async Task<OperateResult> GetEmailVerifyAsync()
         {
             //注册信息验证
             var emailRegisterModelValidPropertyResult = EmailRegisterModelValidProperty();
@@ -90,43 +90,43 @@ namespace RS.Annotation.Views
             }
 
             //如果邮箱验证通过 则往服务端发起验证码发送请求，
-            var getVerificationModelResult = await this.GetVerificationModelAsync();
-            if (!getVerificationModelResult.IsSuccess)
+            var getVerifyModelResult = await this.GetVerifyModelAsync();
+            if (!getVerifyModelResult.IsSuccess)
             {
-                return getVerificationModelResult;
+                return getVerifyModelResult;
             }
             this.Dispatcher.Invoke(() =>
             {
-                this.TxtEmailVerification.VerificationResultModel = getVerificationModelResult.Data;
+                this.TxtEmailVerify.VerifyResultModel = getVerifyModelResult.Data;
             });
 
             //如果验证码发送成功 返回成功
-            this.ViewModel.TaskStatus = RegisterTaskStatus.EmailVerificationValid;
+            this.ViewModel.TaskStatus = RegisterTaskStatus.EmailVerifyValid;
 
             return OperateResult.CreateSuccessResult();
         }
 
-        private async Task<OperateResult<VerificationModel>> GetVerificationModelAsync()
+        private async Task<OperateResult<VerifyModel>> GetVerifyModelAsync()
         {
 
             //如果邮箱验证通过 则往服务端发起验证码发送请求，
-            var getEmailVerificationResult = await RSAppAPI.Register.GetEmailVerification.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerificationModel>(nameof(RSAppAPI), new EmailRegisterPostModel()
+            var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(nameof(RSAppAPI), new EmailRegisterPostModel()
             {
                 Email = this.ViewModel.EmailRegisterModel.Email,
                 //这里需要将秘密进行SHA256加密
                 Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.EmailRegisterModel.Password),
             });
-            if (!getEmailVerificationResult.IsSuccess)
+            if (!getEmailVerifyResult.IsSuccess)
             {
-                return OperateResult.CreateFailResult<VerificationModel>(getEmailVerificationResult);
+                return OperateResult.CreateFailResult<VerifyModel>(getEmailVerifyResult);
             }
-            this.ViewModel.RegisterVerificationModel = getEmailVerificationResult.Data;
+            this.ViewModel.RegisterVerifyModel = getEmailVerifyResult.Data;
 
 
-            return OperateResult.CreateSuccessResult(new VerificationModel()
+            return OperateResult.CreateSuccessResult(new VerifyModel()
             {
-                IsSuccess = getEmailVerificationResult.IsSuccess,
-                ExpireTime = getEmailVerificationResult.Data.ExpireTime,
+                IsSuccess = getEmailVerifyResult.IsSuccess,
+                ExpireTime = getEmailVerifyResult.Data.ExpireTime,
             });
         }
 
@@ -134,32 +134,32 @@ namespace RS.Annotation.Views
         /// 校验邮箱验证码
         /// </summary>
         /// <returns></returns>
-        private async Task<OperateResult?> EmailVerificationValidAsync()
+        private async Task<OperateResult?> EmailVerifyValidAsync()
         {
             //验证用户是否输入验证码
-            var validResult = this.ViewModel.EmailRegisterModel.ValidProperty(this.ViewModel.EmailRegisterModel.Verification, nameof(this.ViewModel.EmailRegisterModel.Verification));
+            var validResult = this.ViewModel.EmailRegisterModel.ValidProperty(this.ViewModel.EmailRegisterModel.Verify, nameof(this.ViewModel.EmailRegisterModel.Verify));
             if (!validResult)
             {
                 return OperateResult.CreateFailResult("邮箱验证码输入验证失败");
             }
 
             //第一步 在本地先验证验证码是否失效
-            var expireTime = this.ViewModel.RegisterVerificationModel.ExpireTime;
+            var expireTime = this.ViewModel.RegisterVerifyModel.ExpireTime;
             if (expireTime <= DateTime.Now.ToTimeStamp())
             {
-                this.ViewModel.TaskStatus = RegisterTaskStatus.GetEmailVerification;
+                this.ViewModel.TaskStatus = RegisterTaskStatus.GetEmailVerify;
                 return OperateResult.CreateFailResult("邮箱验证码失效");
             }
 
             //往服务端发起请求验证用户输入的验证码是否和服务端存储的验证码一致
-            var emailVerificationValidResult = await RSAppAPI.Register.EmailVerificationValid.AESHttpPostAsync(nameof(RSAppAPI), new RegisterVerificationValidModel()
+            var emailVerifyValidResult = await RSAppAPI.Register.EmailVerifyValid.AESHttpPostAsync(nameof(RSAppAPI), new RegisterVerifyValidModel()
             {
-                Token = this.ViewModel.RegisterVerificationModel.Token,
-                Verification = this.ViewModel.EmailRegisterModel.Verification,
+                RegisterSessionId = this.ViewModel.RegisterVerifyModel.RegisterSessionId,
+                Verify = this.ViewModel.EmailRegisterModel.Verify,
             });
-            if (!emailVerificationValidResult.IsSuccess)
+            if (!emailVerifyValidResult.IsSuccess)
             {
-                return emailVerificationValidResult;
+                return emailVerifyValidResult;
             }
 
 
@@ -170,7 +170,7 @@ namespace RS.Annotation.Views
                 this.RegisterEnd?.Invoke(false);
             });
 
-            //this.ViewModel.TaskStatus = RegisterTaskStatus.GetSMSVerification;
+            //this.ViewModel.TaskStatus = RegisterTaskStatus.GetSMSVerify;
 
 
 
@@ -181,7 +181,7 @@ namespace RS.Annotation.Views
         /// 获取短信验证码
         /// </summary>
         /// <returns></returns>
-        private async Task<OperateResult?> GetSMSVerificationAsync()
+        private async Task<OperateResult?> GetSMSVerifyAsync()
         {
             //验证用户手机号码是否输出正确
             var validResult = this.ViewModel.SMSRegisterModel.ValidProperty(this.ViewModel.SMSRegisterModel.Phone, nameof(this.ViewModel.SMSRegisterModel.Phone));
@@ -194,7 +194,7 @@ namespace RS.Annotation.Views
 
 
             //如果成功
-            this.ViewModel.TaskStatus = RegisterTaskStatus.SMSVerificationValid;
+            this.ViewModel.TaskStatus = RegisterTaskStatus.SMSVerifyValid;
 
             return OperateResult.CreateSuccessResult();
         }
@@ -203,10 +203,10 @@ namespace RS.Annotation.Views
         /// 校验短信验证码
         /// </summary>
         /// <returns></returns>
-        private async Task<OperateResult?> SMSVerificationValidAsync()
+        private async Task<OperateResult?> SMSVerifyValidAsync()
         {
             //验证用户是否输入手机短信验证码
-            var validResult = this.ViewModel.SMSRegisterModel.ValidProperty(this.ViewModel.SMSRegisterModel.Verification, nameof(this.ViewModel.SMSRegisterModel.Verification));
+            var validResult = this.ViewModel.SMSRegisterModel.ValidProperty(this.ViewModel.SMSRegisterModel.Verify, nameof(this.ViewModel.SMSRegisterModel.Verify));
             if (!validResult)
             {
                 return OperateResult.CreateFailResult("短信验证码输入验证失败");
@@ -256,18 +256,18 @@ namespace RS.Annotation.Views
         /// 再次获取邮箱验证码
         /// </summary>
         /// <returns></returns>
-        private async Task<VerificationModel> TxtEmailVerification_GetVerificationClick()
+        private async Task<VerifyModel> TxtEmailVerify_GetVerifyClick()
         {
-            VerificationModel verificationModel = new VerificationModel();
+            VerifyModel verifyModel = new VerifyModel();
             var parentWin = this.TryFindParent<RSWindow>();
             var loadingInvokeResult = await parentWin.InvokeLoadingActionAsync(async () =>
                {
                    //如果邮箱验证通过 则往服务端发起验证码发送请求，
-                   return await this.GetVerificationModelAsync();
+                   return await this.GetVerifyModelAsync();
                });
             if (loadingInvokeResult.IsSuccess)
             {
-                return verificationModel;
+                return verifyModel;
             }
 
             return null;
@@ -277,7 +277,7 @@ namespace RS.Annotation.Views
         /// 再次获取短信验证码
         /// </summary>
         /// <returns></returns>
-        private async Task<VerificationModel> TxtSMSVerification_GetVerificationClick()
+        private async Task<VerifyModel> TxtSMSVerify_GetVerifyClick()
         {
 
             return null;

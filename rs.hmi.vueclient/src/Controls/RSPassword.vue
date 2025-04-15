@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import { IEvents } from '../Interfaces/IEvents';
+  import { IInputEvents } from '../Interfaces/IInputEvents';
   const Placeholder = defineModel('Placeholder', {
     type: String,
     default: '请输入密码'
@@ -46,7 +46,7 @@
     }
   }
   // 暴露方法给父组件
-  defineExpose<IEvents>({
+  defineExpose<IInputEvents>({
     Focus
   });
 </script>

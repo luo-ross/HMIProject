@@ -21,7 +21,7 @@
                 <Setter Property="IsEnabled" Value="False" />
                 <Setter Property="Visibility" Value="Collapsed" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerification">
+                    <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerify">
                         <Setter Property="IsEnabled" Value="True" />
                         <Setter Property="Visibility" Value="Visible" />
                     </DataTrigger>
@@ -79,7 +79,7 @@
                                     <Setter Property="IsEnabled" Value="False" />
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerification">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerify">
                                             <Setter Property="IsEnabled" Value="True" />
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
@@ -104,25 +104,25 @@
                             MaxLength="50"
                             Style="{StaticResource RSApp.Styles.RegisterPasswordStyle}" />
 
-                        <rs:RSVerificationTextBox
-                            x:Name="TxtEmailVerification"
+                        <rs:RSVerifyTextBox
+                            x:Name="TxtEmailVerify"
                             rs:ControlsHelper.IsRequired="False"
                             rs:TextBoxHelper.Watermark="请输入邮箱接收到的验证码"
-                            GetVerificationClick="TxtEmailVerification_GetVerificationClick"
-                            Verification="{Binding EmailRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}">
-                            <rs:RSVerificationTextBox.Style>
-                                <Style TargetType="{x:Type rs:RSVerificationTextBox}">
+                            GetVerifyClick="TxtEmailVerify_GetVerifyClick"
+                            Verify="{Binding EmailRegisterModel.Verify, UpdateSourceTrigger=PropertyChanged}">
+                            <rs:RSVerifyTextBox.Style>
+                                <Style TargetType="{x:Type rs:RSVerifyTextBox}">
                                     <Setter Property="IsEnabled" Value="False" />
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="EmailVerificationValid">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="EmailVerifyValid">
                                             <Setter Property="IsEnabled" Value="True" />
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </rs:RSVerificationTextBox.Style>
-                        </rs:RSVerificationTextBox>
+                            </rs:RSVerifyTextBox.Style>
+                        </rs:RSVerifyTextBox>
 
                         <rs:RSPhoneTextBox
                             x:Name="TxtPhone"
@@ -135,7 +135,7 @@
                                     <Setter Property="IsEnabled" Value="False" />
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetSMSVerification">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetSMSVerify">
                                             <Setter Property="IsEnabled" Value="True" />
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
@@ -143,25 +143,25 @@
                                 </Style>
                             </rs:RSPhoneTextBox.Style>
                         </rs:RSPhoneTextBox>
-                        <rs:RSVerificationTextBox
-                            x:Name="TxtSMSVerification"
+                        <rs:RSVerifyTextBox
+                            x:Name="TxtSMSVerify"
                             rs:ControlsHelper.IsRequired="False"
                             rs:TextBoxHelper.Watermark="请输入短信接收到的验证码"
-                            GetVerificationClick="TxtSMSVerification_GetVerificationClick"
-                            Verification="{Binding SMSRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}">
-                            <rs:RSVerificationTextBox.Style>
-                                <Style TargetType="{x:Type rs:RSVerificationTextBox}">
+                            GetVerifyClick="TxtSMSVerify_GetVerifyClick"
+                            Verify="{Binding SMSRegisterModel.Verify, UpdateSourceTrigger=PropertyChanged}">
+                            <rs:RSVerifyTextBox.Style>
+                                <Style TargetType="{x:Type rs:RSVerifyTextBox}">
                                     <Setter Property="IsEnabled" Value="False" />
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="SMSVerificationValid">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="SMSVerifyValid">
                                             <Setter Property="IsEnabled" Value="True" />
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </rs:RSVerificationTextBox.Style>
-                        </rs:RSVerificationTextBox>
+                            </rs:RSVerifyTextBox.Style>
+                        </rs:RSVerifyTextBox>
                         <Button
                             x:Name="BtnRegister"
                             Margin="5,20,5,0"
@@ -171,16 +171,16 @@
                                 <Style BasedOn="{StaticResource RSApp.Styles.LoginButtonStyle}" TargetType="{x:Type Button}">
                                     <Setter Property="Content" Value="继续" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerification">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetEmailVerify">
                                             <Setter Property="Content" Value="继续" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="EmailVerificationValid">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="EmailVerifyValid">
                                             <Setter Property="Content" Value="邮箱验证" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetSMSVerification">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="GetSMSVerify">
                                             <Setter Property="Content" Value="继续" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding TaskStatus}" Value="SMSVerificationValid">
+                                        <DataTrigger Binding="{Binding TaskStatus}" Value="SMSVerifyValid">
                                             <Setter Property="Content" Value="完成注册" />
                                         </DataTrigger>
                                     </Style.Triggers>

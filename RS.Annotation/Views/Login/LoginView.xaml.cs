@@ -44,16 +44,16 @@ namespace RS.Annotation.Views
             this.RSDesktop?.Close();
         }
 
-        private async Task<VerificationModel> TxtVerification_GetVerificationClick()
+        private async Task<VerifyModel> TxtVerify_GetVerifyClick()
         {
             //用户就在这里去往服务端发起请求获取验证码
             var expireTime = new DateTimeOffset(DateTime.Now.AddSeconds(60)).ToUnixTimeMilliseconds();
-            VerificationModel verificationResultModel = new VerificationModel()
+            VerifyModel verifyResultModel = new VerifyModel()
             {
                 IsSuccess = true,
                 ExpireTime = expireTime
             };
-            return verificationResultModel;
+            return verifyResultModel;
         }
 
         private async Task<QRCodeLoginResultModel> QRCodeLogin_OnGetLoginQRCode()

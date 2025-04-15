@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import type { IEvents } from '../Interfaces/IEvents';
+  import type { IInputEvents } from '../Interfaces/IInputEvents';
 
   const Placeholder = defineModel('Placeholder', {
     type: String,
@@ -38,7 +38,7 @@
   }
 
   // 暴露方法给父组件
-  defineExpose<IEvents>({
+  defineExpose<IInputEvents>({
     Focus
   });
 </script>

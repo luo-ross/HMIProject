@@ -535,9 +535,9 @@ namespace RS.HMIServer.BLL
         /// </summary>
         /// <param name="countryCode">国家区号</param>
         /// <param name="phone">电话号码</param>
-        /// <param name="verification">验证码</param>
+        /// <param name="verify">验证码</param>
         /// <returns></returns>
-        public async Task<OperateResult> SendRegisterVerificationAsync(string countryCode, string phone, int verification)
+        public async Task<OperateResult> SendRegisterVerifyAsync(string countryCode, string phone, int verify)
         {
             string accessKeyId = Configuration["ConnectionStrings:SMSConfig:AccessKeyId"];
             string accessKeySecret = Configuration["ConnectionStrings:SMSConfig:AccessKeySecret"];
@@ -571,7 +571,7 @@ namespace RS.HMIServer.BLL
              * 模板中的每个变量都必须赋值，且取值不能为空
              * 查看更多模板规范和变量规范:产品介绍>短信模板须知和短信变量须知
              */
-            string templateParas = $"[\"{verification}\"]"; //模板变量，此处以单变量验证码短信为例，请客户自行生成6位验证码，并定义为字符串类型，以杜绝首位0丢失的问题（例如：002569变成了2569）。
+            string templateParas = $"[\"{verify}\"]"; //模板变量，此处以单变量验证码短信为例，请客户自行生成6位验证码，并定义为字符串类型，以杜绝首位0丢失的问题（例如：002569变成了2569）。
 
             Signer signer = new Signer();
             signer.Key = accessKeyId;

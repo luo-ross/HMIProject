@@ -15,9 +15,9 @@ namespace RS.HMIServer.IBLL
         /// <summary>
         /// 发送邮箱验证码
         /// </summary>
-        /// <param name="emailRegisterVerificationModel">邮箱注册验证码实体</param>
+        /// <param name="emailRegisterVerifyModel">邮箱注册验证码实体</param>
         /// <returns></returns>
-        Task<OperateResult> SendVerificationAsync(EmailRegisterVerificationModel emailRegisterVerificationModel);
+        Task<OperateResult> SendVerifyAsync(EmailRegisterVerifyModel emailRegisterVerifyModel);
 
         /// <summary>
         /// 发送密码重置链接

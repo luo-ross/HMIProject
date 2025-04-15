@@ -91,9 +91,9 @@ namespace RS.HMIServer.BLL
         /// </summary>
         /// <param name="countryCode">国家区号</param>
         /// <param name="phone">电话号码</param>
-        /// <param name="verification">验证码</param>
+        /// <param name="verify">验证码</param>
         /// <returns></returns>
-        public async Task<OperateResult> SendRegisterVerificationAsync(string countryCode, string phone, int verification)
+        public async Task<OperateResult> SendRegisterVerifyAsync(string countryCode, string phone, int verify)
         {
             // 接收短信号码。号码格式为:国际区号+号码。例如:861503871****。
             string to = $"{countryCode}{phone}";
@@ -105,7 +105,7 @@ namespace RS.HMIServer.BLL
             // 短信模板变量对应的实际值,参数格式为JSON格式。如果模板中存在变量,该参数为必填项。例如:{"name":"xd","value":"hello"}
             string templateParam = new
             {
-                Code = $"{verification}"
+                Code = $"{verify}"
             }.ToJson();
 
 

@@ -21,12 +21,12 @@ namespace RS.HMIServer.Entity
         public string? UserPic { get; set; }
 
         /// <summary>
-        /// 邮箱
+        /// 邮箱 一个邮箱只能绑定一个手机号
         /// </summary>
         public string? Email { get; set; }
 
         /// <summary>
-        /// 电话
+        /// 电话 每个账户只能绑定一个手机号
         /// </summary>
         public string? Phone { get; set; }
 

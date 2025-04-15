@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Models
+namespace RS.Widgets.Models
 {
     /// <summary>
-    /// 注册验证码返回值类
+    /// 验证码类
     /// </summary>
-    public class RegisterVerificationModel
+    public  class VerifyModel
     {
         /// <summary>
-        /// 这个Token值就是Redis数据库的键值Key
+        /// 验证码是否获取成功
         /// </summary>
-        public string Token { get; set; }
+        public bool IsSuccess { get; set; }
 
         /// <summary>
-        /// 验证码有效时间
+        /// 时间戳 单位毫秒
         /// </summary>
         public long ExpireTime { get; set; }
     }

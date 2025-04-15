@@ -336,13 +336,13 @@
                                                     rs:TextBoxHelper.IsShowClearButton="True"
                                                     IsCloseWindowWhenCountryCodeSelected="True"
                                                     Phone="{Binding SMSRegisterModel.Phone, UpdateSourceTrigger=PropertyChanged}" />
-                                                <rs:RSVerificationTextBox
-                                                    x:Name="TxtVerification"
+                                                <rs:RSVerifyTextBox
+                                                    x:Name="TxtVerify"
                                                     Margin="5,10,5,0"
                                                     rs:ControlsHelper.IsRequired="False"
                                                     rs:TextBoxHelper.IsShowClearButton="True"
-                                                    GetVerificationClick="TxtVerification_GetVerificationClick"
-                                                    Verification="{Binding SMSRegisterModel.Verification, UpdateSourceTrigger=PropertyChanged}" />
+                                                    GetVerifyClick="TxtVerify_GetVerifyClick"
+                                                    Verify="{Binding SMSRegisterModel.Verify, UpdateSourceTrigger=PropertyChanged}" />
                                                 <Button
                                                     x:Name="BtnSMMLogin"
                                                     Margin="5,30,5,0"

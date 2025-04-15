@@ -12,7 +12,6 @@
 	<ItemGroup>
 		<Content Remove="Configs\log4net.config" />
 		<Content Remove="HtmlTemplates\PasswordReset.cshtml" />
-		<Content Remove="HtmlTemplates\RegisterVerification.cshtml" />
 		<Content Remove="wwwroot\ServerError.html" />
 	</ItemGroup>
 
@@ -21,9 +20,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Include="HtmlTemplates\PasswordReset.cshtml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Include="HtmlTemplates\RegisterVerification.cshtml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Include="wwwroot\ServerError.html" />

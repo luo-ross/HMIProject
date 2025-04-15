@@ -30,9 +30,9 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult<AESEncryptModel>> GetEmailVerification(AESEncryptModel aesEncryptModel)
+        public async Task<OperateResult<AESEncryptModel>> GetEmailVerify(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.GetEmailVerificationAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.GetEmailVerifyAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
 
@@ -43,9 +43,9 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult> EmailVerificationValid(AESEncryptModel aesEncryptModel)
+        public async Task<OperateResult> EmailVerifyValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.EmailVerificationValidAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.EmailVerifyValidAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
 
@@ -59,9 +59,9 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult<AESEncryptModel>> GetSMSVerification(AESEncryptModel aesEncryptModel)
+        public async Task<OperateResult<AESEncryptModel>> GetSMSVerify(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.GetSMSVerificationAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.GetSMSVerifyAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
 
@@ -72,9 +72,9 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult> SMSVerificationValid(AESEncryptModel aesEncryptModel)
+        public async Task<OperateResult> SMSVerifyValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.SMSVerificationValidAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.SMSVerifyValidAsync(aesEncryptModel, SessionId);
             return handleResult;
         }
         #endregion

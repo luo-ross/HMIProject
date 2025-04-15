@@ -17,8 +17,8 @@ namespace RS.HMIServer.IBLL
         /// </summary>
         /// <param name="countryCode">国家代码</param>
         /// <param name="phone">电话号码</param>
-        /// <param name="verification">验证码</param>
+        /// <param name="verify">验证码</param>
         /// <returns></returns>
-        Task<OperateResult> SendRegisterVerificationAsync(string countryCode, string phone, int verification);
+        Task<OperateResult> SendRegisterVerifyAsync(string countryCode, string phone, int verify);
     }
 }

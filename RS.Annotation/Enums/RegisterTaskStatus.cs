@@ -8,21 +8,21 @@
         /// <summary>
         /// 获取注册邮箱验证码
         /// </summary>
-        GetEmailVerification,
+        GetEmailVerify,
 
         /// <summary>
         /// 注册邮箱验证码验证
         /// </summary>
-        EmailVerificationValid,
+        EmailVerifyValid,
 
         /// <summary>
         /// 获取注册短信验证码
         /// </summary>
-        GetSMSVerification,
+        GetSMSVerify,
 
         /// <summary>
         /// 注册短信验证码验证
         /// </summary>
-        SMSVerificationValid,
+        SMSVerifyValid,
     }
 }

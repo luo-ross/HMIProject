@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Widgets.Models
+namespace RS.Models
 {
     /// <summary>
-    /// 验证码类
+    /// 注册验证码返回值类
     /// </summary>
-    public  class VerificationModel
+    public class RegisterVerifyModel
     {
         /// <summary>
-        /// 验证码是否获取成功
+        /// 注册会话Id
         /// </summary>
-        public bool IsSuccess { get; set; }
+        public string RegisterSessionId { get; set; }
 
         /// <summary>
-        /// 时间戳 单位毫秒
+        /// 验证码有效时间
         /// </summary>
         public long ExpireTime { get; set; }
     }

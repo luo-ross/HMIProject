@@ -41,17 +41,17 @@ namespace RS.Annotation.Models
 
 
 
-        private string verification;
+        private string verify;
         /// <summary>
         /// 验证码
         /// </summary>
         [Required(ErrorMessage = "验证码不能为空")]
-        public string Verification
+        public string Verify
         {
-            get { return verification; }
+            get { return verify; }
             set
             {
-                OnPropertyChanged(ref verification, value);
+                OnPropertyChanged(ref verify, value);
                 ValidProperty(value);
             }
         }

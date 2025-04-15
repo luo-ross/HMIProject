@@ -39,21 +39,21 @@ namespace RS.HMIServer.DAL
 
 
         /// <summary>
-        /// 获取注册会话
+        /// 通过邮箱获取注册会话
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<OperateResult<RegisterSessionModel>> GetSessionAsync(string token)
+        public async Task<OperateResult<EmailRegisterSessionModel>> GetEmailSessionAsync(string emailHashCode)
         {
             //根据会话Token获取会话数据
-            var stringSetResult = await this.RegisterRedis.StringGetAsync(token);
+            var stringSetResult = await this.RegisterRedis.StringGetAsync(emailHashCode);
             if (!stringSetResult.HasValue)
             {
-                return OperateResult.CreateFailResult<RegisterSessionModel>("未获取到注册会话");
+                return OperateResult.CreateFailResult<EmailRegisterSessionModel>("未获取到注册会话");
             }
 
             //获取Json字符串
-            var result = stringSetResult.ToString().ToObject<RegisterSessionModel>();
+            var result = stringSetResult.ToString().ToObject<EmailRegisterSessionModel>();
 
             return OperateResult.CreateSuccessResult(result);
         }
@@ -63,13 +63,13 @@ namespace RS.HMIServer.DAL
         /// 更新注册会话
         /// </summary>
         /// <param name="token">注册会话Id</param>
-        /// <param name="verification">短信验证码</param>
+        /// <param name="verify">短信验证码</param>
         /// <param name="expireTime">验证码失效时间</param>
         /// <returns></returns>
-        public async Task<OperateResult> UpdateSessionAsync(string token, int verification, DateTime expireTime)
+        public async Task<OperateResult> UpdateEmailSessionAsync(string token, int verify, DateTime expireTime)
         {
             //获取注册会话
-            var getRegisterSessionResult = await GetSessionAsync(token);
+            var getRegisterSessionResult = await GetEmailSessionAsync(token);
             if (!getRegisterSessionResult.IsSuccess)
             {
                 return getRegisterSessionResult;
@@ -77,9 +77,8 @@ namespace RS.HMIServer.DAL
             var registerSessionModel = getRegisterSessionResult.Data;
 
             //更新会话
-            registerSessionModel.PhoneVerificataion = verification.ToString();
-            registerSessionModel.PhoneVerificationExpireTime = expireTime.ToTimeStamp();
-
+            registerSessionModel.EmailVerificataion = verify.ToString();
+            registerSessionModel.EmailVerifyExpireTime = expireTime.ToTimeStamp();
 
             //保存到数据库
             var jsonStr = registerSessionModel.ToJson();
@@ -99,44 +98,58 @@ namespace RS.HMIServer.DAL
         /// <summary>
         /// 创建注册会话
         /// </summary>
-        /// <param name="token">注册会话主键</param>
+        /// <param name="emailHashCode">注册会话邮箱哈希</param>
         /// <param name="registerSessionModel">注册会话类</param>
         /// <param name="expireTime">注册会话过期时间</param>
         /// <returns></returns>
-        public async Task<OperateResult> CreateSessionAsync(string token, RegisterSessionModel registerSessionModel, DateTime expireTime)
+        public async Task<OperateResult<string>> CreateEmailSessionAsync(string emailHashCode, EmailRegisterSessionModel registerSessionModel, DateTime expireTime)
         {
             //将会话提示转为字符串存储到Redis数据库
             var jsonStr = registerSessionModel.ToJson();
             TimeSpan timeSpan = expireTime.Subtract(DateTime.Now);
-            var result = await this.RegisterRedis.StringSetAsync(token, jsonStr, timeSpan, When.NotExists);
+            var result = await this.RegisterRedis.StringSetAsync(emailHashCode, jsonStr, timeSpan, When.NotExists);
             if (!result)
             {
-                return new OperateResult
+                return new OperateResult<string>
                 {
                     Message = "注册会话已存在，请不要重复发起注册"
                 };
             }
-            return OperateResult.CreateSuccessResult();
+
+            //创建邮箱注册会话主键
+            string emailRegisterSessionId = Guid.NewGuid().ToString();
+            //创建会话映射 只有知道这个主键的才能获取到注册信息
+            result = await this.RegisterRedis.StringSetAsync(emailRegisterSessionId, emailHashCode, timeSpan, When.NotExists);
+            if (!result)
+            {
+                //这里如果失败 说明数据库出问题了
+                return new OperateResult<string>
+                {
+                    Message = "出错了，暂时无法进行注册"
+                };
+            }
+
+            return OperateResult.CreateSuccessResult(emailRegisterSessionId);
         }
 
 
         /// <summary>
         /// 移除注册会话
         /// </summary>
-        /// <param name="token">会话主键</param>
+        /// <param name="emailRegisterSessionId">邮箱注册会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult> RemoveSessionAsync(string token)
+        public async Task<OperateResult> RemoveSessionAsync(string emailRegisterSessionId)
         {
-            await this.RegisterRedis.KeyDeleteAsync(token);
+            await this.RegisterRedis.KeyDeleteAsync(emailRegisterSessionId);
 
             return OperateResult.CreateSuccessResult();
         }
 
         /// <summary>
-        /// 注册账号
+        /// 通过邮箱注册账号
         /// </summary>
         /// <returns></returns>
-        public async Task<OperateResult> RegisterAccountAsync(RegisterSessionModel registerSessionModel, string token)
+        public async Task<OperateResult> EmailRegisterAccountAsync(EmailRegisterSessionModel registerSessionModel, string token)
         {
             //获取用户注册信息
             if (registerSessionModel == null)
@@ -150,12 +163,10 @@ namespace RS.HMIServer.DAL
             //重新生成密码
             var password = this.CryptographyBLL.GetSHA256HashCode($"{registerSessionModel.Password}-{salt}");
 
-
             //创建用户数据
             var userEntity = new UserEntity()
             {
                 Email = registerSessionModel.Email,
-                Phone = registerSessionModel.Phone,
             }.Create();
 
             //创建用户登录数据
@@ -197,7 +208,7 @@ namespace RS.HMIServer.DAL
             var removeSessioResult = await this.RemoveSessionAsync(token);
             if (!removeSessioResult.IsSuccess)
             {
-                return OperateResult.CreateFailResult<AESEncryptModel>(removeSessioResult);
+                return removeSessioResult;
             }
 
             return OperateResult.CreateSuccessResult();
@@ -212,10 +223,10 @@ namespace RS.HMIServer.DAL
         /// <returns>如果注册返回true 未注册 返回false</returns>
         public async Task<OperateResult> IsEmailRegisteredAsync(string emailAddress)
         {
-            string token = this.CryptographyBLL.GetMD5HashCode(emailAddress);
+            string emailHashCode = this.CryptographyBLL.GetMD5HashCode(emailAddress);
 
             //从Redis查询是否已经注册过了
-            var isKeyExists = await this.RegisterRedis.KeyExistsAsync($"Registerd:{token}");
+            var isKeyExists = await this.RegisterRedis.KeyExistsAsync($"Registerd:{emailHashCode}");
             //如果已经注册直接返回
             if (isKeyExists)
             {
@@ -228,7 +239,7 @@ namespace RS.HMIServer.DAL
             if (anyResult.IsSuccess)
             {
                 //如果已经注册写入Redis 存储，避免重复查询数据库
-                await this.RegisterRedis.StringSetAsync($"Registerd:{token}", RedisValue.EmptyString, new TimeSpan(30 * TimeSpan.TicksPerMinute));
+                await this.RegisterRedis.StringSetAsync($"Registerd:{emailHashCode}", RedisValue.EmptyString, new TimeSpan(30 * TimeSpan.TicksPerMinute));
                 return OperateResult.CreateSuccessResult();
             }
 

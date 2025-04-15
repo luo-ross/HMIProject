@@ -77,7 +77,7 @@
   });
 
 
-  async function InvokeLoadingActionAsync(func: Func<Promise<SimpleOperateResult>>): Promis<SimpleOperateResult> {
+  async function InvokeLoadingActionAsync<T>(func: Func<Promise<GenericOperateResult<T>>>): Promis<GenericOperateResult<T>> {
 
     try {
 

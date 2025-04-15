@@ -11,17 +11,22 @@ const router = createRouter({
       component: () => import('../Views/Login/LoginView.vue')
     },
     {
-      path: '/Login/Index',
+      path: '/Login',
       name: 'Login',
       component: () => import('../Views/Login/LoginView.vue')
     },
     {
-      path: '/Register/Index',
+      path: '/Register',
       name: 'Register',
       component: () => import('../Views/Register/RegisterView.vue')
     },
     {
-      path: '/Home/Index',
+      path: '/EmailVerify',
+      name: 'EmailVerify',
+      component: () => import('../Views/EmailVerify/EmailVerifyView.vue')
+    },
+    {
+      path: '/Home',
       name: 'Home',
       component: () => import('../Views/Home/HomeView.vue')
     }
@@ -31,7 +36,7 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   // 白名单，不需要验证的路由
-  const whiteList = ['/Login/Index']
+  const whiteList = ['/Login']
   if (whiteList.includes(to.path)) {
     next();
     return;
@@ -41,14 +46,14 @@ router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, n
   const getSessionModelResult = Cryptography.GetSessionModelFromStorage()
   if (!getSessionModelResult.IsSuccess) {
     // 重定向到登录页，并添加时间戳
-    next('/Login/Index')
+    next('/Login')
     return
   }
 
   const sessionModel = getSessionModelResult.Data
   if (!sessionModel?.Token) {
     // 重定向到登录页，并添加时间戳
-    next('/Login/Index')
+    next('/Login')
     return
   }
   next()

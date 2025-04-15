@@ -41,12 +41,12 @@ namespace RS.RESTfulApi
             /// <summary>
             /// 获取注册邮箱验证码接口
             /// </summary>
-            public static readonly string GetEmailVerification = $"/Api/{ApiVersion}/Register/GetEmailVerification";
+            public static readonly string GetEmailVerify = $"/Api/{ApiVersion}/Register/GetEmailVerify";
 
             /// <summary>
             /// 注册邮箱验证码验证接口
             /// </summary>
-            public static readonly string EmailVerificationValid = $"/Api/{ApiVersion}/Register/EmailVerificationValid";
+            public static readonly string EmailVerifyValid = $"/Api/{ApiVersion}/Register/EmailVerifyValid";
         }
 
         /// <summary>

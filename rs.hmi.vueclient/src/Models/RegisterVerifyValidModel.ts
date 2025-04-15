@@ -1,7 +1,7 @@
 /**
  * 注册验证码类
  */
-export class SessionModel {
+export class RegisterVerifyValidModel {
   /**
    * 注册会话Id
    */
@@ -10,6 +10,6 @@ export class SessionModel {
   /**
    * 验证码 
    */
-  public Verification: string | null = null;
+  public Verify: string | null = null;
 
 }

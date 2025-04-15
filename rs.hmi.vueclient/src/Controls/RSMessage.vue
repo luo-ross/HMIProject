@@ -60,56 +60,56 @@
   const MessageType = defineModel('MessageType');
 
   let TimerId: number = -1;
-  function ShowDangerMsg(msg: string): void {
+  function ShowDangerMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Danger, msg);
   }
 
-  function ShowDarkMsg(msg: string): void {
+  function ShowDarkMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Dark, msg);
   }
 
-  function ShowDismissibleMsg(msg: string): void {
+  function ShowDismissibleMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Dismissible, msg);
   }
 
-  function ShowHeadingMsg(msg: string): void {
+  function ShowHeadingMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Heading, msg);
   }
 
 
-  function ShowInfoMsg(msg: string): void {
+  function ShowInfoMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Info, msg);
   }
 
 
-  function ShowLightMsg(msg: string): void {
+  function ShowLightMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Light, msg);
   }
 
 
-  function ShowLinkMsg(msg: string): void {
+  function ShowLinkMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Link, msg);
   }
 
 
-  function ShowPrimaryMsg(msg: string): void {
+  function ShowPrimaryMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Primary, msg);
   }
 
 
-  function ShowSecondaryMsg(msg: string): void {
+  function ShowSecondaryMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Secondary, msg);
   }
 
 
-  function ShowSuccessMsg(msg: string): void {
+  function ShowSuccessMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Success, msg);
   }
 
   /**
    * 显示信息消息
    */
-  function ShowWarningMsg(msg: string): void {
+  function ShowWarningMsg(msg: string | null): void {
     ShowMsg(MessageEnum.Warning, msg);
   }
 
@@ -124,7 +124,7 @@
   /**
    * 显示消息
    */
-  function ShowMsg(type: MessageType, msg: string): void {
+  function ShowMsg(type: MessageType, msg: string| null): void {
     ClearMsg();
     Message.value = msg;
     MessageType.value = type;

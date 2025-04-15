@@ -116,7 +116,7 @@ namespace HslCommunication.Language
         public override string NetClientFull => "The server hosts the upper limit and receives an exceeded request connection.";
         public override string NetClientLoginFailed => "Error in Client logon: ";
         public override string NetHeartCheckFailed => "Heartbeat Validation exception: ";
-        public override string NetHeartCheckTimeout => "Heartbeat verification timeout, force offline: ";
+        public override string NetHeartCheckTimeout => "Heartbeat verify timeout, force offline: ";
         public override string DataSourseFormatError => "Data source format is incorrect";
         public override string ServerFileCheckFailed => "Server confirmed file failed, please re-upload";
         public override string ClientOnlineInfo => "Client [ {0} ] Online";

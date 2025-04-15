@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.Models
+namespace RS.Commons.Enums
 {
     /// <summary>
-    /// 注册验证码类
+    /// 注册验证码验证类型
     /// </summary>
-    public class RegisterVerificationValidModel
+    public enum VerifyValidType
     {
         /// <summary>
-        /// 注册会话Id
+        /// 邮箱验证类型
         /// </summary>
-        public string Token { get; set; }
+        EmailValiType,
 
         /// <summary>
-        /// 验证码
+        /// 短信验证类型
         /// </summary>
-        public string Verification { get; set; }
+        SMSValidType,
     }
 }

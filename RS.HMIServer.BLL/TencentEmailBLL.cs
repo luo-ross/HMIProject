@@ -46,13 +46,13 @@ namespace RS.HMIServer.BLL
         /// <summary>
         /// 发送邮箱验证码
         /// </summary>
-        /// <param name="emailRegisterVerificationModel">邮箱注册验证码实体</param>
+        /// <param name="emailRegisterVerifyModel">邮箱注册验证码实体</param>
         /// <returns></returns>
-        public async Task<OperateResult> SendVerificationAsync(EmailRegisterVerificationModel emailRegisterVerificationModel)
+        public async Task<OperateResult> SendVerifyAsync(EmailRegisterVerifyModel emailRegisterVerifyModel)
         {
             (string userName, string password, string host, int port) = GetEmailConfig();
-            var messageBody = await GetMessageBody("RegisterVerification", emailRegisterVerificationModel);
-            var mimeMessage = GetMimeMessage(userName, emailRegisterVerificationModel.Email, "注册验证码", messageBody);
+            var messageBody = await GetMessageBody("RegisterVerify", emailRegisterVerifyModel);
+            var mimeMessage = GetMimeMessage(userName, emailRegisterVerifyModel.Email, "注册验证码", messageBody);
             return await SendEmailAsync(host, port, userName, password, mimeMessage);
         }
 

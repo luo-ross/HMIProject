@@ -27,9 +27,9 @@ namespace RS.HMIServer.BLL
         /// </summary>
         /// <param name="countryCode">国家区号</param>
         /// <param name="phone">电话号码</param>
-        /// <param name="verification">验证码</param>
+        /// <param name="verify">验证码</param>
         /// <returns></returns>
-        public async Task<OperateResult> SendRegisterVerificationAsync(string countryCode, string phone, int verification)
+        public async Task<OperateResult> SendRegisterVerifyAsync(string countryCode, string phone, int verify)
         {
 
             /* 必要步骤：
@@ -111,7 +111,7 @@ namespace RS.HMIServer.BLL
 
 
             /* 模板参数: 模板参数的个数需要与 TemplateId 对应模板的变量个数保持一致，若无模板参数，则设置为空 */
-            req.TemplateParamSet = new string[] { $"{verification}" };
+            req.TemplateParamSet = new string[] { $"{verify}" };
            
             /* 下发手机号码，采用 E.164 标准，+[国家或地区码][手机号]
              * 示例如：+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/

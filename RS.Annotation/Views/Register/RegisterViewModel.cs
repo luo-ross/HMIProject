@@ -70,16 +70,16 @@ namespace RS.Annotation.Views
         }
 
 
-        private RegisterVerificationModel registerVerificationModel;
+        private RegisterVerifyModel registerVerifyModel;
         /// <summary>
         /// 注册验证码
         /// </summary>
-        public RegisterVerificationModel RegisterVerificationModel
+        public RegisterVerifyModel RegisterVerifyModel
         {
-            get { return registerVerificationModel; }
+            get { return registerVerifyModel; }
             set
             {
-                OnPropertyChanged(ref registerVerificationModel, value);
+                OnPropertyChanged(ref registerVerifyModel, value);
             }
         }
 

@@ -12,7 +12,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <Style TargetType="{x:Type rs:RSVerificationTextBox}">
+    <Style TargetType="{x:Type rs:RSVerifyTextBox}">
         <Setter Property="Background" Value="#FFF" />
         <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="BorderThickness" Value="1" />
@@ -22,7 +22,7 @@
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type rs:RSVerificationTextBox}">
+                <ControlTemplate TargetType="{x:Type rs:RSVerifyTextBox}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -43,7 +43,7 @@
                                     <ColumnDefinition Width="auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    x:Name="PART_TxtVerification"
+                                    x:Name="PART_TxtVerify"
                                     Grid.Column="0"
                                     rs:ControlsHelper.CornerRadius="0"
                                     rs:TextBoxHelper.IsShowClearButton="True"
@@ -52,7 +52,7 @@
                                     BorderThickness="0"
                                     MaxLength="9"
                                     Style="{StaticResource RSApp.Styles.TextBoxStyle}"
-                                    Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Verification, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Verify, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <Border
                                     x:Name="PART_ValidErrorTip"
                                     Grid.Column="1"
@@ -61,7 +61,7 @@
                                 </Border>
                                 <Grid Grid.Column="2">
                                     <Button
-                                        x:Name="PART_BtnVerification"
+                                        x:Name="PART_BtnVerify"
                                         Margin="0,0,5,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
@@ -80,12 +80,12 @@
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsVerificationSuccess" Value="True">
-                            <Setter TargetName="PART_BtnVerification" Property="Visibility" Value="Collapsed" />
+                        <Trigger Property="IsVerifySuccess" Value="True">
+                            <Setter TargetName="PART_BtnVerify" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_TxtExpireTime" Property="Visibility" Value="Visible" />
                         </Trigger>
 
-                        <Trigger SourceName="PART_TxtVerification" Property="IsFocused" Value="True">
+                        <Trigger SourceName="PART_TxtVerify" Property="IsFocused" Value="True">
                             <Setter Property="BorderBrush" Value="#06B025" />
                         </Trigger>
 

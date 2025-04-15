@@ -125,7 +125,7 @@ namespace HslCommunication.Profinet.Siemens
             OperateResult<byte[]> read = ReadFromCoreServer( command.Content );
             if (!read.IsSuccess) return read;
 
-            // 错误码验证 -> Error code Verification
+            // 错误码验证 -> Error code Verify
             if (read.Content[8] != 0x00) return new OperateResult<byte[]>( read.Content[8], StringResources.Language.SiemensFWError );
 
             // 读取正确 -> Read Right
@@ -176,7 +176,7 @@ namespace HslCommunication.Profinet.Siemens
             OperateResult<byte[]> write = ReadFromCoreServer( command.Content );
             if (!write.IsSuccess) return write;
 
-            // 错误码验证 -> Error code Verification
+            // 错误码验证 -> Error code Verify
             if (write.Content[8] != 0x00) return new OperateResult( write.Content[8], StringResources.Language.SiemensWriteError + write.Content[8] );
 
             // 写入成功 -> Write Right
