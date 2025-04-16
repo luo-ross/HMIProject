@@ -9,36 +9,42 @@ namespace RS.Models
     /// <summary>
     /// 客户端类型
     /// </summary>
-    public class AudienceType
+    public class AudiencesType
     {
+       
         /// <summary>
         /// Windows客户端
         /// </summary>
-        public static readonly string WindowsAudience = "WindowsAudience";
+        public static readonly string Windows = "Windows";
 
         /// <summary>
         /// 安卓客户端
         /// </summary>
-        public static readonly string AndriodAudience = "AndriodAudience";
+        public static readonly string Andriod = "Andriod";
 
         /// <summary>
         /// IOS客户端
         /// </summary>
-        public static readonly string IOSAudience = "IOSAudience";
+        public static readonly string IOS = "IOS";
 
         /// <summary>
         /// 微信客户端
         /// </summary>
-        public static readonly string WeChatAudience = "WeChatAudience";
+        public static readonly string WeChat = "WeChat";
 
         /// <summary>
         /// 钉钉客户端
         /// </summary>
-        public static readonly string DingTalkAudience = "DingTalkAudience";
+        public static readonly string DingTalk = "DingTalk";
 
         /// <summary>
         /// 抖音客户端
         /// </summary>
-        public static readonly string TikTalkAudience = "TikTalkAudience";
+        public static readonly string TikTalk = "TikTalk";
+
+        /// <summary>
+        /// 网页端
+        /// </summary>
+        public static readonly string Web = "Web";
     }
 }

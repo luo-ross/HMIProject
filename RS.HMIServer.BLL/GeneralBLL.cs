@@ -32,22 +32,28 @@ namespace RS.HMIServer.BLL
             GeneralDAL = generalDAL;
         }
 
-        public OperateResult<string> GenerateJWTToken(string audienceType, List<Claim> claimList)
+        public OperateResult<string> GenerateJWTToken(List<Claim> claimList, string audiencesType, DateTime? expires = null)
         {
+            //默认7天
+            if (expires == null)
+            {
+                expires = DateTime.UtcNow.AddDays(7);
+            }
             var tokenHandler = new JsonWebTokenHandler();
             var subject = new ClaimsIdentity();
-            subject.AddClaim(new Claim(ClaimTypes.Role, "Test"));
             foreach (var claim in claimList)
             {
                 subject.AddClaim(claim);
             }
             string tokenSecurityKey = Configuration["ConnectionStrings:JWTConfig:SecurityKey"];
+            string issuer = Configuration["ConnectionStrings:JWTConfig:Issuer"];
+            //这里实际上是就是添加了一堆Claim
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Issuer = "http://wpf.mycompany.com/authapi",
-                Audience = audienceType,
+                Issuer = issuer,
+                Audience = audiencesType,
                 Subject = subject,
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = expires,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSecurityKey)), SecurityAlgorithms.HmacSha256Signature)
             };
             string token = tokenHandler.CreateToken(tokenDescriptor);
@@ -226,7 +232,7 @@ namespace RS.HMIServer.BLL
             };
 
             //通过JWT 生成Token  待处理
-            var generateJWTTokenResult = this.GenerateJWTToken(sessionRequestModel.AudienceType, claimList);
+            var generateJWTTokenResult = this.GenerateJWTToken(claimList, sessionRequestModel.AudiencesType);
             if (!generateJWTTokenResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(generateJWTTokenResult);

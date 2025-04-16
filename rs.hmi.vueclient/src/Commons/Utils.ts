@@ -1,12 +1,7 @@
-import { ref } from 'vue'
-
 /**
  * 通用工具类
  */
 export class CommonUtils {
-  public Message = ref('')
-  public MessageType = ref('')
-
   private TimerId: number = -1;
 
   /**

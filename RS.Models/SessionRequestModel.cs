@@ -24,6 +24,6 @@ namespace RS.Models
         /// <summary>
         /// 客户端类型
         /// </summary>
-        public string AudienceType { get; set; }
+        public string AudiencesType { get; set; }
     }
 }

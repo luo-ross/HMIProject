@@ -40,7 +40,7 @@ async function initDefaultKeys() {
         Nonce: createRandCode(10).toString(),
         TimeStamp: timestamp.toString(),
         MsgSignature: null,
-        AudienceType: "WebAudience"
+        AudiencesType: "Web"
     };
 
     const arrayList = [

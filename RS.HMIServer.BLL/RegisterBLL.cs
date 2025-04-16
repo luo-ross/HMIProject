@@ -7,6 +7,7 @@ using RS.HMIServer.IBLL;
 using RS.HMIServer.IDAL;
 using RS.HMIServer.Models;
 using RS.Models;
+using System.Security.Claims;
 
 namespace RS.HMIServer.BLL
 {
@@ -66,7 +67,7 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult<AESEncryptModel>> GetEmailVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult<AESEncryptModel>> GetEmailVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences)
         {
             //进行数据解密
             var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<EmailRegisterPostModel>(aesEncryptModel, sessionId);
@@ -146,6 +147,7 @@ namespace RS.HMIServer.BLL
                 Email = emailRegisterPostModel.Email,
                 Verify = $"{verify}",
             };
+
             //通过邮箱服务发送验证码
             operateResult = await this.EmailService.SendVerifyAsync(emailRegisterVerifyModel);
             if (!operateResult.IsSuccess)
@@ -153,11 +155,32 @@ namespace RS.HMIServer.BLL
                 return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
             }
 
+
+            //如果邮件发送成功 则生成新的Token给到用户
+            //并且这个新的凭证有效期是2分钟
+            //只有这个Token的用户才能访问接口EmailVerifyValid
+            var claimList = new List<Claim>
+            {
+                new Claim(ClaimTypes.Sid, sessionId),
+                new Claim(ClaimTypes.Role,"EmailVerifyValid")
+            };
+
+            //通过JWT 生成Token  待处理
+            var generateJWTTokenResult = this.GeneralBLL.GenerateJWTToken(claimList, audiences);
+            if (!generateJWTTokenResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(generateJWTTokenResult);
+            }
+
+            string token = generateJWTTokenResult.Data;
+
+
             //这里需要重新生成一个会话Id
             var verifyResultModel = new RegisterVerifyModel()
             {
                 ExpireTime = expireTime.ToTimeStamp(),
-                RegisterSessionId = emailRegisterSessionId
+                RegisterSessionId = emailRegisterSessionId,
+                Token = token,
             };
 
             //AES对称加密
@@ -176,7 +199,7 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult> EmailVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult> EmailVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences)
         {
             //获取解密数据
             var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerifyValidModel>(aesEncryptModel, sessionId);
@@ -224,7 +247,7 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult<AESEncryptModel>> GetSMSVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult<AESEncryptModel>> GetSMSVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences)
         {
             ////进行数据解密
             //var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<SMSRegisterPostModel>(aesEncryptModel, sessionId);
@@ -277,7 +300,7 @@ namespace RS.HMIServer.BLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        public async Task<OperateResult> SMSVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        public async Task<OperateResult> SMSVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences)
         {
             ////获取解密数据
             //var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RegisterVerifyValidModel>(aesEncryptModel, sessionId);

@@ -227,7 +227,7 @@ namespace RS.Widgets.Controls
                 RSASignPublicKey = globalRSASignPublicKey,
                 Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
-                AudienceType = AudienceType.WindowsAudience,
+                AudiencesType = AudiencesType.Windows,
             };
 
             //数据按照顺序组成数组

@@ -17,7 +17,7 @@ export class SessionRequestModel extends SignModel {
   /**
    * 客户端类型
    */
-  public AudienceType: string | null = null;
+  public AudiencesType: string | null = null;
 
 }
 

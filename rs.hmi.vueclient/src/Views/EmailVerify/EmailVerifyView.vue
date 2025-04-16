@@ -86,12 +86,12 @@
         <div class="email-verify-right">
           <div class="email-verify-header">邮箱验证</div>
           <div class="verify-input-border">
-            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyCode.value[0]" @input="(e) => ViewModel.HandleInput(0, e)" @keydown="(e) => ViewModel.HandleKeyDown(0, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref=> ViewModel.RSInputList[0] = ref" />
-            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyCode.value[1]" @input="(e) => ViewModel.HandleInput(1, e)" @keydown="(e) => ViewModel.HandleKeyDown(1, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[1] = ref" />
-            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyCode.value[2]" @input="(e) => ViewModel.HandleInput(2, e)" @keydown="(e) => ViewModel.HandleKeyDown(2, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[2] = ref" />
-            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyCode.value[3]" @input="(e) => ViewModel.HandleInput(3, e)" @keydown="(e) => ViewModel.HandleKeyDown(3, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[3] = ref" />
-            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyCode.value[4]" @input="(e) => ViewModel.HandleInput(4, e)" @keydown="(e) => ViewModel.HandleKeyDown(4, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[4] = ref" />
-            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyCode.value[5]" @input="(e) => ViewModel.HandleInput(5, e)" @keydown="(e) => ViewModel.HandleKeyDown(5, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[5] = ref" />
+            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyList.value[0]" @input="(e) => ViewModel.HandleInput(0, e)" @keydown="(e) => ViewModel.HandleKeyDown(0, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref=> ViewModel.RSInputList[0] = ref" />
+            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyList.value[1]" @input="(e) => ViewModel.HandleInput(1, e)" @keydown="(e) => ViewModel.HandleKeyDown(1, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[1] = ref" />
+            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyList.value[2]" @input="(e) => ViewModel.HandleInput(2, e)" @keydown="(e) => ViewModel.HandleKeyDown(2, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[2] = ref" />
+            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyList.value[3]" @input="(e) => ViewModel.HandleInput(3, e)" @keydown="(e) => ViewModel.HandleKeyDown(3, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[3] = ref" />
+            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyList.value[4]" @input="(e) => ViewModel.HandleInput(4, e)" @keydown="(e) => ViewModel.HandleKeyDown(4, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[4] = ref" />
+            <input class="verify-input" type="text" maxlength="1" v-model="ViewModel.VerifyList.value[5]" @input="(e) => ViewModel.HandleInput(5, e)" @keydown="(e) => ViewModel.HandleKeyDown(5, e)" @paste="(e) => ViewModel.HandlePaste(e)" :ref="ref => ViewModel.RSInputList[5] = ref" />
           </div>
           <div class="form-row">
             <button type="button" class="btn-email-verify" @click="ViewModel.HandleVerfiyConfirm()">确认</button>

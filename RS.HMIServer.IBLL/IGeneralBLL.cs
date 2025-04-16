@@ -17,10 +17,10 @@ namespace RS.HMIServer.IBLL
         /// <summary>
         /// 生成JWTToken
         /// </summary>
-        /// <param name="audienceType">客户端类型</param>
+        /// <param name="AudiencesType">客户端类型</param>
         /// <param name="claimList">声明列表</param>
         /// <returns></returns>
-        OperateResult<string> GenerateJWTToken(string audienceType, List<Claim> claimList);
+        OperateResult<string> GenerateJWTToken(List<Claim> claimList, string audiencesType, DateTime? expires = null);
        
         /// <summary>
         /// 获取客户端和服务端的加密会话

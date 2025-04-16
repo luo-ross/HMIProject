@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using RS.Commons.Extend;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace RS.HMIServer.Areas
@@ -11,8 +16,29 @@ namespace RS.HMIServer.Areas
     {
         public BaseController()
         {
-            
+
+
         }
+
+        /// <summary>
+        /// 角色
+        /// </summary>
+        public string Role
+        {
+            get
+            {
+                return User.Claims.FirstOrDefault(t => t.Type == ClaimTypes.Role)?.Value;
+            }
+        }
+
+        public string Audiences
+        {
+            get
+            {
+                return User.Claims.FirstOrDefault(t => t.Type == "aud")?.Value;
+            }
+        }
+
 
         /// <summary>
         /// 获取会话Id

@@ -12,6 +12,9 @@ export class RegisterVerifyModel {
    */
   public ExpireTime: number  = 0;
 
- 
+  /**
+  * 新的会话JWT
+  */
+  public Token: string | null = null;
 
 }

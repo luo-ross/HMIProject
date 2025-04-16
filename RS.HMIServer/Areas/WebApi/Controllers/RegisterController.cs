@@ -32,7 +32,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetEmailVerify(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.GetEmailVerifyAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.GetEmailVerifyAsync(aesEncryptModel,this. SessionId, this.Audiences);
             return handleResult;
         }
 
@@ -42,10 +42,10 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "EmailVerifyValid")]
         public async Task<OperateResult> EmailVerifyValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.EmailVerifyValidAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.EmailVerifyValidAsync(aesEncryptModel, this.SessionId,this.Audiences);
             return handleResult;
         }
 
@@ -61,7 +61,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetSMSVerify(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.GetSMSVerifyAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.GetSMSVerifyAsync(aesEncryptModel, this.SessionId, this.Audiences);
             return handleResult;
         }
 
@@ -74,7 +74,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize]
         public async Task<OperateResult> SMSVerifyValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.SMSVerifyValidAsync(aesEncryptModel, SessionId);
+            var handleResult = await RegisterBLL.SMSVerifyValidAsync(aesEncryptModel, this.SessionId, this.Audiences);
             return handleResult;
         }
         #endregion

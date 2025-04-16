@@ -21,5 +21,6 @@ namespace RS.Models
         /// 密码
         /// </summary>
         public virtual string Password { get; set; }
+
     }
 }

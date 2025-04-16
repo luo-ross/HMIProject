@@ -44,7 +44,7 @@ export class LoginViewModel extends ViewModelBase {
   }
 
   public HandleRegister(): void {
-    this.Router.push('/Register')
+    this.RouterUtil.Push('/Register')
   }
 
   public async HandleLogin(): Promise<void> {

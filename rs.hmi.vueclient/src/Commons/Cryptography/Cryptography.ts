@@ -1,24 +1,17 @@
 import { AESEncryptModel } from "../../Models/AESEncryptModel";
 import { MemoryCacheKey } from "../../Models/MemoryCacheKey";
 import { SessionModel } from "../../Models/SessionModel";
-import { SessionRequestModel } from "../../Models/SessionRequestModel";
 import { SessionResultModel } from "../../Models/SessionResultModel";
-import Axios from "../Axios";
 import { RSAType } from "../Enums/RSAType";
 import { GenericOperateResult, SimpleOperateResult } from "../OperateResult/OperateResult";
 import { CommonUtils } from "../Utils";
 
 export class Cryptography {
-
-  public CommonUtils;
   private static Instance: Cryptography;
-  private Cryptography: Cryptography | null = null;
-
+  public CommonUtils;
   private constructor() {
     this.CommonUtils = new CommonUtils();
-    this.InitDefaultKeysAsync();
   }
-
   public static GetInstance(): Cryptography {
     if (!Cryptography.Instance) {
       Cryptography.Instance = new Cryptography();
@@ -29,7 +22,7 @@ export class Cryptography {
   /// <summary>
   /// 初始化RSA非对称秘钥数据
   /// </summary>
-  private async InitRSASecurityKeyDataAsync(): Promise<SimpleOperateResult> {
+  public async InitRSASecurityKeyDataAsync(): Promise<SimpleOperateResult> {
 
     const rsaSignPublicKey = sessionStorage.getItem(MemoryCacheKey.GlobalRSASignPublicKey);
     const rsaSignPrivateKey = sessionStorage.getItem(MemoryCacheKey.GlobalRSASignPrivateKey);
@@ -82,53 +75,8 @@ export class Cryptography {
     }
   }
 
-  // 获取用户名
-  private async InitDefaultKeysAsync(): Promise<SimpleOperateResult> {
 
-    const initRSASecurityKeyDataResult = await this.InitRSASecurityKeyDataAsync();
-    if (!initRSASecurityKeyDataResult.IsSuccess) {
-      //this.CommonUtils.ShowDangerMsg(initRSASecurityKeyDataResult.Message);
-      return initRSASecurityKeyDataResult;
-    }
-
-    // 将Date对象转换为Unix时间戳（毫秒）
-    const timestamp = new Date().getTime();
-    //创建会话请求
-    const sessionRequestModel = new SessionRequestModel();
-    sessionRequestModel.RSASignPublicKey = sessionStorage.getItem(MemoryCacheKey.GlobalRSASignPublicKey);
-    sessionRequestModel.RSAEncryptPublicKey = sessionStorage.getItem(MemoryCacheKey.GlobalRSAEncryptPublicKey)
-    sessionRequestModel.Nonce = this.CommonUtils.CreateRandCode(10).toString();
-    sessionRequestModel.TimeStamp = timestamp.toString();
-    sessionRequestModel.AudienceType = "WebAudience";
-
-    const arrayList = [
-      sessionRequestModel.RSASignPublicKey,
-      sessionRequestModel.RSAEncryptPublicKey,
-      sessionRequestModel.Nonce,
-      sessionRequestModel.TimeStamp,
-    ];
-
-    //获取会话的Hash数据
-    const getRSAHashResult = await this.GetRSAHashAsync(arrayList);
-    if (!getRSAHashResult.IsSuccess) {
-      return getRSAHashResult;
-    }
-
-    const rsaSignDataResult = await this.RSASignDataAsync(getRSAHashResult.Data, sessionStorage.getItem(MemoryCacheKey.GlobalRSASignPrivateKey));
-    if (!rsaSignDataResult.IsSuccess) {
-      return rsaSignDataResult;
-    }
-    sessionRequestModel.MsgSignature = rsaSignDataResult.Data;
-
-    const result = await Axios.post<SessionRequestModel, GenericOperateResult<SessionResultModel>>('/api/v1/General/GetSessionModel', sessionRequestModel);
-
-    const getSessionModelResult = await this.GetSessionModel(result);
-    if (!getSessionModelResult.IsSuccess) {
-      return getSessionModelResult;
-    }
-
-    return SimpleOperateResult.CreateSuccessResult();
-  }
+ 
 
 
 
@@ -756,7 +704,7 @@ export class Cryptography {
    * 获取会话数据
    * @returns 返回会话模型结果
    */
-  public static GetSessionModelFromStorage(): GenericOperateResult<SessionModel> {
+  public  GetSessionModelFromStorage(): GenericOperateResult<SessionModel> {
     // 从 sessionStorage 获取会话模型
     const sessionModelJson = sessionStorage.getItem('SessionModel');
     let sessionModel: SessionModel | null = null;
@@ -798,7 +746,7 @@ export class Cryptography {
    */
   public async AESEncryptSimple<T>(encryptModelShould: T): Promise<GenericOperateResult<AESEncryptModel>> {
     // 获取 aesKey, appId, token
-    const getSessionModelResult = Cryptography.GetSessionModelFromStorage();
+    const getSessionModelResult =this.GetSessionModelFromStorage();
     if (!getSessionModelResult.IsSuccess) {
       return GenericOperateResult.CreateFailResult(getSessionModelResult);
     }
@@ -1003,7 +951,7 @@ export class Cryptography {
    */
   public async AESDecryptSimple<TResult>(aesEncryptModel: AESEncryptModel|null): Promise<GenericOperateResult<TResult>> {
     // 获取 aesKey, appId, token
-    const getSessionModelResult = Cryptography.GetSessionModelFromStorage();
+    const getSessionModelResult = this.GetSessionModelFromStorage();
     if (!getSessionModelResult.IsSuccess) {
       return GenericOperateResult.CreateFailResult(getSessionModelResult.Message);
     }

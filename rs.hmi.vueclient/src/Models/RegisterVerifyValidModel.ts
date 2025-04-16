@@ -5,7 +5,7 @@ export class RegisterVerifyValidModel {
   /**
    * 注册会话Id
    */
-  public Token: string | null = null;
+  public RegisterSessionId: string | null = null;
 
   /**
    * 验证码 

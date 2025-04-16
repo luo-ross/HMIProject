@@ -20,5 +20,10 @@ namespace RS.Models
         /// 验证码有效时间
         /// </summary>
         public long ExpireTime { get; set; }
+
+        /// <summary>
+        /// 新的会话JWT
+        /// </summary>
+        public string Token { get; set; }
     }
 }

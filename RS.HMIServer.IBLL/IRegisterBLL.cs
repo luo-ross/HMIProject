@@ -22,7 +22,7 @@ namespace RS.HMIServer.IBLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        Task<OperateResult<AESEncryptModel>> GetEmailVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId);
+        Task<OperateResult<AESEncryptModel>> GetEmailVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId, string AudiencesType);
 
         /// <summary>
         /// 邮箱验证码验证
@@ -30,7 +30,7 @@ namespace RS.HMIServer.IBLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        Task<OperateResult> EmailVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId);
+        Task<OperateResult> EmailVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId,string audiences);
 
         /// <summary>
         /// 获取短信验证码
@@ -38,7 +38,7 @@ namespace RS.HMIServer.IBLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        Task<OperateResult<AESEncryptModel>> GetSMSVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId);
+        Task<OperateResult<AESEncryptModel>> GetSMSVerifyAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences);
 
         /// <summary>
         /// 邮箱验证码验证
@@ -46,6 +46,6 @@ namespace RS.HMIServer.IBLL
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
-        Task<OperateResult> SMSVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId);
+        Task<OperateResult> SMSVerifyValidAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences);
     }
 }
