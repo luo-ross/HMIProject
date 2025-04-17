@@ -17,31 +17,14 @@ export class ValidHelper {
     * @param isRestrict 是否按严格模式验证
     * @returns 是否有效
     */
-  public static IsEmail(value: string|null, isRestrict: boolean = false): boolean {
+  public static IsEmail(value: string | null): boolean {
     if (!value) {
       return false;
     }
-    const pattern = isRestrict
-      ? /^(\?(")(".+?"@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))(\?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$/
-      : /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
-    return pattern.test(value);
+    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,}$/;
+    return pattern.test(value) && value.length <= 254;
   }
 
-  /**
-   * 是否存在邮箱
-   * @param value 值
-   * @param isRestrict 是否按严格模式验证
-   * @returns 是否包含邮箱
-   */
-  public static HasEmail(value: string, isRestrict: boolean = false): boolean {
-    if (!value) {
-      return false;
-    }
-    const pattern = isRestrict
-      ? /^(\?(")(".+?"@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))(\?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$/
-      : /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
-    return pattern.test(value);
-  }
 
   /**
    * 是否合法的手机号码
@@ -364,5 +347,5 @@ export class ValidHelper {
     return /^[1-9][0-9]{4,9}$/.test(value);
   }
 
- 
+
 }

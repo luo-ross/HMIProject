@@ -12,6 +12,8 @@ namespace RS.HMIServer.DAL.Mapping
         public void Configure(EntityTypeBuilder<TablePermissionEntity> builder)
         {
             builder.ToTable("TablePermission").HasKey(t => t.Id);
+            //设置不自动增长
+            builder.Property(t => t.Id).ValueGeneratedNever();
         }
     }
 }

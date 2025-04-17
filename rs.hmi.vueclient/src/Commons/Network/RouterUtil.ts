@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteLocationNormalized, NavigationGuardNext, Router } from 'vue-router'
 import { Cryptography } from '../Cryptography/Cryptography'
-import { CommonUtils } from '../Utils';
+import { Utils } from '../Utils';
 import  { AxiosUtil } from './AxiosUtil';
 import { SimpleOperateResult, type GenericOperateResult } from '../OperateResult/OperateResult';
 import { SessionRequestModel } from '../../Models/SessionRequestModel';
@@ -13,7 +13,7 @@ export class RouterUtil {
   private AxiosUtil: AxiosUtil;
   private Router: Router;
   public Cryptography: Cryptography;
-  public CommonUtils: CommonUtils;
+  public Utils: Utils;
   constructor() {
     // 路由守卫
     this.Router = createRouter({
@@ -72,7 +72,7 @@ export class RouterUtil {
     })
 
 
-    this.CommonUtils = new CommonUtils();
+    this.Utils = new Utils();
     this.Cryptography = Cryptography.GetInstance();
     this.AxiosUtil = AxiosUtil.GetInstance();
     this.InitSessionAsync();
@@ -108,7 +108,7 @@ export class RouterUtil {
     const sessionRequestModel = new SessionRequestModel();
     sessionRequestModel.RSASignPublicKey = sessionStorage.getItem(MemoryCacheKey.GlobalRSASignPublicKey);
     sessionRequestModel.RSAEncryptPublicKey = sessionStorage.getItem(MemoryCacheKey.GlobalRSAEncryptPublicKey)
-    sessionRequestModel.Nonce = this.CommonUtils.CreateRandCode(10).toString();
+    sessionRequestModel.Nonce = this.Utils.CreateRandCode(10).toString();
     sessionRequestModel.TimeStamp = timestamp.toString();
     sessionRequestModel.AudiencesType = "Web";
 

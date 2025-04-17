@@ -1,7 +1,7 @@
 /**
  * 通用工具类
  */
-export class CommonUtils {
+export class Utils {
   private TimerId: number = -1;
 
   /**
@@ -36,11 +36,14 @@ export class CommonUtils {
   * @param validDurationInMinutes 有效时间
   * @returns 是否有效
   */
-  public  IsTimestampExpired(timestamp: number, validDurationInMinutes: number): boolean {
+  public IsTimestampExpired(timestamp: number, validDurationInMinutes: number): boolean {
     const currentTime = Date.now();
     const validDurationInMs = validDurationInMinutes * 60 * 1000;
     return currentTime - timestamp > validDurationInMs;
   }
+
+
+
 }
 
 

@@ -27,7 +27,7 @@ namespace RS.HMIServer.DAL
                 string connectionString = configuration["ConnectionStrings:RSAppSqlSever"];
                 var sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
                 optionsAction.UseSqlServer(sqlConnectionStringBuilder.ConnectionString);
-            },ServiceLifetime.Transient, ServiceLifetime.Transient);
+            });
 
             //自动注册服务
             services.RegisterService(Assembly.GetExecutingAssembly());

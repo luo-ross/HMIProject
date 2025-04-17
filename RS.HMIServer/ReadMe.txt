@@ -5,7 +5,7 @@
     "RSAppRedis:Password": "123456",
     "RSAppRedis:Port": "6379",
     "EmailService:Host": "smtp.qq.com",
-    "EmailService:Password": "eyimtaesl1agdjci",
+    "EmailService:Password": "eyimta123agdjci",
     "EmailService:Port": "587",
     "EmailService:UserName": "1845960295@qq.com",
     "EmailService": "Tencent",

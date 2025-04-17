@@ -96,12 +96,12 @@ namespace RS.HMIServer.BLL
             EmailRegisterSessionModel registerSessionModel = new EmailRegisterSessionModel();
 
             //查询是否已经存在会话
-            var getRegisterSessionResult = await this.RegisterDAL.GetEmailSessionAsync(emailHashCode);
+            var getEmailRegisterSessionResult = await this.RegisterDAL.GetEmailRegisterSessionAsync(emailHashCode);
 
             //如果已经创建了注册会话
-            if (getRegisterSessionResult.IsSuccess)
+            if (getEmailRegisterSessionResult.IsSuccess)
             {
-                registerSessionModel = getRegisterSessionResult.Data;
+                registerSessionModel = getEmailRegisterSessionResult.Data;
 
                 //判断会话Id是否相同
                 if (!sessionId.Equals(registerSessionModel.SessionId))
@@ -209,9 +209,17 @@ namespace RS.HMIServer.BLL
             }
             var registerVerifyValidModel = getAESDecryptResult.Data;
 
+            //通过会话Id获取emailHashCode
+            var getEmailHashCodeResult = await this.RegisterDAL.GetEmailHashCodeAsync(registerVerifyValidModel.RegisterSessionId);
+            if (!getEmailHashCodeResult.IsSuccess)
+            {
+                return getEmailHashCodeResult;
+            }
+
+            string emailHashCode = getEmailHashCodeResult.Data;
 
             //获取注册会话
-            var getRegisterSessionResult = await this.RegisterDAL.GetEmailSessionAsync(registerVerifyValidModel.RegisterSessionId);
+            var getRegisterSessionResult = await this.RegisterDAL.GetEmailRegisterSessionAsync(emailHashCode);
             if (!getRegisterSessionResult.IsSuccess)
             {
                 return getRegisterSessionResult;

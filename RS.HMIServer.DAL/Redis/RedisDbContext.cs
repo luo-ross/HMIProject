@@ -1,15 +1,7 @@
-﻿using NRedisStack.RedisStackCommands;
-using NRedisStack;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RS.HMIServer.IDAL;
 using RS.Commons.Attributs;
+using StackExchange.Redis;
 
 namespace RS.HMIServer.DAL.Redis
 {

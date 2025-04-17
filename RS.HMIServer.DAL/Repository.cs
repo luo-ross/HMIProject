@@ -1,14 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RS.HMIServer.Entity;
-using RS.HMIServer.DAL.SqlServer;
-using RS.HMIServer.IDAL;
 using RS.Commons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using RS.HMIServer.DAL.SqlServer;
+using RS.HMIServer.Entity;
+using RS.HMIServer.IDAL;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RS.HMIServer.DAL
 {

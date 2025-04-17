@@ -17,6 +17,8 @@ namespace RS.HMIServer.DAL.Mapping
         public void Configure(EntityTypeBuilder<LogOnEntity> builder)
         {
             builder.ToTable("LogOn").HasKey(t => t.Id);
+            //设置不自动增长
+            builder.Property(t => t.Id).ValueGeneratedNever();
         }
     }
 }

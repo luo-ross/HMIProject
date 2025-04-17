@@ -4,13 +4,13 @@ import { SessionModel } from "../../Models/SessionModel";
 import { SessionResultModel } from "../../Models/SessionResultModel";
 import { RSAType } from "../Enums/RSAType";
 import { GenericOperateResult, SimpleOperateResult } from "../OperateResult/OperateResult";
-import { CommonUtils } from "../Utils";
+import { Utils } from "../Utils";
 
 export class Cryptography {
   private static Instance: Cryptography;
-  public CommonUtils;
+  public Utils;
   private constructor() {
-    this.CommonUtils = new CommonUtils();
+    this.Utils = new Utils();
   }
   public static GetInstance(): Cryptography {
     if (!Cryptography.Instance) {

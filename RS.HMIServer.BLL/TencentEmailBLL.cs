@@ -1,19 +1,12 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using RS.HMIServer.IBLL;
-using RS.Commons;
 using RazorLight;
-using RS.Models;
+using RS.Commons;
+using RS.HMIServer.IBLL;
 using RS.HMIServer.Models;
-using TencentCloud.Teo.V20220901.Models;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using System.Dynamic;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using TencentCloud.Ame.V20190916.Models;
+using System.IO.Pipelines;
 
 namespace RS.HMIServer.BLL
 {
@@ -31,7 +24,7 @@ namespace RS.HMIServer.BLL
         /// Razor引擎服务
         /// </summary>
         private readonly IRazorLightEngine RazorLightEngine;
-  
+
 
         /// <summary>
         /// 邮件发送客户端
@@ -117,25 +110,48 @@ namespace RS.HMIServer.BLL
 
         private async Task<OperateResult> SendEmailAsync(string host, int port, string userName, string password, MimeMessage mimeMessage)
         {
+            int tryTime = 0;
+        ILResend:
+            try
+            {
+                if (this.SmtpClient == null || (this.SmtpClient != null && !this.SmtpClient.IsConnected))
+                {
+                    this.SmtpClient = new SmtpClient { ServerCertificateValidationCallback = (s, c, h, e) => true };
+                    await this.SmtpClient.ConnectAsync(host, port);
+                    await this.SmtpClient.AuthenticateAsync(userName, password);
+                }
+                var sendResult = await this.SmtpClient.SendAsync(mimeMessage);
+                if (sendResult != null && sendResult.StartsWith("OK"))
+                {
+                    return OperateResult.CreateSuccessResult();
+                }
+                else
+                {
+                    return new OperateResult()
+                    {
+                        Message = sendResult
+                    };
+                }
+            }
+            catch (SmtpProtocolException)
+            {
+                //尝试3次 如果还是失败
+                if (tryTime < 3)
+                {
+                    tryTime++;
+                    goto ILResend;
+                }
 
-            if (this.SmtpClient == null || (this.SmtpClient != null && !this.SmtpClient.IsConnected))
-            {
-                this.SmtpClient = new SmtpClient { ServerCertificateValidationCallback = (s, c, h, e) => true };
-                await this.SmtpClient.ConnectAsync(host, port);
-                await this.SmtpClient.AuthenticateAsync(userName, password);
-            }
-            var sendResult = await this.SmtpClient.SendAsync(mimeMessage);
-            if (sendResult != null && sendResult.StartsWith("OK"))
-            {
-                return OperateResult.CreateSuccessResult();
-            }
-            else
-            {
                 return new OperateResult()
                 {
-                    Message = sendResult
+                    Message = "服务繁忙，请稍后再试"
                 };
             }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
     }

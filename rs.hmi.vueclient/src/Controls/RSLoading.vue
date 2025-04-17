@@ -27,9 +27,8 @@
       </div>
     </div>
     <div v-else-if="LoadingType === 'Rotate'"
-        class="loading-border rotate-loading"
-         :class="{'d-none': !IsLoading }"
-         >
+         class="loading-border rotate-loading"
+         :class="{'d-none': !IsLoading }">
       <IconLoading FillColor="#1296db" class="icon-loading  circle-rotate-loading circle-rotate-progress-animated"></IconLoading>
     </div>
   </div>
@@ -77,15 +76,23 @@
   });
 
 
-  async function InvokeLoadingActionAsync<T>(func: Func<Promise<GenericOperateResult<T>>>): Promis<GenericOperateResult<T>> {
-
+  async function GenericLoadingActionAsync<T> (func: Func<Promise<GenericOperateResult<T>>>)
+  : Promis <GenericOperateResult <T>> {
     try {
-
       IsLoading.value = true;
-
-
       const operateResult = await func?.();
+      IsLoading.value = false;
+      return operateResult;
+    } catch(e) {
 
+    }
+  }
+
+  async function SimpleLoadingActionAsync<T>(func: Func<Promise<GenericOperateResult<T>>>)
+    : Promis<GenericOperateResult<T>> {
+    try {
+      IsLoading.value = true;
+      const operateResult = await func?.();
       IsLoading.value = false;
       return operateResult;
     } catch (e) {
@@ -105,7 +112,8 @@
   //};
   // 导出方法供父组件调用
   defineExpose<ILoadingEvents>({
-    InvokeLoadingActionAsync
+    GenericLoadingActionAsync,
+    SimpleLoadingActionAsync
   });
 </script>
 

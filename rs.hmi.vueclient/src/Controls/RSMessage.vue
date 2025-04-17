@@ -131,7 +131,7 @@
     TimerId = setTimeout(() => {
       ClearMsg();
       TimerId = -1;
-    }, 3000);
+    }, 5000);
   }
 
 

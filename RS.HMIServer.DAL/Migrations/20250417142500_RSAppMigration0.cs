@@ -14,8 +14,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "Area",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ParentId = table.Column<long>(type: "bigint", nullable: true),
                     Level = table.Column<byte>(type: "tinyint", nullable: false)
@@ -29,8 +28,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "ColPermission",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: true),
@@ -45,8 +43,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "Company",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RealCompanyId = table.Column<long>(type: "bigint", nullable: true),
@@ -61,8 +58,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "CompanyProfile",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -85,8 +81,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "Country",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Abbr = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -101,8 +96,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "Department",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Abbr = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -117,8 +111,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "EmailInfo",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GuestId = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -131,8 +124,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "LogOn",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsEnable = table.Column<bool>(type: "bit", nullable: false),
@@ -147,8 +139,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "PhoneInfo",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     CountryCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GuestId = table.Column<long>(type: "bigint", nullable: true)
@@ -162,8 +153,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "RealCompany",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -185,8 +175,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "RealName",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<bool>(type: "bit", nullable: true),
                     BirthDay = table.Column<long>(type: "bigint", nullable: true),
@@ -204,8 +193,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "Role",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ParentId = table.Column<long>(type: "bigint", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -241,8 +229,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "SystemPermission",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: false),
@@ -257,8 +244,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "TablePermission",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: false),
@@ -273,8 +259,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "ThirdPartyLogOn",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     PlatformType = table.Column<int>(type: "int", nullable: true),
                     OpenId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NickName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -291,8 +276,7 @@ namespace RS.HMIServer.DAL.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false),
                     NickName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserPic = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),

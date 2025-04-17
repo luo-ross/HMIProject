@@ -1,18 +1,7 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using RS.HMIServer.Entity;
-using RS.HMIServer.DAL.Redis;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RS.Commons.Attributs;
 using RS.HMIServer.DAL.SqlServer;
 using RS.HMIServer.IDAL;
-using RS.Commons;
-using RS.Commons.Attributs;
-using RS.Models;
-using StackExchange.Redis;
-using RS.HMIServer.Models;
-using RTools_NTS.Util;
-using Newtonsoft.Json.Linq;
-using RS.Commons.Extensions;
 
 namespace RS.HMIServer.DAL
 {

@@ -1,8 +1,8 @@
 import axios, { type AxiosInstance } from 'axios';
 import { Cryptography } from '../Cryptography/Cryptography'
-import { CommonUtils } from '../Utils';
+import { Utils } from '../Utils';
 import type { AESEncryptModel } from '../../Models/AESEncryptModel';
-import { GenericOperateResult } from '../OperateResult/OperateResult';
+import { GenericOperateResult, SimpleOperateResult } from '../OperateResult/OperateResult';
 
 export class AxiosUtil {
   private static Instance: AxiosUtil;
@@ -10,7 +10,7 @@ export class AxiosUtil {
   private GetSessionModelPathName: string = "/api/v1/General/GetSessionModel";
   public Token: string | null = null;
   public Cryptography: Cryptography;
-  public CommonUtils: CommonUtils;
+  public Utils: Utils;
   constructor() {
     // 创建axios 实例
     this.AxiosInstance = axios.create({
@@ -64,24 +64,12 @@ export class AxiosUtil {
         return response.data;
       },
       error => {
-        if (error.response) {
-          switch (error.response.status) {
-            case 401:
-              // token过期或无效，清除认证信息
-              break;
-            case 403:
-              break;
-            case 500:
-              break;
-            default:
-          }
-        }
-        return Promise.reject(error);
+        return error.response.data;
       }
     );
 
 
-    this.CommonUtils = new CommonUtils();
+    this.Utils = new Utils();
     this.Cryptography = Cryptography.GetInstance();
   }
 
@@ -107,7 +95,7 @@ export class AxiosUtil {
  * @typeparam url webAPI接口
  * @typeparam data Post数据
  */
-  public async AESEncryptPost<D, R>(url: string, data?: D | null): Promise<GenericOperateResult<R>> {
+  public async AESEnAndDecryptPost<D, R>(url: string, data?: D | null): Promise<GenericOperateResult<R>> {
 
     //使用AES密钥对数据进行加密
     const aesEncryptResult = await this.Cryptography.AESEncryptSimple(data);
@@ -116,8 +104,8 @@ export class AxiosUtil {
     }
 
     //向服务端发起获取邮箱验证码请求
-    const result = await this.Post<AESEncryptModel, GenericOperateResult<AESEncryptModel>>('/api/v1/Register/GetEmailVerify', aesEncryptResult.Data);
-    if (!result.IsSuccess || result.Data == null) {
+    const result = await this.Post<AESEncryptModel, GenericOperateResult<AESEncryptModel>>(url, aesEncryptResult.Data);
+    if (!result.IsSuccess) {
       return GenericOperateResult.CreateFailResult(result.Message);
     }
 
@@ -130,7 +118,21 @@ export class AxiosUtil {
     return aesDecryptSimpleResult;
   }
 
+  /**
+* 加密发起请求但是不用解密
+* @typeparam url webAPI接口
+* @typeparam data Post数据
+*/
+  public async AESEncryptPost<D>(url: string, data?: D | null): Promise<SimpleOperateResult> {
 
+    //使用AES密钥对数据进行加密
+    const aesEncryptResult = await this.Cryptography.AESEncryptSimple(data);
+    if (!aesEncryptResult.IsSuccess) {
+      return aesEncryptResult;
+    }
+    //向服务端发起获取邮箱验证码请求
+    return await this.Post<AESEncryptModel, SimpleOperateResult>(url, aesEncryptResult.Data);
+  }
 
 }
 

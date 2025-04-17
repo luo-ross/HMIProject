@@ -1,12 +1,10 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using RS.HMIServer.Entity;
+using RS.Commons;
+using RS.Commons.Attributs;
 using RS.HMIServer.DAL.Redis;
 using RS.HMIServer.DAL.SqlServer;
 using RS.HMIServer.IDAL;
-using RS.Commons;
-using RS.Commons.Attributs;
 using RS.Models;
 using StackExchange.Redis;
 

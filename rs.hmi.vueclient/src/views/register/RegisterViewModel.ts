@@ -35,22 +35,24 @@ export class RegisterViewModel extends ViewModelBase {
 
 
   private async HandleRegisterNextAsync(): Promise<void> {
+
     //这里进行客户端简单的表单验证
     if (!this.ValidateForm()) {
       return;
     }
+
     if (this.RSLoadingEvents == null) {
       return;
     }
 
     //在这里发起注册事件
-    const getRegisterVerifyResult = await this.RSLoadingEvents.InvokeLoadingActionAsync<RegisterVerifyModel>(async () => {
+    const getRegisterVerifyResult = await this.RSLoadingEvents.GenericLoadingActionAsync<RegisterVerifyModel>(async () => {
       //验证通过后 对密码进行加密处理
       const passwordSHA256HashCode = await this.Cryptography.GetSHA256HashCode(this.RegisterModel.PasswordConfirm);
       const emailRegisterPostModel = new EmailRegisterPostModel();
       emailRegisterPostModel.Email = this.RegisterModel.Email;
       emailRegisterPostModel.Password = passwordSHA256HashCode.Data;
-      return this.AxiosUtil.AESEncryptPost<EmailRegisterPostModel, RegisterVerifyModel>('/api/v1/Register/GetEmailVerify', emailRegisterPostModel);
+      return this.AxiosUtil.AESEnAndDecryptPost<EmailRegisterPostModel, RegisterVerifyModel>('/api/v1/Register/GetEmailVerify', emailRegisterPostModel);
     });
 
     //验证结果
@@ -75,7 +77,7 @@ export class RegisterViewModel extends ViewModelBase {
       return;
     }
 
-    if (this.CommonUtils.IsTimestampExpired(registerVerifyModel.ExpireTime, 2)) {
+    if (this.Utils.IsTimestampExpired(registerVerifyModel.ExpireTime, 2)) {
       this.RSMessageEvents?.ShowWarningMsg("验证码已失效");
       return;
     }
@@ -98,7 +100,7 @@ export class RegisterViewModel extends ViewModelBase {
   }
 
   public override ValidateForm(): boolean {
-    if (!this.RegisterModel.Email && !ValidHelper.IsEmail(this.RegisterModel.Email)) {
+    if (!this.RegisterModel.Email || !ValidHelper.IsEmail(this.RegisterModel.Email)) {
       this.RSMessageEvents?.ShowWarningMsg('邮箱输入不正确');
       this.RSEmailEvents?.Focus();
       return false;

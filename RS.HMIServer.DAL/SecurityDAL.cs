@@ -1,21 +1,16 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using RS.HMIServer.Entity;
+using RS.Commons;
+using RS.Commons.Attributs;
+using RS.Commons.Extensions;
 using RS.HMIServer.DAL.Redis;
 using RS.HMIServer.DAL.SqlServer;
 using RS.HMIServer.IDAL;
-using RS.Commons;
-using RS.Commons.Attributs;
-using RS.Models;
-using StackExchange.Redis;
 using RS.HMIServer.Models;
-using RTools_NTS.Util;
-using RS.Commons.Extensions;
+using StackExchange.Redis;
 
 namespace RS.HMIServer.DAL
 {
-
 
     /// <summary>
     /// 用户数据逻辑层

@@ -11,7 +11,7 @@ using RS.HMIServer.DAL.SqlServer;
 namespace RS.HMIServer.DAL.Migrations
 {
     [DbContext(typeof(RSAppDbContext))]
-    [Migration("20250226151031_RSAppMigration0")]
+    [Migration("20250417142500_RSAppMigration0")]
     partial class RSAppMigration0
     {
         /// <inheritdoc />
@@ -27,10 +27,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.AreaEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<byte>("Level")
                         .HasColumnType("tinyint");
@@ -49,10 +46,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.ColPermissionEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -74,10 +68,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.CompanyEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Area")
                         .HasColumnType("nvarchar(max)");
@@ -99,10 +90,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.CompanyProfileEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -148,10 +136,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.CountryEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Abbr")
                         .HasColumnType("nvarchar(max)");
@@ -173,10 +158,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.DepartmentEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Abbr")
                         .HasColumnType("nvarchar(max)");
@@ -198,10 +180,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.EmailInfoEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -217,10 +196,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.LogOnEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<bool>("IsEnable")
                         .HasColumnType("bit");
@@ -242,10 +218,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.PhoneInfoEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CountryCode")
                         .HasColumnType("nvarchar(max)");
@@ -264,10 +237,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.RealCompanyEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -310,10 +280,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.RealNameEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -344,10 +311,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.RoleEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CompanyId")
                         .HasColumnType("bigint");
@@ -408,10 +372,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.SystemPermissionEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -433,10 +394,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.TablePermissionEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -458,10 +416,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.ThirdPartyLogOnEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<bool?>("IsEnable")
                         .HasColumnType("bit");
@@ -490,10 +445,7 @@ namespace RS.HMIServer.DAL.Migrations
             modelBuilder.Entity("RS.HMIServer.Entity.UserEntity", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");

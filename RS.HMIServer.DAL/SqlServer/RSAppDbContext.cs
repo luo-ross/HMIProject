@@ -11,7 +11,19 @@ namespace RS.HMIServer.DAL.SqlServer
     {
         public RSAppDbContext(DbContextOptions<RSAppDbContext> dbContextOptions) : base(dbContextOptions)
         {
+            //更新数据库
+            this.MigrationDataBase();
+        }
 
+        /// <summary>
+        /// 自动更新数据库
+        /// </summary>
+        private void MigrationDataBase()
+        {
+            if (this.Database.GetPendingMigrations().Any())
+            {
+                this.Database.Migrate();
+            }
         }
 
         /// <summary>
@@ -30,7 +42,7 @@ namespace RS.HMIServer.DAL.SqlServer
         /// </summary>
         public virtual DbSet<CompanyEntity> Company { get; set; }
 
-      
+
         /// <summary>
         /// 公司资料
         /// </summary>
@@ -50,21 +62,21 @@ namespace RS.HMIServer.DAL.SqlServer
         /// 邮箱信息
         /// </summary>
         public virtual DbSet<EmailInfoEntity> EmailInfo { get; set; }
-   
+
 
         /// <summary>
         /// 登录信息
         /// </summary>
         public virtual DbSet<LogOnEntity> LogOn { get; set; }
 
-    
-     
+
+
         /// <summary>
         /// 电话信息
         /// </summary>
         public virtual DbSet<PhoneInfoEntity> PhoneInfo { get; set; }
 
-      
+
         /// <summary>
         /// 公司实名认证
         /// </summary>
