@@ -36,6 +36,8 @@ export class RegisterViewModel extends ViewModelBase {
 
   private async HandleRegisterNextAsync(): Promise<void> {
 
+
+
     //这里进行客户端简单的表单验证
     if (!this.ValidateForm()) {
       return;
@@ -101,7 +103,7 @@ export class RegisterViewModel extends ViewModelBase {
 
   public override ValidateForm(): boolean {
     if (!this.RegisterModel.Email || !ValidHelper.IsEmail(this.RegisterModel.Email)) {
-      this.RSMessageEvents?.ShowWarningMsg('邮箱输入不正确');
+      this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
       this.RSEmailEvents?.Focus();
       return false;
     }

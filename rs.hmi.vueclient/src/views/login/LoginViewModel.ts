@@ -71,7 +71,7 @@ export class LoginViewModel extends ViewModelBase {
 
    
     if (!email || !ValidHelper.IsEmail(email)) {
-      this.RSMessageEvents?.ShowWarningMsg('邮箱输入不正确');
+      this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
       this.RSEmailEvents?.Focus();
       return false;
     }

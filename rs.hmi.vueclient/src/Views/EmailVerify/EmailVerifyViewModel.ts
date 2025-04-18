@@ -8,6 +8,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
     super();
     this.InitializeComponent();
     this.StartCountdown();
+
     //简单做一些验证
     if (this.EmailVerifyModel.Email == null
       || this.EmailVerifyModel.Token == null
@@ -18,6 +19,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
       this.RouterUtil.Push('/Register');
       return;
     }
+
     //如果通过 重置Axios的Token 只有这个Token才能访问接口
     this.AxiosUtil.Token = this.EmailVerifyModel.Token;
   }
@@ -43,7 +45,14 @@ export class EmailVerifyViewModel extends ViewModelBase {
     }, 1000);
   }
 
+  public HandleBackLogin() {
+    this.RouterUtil.Push("/login");
+  }
+
   public async HandleVerfiyConfirm(): Promise<void> {
+
+    this.EmailVerifyModel.IsRegisterSuccucess = true;
+
 
     //表单做一些验证
     if (!this.ValidateForm()) {

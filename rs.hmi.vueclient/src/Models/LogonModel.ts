@@ -1,8 +1,8 @@
 
 /**
- * 安全类
+ * 登录类
  */
-export class SecurityModel   {
+export class LogonModel   {
   /**
    * 邮箱
    */

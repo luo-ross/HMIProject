@@ -7,7 +7,7 @@ using RS.Commons.Extend;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace RS.HMIServer.Areas
+namespace RS.HMIServer.Controllers
 {
     /// <summary>
     /// WebApi控制器基类

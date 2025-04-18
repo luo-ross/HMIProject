@@ -40,12 +40,12 @@ namespace RS.HMIServer.DAL
         /// 创建密码重置会话
         /// </summary>
         /// <param name="token">密码重置会话主键</param>
-        /// <param name="passwordResetSessionModel">密码重置实体信息</param>
+        /// <param name="EmailSecurityModel">密码重置实体信息</param>
         /// <returns></returns>
-        public async Task<OperateResult> CreatePasswordResetSessionAsync(string token, PasswordResetSessionModel passwordResetSessionModel)
+        public async Task<OperateResult> CreatePasswordResetSessionAsync(string token, EmailSecurityModel EmailSecurityModel)
         {
             //检查秘密重置会话是否已经存在
-            var emailHashCode = this.CryptographyBLL.GetMD5HashCode(passwordResetSessionModel.Email);
+            var emailHashCode = this.CryptographyBLL.GetMD5HashCode(EmailSecurityModel.Email);
             var isSessionExist = this.PasswordResetRedis.KeyExists(emailHashCode);
             if (isSessionExist)
             {
@@ -56,7 +56,7 @@ namespace RS.HMIServer.DAL
             }
 
             //将会话提示转为字符串存储到Redis数据库
-            var jsonStr = passwordResetSessionModel.ToJson();
+            var jsonStr = EmailSecurityModel.ToJson();
             //生成有效期
             DateTime expireTime = DateTime.Now.AddSeconds(60 * 5);
             TimeSpan timeSpan = expireTime.Subtract(DateTime.Now);
@@ -106,8 +106,8 @@ namespace RS.HMIServer.DAL
             }
 
             //获取密码重置会话验证邮箱是否一致
-            var passwordResetSessionModel = stringSetResult.ToString().ToObject<PasswordResetSessionModel>();
-            if (!passwordResetSessionModel.Email.Equals(email))
+            var EmailSecurityModel = stringSetResult.ToString().ToObject<EmailSecurityModel>();
+            if (!EmailSecurityModel.Email.Equals(email))
             {
                 return OperateResult.CreateFailResult("密码重置会话不存在");
             }
@@ -115,7 +115,7 @@ namespace RS.HMIServer.DAL
             //如果一致 将有效时间往后再延长5分钟
             DateTime expireTime = DateTime.Now.AddSeconds(60 * 5);
             TimeSpan timeSpan = expireTime.Subtract(DateTime.Now);
-            var result = await this.PasswordResetRedis.StringSetAsync(token, passwordResetSessionModel.ToJson(), timeSpan, When.Exists);
+            var result = await this.PasswordResetRedis.StringSetAsync(token, EmailSecurityModel.ToJson(), timeSpan, When.Exists);
             if (!result)
             {
                 return new OperateResult

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RS.Commons;
 using RS.Commons.Attributs;
-using RS.HMIServer.Areas;
+using RS.HMIServer.Controllers;
 using System.Net;
 
 namespace RS.HMIServer.Filters

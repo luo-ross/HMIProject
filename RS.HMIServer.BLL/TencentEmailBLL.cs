@@ -56,11 +56,11 @@ namespace RS.HMIServer.BLL
         /// <param name="email">邮箱地址</param>
         /// <param name="passwordResetToken">密码重置会话Token</param>
         /// <returns></returns>
-        public async Task<OperateResult> SendPassResetAsync(EmailPasswordResetModel emailPasswordResetModel)
+        public async Task<OperateResult> SendPassResetAsync(EmailSecurityModel emailSecurityModel)
         {
             (string userName, string password, string host, int port) = GetEmailConfig();
-            var messageBody = await GetMessageBody("PasswordReset", emailPasswordResetModel);
-            var mimeMessage = GetMimeMessage(userName, emailPasswordResetModel.Email, "密码重置", messageBody);
+            var messageBody = await GetMessageBody("PasswordReset", emailSecurityModel);
+            var mimeMessage = GetMimeMessage(userName, emailSecurityModel.Email, "密码重置", messageBody);
             return await SendEmailAsync(host, port, userName, password, mimeMessage);
         }
 

@@ -1,8 +1,8 @@
-import { SecurityModel } from "./SecurityModel";
+import { LogonModel } from "./LogonModel";
 /**
  * 登录类
  */
-export class LoginModel extends SecurityModel {
+export class LoginModel extends LogonModel {
  
   /**
   * 验证码

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using RazorLight;
@@ -12,13 +11,12 @@ using RazorLight.Extensions;
 using RS.Commons;
 using RS.Commons.Converters;
 using RS.Commons.Extensions;
-using RS.Models;
 using RS.HMIServer.BLL;
 using RS.HMIServer.DAL;
 using RS.HMIServer.Filters;
+using RS.Models;
 using System.Text;
 using System.Text.Encodings.Web;
-using RS.HMIServer.Middlewares;
 
 namespace RS.HMIServer
 {

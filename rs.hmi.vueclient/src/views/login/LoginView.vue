@@ -1,13 +1,13 @@
+
+
 <template>
   <div class="div-main">
     <RSMessage :ref="events => ViewModel.RSMessageEvents= events"></RSMessage>
-    <div class="login-content">
-      <div class="login-left img">
+    <div class="general-content">
+      <div class="general-content-left img">
       </div>
       <RSLoading>
-
-
-        <div class="login-right">
+        <div class="general-content-right">
           <a class="btn-qrcode-login" href="/Login/QRCode?ClientId=@clientId&Timestamp=@timeStamp">
             <svg t="1743521881584" class="icon-qrcode" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9539" width="64" height="64">
               <defs>
@@ -47,8 +47,9 @@
               <!--<img class="img-verify" src="~/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />-->
             </div>
           </div>
+
           <div class="form-row">
-            <button type="button" class="btn-login"
+            <button type="button" class="btn-custorm-primary"
                     @click="ViewModel.LoginCommand.Execute()"
                     :disabled="!ViewModel.LoginCommand.CanExecute()"
                     @mouseover="ViewModel.LoginCommand.SetCommandParameter({
@@ -63,7 +64,10 @@
           <div class="form-row">
             <a class="btn-forget-password" target="_blank" href="/SystemManage/Security/ForgetPassword?ClientId=@clientId&Timestamp=@timeStamp">忘记了密码？</a>
           </div>
+
         </div>
+
+       
       </RSLoading>
     </div>
   </div>
@@ -77,6 +81,7 @@
   import RSPassword from '../../Controls/RSPassword.vue'
   import RSVerify from '../../Controls/RSVerify.vue'
   import RSLoading from '../../Controls/RSLoading.vue'
+
   import { LoginViewModel } from './LoginViewModel'
 
   const ViewModel = new LoginViewModel()

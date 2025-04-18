@@ -6,8 +6,7 @@ using RS.Commons.Attributs;
 using RS.Models;
 using RS.HMIServer.IBLL;
 
-
-namespace RS.HMIServer.Areas.WebApi.Controllers
+namespace RS.HMIServer.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]

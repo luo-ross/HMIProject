@@ -4,11 +4,11 @@
   <div class="div-main">
     <RSMessage :ref="events => ViewModel.RSMessageEvents= events"></RSMessage>
    
-    <div class="register-content">
-      <div class="register-left img">
+    <div class="general-content">
+      <div class="general-content-left img">
       </div>
       <RSLoading LoadingType="Rotate" :ref="events => ViewModel.RSLoadingEvents= events">
-        <div class="register-right">
+        <div class="general-content-right">
           <div class="tab-border">
             <input type="radio" id="radio-login" name="tab" value="radio-login">
             <label class="label-tab label-login" for="radio-login" @click="ViewModel.HandleLogin">登录</label>
@@ -30,7 +30,7 @@
                       :ref="events => ViewModel.RSPasswordConfirmEvents= events" />
 
           <div class="form-row">
-            <button type="button" class="btn-register-next" @click="ViewModel.RegisterNextCommand.Execute()">下一步</button>
+            <button type="button" class="btn-custorm-primary" @click="ViewModel.RegisterNextCommand.Execute()">下一步</button>
           </div>
         </div>
       </RSLoading>

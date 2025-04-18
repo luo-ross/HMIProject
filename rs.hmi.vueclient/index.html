@@ -12,7 +12,6 @@
             color: #333 !important;
         }
 
-
         html {
             width: 100%;
             height: 100%;
@@ -36,8 +35,8 @@
 
         input[type=text]:focus, input[type=password]:focus, textarea:focus {
             -webkit-box-shadow: 0 0 0 1000px white inset;
-          /*  border: none;*/
-          /*  box-shadow: none;*/
+            /*  border: none;*/
+            /*  box-shadow: none;*/
         }
 
 
@@ -77,7 +76,7 @@
         }
 
 
-        .login-content, .register-content, .email-verify-content {
+        .general-content {
             position: relative;
             display: flex;
             background: url('public/loginbg.jpg');
@@ -86,13 +85,14 @@
             height: 450px;
         }
 
-        .login-left, .register-left, .email-verify-left {
+        .general-content-left {
             display: flex;
             width: 100%;
             height: 100%;
         }
 
-        .login-right, .register-right, .email-verify-right {
+        .general-content-right
+        {
             position: relative;
             display: flex;
             width: 100%;
@@ -168,11 +168,7 @@
         }
 
 
-        .btn-login,
-        .btn-register,
-        .btn-passwordfind,
-        .btn-register-next,
-        .btn-email-verify {
+        .btn-custorm-primary {
             width: 100%;
             padding: 8px 15px;
             border: 1px solid #eee;
@@ -182,11 +178,12 @@
             margin: 35px 3px 0px 3px;
         }
 
-            .btn-login:hover, .btn-register:hover {
+            .btn-custorm-primary:hover
+            {
                 opacity: 0.8;
             }
 
-            .btn-login:active, .btn-register:active {
+            .btn-custorm-primary:active {
                 opacity: 0.7;
             }
 
@@ -265,7 +262,7 @@
                 opacity: 0.7;
             }
 
-        .btn-register {
+        .btn-custorm-primary {
             margin: 10px 3px 2px 3px;
         }
 
@@ -373,10 +370,9 @@
 
 
         .circle-rotate-progress-animated {
-           
             animation: circle-rotate-progress 1.2s linear infinite;
         }
-     
+
 
         @keyframes circle-rotate-progress {
             from {
@@ -386,18 +382,104 @@
 
             to {
                 transform-origin: center;
-                transform:  rotate(360deg);
+                transform: rotate(360deg);
             }
         }
 
         .rotate-loading {
-            justify-content:center;
-            align-items:center;
+            justify-content: center;
+            align-items: center;
         }
 
 
-      
-       
+        .icon-success {
+            width: 54px;
+            height: 54px;
+        }
+
+        .lable-succes {
+            font-size: calc(1.375rem + 1.5vw);
+        }
+
+        .label-welcome {
+            font-size: calc(1.375rem + 1.5vw);
+        }
+
+        .general-content-right .card-title {
+            font-size: calc(1.375rem + 1.5vw);
+        }
+
+
+        .email-verify-header,. {
+            font-weight: 600;
+            font-size: 20px;
+            color: #303133;
+            justify-content: center;
+            display: flex;
+            text-align: center;
+            width: 100%;
+            padding: 0px 0px 0px 5px;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .verify-input-border {
+            display: flex;
+            width: 100%;
+            margin: 30px 0px 24px 0px;
+            padding: 0px 1px 0px 1px;
+        }
+
+        .verify-input {
+            aspect-ratio: 1;
+            width: 100%;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 500;
+            color: #303133;
+            transition: all 0.3s;
+            outline: none;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 5px;
+        }
+
+        .form-row {
+            width: 100%;
+        }
+
+        .email-info {
+            text-align: center;
+            color: #949494;
+            word-break: break-all;
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-text {
+            color: #409eff;
+            font-weight: 500;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .countdown {
+            margin-top: 10px;
+            color: #f56c6c;
+            font-weight: 500;
+        }
+            .security-email {
+                margin: 50px 0px 35px 0px;
+            }
     </style>
 </head>
 <body>

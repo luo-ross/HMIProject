@@ -5,8 +5,7 @@ using RS.HMIServer.IBLL;
 using System.Collections;
 using RS.HMIServer.Models;
 
-
-namespace RS.HMIServer.Areas.WebApi.Controllers
+namespace RS.HMIServer.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
@@ -79,11 +78,11 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
             }
 
             //获取请求的网络信息 
-            string remoteIpAddress = this.HttpContext.Connection.RemoteIpAddress.ToString();
-            string localIpAddress = this.HttpContext.Connection.LocalIpAddress.ToString();
-            string xForwardedFor = this.HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            string userAgent = this.HttpContext.Request.Headers["User-Agent"].ToString();
-            OperateResult<string> operateResult = await this.GeneralBLL.GetClientIdAsync(new LoginClientModel()
+            string remoteIpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            string localIpAddress = HttpContext.Connection.LocalIpAddress.ToString();
+            string xForwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            string userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+            OperateResult<string> operateResult = await GeneralBLL.GetClientIdAsync(new LoginClientModel()
             {
                 LocalIpAddress = localIpAddress,
                 RemoteIpAddress = remoteIpAddress,

@@ -18,10 +18,8 @@ namespace RS.HMIServer.IBLL
         /// <summary>
         /// 密码重置
         /// </summary>
-        /// <param name="hostWithScheme">主机名协议</param>
-        /// <param name="passwordResetModel">名称重置实体</param>
         /// <returns></returns>
-        Task<OperateResult> PasswordResetAsync(string hostWithScheme, PasswordResetModel passwordResetModel);
+        Task<OperateResult> PasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences);
 
         /// <summary>
         /// 密码重置会话验证

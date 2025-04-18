@@ -25,6 +25,6 @@ namespace RS.HMIServer.IBLL
         /// <param name="email">邮箱地址</param>
         /// <param name="passwordResetToken">密码重置会话Token</param>
         /// <returns></returns>
-        Task<OperateResult> SendPassResetAsync(EmailPasswordResetModel emailPasswordResetModel);
+        Task<OperateResult> SendPassResetAsync(EmailSecurityModel emailSecurityModel);
     }
 }

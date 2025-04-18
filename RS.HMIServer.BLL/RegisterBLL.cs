@@ -87,7 +87,7 @@ namespace RS.HMIServer.BLL
             var operateResult = await this.RegisterDAL.IsEmailRegisteredAsync(emailRegisterPostModel.Email);
             if (operateResult.IsSuccess)
             {
-                return OperateResult.CreateFailResult<AESEncryptModel>($"邮箱{emailRegisterPostModel.Email}已注册，请直接使用该账号登录。{Environment.NewLine}如果忘记密码，请使用密码找回功能！");
+                return OperateResult.CreateFailResult<AESEncryptModel>($"邮箱已注册！");
             }
 
             //邮箱地址哈希值作为会话主键

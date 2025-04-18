@@ -43,6 +43,11 @@ export class RouterUtil {
           path: '/Home',
           name: 'Home',
           component: () => import('../../Views/Home/HomeView.vue')
+        },
+        {
+          path: '/Security',
+          name: 'Security',
+          component: () => import('../../Views/Security/SecurityView.vue')
         }
       ]
     });

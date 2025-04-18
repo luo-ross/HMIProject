@@ -4,7 +4,7 @@ using RS.HMIServer.IBLL;
 using RS.Commons;
 using RS.Models;
 
-namespace RS.HMIServer.Areas.WebApi.Controllers
+namespace RS.HMIServer.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
@@ -32,7 +32,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetEmailVerify(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.GetEmailVerifyAsync(aesEncryptModel,this. SessionId, this.Audiences);
+            var handleResult = await RegisterBLL.GetEmailVerifyAsync(aesEncryptModel, SessionId, Audiences);
             return handleResult;
         }
 
@@ -45,7 +45,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize(Roles = "EmailVerifyValid")]
         public async Task<OperateResult> EmailVerifyValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.EmailVerifyValidAsync(aesEncryptModel, this.SessionId,this.Audiences);
+            var handleResult = await RegisterBLL.EmailVerifyValidAsync(aesEncryptModel, SessionId,Audiences);
             return handleResult;
         }
 
@@ -61,7 +61,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetSMSVerify(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.GetSMSVerifyAsync(aesEncryptModel, this.SessionId, this.Audiences);
+            var handleResult = await RegisterBLL.GetSMSVerifyAsync(aesEncryptModel, SessionId, Audiences);
             return handleResult;
         }
 
@@ -74,7 +74,7 @@ namespace RS.HMIServer.Areas.WebApi.Controllers
         [Authorize]
         public async Task<OperateResult> SMSVerifyValid(AESEncryptModel aesEncryptModel)
         {
-            var handleResult = await RegisterBLL.SMSVerifyValidAsync(aesEncryptModel, this.SessionId, this.Audiences);
+            var handleResult = await RegisterBLL.SMSVerifyValidAsync(aesEncryptModel, SessionId, Audiences);
             return handleResult;
         }
         #endregion
