@@ -19,7 +19,7 @@ namespace RS.HMIServer.IBLL
         /// 密码重置
         /// </summary>
         /// <returns></returns>
-        Task<OperateResult> PasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences);
+        Task<OperateResult> EmailPasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences);
 
         /// <summary>
         /// 密码重置会话验证

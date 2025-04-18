@@ -46,7 +46,7 @@ namespace RS.HMIServer.BLL
         }
 
 
-        public async Task<OperateResult> PasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences)
+        public async Task<OperateResult> EmailPasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences)
         {
             //进行数据解密
             var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<EmailSecurityModel>(aesEncryptModel, sessionId);
@@ -85,7 +85,7 @@ namespace RS.HMIServer.BLL
 
             //创建修改密码会话
             string passwordResetToken = Guid.NewGuid().ToString();  //创建会话主键
-            var operateResult = await this.SecurityDAL.CreatePasswordResetSessionAsync(passwordResetToken, new EmailSecurityModel()
+            var operateResult = await this.SecurityDAL.CreateEmailPasswordResetSessionAsync(passwordResetToken, new EmailSecurityModel()
             {
                 Email = emailSecurityModel.Email,
             });

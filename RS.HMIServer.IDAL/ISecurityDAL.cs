@@ -18,7 +18,7 @@ namespace RS.HMIServer.IDAL
         /// <param name="token">密码重置会话主键</param>
         /// <param name="EmailSecurityModel">密码重置实体信息</param>
         /// <returns></returns>
-        Task<OperateResult> CreatePasswordResetSessionAsync(string token, EmailSecurityModel EmailSecurityModel);
+        Task<OperateResult> CreateEmailPasswordResetSessionAsync(string token, EmailSecurityModel EmailSecurityModel);
 
 
         /// <summary>

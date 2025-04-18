@@ -42,7 +42,7 @@ namespace RS.HMIServer.DAL
         /// <param name="token">密码重置会话主键</param>
         /// <param name="EmailSecurityModel">密码重置实体信息</param>
         /// <returns></returns>
-        public async Task<OperateResult> CreatePasswordResetSessionAsync(string token, EmailSecurityModel EmailSecurityModel)
+        public async Task<OperateResult> CreateEmailPasswordResetSessionAsync(string token, EmailSecurityModel EmailSecurityModel)
         {
             //检查秘密重置会话是否已经存在
             var emailHashCode = this.CryptographyBLL.GetMD5HashCode(EmailSecurityModel.Email);

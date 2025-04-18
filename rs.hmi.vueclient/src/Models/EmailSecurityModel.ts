@@ -1,6 +1,6 @@
 
 /**
- * 安全类
+ * 邮箱密码重置请求类
  */
 export class EmailSecurityModel   {
   /**

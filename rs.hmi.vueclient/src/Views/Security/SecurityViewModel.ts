@@ -2,28 +2,29 @@ import { ref } from 'vue'
 import { ValidHelper } from '../../Commons/Helper/ValidHelper';
 import { ViewModelBase } from '../../Models/ViewModelBase';
 import type { IInputEvents } from '../../Interfaces/IInputEvents';
-import { EmailSecurityModel } from '../../Models/EmailEmailSecurityModel';
-import { SimpleOperateResult } from '../../Commons/OperateResult/OperateResult';
+import { SecurityModel } from '../../Models/SecurityModel';
+import { EmailSecurityModel } from '../../Models/EmailSecurityModel';
 
 
 export class SecurityViewModel extends ViewModelBase {
-  private EmailSecurityModel = ref<EmailSecurityModel>(new EmailSecurityModel());
+  private securityModel = ref<SecurityModel>(new SecurityModel());
   public RSEmailEvents: IInputEvents | null = null;
 
   constructor() {
     super();
+
+    this.SecurityModel.IsEmailSendSuccucess = true;
   }
 
-
-  public get EmailSecurityModel(): EmailSecurityModel {
-    return this.EmailSecurityModel.value;
+  public get SecurityModel(): SecurityModel {
+    return this.securityModel.value;
   }
-  public set EmailSecurityModel(viewModel: EmailSecurityModel) {
-    this.EmailSecurityModel.value = viewModel;
+  public set SecurityModel(viewModel: SecurityModel) {
+    this.securityModel.value = viewModel;
   }
 
   //用户点击发送重置邮件事件
-  private async HandlePasswordReset(): Promise<void> {
+  public async HandlePasswordReset(): Promise<void> {
 
     //这里进行客户端简单的表单验证
     if (!this.ValidateForm()) {
@@ -36,12 +37,9 @@ export class SecurityViewModel extends ViewModelBase {
 
     //在这里发起注册事件
     const getRegisterVerifyResult = await this.RSLoadingEvents.SimpleLoadingActionAsync(async () => {
-
-      const registerVerifyValidModel = new RegisterVerifyValidModel();
-      registerVerifyValidModel.RegisterSessionId = this.EmailVerifyModel.RegisterSessionId;
-      registerVerifyValidModel.Verify = this.EmailVerifyModel.Verify;
-      return await this.AxiosUtil.AESEncryptPost<RegisterVerifyValidModel>('/api/v1/Register/EmailVerifyValid', registerVerifyValidModel);
-      
+      const emailSecurityModel = new EmailSecurityModel();
+      emailSecurityModel.Email = this.SecurityModel.Email;
+      return await this.AxiosUtil.AESEncryptPost<EmailSecurityModel>('/api/v1/Security/EmailPasswordReset', emailSecurityModel);
     });
 
     //验证结果
@@ -49,13 +47,17 @@ export class SecurityViewModel extends ViewModelBase {
       this.RSMessageEvents?.ShowWarningMsg(getRegisterVerifyResult.Message);
       return;
     }
-    
-  
-    return;
+
+    this.SecurityModel.IsEmailSendSuccucess = true;
+  }
+
+
+  public HandleReturnSecurity() {
+    this.SecurityModel.IsEmailSendSuccucess = false;
   }
 
   public override ValidateForm(): boolean {
-    if (!this.EmailSecurityModel.Email || !ValidHelper.IsEmail(this.EmailSecurityModel.Email)) {
+    if (!this.SecurityModel.Email || !ValidHelper.IsEmail(this.SecurityModel.Email)) {
       this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
       this.RSEmailEvents?.Focus();
       return false;

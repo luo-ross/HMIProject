@@ -29,14 +29,14 @@ namespace RS.HMIServer.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult> PasswordResetAsync(AESEncryptModel aesEncryptModel)
+        public async Task<OperateResult> EmailPasswordReset(AESEncryptModel aesEncryptModel)
         {
-            return await SecurityBLL.PasswordResetAsync(aesEncryptModel,HostWithScheme,  SessionId, Audiences);
+            return await SecurityBLL.EmailPasswordResetAsync(aesEncryptModel,HostWithScheme,  SessionId, Audiences);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult> PasswordConfirmAsync(PasswordConfirmModel passwordConfirmModel)
+        public async Task<OperateResult> EmailPasswordConfirm(PasswordConfirmModel passwordConfirmModel)
         {
             return OperateResult.CreateSuccessResult();
         }
