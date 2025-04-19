@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from 'axios';
 import { Cryptography } from '../Cryptography/Cryptography'
 import { Utils } from '../Utils';
-import type { AESEncryptModel } from '../../Models/AESEncryptModel';
+import type { AESEncryptModel } from '../../Models/WebAPI/AESEncryptModel';
 import { GenericOperateResult, SimpleOperateResult } from '../OperateResult/OperateResult';
 
 export class AxiosUtil {

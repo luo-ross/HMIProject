@@ -66,10 +66,10 @@ namespace RS.HMIServer.BLL
 
         private (string userName, string password, string host, int port) GetEmailConfig()
         {
-            string userName = Configuration["ConnectionStrings:EmailService:UserName"];
-            string password = Configuration["ConnectionStrings:EmailService:Password"];
-            string host = Configuration["ConnectionStrings:EmailService:Host"];
-            int port = int.Parse(Configuration["ConnectionStrings:EmailService:Port"]);
+            string userName = Configuration["EmailService:UserName"];
+            string password = Configuration["EmailService:Password"];
+            string host = Configuration["EmailService:Host"];
+            int port = int.Parse(Configuration["EmailService:Port"]);
             return (userName, password, host, port);
         }
 

@@ -1,11 +1,12 @@
 import { ref } from 'vue'
-import { EmailRegisterPostModel } from '../../Models/EmailRegisterPostModel';
+import { EmailRegisterPostModel } from '../../Models/WebAPI/EmailRegisterPostModel';
 import { ValidHelper } from '../../Commons/Helper/ValidHelper';
 import { RegisterModel } from '../../Models/RegisterModel';
 import { ViewModelBase } from '../../Models/ViewModelBase';
 import { RelayCommand } from '../../Events/RelayCommand';
 import type { IInputEvents } from '../../Interfaces/IInputEvents';
-import type { RegisterVerifyModel } from '../../Models/RegisterVerifyModel';
+import type { RegisterVerifyModel } from '../../Models/WebAPI/RegisterVerifyModel';
+import { GenericOperateResult } from '../../Commons/OperateResult/OperateResult';
 
 export class RegisterViewModel extends ViewModelBase {
   private registerModel = ref<RegisterModel>(new RegisterModel());
@@ -51,6 +52,9 @@ export class RegisterViewModel extends ViewModelBase {
     const getRegisterVerifyResult = await this.RSLoadingEvents.GenericLoadingActionAsync<RegisterVerifyModel>(async () => {
       //验证通过后 对密码进行加密处理
       const passwordSHA256HashCode = await this.Cryptography.GetSHA256HashCode(this.RegisterModel.PasswordConfirm);
+      if (!passwordSHA256HashCode.IsSuccess) {
+        return GenericOperateResult.CreateFailResult(passwordSHA256HashCode);
+      }
       const emailRegisterPostModel = new EmailRegisterPostModel();
       emailRegisterPostModel.Email = this.RegisterModel.Email;
       emailRegisterPostModel.Password = passwordSHA256HashCode.Data;

@@ -118,7 +118,7 @@ namespace RS.HMIServer
             builder.Services.AddDataProtection(setupAction =>
             {
                 var configuration = builder.Configuration;
-                string applicationDiscriminator = configuration["ConnectionStrings:ApplicationDiscriminator"];
+                string applicationDiscriminator = configuration["ApplicationDiscriminator"];
                 setupAction.ApplicationDiscriminator = applicationDiscriminator;
             }).PersistKeysToFileSystem(new DirectoryInfo(KeysRepository))
             .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
@@ -149,9 +149,9 @@ namespace RS.HMIServer
             {
                 //≈‰÷√JWT Token
                 var configuration = builder.Configuration;
-                string? tokenSecurityKey = configuration["ConnectionStrings:JWTConfig:SecurityKey"];
-                string? issuer = configuration["ConnectionStrings:JWTConfig:Issuer"];
-                string[]? audiences = configuration.GetSection("ConnectionStrings:JWTConfig:Audiences").Get<string[]>();
+                string? tokenSecurityKey = configuration["JWTConfig:SecurityKey"];
+                string? issuer = configuration["JWTConfig:Issuer"];
+                string[]? audiences = configuration.GetSection("JWTConfig:Audiences").Get<string[]>();
                 configureOptions.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidIssuer = issuer,
@@ -375,10 +375,10 @@ namespace RS.HMIServer
             var configuration = appHost.Services.GetRequiredService<IConfiguration>();
             var memoryCache = appHost.Services.GetRequiredService<IMemoryCache>();
 
-            string globalRSASignPublicKeyFileName = configuration["ConnectionStrings:GlobalRSASignPublicKeyFileName"];
-            string globalRSASignPrivateKeyFileName = configuration["ConnectionStrings:GlobalRSASignPrivateKeyFileName"];
-            string globalRSAEncryptPublicKeyFileName = configuration["ConnectionStrings:GlobalRSAEncryptPublicKeyFileName"];
-            string globalRSAEncryptPrivateKeyFileName = configuration["ConnectionStrings:GlobalRSAEncryptPrivateKeyFileName"];
+            string globalRSASignPublicKeyFileName = configuration["GlobalRSASignPublicKeyFileName"];
+            string globalRSASignPrivateKeyFileName = configuration["GlobalRSASignPrivateKeyFileName"];
+            string globalRSAEncryptPublicKeyFileName = configuration["GlobalRSAEncryptPublicKeyFileName"];
+            string globalRSAEncryptPrivateKeyFileName = configuration["GlobalRSAEncryptPrivateKeyFileName"];
 
             GlobalRSASignPublicKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSASignPublicKeyFileName);
             GlobalRSASignPrivateKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSASignPrivateKeyFileName);

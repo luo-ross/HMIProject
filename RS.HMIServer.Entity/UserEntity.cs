@@ -9,7 +9,6 @@ namespace RS.HMIServer.Entity
     /// </summary>
     public sealed class UserEntity : BaseEntity
     {
-
         /// <summary>
         /// 用户昵称
         /// </summary>
@@ -34,5 +33,10 @@ namespace RS.HMIServer.Entity
         /// 关联实名认证
         /// </summary>
         public long? RealNameId { get; set; }
+
+        /// <summary>
+        /// 是否禁用
+        /// </summary>
+        public bool? IsDisabled { get; set; }
     }
 }

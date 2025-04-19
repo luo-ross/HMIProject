@@ -62,7 +62,7 @@
           </div>
 
           <div class="form-row">
-            <a class="btn-forget-password" target="_blank" href="/SystemManage/Security/ForgetPassword?ClientId=@clientId&Timestamp=@timeStamp">忘记了密码？</a>
+            <a class="btn-redirect" @click="ViewModel.HandleForgetPassword">忘记了密码?</a>
           </div>
 
         </div>

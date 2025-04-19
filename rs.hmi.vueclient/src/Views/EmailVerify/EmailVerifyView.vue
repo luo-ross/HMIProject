@@ -25,7 +25,7 @@
         </div>
         <div v-else class="general-content-right">
           <IconSuccess class="icon-success"></IconSuccess>
-          <div class="card-title fw-bold mb-3 mt-5">注册成功</div>
+          <h2 class="text-2xl font-bold text-gray-700 mb-4 mt-4 text-center">注册成功</h2>
           <div class="card-text text-muted mb-4">你已成功注册账号。欢迎加入我们，开启全新的旅程</div>
           <button class="btn-custorm-primary" @click="ViewModel.HandleBackLogin">返回登录</button>
         </div>

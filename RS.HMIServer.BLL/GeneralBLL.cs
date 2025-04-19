@@ -45,8 +45,8 @@ namespace RS.HMIServer.BLL
             {
                 subject.AddClaim(claim);
             }
-            string tokenSecurityKey = Configuration["ConnectionStrings:JWTConfig:SecurityKey"];
-            string issuer = Configuration["ConnectionStrings:JWTConfig:Issuer"];
+            string tokenSecurityKey = Configuration["JWTConfig:SecurityKey"];
+            string issuer = Configuration["JWTConfig:Issuer"];
             //这里实际上是就是添加了一堆Claim
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {

@@ -3,7 +3,7 @@ import { ValidHelper } from '../../Commons/Helper/ValidHelper';
 import { ViewModelBase } from '../../Models/ViewModelBase';
 import type { IInputEvents } from '../../Interfaces/IInputEvents';
 import { SecurityModel } from '../../Models/SecurityModel';
-import { EmailSecurityModel } from '../../Models/EmailSecurityModel';
+import { EmailSecurityModel } from '../../Models/WebAPI/EmailSecurityModel';
 
 
 export class SecurityViewModel extends ViewModelBase {
@@ -12,8 +12,6 @@ export class SecurityViewModel extends ViewModelBase {
 
   constructor() {
     super();
-
-    this.SecurityModel.IsEmailSendSuccucess = true;
   }
 
   public get SecurityModel(): SecurityModel {
@@ -24,7 +22,7 @@ export class SecurityViewModel extends ViewModelBase {
   }
 
   //用户点击发送重置邮件事件
-  public async HandlePasswordReset(): Promise<void> {
+  public async HandSendEmailPasswordReset(): Promise<void> {
 
     //这里进行客户端简单的表单验证
     if (!this.ValidateForm()) {
@@ -39,7 +37,7 @@ export class SecurityViewModel extends ViewModelBase {
     const getRegisterVerifyResult = await this.RSLoadingEvents.SimpleLoadingActionAsync(async () => {
       const emailSecurityModel = new EmailSecurityModel();
       emailSecurityModel.Email = this.SecurityModel.Email;
-      return await this.AxiosUtil.AESEncryptPost<EmailSecurityModel>('/api/v1/Security/EmailPasswordReset', emailSecurityModel);
+      return await this.AxiosUtil.AESEncryptPost<EmailSecurityModel>('/api/v1/Security/PasswordResetEmailSend', emailSecurityModel);
     });
 
     //验证结果
@@ -54,6 +52,10 @@ export class SecurityViewModel extends ViewModelBase {
 
   public HandleReturnSecurity() {
     this.SecurityModel.IsEmailSendSuccucess = false;
+  }
+
+  public HandleBackLogin() {
+    this.RouterUtil.Push("/Login");
   }
 
   public override ValidateForm(): boolean {

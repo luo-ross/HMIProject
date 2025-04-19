@@ -1,12 +1,9 @@
+import { LogonModel } from "./LogonModel";
 
 /**
  * 安全类
  */
-export class SecurityModel   {
-  /**
-   * 邮箱
-   */
-  public Email: string | null = null;
+export class SecurityModel extends LogonModel  {
 
   /**
    * 邮件是否发送成功

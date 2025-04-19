@@ -4,9 +4,9 @@ import { Cryptography } from '../Cryptography/Cryptography'
 import { Utils } from '../Utils';
 import  { AxiosUtil } from './AxiosUtil';
 import { SimpleOperateResult, type GenericOperateResult } from '../OperateResult/OperateResult';
-import { SessionRequestModel } from '../../Models/SessionRequestModel';
-import { MemoryCacheKey } from '../../Models/MemoryCacheKey';
-import type { SessionResultModel } from '../../Models/SessionResultModel';
+import { SessionRequestModel } from '../../Models/WebAPI/SessionRequestModel';
+import { MemoryCacheKey } from '../../Models/WebAPI/MemoryCacheKey';
+import type { SessionResultModel } from '../../Models/WebAPI/SessionResultModel';
 
 export class RouterUtil {
   private static Instance: RouterUtil;
@@ -48,13 +48,27 @@ export class RouterUtil {
           path: '/Security',
           name: 'Security',
           component: () => import('../../Views/Security/SecurityView.vue')
+        },
+        {
+          path: '/EmailPasswordReset',
+          name: 'EmailPasswordReset',
+          component: () => import('../../Views/Security/EmailPasswordResetView.vue')
         }
       ]
     });
     this.Router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+
       // 白名单，不需要验证的路由
-      const whiteList = ['/Login']
-      if (whiteList.includes(to.path)) {
+      const whiteList = ['/Login','/EmailPasswordReset']
+      
+      // 检查当前路径是否匹配白名单中的任何路径（忽略查询参数）
+      const isInWhiteList = whiteList.some(path => {
+        // 移除查询参数进行比较
+        const currentPath = to.path.split('?')[0];
+        return currentPath === path;
+      });
+
+      if (isInWhiteList) {
         next();
         return;
       }

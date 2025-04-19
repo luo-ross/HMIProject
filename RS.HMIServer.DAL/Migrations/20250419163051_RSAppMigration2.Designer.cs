@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RS.HMIServer.DAL.SqlServer;
 
@@ -10,9 +11,11 @@ using RS.HMIServer.DAL.SqlServer;
 namespace RS.HMIServer.DAL.Migrations
 {
     [DbContext(typeof(RSAppDbContext))]
-    partial class RSAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250419163051_RSAppMigration2")]
+    partial class RSAppMigration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

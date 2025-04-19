@@ -19,14 +19,21 @@ namespace RS.HMIServer.IDAL
         /// <param name="EmailSecurityModel">密码重置实体信息</param>
         /// <returns></returns>
         Task<OperateResult> CreateEmailPasswordResetSessionAsync(string token, EmailSecurityModel EmailSecurityModel);
-
-
+       
         /// <summary>
         /// 密码重置会话验证
         /// </summary>
         /// <param name="email">邮箱</param>
         /// <param name="token">会话主键</param>
         /// <returns></returns>
-        Task<OperateResult> PasswordResetSessionValidAsync(string email, string token);
+        Task<OperateResult<EmailSecurityModel>> EmailPasswordResetSessionValidAsync(string email, string token);
+
+        /// <summary>
+        /// 密码重置确认
+        /// </summary>
+        /// <param name="emailPasswordConfirmModel">密码重置信息</param>
+        /// <returns></returns>
+        Task<OperateResult> EmailPasswordResetConfirmAsync(EmailPasswordConfirmModel emailPasswordConfirmModel);
+
     }
 }

@@ -39,8 +39,8 @@ namespace RS.HMIServer.BLL
              * 以免泄露密钥对危及您的财产安全。
              * SecretId、SecretKey 查询: https://console.cloud.tencent.com/cam/capi */
 
-            string accessKeyId = Configuration["ConnectionStrings:SMSConfig:AccessKeyId"];
-            string accessKeySecret = Configuration["ConnectionStrings:SMSConfig:AccessKeySecret"];
+            string accessKeyId = Configuration["SMSConfig:AccessKeyId"];
+            string accessKeySecret = Configuration["SMSConfig:AccessKeySecret"];
             Credential cred = new Credential
             {
                 SecretId = accessKeyId,

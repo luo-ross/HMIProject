@@ -69,7 +69,7 @@ export class LoginViewModel extends ViewModelBase {
     const password = this.LoginModel.Password;
     const verify = this.LoginModel.Verify;
 
-   
+
     if (!email || !ValidHelper.IsEmail(email)) {
       this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
       this.RSEmailEvents?.Focus();
@@ -89,5 +89,9 @@ export class LoginViewModel extends ViewModelBase {
     }
 
     return true;
+  }
+
+  public HandleForgetPassword() {
+    this.RouterUtil.Push("/Security");
   }
 } 

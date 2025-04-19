@@ -1,44 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using RazorLight;
 using RS.Commons;
 using RS.HMIServer.IBLL;
 using RS.HMIServer.Models;
 using RS.Models;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace RS.HMIServer.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]/[action]")]
-    [Authorize]
     public class SecurityController : BaseController
     {
         private readonly ISecurityBLL SecurityBLL;
         private readonly ILogBLL LogBLL;
 
-        public SecurityController(ISecurityBLL securityBLL,  ILogBLL logBLL)
+        public SecurityController(ISecurityBLL securityBLL, ILogBLL logBLL)
         {
             SecurityBLL = securityBLL;
             LogBLL = logBLL;
         }
-     
+
 
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult> EmailPasswordReset(AESEncryptModel aesEncryptModel)
+        public async Task<OperateResult> PasswordResetEmailSend(AESEncryptModel aesEncryptModel)
         {
-            return await SecurityBLL.EmailPasswordResetAsync(aesEncryptModel,HostWithScheme,  SessionId, Audiences);
+            return await SecurityBLL.PasswordResetEmailSendAsync(aesEncryptModel,  SessionId, Audiences);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<OperateResult> EmailPasswordConfirm(PasswordConfirmModel passwordConfirmModel)
+        public async Task<OperateResult> EmailPasswordResetConfirm(AESEncryptModel aesEncryptModel)
         {
-            return OperateResult.CreateSuccessResult();
+            return await SecurityBLL.EmailPasswordResetConfirmAsync(aesEncryptModel, SessionId, Audiences);
         }
     }
 }

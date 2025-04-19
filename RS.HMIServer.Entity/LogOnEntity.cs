@@ -25,7 +25,12 @@ namespace RS.HMIServer.Entity
         /// </summary>
         public bool IsEnable { get; set; }
 
+        /// <summary>
+        /// 用户主键
+        /// </summary>
         public long? UserId { get; set; }
+
+        public int Test { get; set; }
 
     }
 }

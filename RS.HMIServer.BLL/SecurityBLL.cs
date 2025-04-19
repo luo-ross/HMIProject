@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Helper;
@@ -7,6 +8,7 @@ using RS.HMIServer.IBLL;
 using RS.HMIServer.IDAL;
 using RS.HMIServer.Models;
 using RS.Models;
+using RTools_NTS.Util;
 
 namespace RS.HMIServer.BLL
 {
@@ -37,16 +39,20 @@ namespace RS.HMIServer.BLL
         /// </summary>
         private readonly IGeneralBLL GeneralBLL;
 
-        public SecurityBLL(ISecurityDAL securityDAL, IEmailBLL emailBLL, ICryptographyBLL cryptographyBLL, IGeneralBLL generalBLL)
+        private readonly IConfiguration Configuration;
+
+
+        public SecurityBLL(ISecurityDAL securityDAL, IEmailBLL emailBLL, ICryptographyBLL cryptographyBLL, IGeneralBLL generalBLL, IConfiguration configuration)
         {
             this.EmailBLL = emailBLL;
             this.CryptographyBLL = cryptographyBLL;
             this.SecurityDAL = securityDAL;
             this.GeneralBLL = generalBLL;
+            this.Configuration = configuration;
         }
 
 
-        public async Task<OperateResult> EmailPasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences)
+        public async Task<OperateResult> PasswordResetEmailSendAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences)
         {
             //进行数据解密
             var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<EmailSecurityModel>(aesEncryptModel, sessionId);
@@ -60,9 +66,10 @@ namespace RS.HMIServer.BLL
             {
                 throw new ArgumentNullException(nameof(emailSecurityModel));
             }
-            if (string.IsNullOrEmpty(hostWithScheme) || string.IsNullOrWhiteSpace(hostWithScheme))
+            string webHost = this.Configuration["WebHost"];
+            if (string.IsNullOrEmpty(webHost) || string.IsNullOrWhiteSpace(webHost))
             {
-                throw new ArgumentNullException(nameof(hostWithScheme));
+                throw new ArgumentNullException(nameof(webHost));
             }
 
             if (string.IsNullOrEmpty(emailSecurityModel.Email) || string.IsNullOrWhiteSpace(emailSecurityModel.Email))
@@ -89,12 +96,13 @@ namespace RS.HMIServer.BLL
             {
                 Email = emailSecurityModel.Email,
             });
+
             if (!operateResult.IsSuccess)
             {
                 return operateResult;
             }
-           
-            emailSecurityModel.ResetLink = $"{hostWithScheme}/password/edit?email={Uri.EscapeDataString(emailSecurityModel.Email)}&token={passwordResetToken}";
+
+            emailSecurityModel.ResetLink = $"{webHost}/EmailPasswordReset?Email={Uri.EscapeDataString(emailSecurityModel.Email)}&Token={passwordResetToken}";
 
             operateResult = await this.EmailBLL.SendPassResetAsync(emailSecurityModel);
             if (!operateResult.IsSuccess)
@@ -108,19 +116,42 @@ namespace RS.HMIServer.BLL
 
         }
 
-        
-       
-
-
-        /// <summary>
-        /// 密码重置会话验证
-        /// </summary>
-        /// <param name="email">邮箱</param>
-        /// <param name="token">会话主键</param>
-        /// <returns></returns>
-        public async Task<OperateResult> PasswordResetSessionValidAsync(string email, string token)
+        public async Task<OperateResult> EmailPasswordResetConfirmAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences)
         {
-            return await this.SecurityDAL.PasswordResetSessionValidAsync(email, token);
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<EmailPasswordConfirmModel>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var emailPasswordConfirmModel = getAESDecryptResult.Data;
+
+            //查看会话是否存在
+            var validResult = await this.SecurityDAL.EmailPasswordResetSessionValidAsync(emailPasswordConfirmModel.Email, emailPasswordConfirmModel.Token);
+            if (!validResult.IsSuccess)
+            {
+                return validResult;
+            }
+            var emailSecurityModel = validResult.Data;
+
+            //判断用户是否相同
+            if (!emailSecurityModel.Email.Equals(emailPasswordConfirmModel.Email))
+            {
+                return OperateResult.CreateFailResult("密码重置会话不存在");
+            }
+            //获取邮箱
+            string  email= emailPasswordConfirmModel.Email;
+            //然后获取用户信息
+            var userEntity = this.SecurityDAL.FirstOrDefaultAsync<UserEntity>(t => t.Email == email);
+            if (userEntity == null)
+            {
+                return OperateResult.CreateFailResult("用户不存在！");
+            }
+
+            return await this.SecurityDAL.EmailPasswordResetConfirmAsync(emailPasswordConfirmModel);
         }
+
+
+
     }
 }

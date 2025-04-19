@@ -539,8 +539,8 @@ namespace RS.HMIServer.BLL
         /// <returns></returns>
         public async Task<OperateResult> SendRegisterVerifyAsync(string countryCode, string phone, int verify)
         {
-            string accessKeyId = Configuration["ConnectionStrings:SMSConfig:AccessKeyId"];
-            string accessKeySecret = Configuration["ConnectionStrings:SMSConfig:AccessKeySecret"];
+            string accessKeyId = Configuration["SMSConfig:AccessKeyId"];
+            string accessKeySecret = Configuration["SMSConfig:AccessKeySecret"];
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             //必填,请参考"开发准备"获取如下数据,替换为实际值

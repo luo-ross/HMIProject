@@ -42,9 +42,9 @@ namespace RS.HMIServer.DAL.Redis
 
         public RedisDbContext(IConfiguration configuration)
         {
-            string host = configuration["ConnectionStrings:RSAppRedis:Host"];
-            string port = configuration["ConnectionStrings:RSAppRedis:Port"];
-            string password = configuration["ConnectionStrings:RSAppRedis:Password"];
+            string host = configuration["RSAppRedis:Host"];
+            string port = configuration["RSAppRedis:Port"];
+            string password = configuration["RSAppRedis:Password"];
             var options = new ConfigurationOptions();
             options.EndPoints.Add(host, int.Parse(port));
             options.Password = password;

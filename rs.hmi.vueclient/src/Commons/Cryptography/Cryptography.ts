@@ -1,7 +1,7 @@
-import { AESEncryptModel } from "../../Models/AESEncryptModel";
-import { MemoryCacheKey } from "../../Models/MemoryCacheKey";
-import { SessionModel } from "../../Models/SessionModel";
-import { SessionResultModel } from "../../Models/SessionResultModel";
+import { AESEncryptModel } from "../../Models/WebAPI/AESEncryptModel";
+import { MemoryCacheKey } from "../../Models/WebAPI/MemoryCacheKey";
+import { SessionModel } from "../../Models/WebAPI/SessionModel";
+import { SessionResultModel } from "../../Models/WebAPI/SessionResultModel";
 import { RSAType } from "../Enums/RSAType";
 import { GenericOperateResult, SimpleOperateResult } from "../OperateResult/OperateResult";
 import { Utils } from "../Utils";

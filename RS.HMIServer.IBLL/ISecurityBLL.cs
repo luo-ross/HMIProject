@@ -15,18 +15,21 @@ namespace RS.HMIServer.IBLL
     /// </summary>
     public interface ISecurityBLL
     {
+
         /// <summary>
         /// 密码重置
         /// </summary>
         /// <returns></returns>
-        Task<OperateResult> EmailPasswordResetAsync(AESEncryptModel aesEncryptModel, string hostWithScheme, string sessionId, string audiences);
+        Task<OperateResult> PasswordResetEmailSendAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences);
 
         /// <summary>
-        /// 密码重置会话验证
+        /// 密码重置确认
         /// </summary>
-        /// <param name="email">邮箱</param>
-        /// <param name="token">会话主键</param>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <param name="audiences">客户端类型</param>
         /// <returns></returns>
-        Task<OperateResult> PasswordResetSessionValidAsync(string email, string token);
+        Task<OperateResult> EmailPasswordResetConfirmAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences);
+
     }
 }
