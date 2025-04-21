@@ -4,11 +4,11 @@ namespace RS.HMIServer.Models
 {
     public class EmailPasswordConfirmModel
     {
-      /// <summary>
-      /// 邮箱地址
-      /// </summary>
+        /// <summary>
+        /// 邮箱地址
+        /// </summary>
         public string Email { get; set; }
-
+       
         /// <summary>
         /// 会话主键
         /// </summary>

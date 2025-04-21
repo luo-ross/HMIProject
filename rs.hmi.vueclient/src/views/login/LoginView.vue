@@ -1,5 +1,91 @@
+<style>
+  .slider-border {
+    display: flex;
+    width: 100%;
+    border: 1px solid #198cff;
+    border-radius: 5px;
+    padding: 0;
+    position: relative;
+    height: 40px;
+    background-color: #f5f5f5;
+    margin: 2px 3px;
+  }
 
+  .btn-slider {
+    background-color: #198cff;
+    border-radius: 3px;
+    padding: 0;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    cursor: grab;
+    user-select: none;
+    padding: 6px 10px;
+  }
 
+    .btn-slider:active ,.btn-imgslider:active{
+      cursor: grabbing;
+    }
+
+  .btn-slider-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-slider-icon-path {
+    fill: #fff;
+  }
+
+  .slider-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 40px;
+    color: #666;
+    pointer-events: none;
+  }
+
+  .background-fill {
+    position: absolute;
+    height: 100%;
+    background: #198cff;
+    opacity: 0.2;
+  }
+
+  .btn-slider:hover,.btn-imgslider:hover {
+    opacity: 1;
+  }
+
+  .verify-img-host {
+    background-image: url(/public/test11111.jpg);
+    width: 100%;
+    height: 150px;
+    position: absolute;
+    top: -155px;
+    border-radius: 5px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .btn-imgslider {
+    width: 50px;
+    height: 50px;
+    background-image: url(/public/icon.png);
+    background-size: cover;
+    background-position: center;
+    border: none;
+    position: absolute;
+    left: 50px;
+    top: 45px;
+    box-shadow: 0px 0px 20px rgba(255,0,0,1);
+  }
+</style>
 <template>
   <div class="div-main">
     <RSMessage :ref="events => ViewModel.RSMessageEvents= events"></RSMessage>
@@ -25,7 +111,7 @@
             <label class="label-tab label-login" for="radio-login">登录</label>
 
             <input type="radio" id="radio-register" name="tab" value="radio-register">
-            <label class="label-tab label-register" for="radio-register" @click="ViewModel.RegisterCommand.Execute()">注册</label>
+            <label class="label-tab label-register" for="radio-register" @click="ViewModel.HandleRegister">注册</label>
           </div>
 
 
@@ -39,24 +125,60 @@
                       :ref="events => ViewModel.RSPasswordEvents= events" />
 
 
-          <div class="form-row">
+          <!--<div class="form-row">
             <RSVerify Placeholder="请输入验证码"
                       v-model:Verify="ViewModel.LoginModel.Verify"
                       :ref="events => ViewModel.RSVerifyEvents = events" />
             <div class="form-input-border img-border">
-              <!--<img class="img-verify" src="~/SystemManage/Security/GetLoginVerify?ClientId=@clientId&Timestamp=@timeStamp" />-->
+              <img class="img-verify" src="/public/verify.jpg" />
+            </div>
+          </div>-->
+          <div class="form-row">
+            <div :ref="el => ViewModel.SliderBorderRef.value = el"
+                 class="slider-border">
+              <span class="slider-text">向右滑动滑块进行验证</span>
+              <div :style="{width: ViewModel.LoginModel.BackgroundFillPercent+'%' }"
+                   class="background-fill">
+              </div>
+              <button :ref="el => ViewModel.BtnSliderRef.value = el"
+                      :style="{left: ViewModel.LoginModel.BtnSliderPositionX+'px' }"
+                      class="btn-slider"
+                      @mousedown="ViewModel.HandleBtnSliderMousedown($event)">
+                <svg t="1745157586510" class="icon btn-slider-icon"
+                     viewBox="0 0 1024 1024"
+                     version="1.1"
+                     xmlns="http://www.w3.org/2000/svg"
+                     p-id="2693"
+                     width="64"
+                     height="64">
+                  <path class="btn-slider-icon-path"
+                        d="M567.32505 547.18536c20.970614-21.479197 20.970614-56.307424 0-77.790714L185.251168 77.115332c-20.971637-21.47715-54.975079-21.47715-75.948763 0-20.973684 21.484314-20.973684 56.30947 0 77.793784l344.188016 353.383446-344.188016 353.384469c-20.973684 21.484314-20.973684 56.311517 0 77.79276 20.971637 21.482267 54.975079 21.482267 75.948763 0l382.072858-392.280337 0.001024-0.004094zM440.60802 154.908092l344.18597 353.383446-344.18597 353.385493c-20.973684 21.484314-20.973684 56.311517 0 77.79276 20.972661 21.482267 54.975079 21.482267 75.949786 0l382.074905-392.281361c20.966521-21.478174 20.966521-56.307424 0-77.790714L516.555759 77.115332c-20.972661-21.47715-54.975079-21.47715-75.949786 0-20.971637 21.48329-20.971637 56.30947 0.002047 77.79276z"
+                        p-id="2694">
+                  </path>
+                </svg>
+              </button>
+              <div :ref="el => ViewModel.VerifyImgHostRef.value = el"
+                   class="verify-img-host"
+                   :class="{'d-none': !ViewModel.LoginModel.IsShowVerifyImg }"
+                   >
+                <button :style="{
+                        width: ViewModel.LoginModel.BtnImgSliderWidth+'px',
+                        height:ViewModel.LoginModel.BtnImgSliderHeight+'px',
+                        left:ViewModel.LoginModel.BtnImgSliderPositionX+'px',
+                        top:ViewModel.LoginModel.BtnImgSliderPositionY+'px',
+                        }"
+                        :ref="el => ViewModel.BtnImgSliderRef.value = el"
+                        class="btn-imgslider"
+                        @mousedown="ViewModel.HandleBtnImgSliderMousedown($event)">
+                </button>
+              </div>
             </div>
           </div>
 
+
           <div class="form-row">
             <button type="button" class="btn-custorm-primary"
-                    @click="ViewModel.LoginCommand.Execute()"
-                    :disabled="!ViewModel.LoginCommand.CanExecute()"
-                    @mouseover="ViewModel.LoginCommand.SetCommandParameter({
-                   email: ViewModel.LoginModel.Email,
-                   password: ViewModel.LoginModel.Password,
-                   verify: ViewModel.LoginModel.Verify
-                 })">
+                    @click="ViewModel.HandleLogin">
               登录
             </button>
           </div>
@@ -67,7 +189,7 @@
 
         </div>
 
-       
+
       </RSLoading>
     </div>
   </div>
@@ -81,11 +203,8 @@
   import RSPassword from '../../Controls/RSPassword.vue'
   import RSVerify from '../../Controls/RSVerify.vue'
   import RSLoading from '../../Controls/RSLoading.vue'
-
   import { LoginViewModel } from './LoginViewModel'
-
   const ViewModel = new LoginViewModel()
-
 </script>
 
 

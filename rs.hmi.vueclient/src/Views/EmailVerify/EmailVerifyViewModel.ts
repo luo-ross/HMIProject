@@ -1,7 +1,7 @@
-import { RegisterVerifyValidModel } from '../../Models/RegisterVerifyValidModel';
 import { EmailVerifyModel } from '../../Models/EmailVerifyModel';
 import { ViewModelBase } from '../../Models/ViewModelBase';
 import { ref } from 'vue';
+import { RegisterVerifyValidModel } from '../../Models/WebAPI/RegisterVerifyValidModel';
 export class EmailVerifyViewModel extends ViewModelBase {
   private emailVerifyModel = ref<EmailVerifyModel>(new EmailVerifyModel());
   constructor() {
