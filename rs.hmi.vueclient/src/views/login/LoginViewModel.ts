@@ -194,7 +194,7 @@ export class LoginViewModel extends ViewModelBase {
       this.HandleBtnSliderMove(event);
     } else if (this.IsBtnImgSliderDragging) {
       this.HandleBtnImgSliderMove(event);
-    } 
+    }
   }
 
   //滑动块事件
@@ -205,7 +205,7 @@ export class LoginViewModel extends ViewModelBase {
     this.LoginModel.BtnSliderPositionX = newPositionX;
     this.LoginModel.BackgroundFillPercent = Math.floor((this.LoginModel.BtnSliderPositionX + this.BtnSliderWidth) / this.BtnSliderContainerWidth * 100);
 
-    if (this.LoginModel.BackgroundFillPercent>99) {
+    if (this.LoginModel.BackgroundFillPercent > 99) {
       this.LoginModel.IsShowVerifyImg = true;
       this.InitBtnImgSliderControl();
     } else {
@@ -219,7 +219,7 @@ export class LoginViewModel extends ViewModelBase {
     newPositionX = Math.max(0, newPositionX);
     this.LoginModel.BtnImgSliderPositionX = newPositionX;
 
-    let newPositionY= this.BtnImgSliderHistoryPositionY + event.clientY - this.BtnImgSliderStartY;
+    let newPositionY = this.BtnImgSliderHistoryPositionY + event.clientY - this.BtnImgSliderStartY;
     newPositionY = Math.min(newPositionY, this.BtnImgSliderMaxPositionY);
     newPositionY = Math.max(0, newPositionY);
     this.LoginModel.BtnImgSliderPositionY = newPositionY;
@@ -233,7 +233,7 @@ export class LoginViewModel extends ViewModelBase {
       return;
     }
     this.IsBtnSliderDragging = true;
- 
+
     this.BtnSliderStartX = event.clientX;
   }
 
