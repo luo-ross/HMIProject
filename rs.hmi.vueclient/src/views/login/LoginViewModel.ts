@@ -280,8 +280,13 @@ export class LoginViewModel extends ViewModelBase {
     this.BtnImgSliderHistoryPositionY = this.LoginModel.BtnImgSliderPositionY;
   }
 
+  //处理鼠标离开
   public HandleGlobalMouseleave() {
     this.HandleGlobalMouseUp();
+  }
+
+  public GetVerifyImg() {
+   
   }
 
 } 
