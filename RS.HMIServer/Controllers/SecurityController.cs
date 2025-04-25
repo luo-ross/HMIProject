@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RS.Commons;
+using RS.HMIServer.BLL;
 using RS.HMIServer.IBLL;
 using RS.HMIServer.Models;
 using RS.Models;
@@ -16,8 +17,8 @@ namespace RS.HMIServer.Controllers
 
         public SecurityController(ISecurityBLL securityBLL, ILogBLL logBLL)
         {
-            SecurityBLL = securityBLL;
-            LogBLL = logBLL;
+            this. SecurityBLL = securityBLL;
+            this.LogBLL = logBLL;
         }
 
 
@@ -33,6 +34,17 @@ namespace RS.HMIServer.Controllers
         public async Task<OperateResult> EmailPasswordResetConfirm(AESEncryptModel aesEncryptModel)
         {
             return await SecurityBLL.EmailPasswordResetConfirmAsync(aesEncryptModel, SessionId, Audiences);
+        }
+
+        /// <summary>
+        /// 这里让用户必须通过Post才能获取到图像数据
+        /// </summary>
+        [HttpGet]
+        [Authorize]
+        public async Task<OperateResult<AESEncryptModel>> GetVerifyImgModel()
+        {
+            return await this.SecurityBLL.GetVerifyImgModelAsync(SessionId, Audiences);
+            //return File(combinedBytes, "application/octet-stream");
         }
     }
 }

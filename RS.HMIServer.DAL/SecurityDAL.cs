@@ -29,6 +29,11 @@ namespace RS.HMIServer.DAL
         private readonly IDatabase PasswordResetRedis;
 
         /// <summary>
+        /// Redis密码重置缓存接口
+        /// </summary>
+        private readonly IDatabase ImgVerifyRedis;
+
+        /// <summary>
         /// 密码服务
         /// </summary>
         private readonly ICryptographyBLL CryptographyBLL;
@@ -39,6 +44,7 @@ namespace RS.HMIServer.DAL
             this.RSAppDb = rsAppDb;
             this.CryptographyBLL = cryptographyBLL;
             this.PasswordResetRedis = redisDbContext.GetPasswordResetRedis();
+            this.ImgVerifyRedis = redisDbContext.GetImgVerifyRedis();
         }
 
         /// <summary>
@@ -105,14 +111,14 @@ namespace RS.HMIServer.DAL
                 return OperateResult.CreateFailResult<EmailSecurityModel>("密码重置会话不存在");
             }
 
-            var stringSetResult = await this.PasswordResetRedis.StringGetAsync(emailHashCode.ToString());
-            if (!stringSetResult.HasValue)
+            var stringGetResult = await this.PasswordResetRedis.StringGetAsync(emailHashCode.ToString());
+            if (!stringGetResult.HasValue)
             {
                 return OperateResult.CreateFailResult<EmailSecurityModel>("密码重置会话不存在");
             }
 
             //获取密码重置会话验证邮箱是否一致
-            var emailSecurityModel = stringSetResult.ToString().ToObject<EmailSecurityModel>();
+            var emailSecurityModel = stringGetResult.ToString().ToObject<EmailSecurityModel>();
             if (emailSecurityModel == null || !emailSecurityModel.Email.Equals(email))
             {
                 return OperateResult.CreateFailResult<EmailSecurityModel>("密码重置会话不存在");
@@ -214,6 +220,76 @@ namespace RS.HMIServer.DAL
             if (emailHashCode.HasValue)
             {
                 await this.PasswordResetRedis.KeyDeleteAsync(emailHashCode.ToString());
+            }
+            return OperateResult.CreateSuccessResult();
+        }
+
+        public async Task<OperateResult<string>> CreateVerifySessionModelAsync(VerifyImgInitModel verifyImgInitModel, string sessionId)
+        {
+            string verifyId = Guid.NewGuid().ToString();
+
+            VerifySessionModel model = new VerifySessionModel()
+            {
+                CreateCount = 1,
+                IconBtnDefaultX = verifyImgInitModel.IconBtnDefaultX,
+                IconBtnDefaultY = verifyImgInitModel.IconBtnDefaultY,
+                Rect = verifyImgInitModel.Rect,
+                VerifyId = verifyId,
+            };
+
+            VerifySessionModel verifySessionModelExist = null;
+            var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
+            if (stringGetResult.HasValue)
+            {
+                verifySessionModelExist = stringGetResult.ToString().ToObject<VerifySessionModel>();
+            }
+            if (verifySessionModelExist != null)
+            {
+                verifyId = verifySessionModelExist.VerifyId;
+                model.CreateCount = model.CreateCount + verifySessionModelExist.CreateCount;
+            }
+            if (model.CreateCount > 20)
+            {
+                return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧");
+            }
+
+            //将会话提示转为字符串存储到Redis数据库
+            var jsonStr = model.ToJson();
+            //生成有效期 2分钟内有效
+            DateTime expireTime = DateTime.Now.AddSeconds(60 * 2);
+            TimeSpan timeSpan = expireTime.Subtract(DateTime.Now);
+            var result = await this.ImgVerifyRedis.StringSetAsync(sessionId, jsonStr, timeSpan, When.Always);
+            if (!result)
+            {
+                return OperateResult.CreateFailResult<string>("创建图像验证会话失败");
+            }
+
+            //再创建一组映射
+            result = await this.ImgVerifyRedis.StringSetAsync(verifyId, sessionId, timeSpan, When.Always);
+            if (!result)
+            {
+                return OperateResult.CreateFailResult<string>("创建图像验证会话失败");
+            }
+
+            return OperateResult.CreateSuccessResult(verifyId);
+        }
+
+        /// <summary>
+        /// 验证是否可以创建验证会话
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        public async Task<OperateResult> IsCanCreateImgVerifySessionAsync(string sessionId)
+        {
+            VerifySessionModel verifySessionModelExist = null;
+            var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
+            if (stringGetResult.HasValue)
+            {
+                verifySessionModelExist = stringGetResult.ToString().ToObject<VerifySessionModel>();
+            }
+            if (verifySessionModelExist != null && verifySessionModelExist.CreateCount > 20)
+            {
+                return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧");
             }
             return OperateResult.CreateSuccessResult();
         }

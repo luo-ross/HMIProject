@@ -167,7 +167,7 @@ namespace RS.HMIServer.BLL
 
 
             //对返回的数据进行加密
-            var aesEncryptResult = CryptographyBLL.AESEncryptGeneric(encryptModelShould, sessionModel);
+            var aesEncryptResult = this.CryptographyBLL.AESEncryptGeneric(encryptModelShould, sessionModel);
             if (!aesEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(aesEncryptResult);

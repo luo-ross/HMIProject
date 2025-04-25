@@ -4,6 +4,9 @@ using RS.Models;
 using RS.HMIServer.IBLL;
 using System.Collections;
 using RS.HMIServer.Models;
+using System.IO;
+using System.Net.Http.Headers;
+using OpenCvSharp;
 
 namespace RS.HMIServer.Controllers
 {
@@ -16,13 +19,17 @@ namespace RS.HMIServer.Controllers
         private readonly ILogBLL LogBLL;
         private readonly IConfiguration Configuration;
 
-        public GeneralController(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL, IConfiguration configuration, ILogBLL logBLL)
+
+        public GeneralController(IGeneralBLL generalBLL,
+            ICryptographyBLL cryptographyBLL,
+            IConfiguration configuration,
+            IOpenCVBLL openCVBLL,
+            ILogBLL logBLL)
         {
             this.GeneralBLL = generalBLL;
             this.LogBLL = logBLL;
             this.CryptographyBLL = cryptographyBLL;
             this.Configuration = configuration;
-
         }
 
         /// <summary>
@@ -110,28 +117,6 @@ namespace RS.HMIServer.Controllers
 
 
             return OperateResult.CreateSuccessResult(getSessionModelResult.Data);
-        }
-
-        /// <summary>
-        /// 这里让用户必须通过Post才能获取到图像数据
-        /// </summary>
-        [HttpPost]
-        public IActionResult GetVerifyImage()
-        {
-            string verifyImgDir = this.Configuration["VerifyImgDir"];
-            Random random = new Random(Guid.NewGuid().GetHashCode());
-            var fileList = Directory.GetFiles(verifyImgDir);
-            var imgIndex = random.Next(0, fileList.Count() - 1);
-            var verifyImg = fileList[imgIndex];
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var fileStream = new FileStream(verifyImg, FileMode.Open))
-                {
-                    fileStream.CopyTo(memoryStream);
-                    memoryStream.Position = 0;
-                    return File(memoryStream, "image/jpeg");
-                }
-            }
         }
 
 

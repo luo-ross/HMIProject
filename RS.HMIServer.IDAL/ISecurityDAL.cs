@@ -34,6 +34,19 @@ namespace RS.HMIServer.IDAL
         /// <param name="emailPasswordConfirmModel">密码重置信息</param>
         /// <returns></returns>
         Task<OperateResult> EmailPasswordResetConfirmAsync(EmailPasswordConfirmModel emailPasswordConfirmModel);
-
+        
+        /// <summary>
+        /// 创建验证会话
+        /// </summary>
+        /// <param name="verifyImgInitModel"></param>
+        /// <returns></returns>
+        Task<OperateResult<string>> CreateVerifySessionModelAsync(VerifyImgInitModel verifyImgInitModel,string sessionId);
+      
+        /// <summary>
+        /// 验证是否可以创建验证会话
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        Task<OperateResult> IsCanCreateImgVerifySessionAsync(string sessionId);
     }
 }

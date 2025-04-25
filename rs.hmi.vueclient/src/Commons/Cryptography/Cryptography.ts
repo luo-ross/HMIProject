@@ -8,7 +8,7 @@ import { Utils } from "../Utils";
 
 export class Cryptography {
   private static Instance: Cryptography;
-  public Utils;
+  public Utils: Utils;
   private constructor() {
     this.Utils = new Utils();
   }
@@ -76,7 +76,7 @@ export class Cryptography {
   }
 
 
- 
+
 
 
 
@@ -704,7 +704,7 @@ export class Cryptography {
    * 获取会话数据
    * @returns 返回会话模型结果
    */
-  public  GetSessionModelFromStorage(): GenericOperateResult<SessionModel> {
+  public GetSessionModelFromStorage(): GenericOperateResult<SessionModel> {
     // 从 sessionStorage 获取会话模型
     const sessionModelJson = sessionStorage.getItem('SessionModel');
     let sessionModel: SessionModel | null = null;
@@ -746,7 +746,7 @@ export class Cryptography {
    */
   public async AESEncryptSimple<T>(encryptModelShould: T): Promise<GenericOperateResult<AESEncryptModel>> {
     // 获取 aesKey, appId, token
-    const getSessionModelResult =this.GetSessionModelFromStorage();
+    const getSessionModelResult = this.GetSessionModelFromStorage();
     if (!getSessionModelResult.IsSuccess) {
       return GenericOperateResult.CreateFailResult(getSessionModelResult);
     }
@@ -899,8 +899,8 @@ export class Cryptography {
    * @param sessionModel 会话实体类
    * @returns 返回解密后的实体
    */
-  public async AESDecryptGeneric<TResult>(aesEncryptModel: AESEncryptModel|null, sessionModel: SessionModel): Promise<GenericOperateResult<TResult>> {
-    if (aesEncryptModel==null) {
+  public async AESDecryptGeneric<TResult>(aesEncryptModel: AESEncryptModel | null, sessionModel: SessionModel, type: new () => TResult): Promise<GenericOperateResult<TResult>> {
+    if (aesEncryptModel == null) {
       return GenericOperateResult.CreateFailResult('加密数据为null');
     }
 
@@ -937,7 +937,7 @@ export class Cryptography {
 
     try {
       // 将JSON字符串转换为对象
-      const result = JSON.parse(sMsg) as TResult;
+      const result = this.Utils.ToObject<TResult>(sMsg, type);
       return GenericOperateResult.CreateSuccessResult(result);
     } catch {
       return GenericOperateResult.CreateFailResult("解析JSON数据失败");
@@ -949,7 +949,7 @@ export class Cryptography {
    * @param aesEncryptModel AES加密数据
    * @returns 返回解密后的实体
    */
-  public async AESDecryptSimple<TResult>(aesEncryptModel: AESEncryptModel|null): Promise<GenericOperateResult<TResult>> {
+  public async AESDecryptSimple<TResult>(aesEncryptModel: AESEncryptModel | null, type: new () => TResult): Promise<GenericOperateResult<TResult>> {
     // 获取 aesKey, appId, token
     const getSessionModelResult = this.GetSessionModelFromStorage();
     if (!getSessionModelResult.IsSuccess) {
@@ -964,7 +964,7 @@ export class Cryptography {
     const sessionModel = getSessionModelResult.Data;
 
     // 返回AES对称解密数据
-    return await this.AESDecryptGeneric<TResult>(aesEncryptModel, sessionModel);
+    return await this.AESDecryptGeneric<TResult>(aesEncryptModel, sessionModel, type);
   }
 
   /**
@@ -979,6 +979,8 @@ export class Cryptography {
     }
     return outval;
   }
+
+
 
 
 }

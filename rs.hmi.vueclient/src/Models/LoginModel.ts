@@ -17,7 +17,9 @@ export class LoginModel extends LogonModel {
   /**
 * 这是滑动背景色百分比
 */
+
   public BackgroundFillPercent: number = 0;
+ 
 
   /**
 * 图片滑动块宽度
@@ -44,7 +46,17 @@ export class LoginModel extends LogonModel {
 * 是否显示验证图像
 */
   public IsShowVerifyImg: boolean = false;
-  
+
+  /**
+* 这是背景图Url
+*/
+  public VerifyImgUrl: string | null = null;
+
+  /**
+* 这是图像滑块Url
+*/
+  public ImgSliderUrl: string | null = null;
+
 }
 
 

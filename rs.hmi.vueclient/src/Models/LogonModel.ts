@@ -1,12 +1,9 @@
+import { EmailModel } from "./WebAPI/EmailModel";
 
 /**
  * 登录类
  */
-export class LogonModel   {
-  /**
-   * 邮箱
-   */
-  public Email: string | null = null;
+export class LogonModel extends EmailModel  {
 
   /**
    * 密码

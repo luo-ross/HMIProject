@@ -40,6 +40,11 @@ namespace RS.HMIServer.DAL.Redis
         /// </summary>
         private readonly IDatabase ClientIPRedis;
 
+        /// <summary>
+        /// 图像验证码Redis数据库
+        /// </summary>
+        private readonly IDatabase ImgVerifyRedis;
+
         public RedisDbContext(IConfiguration configuration)
         {
             string host = configuration["RSAppRedis:Host"];
@@ -55,6 +60,7 @@ namespace RS.HMIServer.DAL.Redis
             this.PasswordResetRedis = ConnectionMultiplexer.GetDatabase(3);
             this.ClientIdRedis = ConnectionMultiplexer.GetDatabase(4);
             this.ClientIPRedis = ConnectionMultiplexer.GetDatabase(5);
+            this.ImgVerifyRedis = ConnectionMultiplexer.GetDatabase(6);
         }
 
         /// <summary>
@@ -111,6 +117,16 @@ namespace RS.HMIServer.DAL.Redis
         public IDatabase GetClientIPRedis()
         {
             return this.ClientIPRedis;
+        }
+
+
+        /// <summary>
+        /// 获取图像验证码Redis
+        /// </summary>
+        /// <returns></returns>
+        public IDatabase GetImgVerifyRedis()
+        {
+            return this.ImgVerifyRedis;
         }
     }
 }

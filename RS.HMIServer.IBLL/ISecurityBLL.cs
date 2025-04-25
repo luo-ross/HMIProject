@@ -31,5 +31,12 @@ namespace RS.HMIServer.IBLL
         /// <returns></returns>
         Task<OperateResult> EmailPasswordResetConfirmAsync(AESEncryptModel aesEncryptModel, string sessionId, string audiences);
 
+        /// <summary>
+        /// 获取验证码信息
+        /// </summary>
+        /// <param name="sessionId">会话Id</param>
+        /// <param name="audiences">客户端类型</param>
+        /// <returns></returns>
+        Task<OperateResult<AESEncryptModel>> GetVerifyImgModelAsync(string sessionId, string audiences);
     }
 }

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace RS.HMIServer.Models
 {
     /// <summary>
-    /// 安全类
+    /// 邮箱类
     /// </summary>
-    public class EmailSecurityModel:EmailModel
+    public class EmailModel
     {
         /// <summary>
-        /// 重置链接
+        /// 用户邮箱
         /// </summary>
-        public string? ResetLink { get; set; }
+        public string? Email { get; set; }
 
     }
 }

@@ -5,7 +5,7 @@ import { RegisterModel } from '../../Models/RegisterModel';
 import { ViewModelBase } from '../../Models/ViewModelBase';
 import { RelayCommand } from '../../Events/RelayCommand';
 import type { IInputEvents } from '../../Interfaces/IInputEvents';
-import type { RegisterVerifyModel } from '../../Models/WebAPI/RegisterVerifyModel';
+import { RegisterVerifyModel } from '../../Models/WebAPI/RegisterVerifyModel';
 import { GenericOperateResult } from '../../Commons/OperateResult/OperateResult';
 
 export class RegisterViewModel extends ViewModelBase {
@@ -58,7 +58,7 @@ export class RegisterViewModel extends ViewModelBase {
       const emailRegisterPostModel = new EmailRegisterPostModel();
       emailRegisterPostModel.Email = this.RegisterModel.Email;
       emailRegisterPostModel.Password = passwordSHA256HashCode.Data;
-      return this.AxiosUtil.AESEnAndDecryptPost<EmailRegisterPostModel, RegisterVerifyModel>('/api/v1/Register/GetEmailVerify', emailRegisterPostModel);
+      return this.AxiosUtil.AESEnAndDecryptPost<EmailRegisterPostModel, RegisterVerifyModel>('/api/v1/Register/GetEmailVerify', emailRegisterPostModel, RegisterVerifyModel);
     });
 
     //验证结果

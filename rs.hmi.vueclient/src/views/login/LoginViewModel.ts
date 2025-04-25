@@ -1,9 +1,12 @@
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { LoginModel } from '../../Models/LoginModel';
 import { ValidHelper } from '../../Commons/Helper/ValidHelper';
 import type { IInputEvents } from '../../Interfaces/IInputEvents';
 import type { IMessageEvents } from '../../Interfaces/IMessageEvents';
 import { ViewModelBase } from '../../Models/ViewModelBase';
+import { VerifyImgModel } from '../../Models/WebAPI/VerifyImgModel';
+import { SimpleOperateResult } from '../../Commons/OperateResult/OperateResult';
+
 
 export class LoginViewModel extends ViewModelBase {
   private loginModel = ref<LoginModel>(new LoginModel());
@@ -35,72 +38,6 @@ export class LoginViewModel extends ViewModelBase {
     this.loginModel.value = viewModel;
   }
 
-
-  public HandleRegister(): void {
-    this.RouterUtil.Push('/Register')
-  }
-
-  public async HandleLogin(): Promise<void> {
-    // 这里进行客户端简单的表单验证
-    if (!this.ValidateForm()) {
-      return;
-    }
-  }
-
-  //private CanExecuteLogin(): boolean {
-  //  const email = this.LoginModel.Email;
-  //  const password = this.LoginModel.Password;
-  //  const verify = this.LoginModel.Verify;
-  //  // 只进行基本的非空检查，不触发消息和焦点设置
-  //  return email != null
-  //    && password != null
-  //    && verify != null;
-  //}
-
-  public override  ValidateForm(): boolean {
-    const email = this.LoginModel.Email;
-    const password = this.LoginModel.Password;
-    const verify = this.LoginModel.Verify;
-
-
-    if (!email || !ValidHelper.IsEmail(email)) {
-      this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
-      this.RSEmailEvents?.Focus();
-      return false;
-    }
-
-    if (!password) {
-      this.RSMessageEvents?.ShowWarningMsg('密码不能为空');
-      this.RSPasswordEvents?.Focus();
-      return false;
-    }
-
-    if (!verify) {
-      this.RSMessageEvents?.ShowWarningMsg('验证码不能为空');
-      this.RSVerifyEvents?.Focus();
-      return false;
-    }
-
-    return true;
-  }
-
-  public HandleForgetPassword() {
-    this.RouterUtil.Push("/Security");
-  }
-
-
-  private IsBtnSliderDragging = false;
-  private BtnSliderStartX = 0;
-  private BtnSliderHistoryPositionX = 0;
-  private BtnSliderWidth = 0;
-  private BtnSliderHeight = 0;
-  private BtnSliderContainerWidth = 0;
-  private BtnSliderContainerHeight = 0;
-  private BtnSliderMaxPositionX = 0;
-
-
-
-
   // 绑定全局事件
   private bindGlobalEvents() {
     // 使用箭头函数确保this指向正确
@@ -129,7 +66,89 @@ export class LoginViewModel extends ViewModelBase {
       window.removeEventListener('mouseup', handleGlobalMouseUp);
       window.removeEventListener('mouseleave', handleGlobalMouseleave);
     });
+
+    // 监听 ref 值的变化
+    watch(
+      () => this.LoginModel.BackgroundFillPercent,
+      (newValue, oldValue) => {
+        console.log('BackgroundFillPercent 发生变化:', newValue, oldValue);
+      }
+    );
   }
+
+
+
+
+  public HandleRegister(): void {
+    this.RouterUtil.Push('/Register')
+  }
+
+  public async HandleLogin(): Promise<void> {
+
+
+
+
+    // 这里进行客户端简单的表单验证
+    if (!this.ValidateForm()) {
+      return;
+    }
+  }
+
+  //private CanExecuteLogin(): boolean {
+  //  const email = this.LoginModel.Email;
+  //  const password = this.LoginModel.Password;
+  //  const verify = this.LoginModel.Verify;
+  //  // 只进行基本的非空检查，不触发消息和焦点设置
+  //  return email != null
+  //    && password != null
+  //    && verify != null;
+  //}
+
+  public override  ValidateForm(): boolean {
+    const email = this.LoginModel.Email;
+    const password = this.LoginModel.Password;
+    //const verify = this.LoginModel.Verify;
+
+
+    if (!email || !ValidHelper.IsEmail(email)) {
+      this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
+      this.RSEmailEvents?.Focus();
+      return false;
+    }
+
+    if (!password) {
+      this.RSMessageEvents?.ShowWarningMsg('密码不能为空');
+      this.RSPasswordEvents?.Focus();
+      return false;
+    }
+
+    //if (!verify) {
+    //  this.RSMessageEvents?.ShowWarningMsg('验证码不能为空');
+    //  this.RSVerifyEvents?.Focus();
+    //  return false;
+    //}
+
+    return true;
+  }
+
+  public HandleForgetPassword() {
+    this.RouterUtil.Push("/Security");
+  }
+
+
+  private IsBtnSliderDragging = false;
+  private BtnSliderStartX = 0;
+  private BtnSliderHistoryPositionX = 0;
+  private BtnSliderWidth = 0;
+  private BtnSliderHeight = 0;
+  private BtnSliderContainerWidth = 0;
+  private BtnSliderContainerHeight = 0;
+  private BtnSliderMaxPositionX = 0;
+
+
+
+
+
 
 
   public InitBtnSliderControl() {
@@ -152,22 +171,40 @@ export class LoginViewModel extends ViewModelBase {
   }
 
 
-  public InitBtnImgSliderControl() {
+  public async InitVerifyControlAsync(): Promise<SimpleOperateResult> {
     //计算按钮的大小和宽度
     if (this.VerifyImgHostRef.value == null) {
-      return;
+      return SimpleOperateResult.CreateFailResult("无法获取图像容器");
     }
 
     if (this.BtnImgSliderRef.value == null) {
-      return;
+      return SimpleOperateResult.CreateFailResult("无法获取验证控件");
     }
+
+    //做表单验证
+    if (!this.ValidateForm()) {
+      return SimpleOperateResult.CreateFailResult("表单验证不通过");
+    }
+   
+    const getVerifyImgModelResult = await this.AxiosUtil.DecryptGet<VerifyImgModel>('/api/v1/Security/GetVerifyImgModel', VerifyImgModel);
+    if (!getVerifyImgModelResult.IsSuccess) {
+      return getVerifyImgModelResult;
+    }
+    let verifyImgModel = getVerifyImgModelResult.Data;
+    if (verifyImgModel == null) {
+      return SimpleOperateResult.CreateFailResult("未获取到验证码信息");
+    }
+    verifyImgModel = VerifyImgModel.GetBlobUrl(verifyImgModel);
+
+    this.LoginModel.VerifyImgUrl = verifyImgModel?.VerifyImgUrl;
+    this.LoginModel.ImgSliderUrl = verifyImgModel?.ImgSliderUrl;
 
     const verifyImgHostWidth = this.VerifyImgHostRef.value?.clientWidth;
     const verifyImgHostHeight = this.VerifyImgHostRef.value?.clientHeight;
-    const widthScale = verifyImgHostWidth / this.ImgOriginalWidth;
-    const heightScale = verifyImgHostHeight / this.ImgOriginalHeight;
-    this.LoginModel.BtnImgSliderWidth = this.ImgIconWidth * widthScale;
-    this.LoginModel.BtnImgSliderHeight = this.ImgIconHeight * heightScale;
+    const widthScale = verifyImgHostWidth / verifyImgModel.ImgWidth;
+    const heightScale = verifyImgHostHeight / verifyImgModel.ImgHeight;
+    this.LoginModel.BtnImgSliderWidth = verifyImgModel.IconWidth * widthScale;
+    this.LoginModel.BtnImgSliderHeight = verifyImgModel.IconHeight * heightScale;
 
     //获取滑块的长度和宽度
     this.BtnImgSliderWidth = this.BtnImgSliderRef.value.clientWidth
@@ -180,13 +217,15 @@ export class LoginViewModel extends ViewModelBase {
     this.BtnImgSliderMaxPositionX = this.BtnImgSliderContainerWidth - this.BtnImgSliderWidth;
     this.BtnImgSliderMaxPositionY = this.BtnImgSliderContainerHeight - this.BtnImgSliderHeight;
 
-    //模拟一个随机数
-    this.BtnImgSliderHistoryPositionX = this.Utils.GetRandomNumber(0, this.BtnImgSliderMaxPositionX);
-    this.BtnImgSliderHistoryPositionY = this.Utils.GetRandomNumber(0, this.BtnImgSliderMaxPositionY);
+    //设置默认位置
+    this.BtnImgSliderHistoryPositionX = verifyImgModel.IconBtnDefaultX * widthScale;
+    this.BtnImgSliderHistoryPositionY = verifyImgModel.IconBtnDefaultY * heightScale;
 
     //先在这里设置个随机默认值
     this.LoginModel.BtnImgSliderPositionX = this.BtnImgSliderHistoryPositionX;
     this.LoginModel.BtnImgSliderPositionY = this.BtnImgSliderHistoryPositionY;
+
+    return SimpleOperateResult.CreateSuccessResult();
   }
 
   public HandleGlobalMouseMove(event: MouseEvent) {
@@ -198,21 +237,33 @@ export class LoginViewModel extends ViewModelBase {
   }
 
   //滑动块事件
-  public HandleBtnSliderMove(event: MouseEvent) {
+  public async HandleBtnSliderMove(event: MouseEvent): Promise<void> {
+    if (this.RSLoadingEvents == null) {
+      return;
+    }
     let newPositionX = this.BtnSliderHistoryPositionX + event.clientX - this.BtnSliderStartX;
     newPositionX = Math.min(newPositionX, this.BtnSliderMaxPositionX);
     newPositionX = Math.max(0, newPositionX);
     this.LoginModel.BtnSliderPositionX = newPositionX;
     this.LoginModel.BackgroundFillPercent = Math.floor((this.LoginModel.BtnSliderPositionX + this.BtnSliderWidth) / this.BtnSliderContainerWidth * 100);
 
-    if (this.LoginModel.BackgroundFillPercent > 99) {
+    if (this.LoginModel.BackgroundFillPercent > 99 && !this.LoginModel.IsShowVerifyImg) {
       this.LoginModel.IsShowVerifyImg = true;
-      this.InitBtnImgSliderControl();
-    } else {
+      //在这里发起获取验证码请求
+      const getRegisterVerifyResult = await this.RSLoadingEvents.SimpleLoadingActionAsync(async () => {
+        return await this.InitVerifyControlAsync();
+      });
+      //检查结果
+      if (!getRegisterVerifyResult.IsSuccess) {
+        this.RSMessageEvents?.ShowDangerMsg(getRegisterVerifyResult.Message);
+        return;
+      }
+    } else if (this.LoginModel.IsShowVerifyImg && this.LoginModel.BackgroundFillPercent < 20) {
       this.LoginModel.IsShowVerifyImg = false;
     }
   }
 
+  //处理验证码拖动按钮事件
   public HandleBtnImgSliderMove(event: MouseEvent) {
     let newPositionX = this.BtnImgSliderHistoryPositionX + event.clientX - this.BtnImgSliderStartX;
     newPositionX = Math.min(newPositionX, this.BtnImgSliderMaxPositionX);
@@ -225,6 +276,7 @@ export class LoginViewModel extends ViewModelBase {
     this.LoginModel.BtnImgSliderPositionY = newPositionY;
   }
 
+  //处理滑动按钮鼠标按下事件
   public HandleBtnSliderMousedown(event: MouseEvent) {
     if (this.BtnSliderRef.value == null) {
       return;
@@ -252,10 +304,6 @@ export class LoginViewModel extends ViewModelBase {
   private BtnImgSliderMaxPositionX = 0;
   private BtnImgSliderMaxPositionY = 0;
 
-  private ImgOriginalWidth = 1920;
-  private ImgOriginalHeight = 960;
-  private ImgIconWidth = 103;
-  private ImgIconHeight = 101;
 
   //图像拖动快鼠标按下事件
   public HandleBtnImgSliderMousedown(event: MouseEvent) {
@@ -284,9 +332,4 @@ export class LoginViewModel extends ViewModelBase {
   public HandleGlobalMouseleave() {
     this.HandleGlobalMouseUp();
   }
-
-  public GetVerifyImg() {
-   
-  }
-
 } 

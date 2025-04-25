@@ -62,7 +62,6 @@
   }
 
   .verify-img-host {
-    background-image: url(/public/test11111.jpg);
     width: 100%;
     height: 150px;
     position: absolute;
@@ -71,6 +70,7 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
+    overflow: hidden;
   }
 
   .btn-imgslider {
@@ -84,6 +84,7 @@
     left: 50px;
     top: 45px;
     box-shadow: 0px 0px 20px rgba(255,0,0,1);
+    background-color: transparent;
   }
 </style>
 <template>
@@ -92,7 +93,7 @@
     <div class="general-content">
       <div class="general-content-left img">
       </div>
-      <RSLoading>
+      <RSLoading LoadingType="ProgressBar" :ref="events => ViewModel.RSLoadingEvents= events">
         <div class="general-content-right">
           <a class="btn-qrcode-login" href="/Login/QRCode?ClientId=@clientId&Timestamp=@timeStamp">
             <svg t="1743521881584" class="icon-qrcode" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9539" width="64" height="64">
@@ -160,17 +161,22 @@
               <div :ref="el => ViewModel.VerifyImgHostRef.value = el"
                    class="verify-img-host"
                    :class="{'d-none': !ViewModel.LoginModel.IsShowVerifyImg }"
+                   :style="{'background-image':`url(${ViewModel.LoginModel.VerifyImgUrl})`}"
                    >
+               
                 <button :style="{
                         width: ViewModel.LoginModel.BtnImgSliderWidth+'px',
                         height:ViewModel.LoginModel.BtnImgSliderHeight+'px',
                         left:ViewModel.LoginModel.BtnImgSliderPositionX+'px',
                         top:ViewModel.LoginModel.BtnImgSliderPositionY+'px',
+                        'background-image':`url(${ViewModel.LoginModel.ImgSliderUrl})`
                         }"
                         :ref="el => ViewModel.BtnImgSliderRef.value = el"
                         class="btn-imgslider"
                         @mousedown="ViewModel.HandleBtnImgSliderMousedown($event)">
                 </button>
+
+                
               </div>
             </div>
           </div>

@@ -1,26 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AlibabaCloud.SDK.Dysmsapi20180501" Version="1.0.6" />
-    <PackageReference Include="MailKit" Version="4.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
-    <PackageReference Include="NewId" Version="4.0.1" />
-    <PackageReference Include="RazorLight" Version="2.3.1" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
-    <PackageReference Include="TencentCloudSDK" Version="3.0.1007" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AlibabaCloud.SDK.Dysmsapi20180501" Version="1.0.6" />
+		<PackageReference Include="MailKit" Version="4.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
+		<PackageReference Include="NewId" Version="4.0.1" />
+		<PackageReference Include="RazorLight" Version="2.3.1" />
+		<PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
+		<PackageReference Include="TencentCloudSDK" Version="3.0.1007" />
+		<PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
+		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\RS.HMIServer.DAL\RS.HMIServer.DAL.csproj" />
-    <ProjectReference Include="..\RS.HMIServer.IBLL\RS.HMIServer.IBLL.csproj" />
-    <ProjectReference Include="..\RS.HMIServer.IDAL\RS.HMIServer.IDAL.csproj" />
-    <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RS.HMIServer.DAL\RS.HMIServer.DAL.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.IBLL\RS.HMIServer.IBLL.csproj" />
+		<ProjectReference Include="..\RS.HMIServer.IDAL\RS.HMIServer.IDAL.csproj" />
+		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+	</ItemGroup>
 
 </Project>

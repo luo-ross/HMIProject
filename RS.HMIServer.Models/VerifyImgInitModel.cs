@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RS.HMIServer.Models
 {
-    /// <summary>
-    /// 安全类
-    /// </summary>
-    public class EmailSecurityModel:EmailModel
+    public class VerifyImgInitModel : VerifyImgModel
     {
         /// <summary>
-        /// 重置链接
+        /// 验证矩形框信息
         /// </summary>
-        public string? ResetLink { get; set; }
-
+        public RectModel Rect { get; set; }
     }
 }
