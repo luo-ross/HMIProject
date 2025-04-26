@@ -1,68 +1,65 @@
 /**
  * 验证码图像
  */
-export class VerifyImgModel {
+export class ImgVerifyModel {
 
   /**
   * 验证会话Id
   */
-  VerifyId: string|null=null;
+  VerifyId: string | null = null;
 
   /**
    * 验证图像数据二合一
    */
-  ImgBuffer: ArrayBuffer;
+  ImgBuffer: ArrayBuffer = new ArrayBuffer(0);
 
   /**
    * 背景图宽度
    */
-  ImgWidth: number;
+  ImgWidth: number = 0;
 
   /**
    * 背景图高度
    */
-  ImgHeight: number;
+  ImgHeight: number = 0;
 
   /**
    * 拖拽背景图片宽度
    */
-  IconWidth: number;
+  IconWidth: number = 0;
 
   /**
    * 拖拽背景图片高度
    */
-  IconHeight: number;
+  IconHeight: number = 0;
 
   /**
    * 拖拽按钮默认坐标位置X
    */
-  IconBtnDefaultX: number;
+  ImgBtnPositionX: number = 0;
 
   /**
    * 拖拽按钮默认坐标位置Y
    */
-  IconBtnDefaultY: number;
+  ImgBtnPositionY: number = 0;
 
-  VerifyImgUrl: string | null;
-  ImgSliderUrl: string | null;
-  constructor() {
-    this.ImgBuffer = new ArrayBuffer(0);
-    this.ImgWidth = 0;
-    this.ImgHeight = 0;
-    this.IconWidth = 0;
-    this.IconHeight = 0;
-    this.IconBtnDefaultX = 0;
-    this.IconBtnDefaultY = 0;
-    this.VerifyImgUrl = null;
-    this.ImgSliderUrl = null;
-  }
+  /**
+   * 背景图
+   */
+  VerifyImgUrl: string | null = null;
+
+  /**
+   * 拖拽背景图
+   */
+  ImgSliderUrl: string | null = null;
+
 
   /**
    * 获取图片的Blob URL
    */
-  public static GetBlobUrl(model: VerifyImgModel) {
+  public static GetBlobUrl(model: ImgVerifyModel) {
 
-    const imgBuffer= new Uint8Array(model.ImgBuffer).buffer;
+    const imgBuffer = new Uint8Array(model.ImgBuffer).buffer;
     // 读取第一个图片的长度（前8个字节）
     const dataView = new DataView(imgBuffer);
     const image1Length = dataView.getInt32(0, true); // true表示小端字节序
@@ -85,7 +82,7 @@ export class VerifyImgModel {
   /**
    * 释放Blob URL
    */
-  public ReleaseBlobUrl(model: VerifyImgModel): void {
+  public static ReleaseBlobUrl(model: ImgVerifyModel): void {
     if (model.VerifyImgUrl != null) {
       URL.revokeObjectURL(model.VerifyImgUrl);
     }
@@ -94,4 +91,5 @@ export class VerifyImgModel {
       URL.revokeObjectURL(model.ImgSliderUrl);
     }
   }
+
 }

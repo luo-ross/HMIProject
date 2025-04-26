@@ -171,7 +171,7 @@ namespace RS.HMIServer.BLL
         /// <param name="sessionId">会话Id</param>
         /// <param name="audiences">客户端类型</param>
         /// <returns></returns>
-        public async Task<OperateResult<AESEncryptModel>> GetVerifyImgModelAsync(string sessionId, string audiences)
+        public async Task<OperateResult<AESEncryptModel>> GetImgVerifyModelAsync(string sessionId, string audiences)
         {
             //在这个创建验证码数据前简单验证一下用户是否有权限啥的
             OperateResult operateResult =await this.SecurityDAL.IsCanCreateImgVerifySessionAsync(sessionId);
@@ -201,10 +201,10 @@ namespace RS.HMIServer.BLL
             verifyImgInitModel.VerifyId = verifyId;
 
             //这里还需要把验证码信息存起来，用于后面的用户进行验证使用
-            VerifyImgModel verifyImgModel = new VerifyImgModel()
+            ImgVerifyModel imgVerifyModel = new ImgVerifyModel()
             {
-                IconBtnDefaultX = verifyImgInitModel.IconBtnDefaultX,
-                IconBtnDefaultY = verifyImgInitModel.IconBtnDefaultY,
+                ImgBtnPositionX = verifyImgInitModel.ImgBtnPositionX,
+                ImgBtnPositionY = verifyImgInitModel.ImgBtnPositionY,
                 IconHeight = verifyImgInitModel.IconHeight,
                 IconWidth = verifyImgInitModel.IconWidth,
                 ImgBuffer = verifyImgInitModel.ImgBuffer,
@@ -214,7 +214,7 @@ namespace RS.HMIServer.BLL
             };
 
             //AES对称加密
-            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(verifyImgModel, sessionId);
+            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(imgVerifyModel, sessionId);
             if (!getAESEncryptResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);

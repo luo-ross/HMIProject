@@ -6,7 +6,7 @@ import { EmailModel } from "./WebAPI/EmailModel";
 export class EmailVerifyModel extends EmailModel{
   public IsRegisterSuccucess: boolean = false;
   public VerifyList: string[] ;
-  public RSInputList: HTMLInputElement[];
+  public InputList: HTMLInputElement[];
   public RegisterSessionId: string | null = null;
   public ExpireTime: number = 0;
   public Token: string | null = null;
@@ -15,7 +15,7 @@ export class EmailVerifyModel extends EmailModel{
   constructor() {
     super()
     this.VerifyList = [...Array(6)].fill("") as string[];
-    this.RSInputList = [...Array(6)].fill(null) as HTMLInputElement[];
+    this.InputList = [...Array(6)].fill(null) as HTMLInputElement[];
   }
  
 }

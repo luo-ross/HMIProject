@@ -11,6 +11,6 @@ namespace RS.HMIServer.IBLL
 {
     public interface IOpenCVBLL
     {
-        Task<OperateResult<VerifyImgInitModel>> GetVerifyImgInitModelAsync();
+        Task<OperateResult<ImgVerifyInitModel>> GetVerifyImgInitModelAsync();
     }
 }

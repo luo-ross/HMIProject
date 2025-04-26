@@ -40,7 +40,7 @@ namespace RS.HMIServer.IDAL
         /// </summary>
         /// <param name="verifyImgInitModel"></param>
         /// <returns></returns>
-        Task<OperateResult<string>> CreateVerifySessionModelAsync(VerifyImgInitModel verifyImgInitModel,string sessionId);
+        Task<OperateResult<string>> CreateVerifySessionModelAsync(ImgVerifyInitModel verifyImgInitModel,string sessionId);
       
         /// <summary>
         /// 验证是否可以创建验证会话

@@ -37,7 +37,7 @@ namespace RS.HMIServer.BLL
             this.Configuration = configuration;
         }
 
-        public async Task<OperateResult<VerifyImgInitModel>> GetVerifyImgInitModelAsync()
+        public async Task<OperateResult<ImgVerifyInitModel>> GetVerifyImgInitModelAsync()
         {
             string verifyImgDir = this.Configuration["VerifyImgDir"];
             string iconsDir = Path.Combine(verifyImgDir, "Icons");
@@ -128,15 +128,15 @@ namespace RS.HMIServer.BLL
             // 复制第二个图片数据
             image2Bytes.CopyTo(combinedBytes, 8 + image1Bytes.Length);
 
-            VerifyImgInitModel verifyImgInitModel = new VerifyImgInitModel();
+            ImgVerifyInitModel verifyImgInitModel = new ImgVerifyInitModel();
             verifyImgInitModel.ImgBuffer = combinedBytes;
             verifyImgInitModel.ImgWidth = imgWidth;
             verifyImgInitModel.ImgHeight = imgHeight;
             verifyImgInitModel.IconWidth = iconWidth;
             verifyImgInitModel.IconHeight = iconHeight;
             verifyImgInitModel.Rect = new RectModel(roiConfirm.X, roiConfirm.Y, roiConfirm.Width, roiConfirm.Height);
-            verifyImgInitModel.IconBtnDefaultX = lastPosition.left;
-            verifyImgInitModel.IconBtnDefaultY = lastPosition.top;
+            verifyImgInitModel.ImgBtnPositionX = lastPosition.left;
+            verifyImgInitModel.ImgBtnPositionY = lastPosition.top;
 
             return OperateResult.CreateSuccessResult(verifyImgInitModel);
         }

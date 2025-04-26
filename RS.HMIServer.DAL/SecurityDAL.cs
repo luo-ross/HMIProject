@@ -224,24 +224,24 @@ namespace RS.HMIServer.DAL
             return OperateResult.CreateSuccessResult();
         }
 
-        public async Task<OperateResult<string>> CreateVerifySessionModelAsync(VerifyImgInitModel verifyImgInitModel, string sessionId)
+        public async Task<OperateResult<string>> CreateVerifySessionModelAsync(ImgVerifyInitModel verifyImgInitModel, string sessionId)
         {
             string verifyId = Guid.NewGuid().ToString();
 
-            VerifySessionModel model = new VerifySessionModel()
+            ImgVerifySessionModel model = new ImgVerifySessionModel()
             {
                 CreateCount = 1,
-                IconBtnDefaultX = verifyImgInitModel.IconBtnDefaultX,
-                IconBtnDefaultY = verifyImgInitModel.IconBtnDefaultY,
+                ImgBtnPositionX = verifyImgInitModel.ImgBtnPositionX,
+                ImgBtnPositionY = verifyImgInitModel.ImgBtnPositionY,
                 Rect = verifyImgInitModel.Rect,
                 VerifyId = verifyId,
             };
 
-            VerifySessionModel verifySessionModelExist = null;
+            ImgVerifySessionModel verifySessionModelExist = null;
             var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
             if (stringGetResult.HasValue)
             {
-                verifySessionModelExist = stringGetResult.ToString().ToObject<VerifySessionModel>();
+                verifySessionModelExist = stringGetResult.ToString().ToObject<ImgVerifySessionModel>();
             }
             if (verifySessionModelExist != null)
             {
@@ -281,11 +281,11 @@ namespace RS.HMIServer.DAL
         /// <returns></returns>
         public async Task<OperateResult> IsCanCreateImgVerifySessionAsync(string sessionId)
         {
-            VerifySessionModel verifySessionModelExist = null;
+            ImgVerifySessionModel verifySessionModelExist = null;
             var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
             if (stringGetResult.HasValue)
             {
-                verifySessionModelExist = stringGetResult.ToString().ToObject<VerifySessionModel>();
+                verifySessionModelExist = stringGetResult.ToString().ToObject<ImgVerifySessionModel>();
             }
             if (verifySessionModelExist != null && verifySessionModelExist.CreateCount > 20)
             {

@@ -41,9 +41,9 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         [HttpGet]
         [Authorize]
-        public async Task<OperateResult<AESEncryptModel>> GetVerifyImgModel()
+        public async Task<OperateResult<AESEncryptModel>> GetImgVerifyModel()
         {
-            return await this.SecurityBLL.GetVerifyImgModelAsync(SessionId, Audiences);
+            return await this.SecurityBLL.GetImgVerifyModelAsync(SessionId, Audiences);
             //return File(combinedBytes, "application/octet-stream");
         }
     }

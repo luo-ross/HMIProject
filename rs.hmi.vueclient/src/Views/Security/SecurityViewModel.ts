@@ -8,7 +8,7 @@ import { EmailSecurityModel } from '../../Models/WebAPI/EmailSecurityModel';
 
 export class SecurityViewModel extends ViewModelBase {
   private securityModel = ref<SecurityModel>(new SecurityModel());
-  public RSEmailEvents: IInputEvents | null = null;
+  public EmailEvents: IInputEvents | null = null;
 
   constructor() {
     super();
@@ -29,12 +29,12 @@ export class SecurityViewModel extends ViewModelBase {
       return;
     }
 
-    if (this.RSLoadingEvents == null) {
+    if (this.LoadingEvents == null) {
       return;
     }
 
     //在这里发起注册事件
-    const getRegisterVerifyResult = await this.RSLoadingEvents.SimpleLoadingActionAsync(async () => {
+    const getRegisterVerifyResult = await this.LoadingEvents.SimpleLoadingActionAsync(async () => {
       const emailSecurityModel = new EmailSecurityModel();
       emailSecurityModel.Email = this.SecurityModel.Email;
       return await this.AxiosUtil.AESEncryptPost<EmailSecurityModel>('/api/v1/Security/PasswordResetEmailSend', emailSecurityModel);
@@ -42,7 +42,7 @@ export class SecurityViewModel extends ViewModelBase {
 
     //验证结果
     if (!getRegisterVerifyResult.IsSuccess) {
-      this.RSMessageEvents?.ShowWarningMsg(getRegisterVerifyResult.Message);
+      this.MessageEvents?.ShowWarningMsg(getRegisterVerifyResult.Message);
       return;
     }
 
@@ -60,8 +60,8 @@ export class SecurityViewModel extends ViewModelBase {
 
   public override ValidateForm(): boolean {
     if (!this.SecurityModel.Email || !ValidHelper.IsEmail(this.SecurityModel.Email)) {
-      this.RSMessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
-      this.RSEmailEvents?.Focus();
+      this.MessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
+      this.EmailEvents?.Focus();
       return false;
     }
     return true

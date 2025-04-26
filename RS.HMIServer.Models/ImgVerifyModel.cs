@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.Models
 {
-    public class VerifyImgModel
+    public class ImgVerifyModel
     {
         /// <summary>
         /// 验证会话Id
@@ -42,12 +42,12 @@ namespace RS.HMIServer.Models
         /// <summary>
         /// 拖拽按钮默认坐标位置X
         /// </summary>
-        public int IconBtnDefaultX { get; set; }
+        public int ImgBtnPositionX { get; set; }
 
         /// <summary>
         /// 拖拽按钮默认坐标位置Y
         /// </summary>
-        public int IconBtnDefaultY { get; set; }
+        public int ImgBtnPositionY { get; set; }
 
     }
 }

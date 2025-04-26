@@ -37,6 +37,6 @@ namespace RS.HMIServer.IBLL
         /// <param name="sessionId">会话Id</param>
         /// <param name="audiences">客户端类型</param>
         /// <returns></returns>
-        Task<OperateResult<AESEncryptModel>> GetVerifyImgModelAsync(string sessionId, string audiences);
+        Task<OperateResult<AESEncryptModel>> GetImgVerifyModelAsync(string sessionId, string audiences);
     }
 }

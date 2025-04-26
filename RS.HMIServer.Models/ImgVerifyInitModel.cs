@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMIServer.Models
 {
-    public class VerifyImgInitModel : VerifyImgModel
+    public class ImgVerifyInitModel : ImgVerifyModel
     {
         /// <summary>
         /// 验证矩形框信息

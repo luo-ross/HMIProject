@@ -1,8 +1,8 @@
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import axios, { type AxiosInstance} from 'axios';
 import { Cryptography } from '../Cryptography/Cryptography'
 import { Utils } from '../Utils';
 import type { AESEncryptModel } from '../../Models/WebAPI/AESEncryptModel';
-import { GenericOperateResult, SimpleOperateResult } from '../OperateResult/OperateResult';
+import { BaseOperateResult, GenericOperateResult, SimpleOperateResult } from '../OperateResult/OperateResult';
 
 export class AxiosUtil {
   private static Instance: AxiosUtil;
@@ -64,7 +64,22 @@ export class AxiosUtil {
         return response.data;
       },
       error => {
-        return error.response.data;
+        const result = new BaseOperateResult();
+        if (error.response) {
+          // 服务器有响应（如 400、401、403、404、500 等）
+          result.ErrorCode = error.response.status;
+          result.Message = error.response.data?.message || error.response.statusText || '服务器错误';
+        } else if (error.request) {
+          // 请求已发出但无响应
+          result.ErrorCode = -1;
+          result.Message = '服务器无响应，请检查网络或稍后重试';
+        } else {
+          // 其他错误
+          result.ErrorCode = -2;
+          result.Message = error.message || '未知错误';
+        }
+        result.IsSuccess = false;
+        return result;
       }
     );
 

@@ -1,36 +1,27 @@
-import { Cryptography } from '../Commons/Cryptography/Cryptography';
-import { Utils } from '../Commons/Utils';
 import type { ILoadingEvents } from '../Interfaces/ILoadingEvents';
 import type { IMessageEvents } from '../Interfaces/IMessageEvents';
-import { AxiosUtil } from '../Commons/Network/AxiosUtil';
-import { RouterUtil } from '../Commons/Network/RouterUtil';
+import { ref } from 'vue';
+import { ModelBase } from './ModelBase';
 
-export abstract class ViewModelBase {
-  public RouterUtil: RouterUtil;
-  public Cryptography: Cryptography;
-  public Utils: Utils;
-  public AxiosUtil: AxiosUtil;
-  //加载
-  public RSLoadingEvents: ILoadingEvents | null = null;
-  //消息
-  public RSMessageEvents: IMessageEvents | null = null;
+export abstract class ViewModelBase extends ModelBase {
+  private _LoadingEvents = ref<ILoadingEvents | null>(null);
+  private _MessageEvents = ref<IMessageEvents | null>(null);
+
   constructor() {
-    this.Utils = new Utils();
-    this.Cryptography = Cryptography.GetInstance();
-    this.RouterUtil = RouterUtil.GetInstance();
-    this.AxiosUtil = AxiosUtil.GetInstance();
+    super();
   }
 
-  // 定义一个函数来模拟延迟
-  public async TaskDelay(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
+  public get LoadingEvents(): ILoadingEvents | null{
+    return this._LoadingEvents.value
+  }
+  public set LoadingEvents(value: ILoadingEvents | null) {
+    this._LoadingEvents.value = value;
   }
 
-  public ValidateForm(): boolean {
-    return true;
+  public get MessageEvents(): IMessageEvents | null {
+    return this._MessageEvents.value
   }
-
-
+  public set MessageEvents(value: IMessageEvents | null) {
+    this._MessageEvents.value = value;
+  }
 }

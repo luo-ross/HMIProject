@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 using OpenCvSharp;
 using OpenCvSharp.Internal.Vectors;
 using System.Diagnostics;
@@ -9,6 +10,38 @@ namespace RS.HMI.Test
     [TestClass]
     public sealed class Test1
     {
+        [TestMethod]
+        public void Str()
+        {
+            string testStr = "sdf       sd sdf sd  sfsd  sdfsd dsfsf sf";
+            string result = Test(testStr, 5);
+            result = Test(testStr, 8);
+            result = Test(testStr, 4);
+            result = Test(testStr, 10);
+            result = Test(testStr, 15);
+            result = Test(testStr, 50);
+            Console.ReadLine();
+        }
+
+
+        public string Test(string s, int len)
+        {
+            if (len > s.Length)
+            {
+                return s.Trim();
+            }
+            if (len <= 0)
+            {
+                return null;
+            }
+            var skipData = s.Skip(len).Take(s.Length - len).ToList();
+            int firstSpaceIndex = skipData.IndexOf(' ');
+            string result = new string(s.Take(len + firstSpaceIndex).ToArray());
+            Debug.WriteLine($"截取长度{len}:{result}");
+            return result;
+        }
+
+
         [TestMethod]
         public void TestMethod1()
         {
@@ -55,7 +88,7 @@ namespace RS.HMI.Test
             //mergeMat.SaveImage("heart2.png");
             //Cv2.ImShow("123123", mergeMat);
             //Cv2.WaitKey(0);
-      
+
             for (int i = 0; i < positionList.Count; i++)
             {
                 var position = positionList[i];
@@ -83,7 +116,7 @@ namespace RS.HMI.Test
             //这样子就获取到了ROI Rect 还有一个透明图片
             var image1Bytes = imgMat.ToBytes();
             var image2Bytes = mergeMat.ToBytes();
-            
+
             // 创建一个新的数组来存储两个图片的数据
             // 前8个字节用来存储第一个图片的长度（作为分隔标记）
             var combinedLength = 8 + image1Bytes.Length + image2Bytes.Length;
@@ -134,12 +167,12 @@ namespace RS.HMI.Test
             }
 
             List<(int x, int y)> pointList = new List<(int x, int y)>(pointCount); // 预分配容量
-            
+
             //增加一个margin 5的边框 不然掩码贴着边框不好看
             int xMin = 5;
-            int xMax = imgWidth - rectWidth- xMin;
+            int xMax = imgWidth - rectWidth - xMin;
             int yMin = 5;
-            int yMax = imgHeight - rectHeight- yMin;
+            int yMax = imgHeight - rectHeight - yMin;
 
             // 添加最大尝试次数，防止无限循环
             int maxAttempts = pointCount * 100;

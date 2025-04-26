@@ -64,11 +64,11 @@ export class EmailVerifyViewModel extends ViewModelBase {
       return;
     }
 
-    if (this.RSLoadingEvents == null) {
+    if (this.LoadingEvents == null) {
       return;
     }
     //在这里发起注册事件
-    const verifyValidResult = await this.RSLoadingEvents.SimpleLoadingActionAsync(async () => {
+    const verifyValidResult = await this.LoadingEvents.SimpleLoadingActionAsync(async () => {
       const registerVerifyValidModel = new RegisterVerifyValidModel();
       registerVerifyValidModel.RegisterSessionId = this.EmailVerifyModel.RegisterSessionId;
       registerVerifyValidModel.Verify = this.EmailVerifyModel.Verify;
@@ -77,7 +77,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
 
     //验证结果
     if (!verifyValidResult.IsSuccess) {
-      this.RSMessageEvents?.ShowWarningMsg(verifyValidResult.Message);
+      this.MessageEvents?.ShowWarningMsg(verifyValidResult.Message);
       return;
     }
 
@@ -114,8 +114,8 @@ export class EmailVerifyViewModel extends ViewModelBase {
     for (let i = 0; i < this.EmailVerifyModel.VerifyList.length; i++) {
       if (!this.EmailVerifyModel.VerifyList[i]) {
         // 如果发现空输入框，设置焦点并显示提示
-        this.EmailVerifyModel.RSInputList[i]?.focus();
-        this.RSMessageEvents?.ShowWarningMsg('请输入完整的验证码');
+        this.EmailVerifyModel.InputList[i]?.focus();
+        this.MessageEvents?.ShowWarningMsg('请输入完整的验证码');
         return false;
       }
     }
@@ -123,7 +123,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
     // 所有输入框都有值，继续处理验证逻辑
     this.EmailVerifyModel.Verify = this.EmailVerifyModel.VerifyList.join('');
     if (this.EmailVerifyModel.Verify.length != 6) {
-      this.RSMessageEvents?.ShowWarningMsg('请输入完整的验证码');
+      this.MessageEvents?.ShowWarningMsg('请输入完整的验证码');
       return false;
     }
 
@@ -137,7 +137,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
 
     // 自动跳转到下一个输入框
     if (value && index < 5) {
-      const nextInput = this.EmailVerifyModel.RSInputList[index + 1];
+      const nextInput = this.EmailVerifyModel.InputList[index + 1];
       if (nextInput) {
         nextInput.focus();
       }
@@ -157,8 +157,8 @@ export class EmailVerifyViewModel extends ViewModelBase {
       });
 
       // 将焦点移到最后一个输入框
-      if (this.EmailVerifyModel.RSInputList[5]) {
-        this.EmailVerifyModel.RSInputList[5].focus();
+      if (this.EmailVerifyModel.InputList[5]) {
+        this.EmailVerifyModel.InputList[5].focus();
       }
     }
   }
@@ -177,7 +177,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
 
       // 如果不是第一个输入框，则跳转到前一个输入框并清除内容
       if (index > 0) {
-        const prevInput = this.EmailVerifyModel.RSInputList[index - 1];
+        const prevInput = this.EmailVerifyModel.InputList[index - 1];
         if (prevInput) {
           prevInput.focus();
           this.EmailVerifyModel.VerifyList[index - 1] = '';

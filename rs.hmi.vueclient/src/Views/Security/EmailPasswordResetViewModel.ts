@@ -7,8 +7,8 @@ import { EmailPasswordConfirmModel } from '../../Models/WebAPI/EmailPasswordConf
 
 export class EmailPasswordResetViewModel extends ViewModelBase {
   private emailPasswordResetModel = ref<EmailPasswordResetModel>(new EmailPasswordResetModel());
-  public RSPasswordEvents: IInputEvents | null = null;
-  public RSPasswordConfirmEvents: IInputEvents | null = null;
+  public PasswordEvents: IInputEvents | null = null;
+  public PasswordConfirmEvents: IInputEvents | null = null;
   private route = useRoute();
   constructor() {
     super();
@@ -43,12 +43,12 @@ export class EmailPasswordResetViewModel extends ViewModelBase {
       return;
     }
 
-    if (this.RSLoadingEvents == null) {
+    if (this.LoadingEvents == null) {
       return;
     }
 
     //在这里发起注册事件
-    const getRegisterVerifyResult = await this.RSLoadingEvents.SimpleLoadingActionAsync(async () => {
+    const getRegisterVerifyResult = await this.LoadingEvents.SimpleLoadingActionAsync(async () => {
       debugger;
       //验证通过后 对密码进行加密处理
       const passwordSHA256HashCode = await this.Cryptography.GetSHA256HashCode(this.EmailPasswordResetModel.PasswordConfirm);
@@ -64,7 +64,7 @@ export class EmailPasswordResetViewModel extends ViewModelBase {
 
     //验证结果
     if (!getRegisterVerifyResult.IsSuccess) {
-      this.RSMessageEvents?.ShowWarningMsg(getRegisterVerifyResult.Message);
+      this.MessageEvents?.ShowWarningMsg(getRegisterVerifyResult.Message);
       return;
     }
 
@@ -82,20 +82,20 @@ export class EmailPasswordResetViewModel extends ViewModelBase {
 
   public override ValidateForm(): boolean {
     if (!this.EmailPasswordResetModel.Password) {
-      this.RSMessageEvents?.ShowWarningMsg('请输入密码');
-      this.RSPasswordEvents?.Focus();
+      this.MessageEvents?.ShowWarningMsg('请输入密码');
+      this.PasswordEvents?.Focus();
       return false
     }
 
     if (!this.EmailPasswordResetModel.PasswordConfirm) {
-      this.RSMessageEvents?.ShowWarningMsg('请输入确认密码');
-      this.RSPasswordConfirmEvents?.Focus();
+      this.MessageEvents?.ShowWarningMsg('请输入确认密码');
+      this.PasswordConfirmEvents?.Focus();
       return false
     }
 
     if (!(this.EmailPasswordResetModel.Password === this.EmailPasswordResetModel.PasswordConfirm)) {
-      this.RSMessageEvents?.ShowWarningMsg('2次密码输入不一致');
-      this.RSPasswordConfirmEvents?.Focus();
+      this.MessageEvents?.ShowWarningMsg('2次密码输入不一致');
+      this.PasswordConfirmEvents?.Focus();
       return false
     }
     return true
