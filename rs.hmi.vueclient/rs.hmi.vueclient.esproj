@@ -9,7 +9,9 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="dist\**" />
     <None Remove="src\services\**" />
+    <TypeScriptConfiguration Remove="dist\**" />
     <TypeScriptConfiguration Remove="src\services\**" />
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@ export class ImgVerifyModel {
   /**
   * 验证会话Id
   */
-  VerifyId: string | null = null;
+  VerifySessionId: string | null = null;
 
   /**
    * 验证图像数据二合一

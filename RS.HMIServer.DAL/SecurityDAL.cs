@@ -10,6 +10,7 @@ using RS.HMIServer.DAL.SqlServer;
 using RS.HMIServer.Entity;
 using RS.HMIServer.IDAL;
 using RS.HMIServer.Models;
+using RS.Models;
 using RTools_NTS.Util;
 using StackExchange.Redis;
 using System;
@@ -226,7 +227,7 @@ namespace RS.HMIServer.DAL
 
         public async Task<OperateResult<string>> CreateVerifySessionModelAsync(ImgVerifyInitModel verifyImgInitModel, string sessionId)
         {
-            string verifyId = Guid.NewGuid().ToString();
+            string verifySessionId = Guid.NewGuid().ToString();
 
             ImgVerifySessionModel model = new ImgVerifySessionModel()
             {
@@ -234,20 +235,18 @@ namespace RS.HMIServer.DAL
                 ImgBtnPositionX = verifyImgInitModel.ImgBtnPositionX,
                 ImgBtnPositionY = verifyImgInitModel.ImgBtnPositionY,
                 Rect = verifyImgInitModel.Rect,
-                VerifyId = verifyId,
+                VerifySessionId = verifySessionId,
             };
 
-            ImgVerifySessionModel verifySessionModelExist = null;
-            var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
-            if (stringGetResult.HasValue)
+            //获取已创建的验证码会话
+            var getImgVerifySessionModelResult = await this.GetImgVerifySessionModelAsync(sessionId);
+            if (getImgVerifySessionModelResult.IsSuccess)
             {
-                verifySessionModelExist = stringGetResult.ToString().ToObject<ImgVerifySessionModel>();
-            }
-            if (verifySessionModelExist != null)
-            {
-                verifyId = verifySessionModelExist.VerifyId;
+                var verifySessionModelExist = getImgVerifySessionModelResult.Data;
+                verifySessionId = verifySessionModelExist.VerifySessionId;
                 model.CreateCount = model.CreateCount + verifySessionModelExist.CreateCount;
             }
+            //如果在2分钟内连续20次请求 则返回失败
             if (model.CreateCount > 20)
             {
                 return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧");
@@ -265,13 +264,13 @@ namespace RS.HMIServer.DAL
             }
 
             //再创建一组映射
-            result = await this.ImgVerifyRedis.StringSetAsync(verifyId, sessionId, timeSpan, When.Always);
+            result = await this.ImgVerifyRedis.StringSetAsync(verifySessionId, sessionId, timeSpan, When.Always);
             if (!result)
             {
                 return OperateResult.CreateFailResult<string>("创建图像验证会话失败");
             }
 
-            return OperateResult.CreateSuccessResult(verifyId);
+            return OperateResult.CreateSuccessResult(verifySessionId);
         }
 
         /// <summary>
@@ -292,6 +291,27 @@ namespace RS.HMIServer.DAL
                 return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧");
             }
             return OperateResult.CreateSuccessResult();
+        }
+
+        /// <summary>
+        /// 获取验证码会话数据
+        /// </summary>
+        /// <param name="verifySessionId">验证码会话Id</param>
+        /// <returns></returns>
+        public async Task<OperateResult<ImgVerifySessionModel>> GetImgVerifySessionModelAsync(string verifySessionId)
+        {
+            ImgVerifySessionModel verifySessionModelExist = null;
+            var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(verifySessionId);
+            if (stringGetResult.HasValue)
+            {
+                verifySessionModelExist = stringGetResult.ToString().ToObject<ImgVerifySessionModel>();
+            }
+
+            if (verifySessionModelExist == null)
+            {
+                return OperateResult.CreateFailResult<ImgVerifySessionModel>("验证码不存在或者已失效");
+            }
+            return OperateResult.CreateSuccessResult(verifySessionModelExist);
         }
     }
 }

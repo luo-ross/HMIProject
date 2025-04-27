@@ -48,5 +48,12 @@ namespace RS.HMIServer.IDAL
         /// <param name="sessionId"></param>
         /// <returns></returns>
         Task<OperateResult> IsCanCreateImgVerifySessionAsync(string sessionId);
+      
+        /// <summary>
+        /// 获取验证码会话数据
+        /// </summary>
+        /// <param name="verifySessionId">验证码会话Id</param>
+        /// <returns></returns>
+        Task<OperateResult<ImgVerifySessionModel>> GetImgVerifySessionModelAsync(string verifySessionId);
     }
 }

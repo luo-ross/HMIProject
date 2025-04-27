@@ -109,7 +109,9 @@ namespace RS.HMIServer.Controllers
             var sessionId = operateResult.Data;
 
             //获取会话
-            var getSessionModelResult = await GeneralBLL.GetSessionModelAsync(sessionRequestModel, sessionId);
+            var getSessionModelResult = await GeneralBLL.GetSessionResultModelAsync(
+              sessionRequestModel, 
+                sessionId);
             if (!getSessionModelResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<SessionResultModel>(getSessionModelResult);

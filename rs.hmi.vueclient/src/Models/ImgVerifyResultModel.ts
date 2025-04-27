@@ -14,7 +14,13 @@ export class ImgVerifyResultModel {
   /**
   * 验证矩形框
   */
-  public Rect: RectModel | null = null;
+  public Verify: RectModel | null = null;
+
+
+  /**
+  * 验证会话Id
+  */
+  public VerifySessionId: string | null = null;
 
 }
 

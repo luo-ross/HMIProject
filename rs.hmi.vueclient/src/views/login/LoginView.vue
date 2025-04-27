@@ -37,7 +37,6 @@
                     :ref="events => ViewModel.PasswordEvents= events" />
 
           <ImgVerify
-                      :class="{'invisible': !canShowCaptcha }"
                      :ref="events => ViewModel.ImgVerifyEvents= events"
                      v-model:LoadingEvents="ViewModel.LoadingEvents"
                      v-model:MessageEvents="ViewModel.MessageEvents">
@@ -73,13 +72,13 @@
   import { LoginViewModel } from './LoginViewModel'
   const ViewModel = new LoginViewModel()
 
-  // 判断是否都已输入
-  const canShowCaptcha = computed(() => {
-    return ViewModel.LoginModel.Email != null
-      && ViewModel.LoginModel.Password != null
-      && ViewModel.LoginModel.Email?.trim() !== ''
-      && ViewModel.LoginModel.Password?.trim() !== '';
-  });
+  //// 判断是否都已输入
+  //const canShowCaptcha = computed(() => {
+  //  return ViewModel.LoginModel.Email != null
+  //    && ViewModel.LoginModel.Password != null
+  //    && ViewModel.LoginModel.Email?.trim() !== ''
+  //    && ViewModel.LoginModel.Password?.trim() !== '';
+  //});
 </script>
 
 

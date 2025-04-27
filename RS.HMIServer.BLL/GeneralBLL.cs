@@ -175,7 +175,7 @@ namespace RS.HMIServer.BLL
             return aesEncryptResult;
         }
 
-        public async Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel, string sessionId)
+        public async Task<OperateResult<SessionResultModel>> GetSessionResultModelAsync(SessionRequestModel sessionRequestModel, string sessionId)
         {
             //获取服务端签名公钥
             MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSASignPublicKey, out string globalRSASignPublicKey);
@@ -183,6 +183,7 @@ namespace RS.HMIServer.BLL
             {
                 return OperateResult.CreateFailResult<SessionResultModel>("获取服务端签名公钥失败！");
             }
+
             //获取服务端加密公钥
             MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAEncryptPublicKey, out string globalRSAEncryptPublicKey);
             if (string.IsNullOrEmpty(globalRSAEncryptPublicKey))
@@ -201,8 +202,10 @@ namespace RS.HMIServer.BLL
             }
             string aesKeyEncrypt = rsaEncryptResult.Data;
 
-            //创建会话ID 也可以说是AppId
-            string appId = Guid.NewGuid().ToString();
+            //创建AppId
+           
+               string appId = Guid.NewGuid().ToString();
+            
 
             //RSA非对称加密
             rsaEncryptResult = CryptographyBLL.RSAEncrypt(appId, sessionRequestModel.RSAEncryptPublicKey);
@@ -211,6 +214,22 @@ namespace RS.HMIServer.BLL
                 return OperateResult.CreateFailResult<SessionResultModel>(rsaEncryptResult);
             }
             string appIdEncrypt = rsaEncryptResult.Data;
+
+
+            var claimList = new List<Claim>
+            {
+                new Claim(ClaimTypes.Sid, sessionId)
+            };
+          
+
+            //通过JWT 生成Token  待处理
+            var generateJWTTokenResult = this.GenerateJWTToken(claimList, sessionRequestModel.AudiencesType);
+            if (!generateJWTTokenResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<SessionResultModel>(generateJWTTokenResult);
+            }
+            string token = generateJWTTokenResult.Data;
+
 
             //创建返回值
             SessionResultModel sessionResultModel = new SessionResultModel()
@@ -223,22 +242,9 @@ namespace RS.HMIServer.BLL
                 {
                     AesKey = aesKeyEncrypt,
                     AppId = appIdEncrypt,
+                    Token = token,
                 },
             };
-
-            var claimList = new List<Claim>
-            {
-                new Claim(ClaimTypes.Sid, sessionId)
-            };
-
-            //通过JWT 生成Token  待处理
-            var generateJWTTokenResult = this.GenerateJWTToken(claimList, sessionRequestModel.AudiencesType);
-            if (!generateJWTTokenResult.IsSuccess)
-            {
-                return OperateResult.CreateFailResult<SessionResultModel>(generateJWTTokenResult);
-            }
-            string token = generateJWTTokenResult.Data;
-            sessionResultModel.SessionModel.Token = token;
 
 
             //把创建好的会话数据写入到Redis进行存储
@@ -248,7 +254,7 @@ namespace RS.HMIServer.BLL
             {
                 AppId = appIdProtect,
                 AesKey = aesKeyProtect,
-                Token = token
+                Token = token,
             }, sessionId);
 
             if (!saveSessionModelResult.IsSuccess)
@@ -291,5 +297,8 @@ namespace RS.HMIServer.BLL
             sessionResultModel.MsgSignature = rsaSignDataResult.Data;
             return OperateResult.CreateSuccessResult(sessionResultModel);
         }
+
+
+        
     }
 }

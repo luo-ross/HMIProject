@@ -8,7 +8,7 @@ using RS.Commons.Extensions;
 
 namespace RS.Commons.Helper
 {
-    public static class ValidationHelper
+    public static class ValidHelper
     {
 
         #region IsEmail(是否邮箱)
@@ -17,15 +17,21 @@ namespace RS.Commons.Helper
         /// </summary>
         /// <param name="value">邮箱地址</param>
         /// <returns></returns>
-        public static bool IsEmail(this string value)
+        public static bool IsEmail(this string value, bool isRestrict = false)
         {
             if (value.IsEmpty())
             {
                 return false;
             }
-            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            return Regex.IsMatch(value, pattern);
+            string pattern = isRestrict
+                ? @"^(?("")("".+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$"
+                : @"^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$";
+
+            return value.IsMatch(pattern, RegexOptions.IgnoreCase);
         }
+
+
+
 
         /// <summary>
         /// 是否存在邮箱

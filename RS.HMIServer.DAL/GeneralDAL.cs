@@ -84,6 +84,29 @@ namespace RS.HMIServer.DAL
         }
 
 
+        /// <summary>
+        /// 移除会话
+        /// </summary>
+        /// <param name="sessionModelKey"></param>
+        /// <returns></returns>
+        public async Task<OperateResult> RemoveSessionModelAsync(string sessionModelKey)
+        {
+            if (string.IsNullOrEmpty(sessionModelKey) || string.IsNullOrWhiteSpace(sessionModelKey))
+            {
+                return OperateResult.CreateFailResult("无法获取会话！");
+            }
+
+            //从Redis数据库移除会话
+            var result = await this.SessionRedis.KeyDeleteAsync(sessionModelKey);
+            if (result)
+            {
+                return OperateResult.CreateFailResult("数据库异常", 100_0002);
+            }
+
+            return OperateResult.CreateSuccessResult();
+        }
+
+
 
 
         /// <summary>
@@ -184,6 +207,12 @@ namespace RS.HMIServer.DAL
         }
 
 
+        /// <summary>
+        /// 验证客户单IP是否选在
+        /// </summary>
+        /// <param name="loginClientModel"></param>
+        /// <param name="clientId"></param>
+        /// <returns></returns>
         public async Task<OperateResult> IsClientIPExistAsync(LoginClientModel loginClientModel, string clientId)
         {
             //刷新时间

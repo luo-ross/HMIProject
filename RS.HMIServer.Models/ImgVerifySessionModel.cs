@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RS.Models;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace RS.HMIServer.Models
         /// <summary>
         /// 验证会话Id
         /// </summary>
-        public string VerifyId { get; set; }
+        public string VerifySessionId { get; set; }
 
         /// <summary>
         /// 矩形框验证信息

@@ -128,6 +128,17 @@ namespace RS.Commons
         /// <summary>
         /// 创建失败结果
         /// </summary>
+        /// <param name="message">失败消息</param>
+        /// <param name="errorCode">消息代码</param>
+        /// <returns></returns>
+        public static OperateResult CreateFailResult( string message, int errorCode)
+        {
+            return new OperateResult(errorCode, message);
+        }
+
+        /// <summary>
+        /// 创建失败结果
+        /// </summary>
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="errorOperateResult">错误操作结果</param>
         /// <returns></returns>

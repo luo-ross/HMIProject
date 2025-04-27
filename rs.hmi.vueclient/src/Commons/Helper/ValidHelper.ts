@@ -12,17 +12,26 @@ export class ValidHelper {
 
 
   /**
-    * 是否邮箱
-    * @param value 邮箱地址
-    * @param isRestrict 是否按严格模式验证
-    * @returns 是否有效
+    * 验证传入的字符串是否为有效的邮箱地址
+    * @param value - 待验证的邮箱地址字符串
+    * @param isRestrict - 是否使用严格模式进行验证，默认为 false
+    * @returns 如果是有效的邮箱地址返回 true，否则返回 false
     */
-  public static IsEmail(value: string | null): boolean {
-    if (!value) {
+  public static IsEmail(value: string, isRestrict: boolean = true): boolean {
+    // 检查传入的字符串是否为空或 undefined，如果是则直接判定为无效邮箱地址
+    if (value === null || value === undefined || value.length === 0) {
       return false;
     }
-    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,}$/;
-    return pattern.test(value) && value.length <= 254;
+
+    // 根据 isRestrict 参数选择不同的正则表达式模式
+    const pattern = isRestrict
+      // 严格模式下的正则表达式，支持带引号的用户名和更严格的域名格式
+      ? /^(?:"([^"]+)"|([\w!#$%&'*+/=?^`{|}~-]+(?:\.[\w!#$%&'*+/=?^`{|}~-]+)*))@((?:[\w](?:[\w-]*[\w])?\.)+[a-zA-Z]{2,6})$/i
+      // 非严格模式下的正则表达式，只要求基本的邮箱格式
+      : /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/i;
+
+    // 使用正则表达式的 test 方法检查传入的字符串是否匹配邮箱模式
+    return pattern.test(value);
   }
 
 

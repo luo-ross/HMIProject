@@ -59,9 +59,6 @@ namespace RS.HMIServer.Filters
             {
                 controller.ViewData["ClientId"] = clientId;
             }
-
-
-
         }
 
         /// <summary>

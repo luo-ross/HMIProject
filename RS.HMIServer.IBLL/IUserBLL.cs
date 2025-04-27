@@ -19,12 +19,5 @@ namespace RS.HMIServer.IBLL
         /// <returns></returns>
         Task<OperateResult<AESEncryptModel>> GetUsersAsync(string sessionId);
 
-        /// <summary>
-        /// 验证用户登录
-        /// </summary>
-        /// <param name="aesEncryptModel">AES对称加密</param>
-        /// <param name="sessionId">会话Id</param>
-        /// <returns></returns>
-        Task<OperateResult> ValidLoginAsync(AESEncryptModel aesEncryptModel, string sessionId);
-    }
+           }
 }

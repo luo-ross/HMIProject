@@ -12,7 +12,7 @@ namespace RS.HMIServer.Models
         /// <summary>
         /// 验证会话Id
         /// </summary>
-        public string VerifyId { get; set; }
+        public string VerifySessionId { get; set; }
 
         /// <summary>
         /// 验证图像数据二合一

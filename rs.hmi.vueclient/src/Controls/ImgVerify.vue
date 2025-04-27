@@ -186,7 +186,8 @@
     VerifyImgHostRef: null,
     BtnImgSliderRef: null,
     MouseMovingTrack: [],
-    Rect: null,
+    Verify: null,
+    VerifySessionId: null,
   })
 
   let IsBtnSliderDragging = false;
@@ -371,7 +372,7 @@
     BtnImgSliderHistoryPositionX = state.BtnImgSliderPositionX;
     BtnImgSliderHistoryPositionY = state.BtnImgSliderPositionY;
 
-    state.Rect = new RectModel(
+    state.Verify = new RectModel(
       state.BtnImgSliderPositionX,
       state.BtnImgSliderPositionY,
       state.BtnImgSliderWidth,
@@ -441,12 +442,14 @@
     if (state.IsShowVerifyImg) {
       const imgVerifyResultModel = new ImgVerifyResultModel();
       imgVerifyResultModel.MouseMovingTrack = state.MouseMovingTrack;
-      imgVerifyResultModel.Rect = { ...state.MouseMovingTrack };
+      //浅拷贝
+      imgVerifyResultModel.Verify = { ...state.Verify };
+      imgVerifyResultModel.VerifySessionId = state.VerifySessionId;
       return GenericOperateResult.CreateSuccessResult<ImgVerifyResultModel>(imgVerifyResultModel);
     } else {
       return GenericOperateResult.CreateFailResult<ImgVerifyResultModel>("获取验证码失败");
     }
-   
+
   }
 
   // 导出方法供父组件调用

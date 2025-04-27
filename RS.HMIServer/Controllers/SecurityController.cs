@@ -17,7 +17,7 @@ namespace RS.HMIServer.Controllers
 
         public SecurityController(ISecurityBLL securityBLL, ILogBLL logBLL)
         {
-            this. SecurityBLL = securityBLL;
+            this.SecurityBLL = securityBLL;
             this.LogBLL = logBLL;
         }
 
@@ -26,7 +26,7 @@ namespace RS.HMIServer.Controllers
         [Authorize]
         public async Task<OperateResult> PasswordResetEmailSend(AESEncryptModel aesEncryptModel)
         {
-            return await SecurityBLL.PasswordResetEmailSendAsync(aesEncryptModel,  SessionId, Audiences);
+            return await SecurityBLL.PasswordResetEmailSendAsync(aesEncryptModel, SessionId, Audiences);
         }
 
         [HttpPost]
@@ -45,6 +45,19 @@ namespace RS.HMIServer.Controllers
         {
             return await this.SecurityBLL.GetImgVerifyModelAsync(SessionId, Audiences);
             //return File(combinedBytes, "application/octet-stream");
+        }
+
+
+        /// <summary>
+        /// 验证登录
+        /// </summary>
+        /// <param name="aesEncryptModel">AES加密数据</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public async Task<OperateResult<AESEncryptModel>> ValidLogin(AESEncryptModel aesEncryptModel)
+        {
+            return await this.SecurityBLL.ValidLoginAsync(aesEncryptModel, SessionId, Audiences);
         }
     }
 }

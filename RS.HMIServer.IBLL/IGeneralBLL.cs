@@ -28,7 +28,7 @@ namespace RS.HMIServer.IBLL
         /// <param name="sessionRequestModel"></param>
         /// <param name="sessionId"></param>
         /// <returns></returns>
-        Task<OperateResult<SessionResultModel>> GetSessionModelAsync(SessionRequestModel sessionRequestModel, string sessionId);
+        Task<OperateResult<SessionResultModel>> GetSessionResultModelAsync(SessionRequestModel sessionRequestModel, string sessionId);
 
         /// <summary>
         /// 获取AES解密数据

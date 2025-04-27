@@ -35,17 +35,5 @@ namespace RS.HMIServer.Controllers
         {
             return await UserBLL.GetUsersAsync(SessionId);
         }
-
-        /// <summary>
-        /// 验证登录
-        /// </summary>
-        /// <param name="aesEncryptModel">AES加密数据</param>
-        /// <returns></returns>
-        [HttpPost()]
-        public async Task<OperateResult> ValidLogin(AESEncryptModel aesEncryptModel)
-        {
-            return await UserBLL.ValidLoginAsync(aesEncryptModel, SessionId);
-        }
-
     }
 }
