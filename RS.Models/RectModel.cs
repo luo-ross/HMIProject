@@ -12,7 +12,7 @@ namespace RS.Models
     /// </summary>
     public class RectModel
     {
-        public RectModel(int left, int top, int width, int height)
+        public RectModel(double left, double top, double width, double height)
         {
             this.Left = left;
             this.Top = top;
@@ -20,10 +20,10 @@ namespace RS.Models
             this.Height = height;
         }
 
-        public int Left { get; set; }
-        public int Top { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public double Left { get; set; }
+        public double Top { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
 
     }
 }

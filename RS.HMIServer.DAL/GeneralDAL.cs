@@ -98,7 +98,7 @@ namespace RS.HMIServer.DAL
 
             //从Redis数据库移除会话
             var result = await this.SessionRedis.KeyDeleteAsync(sessionModelKey);
-            if (result)
+            if (!result)
             {
                 return OperateResult.CreateFailResult("数据库异常", 100_0002);
             }

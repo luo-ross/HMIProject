@@ -239,13 +239,21 @@ namespace RS.HMIServer.DAL
             };
 
             //获取已创建的验证码会话
-            var getImgVerifySessionModelResult = await this.GetImgVerifySessionModelAsync(sessionId);
-            if (getImgVerifySessionModelResult.IsSuccess)
+            ImgVerifySessionModel verifySessionModelExist = null;
+            var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
+
+            if (stringGetResult.HasValue)
             {
-                var verifySessionModelExist = getImgVerifySessionModelResult.Data;
+                verifySessionModelExist = stringGetResult.ToString().ToObject<ImgVerifySessionModel>();
+            }
+
+            if (verifySessionModelExist != null)
+            {
                 verifySessionId = verifySessionModelExist.VerifySessionId;
                 model.CreateCount = model.CreateCount + verifySessionModelExist.CreateCount;
+
             }
+
             //如果在2分钟内连续20次请求 则返回失败
             if (model.CreateCount > 20)
             {
@@ -301,10 +309,19 @@ namespace RS.HMIServer.DAL
         public async Task<OperateResult<ImgVerifySessionModel>> GetImgVerifySessionModelAsync(string verifySessionId)
         {
             ImgVerifySessionModel verifySessionModelExist = null;
-            var stringGetResult = await this.ImgVerifyRedis.StringGetAsync(verifySessionId);
-            if (stringGetResult.HasValue)
+            //通过verifySessionId来获取sessionId
+            var verifySessionIdResult = await this.ImgVerifyRedis.StringGetAsync(verifySessionId);
+            if (!verifySessionIdResult.HasValue)
             {
-                verifySessionModelExist = stringGetResult.ToString().ToObject<ImgVerifySessionModel>();
+                return OperateResult.CreateFailResult<ImgVerifySessionModel>("请先获取验证码！");
+            }
+
+            var sessionId = verifySessionIdResult.ToString();
+
+            var imgVerifySessionModelJsonResult = await this.ImgVerifyRedis.StringGetAsync(sessionId);
+            if (imgVerifySessionModelJsonResult.HasValue)
+            {
+                verifySessionModelExist = imgVerifySessionModelJsonResult.ToString().ToObject<ImgVerifySessionModel>();
             }
 
             if (verifySessionModelExist == null)

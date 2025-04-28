@@ -37,12 +37,12 @@ export class LoginViewModel extends ViewModelBase {
       return;
     }
 
-    if (this.ImgVerifyEvents==null) {
+    if (this.ImgVerifyEvents == null) {
       return;
     }
 
     //获取验证码信息
-    const getImgVerifyResult =await this.ImgVerifyEvents.GetImgVerifyResultAsync();
+    const getImgVerifyResult = await this.ImgVerifyEvents.GetImgVerifyResultAsync();
     if (!getImgVerifyResult.IsSuccess) {
       this.MessageEvents?.ShowDangerMsg(getImgVerifyResult.Message);
     }
@@ -53,10 +53,11 @@ export class LoginViewModel extends ViewModelBase {
       || this.LoginModel.ImgVerifyResult.VerifySessionId == null
     ) {
       this.MessageEvents?.ShowDangerMsg("未获取到验证码");
+      return;
     }
 
 
-    if (this.LoadingEvents==null) {
+    if (this.LoadingEvents == null) {
       return;
     }
 
@@ -66,16 +67,16 @@ export class LoginViewModel extends ViewModelBase {
       const loginValidModel = new LoginValidModel();
       loginValidModel.UserName = this.LoginModel.Email;
 
-      const getSHA256HashCodeResult =await this.Cryptography.GetSHA256HashCode(this.LoginModel.Password);
+      const getSHA256HashCodeResult = await this.Cryptography.GetSHA256HashCode(this.LoginModel.Password);
       if (!getSHA256HashCodeResult.IsSuccess) {
         return getSHA256HashCodeResult;
       }
-      if (this.LoginModel.ImgVerifyResult==null) {
+      if (this.LoginModel.ImgVerifyResult == null) {
         return SimpleOperateResult.CreateFailResult("未获取到验证码");
       }
 
       loginValidModel.Password = getSHA256HashCodeResult.Data;
-      loginValidModel.VerifySessionId = this.LoginModel.ImgVerifyResult.VerifySessionId ;
+      loginValidModel.VerifySessionId = this.LoginModel.ImgVerifyResult.VerifySessionId;
       loginValidModel.Verify = this.LoginModel.ImgVerifyResult.Verify;
 
       return await this.AxiosUtil.AESEncryptPost<LoginValidModel>('/api/v1/Security/ValidLogin', loginValidModel);
@@ -85,14 +86,14 @@ export class LoginViewModel extends ViewModelBase {
       this.MessageEvents?.ShowDangerMsg(loginResult.Message);
       return;
     }
-
+    this.MessageEvents?.ShowSuccessMsg("登录成功啦");
   }
 
   public override  ValidateForm(): boolean {
     const email = this.LoginModel.Email;
     const password = this.LoginModel.Password;
 
-    if (!email ) {
+    if (!email) {
       this.MessageEvents?.ShowWarningMsg('邮箱不能为空');
       this.EmailEvents?.Focus();
       return false;
@@ -109,7 +110,7 @@ export class LoginViewModel extends ViewModelBase {
       return false;
     }
 
-    if (password.length<8) {
+    if (password.length < 8) {
       this.MessageEvents?.ShowWarningMsg('密码长度至少8位');
       this.PasswordEvents?.Focus();
       return false;
@@ -121,4 +122,22 @@ export class LoginViewModel extends ViewModelBase {
   public HandleForgetPassword() {
     this.RouterUtil.Push("/Security");
   }
+
+
+  // 使用类属性初始化器
+  public OnBtnSliderMousedown = async (): Promise<SimpleOperateResult> => {
+    if (!this.ValidateForm()) {
+      return SimpleOperateResult.CreateFailResult();
+    }
+    return SimpleOperateResult.CreateSuccessResult();
+  }
+
+  ////这里是子组件图像验证需要进行调用的事件
+  //public async OnBtnSliderMousedown(): Promise<SimpleOperateResult> {
+  //  // 这里进行客户端简单的表单验证
+  //  if (!this.ValidateForm()) {
+  //    return SimpleOperateResult.CreateFailResult();
+  //  }
+  //  return SimpleOperateResult.CreateSuccessResult();
+  //}
 } 

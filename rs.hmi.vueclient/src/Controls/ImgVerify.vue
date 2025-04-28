@@ -159,7 +159,10 @@
   const props = defineProps<{
     LoadingEvents: ILoadingEvents | null;
     MessageEvents: IMessageEvents | null;
+    OnBtnSliderMousedown?: () => Promise<SimpleOperateResult>;
   }>();
+
+
 
   const state = reactive({
     //这是滑块的位置X
@@ -186,7 +189,7 @@
     VerifyImgHostRef: null,
     BtnImgSliderRef: null,
     MouseMovingTrack: [],
-    Verify: null,
+    Verify: null as RectModel, 
     VerifySessionId: null,
   })
 
@@ -208,7 +211,9 @@
 
   let BtnImgSliderMaxPositionX = 0;
   let BtnImgSliderMaxPositionY = 0;
-
+  //缩放比
+  let WidthScale = 0;
+  let HeightScale = 0;
   let MAX_POINTS = 1024;
 
   function InitBtnSliderControl() {
@@ -254,11 +259,11 @@
 
     state.VerifyImgUrl = imgVerifyModel.VerifyImgUrl;
     state.ImgSliderUrl = imgVerifyModel.ImgSliderUrl;
-
-    const widthScale = state.VerifyImgHostRef.clientWidth / imgVerifyModel.ImgWidth;
-    const heightScale = state.VerifyImgHostRef.clientHeight / imgVerifyModel.ImgHeight;
-    state.BtnImgSliderWidth = imgVerifyModel.IconWidth * widthScale;
-    state.BtnImgSliderHeight = imgVerifyModel.IconHeight * heightScale;
+    state.VerifySessionId = imgVerifyModel.VerifySessionId;
+    WidthScale = state.VerifyImgHostRef.clientWidth / imgVerifyModel.ImgWidth;
+    HeightScale = state.VerifyImgHostRef.clientHeight / imgVerifyModel.ImgHeight;
+    state.BtnImgSliderWidth = imgVerifyModel.IconWidth * WidthScale;
+    state.BtnImgSliderHeight = imgVerifyModel.IconHeight * HeightScale;
 
 
     //获取最大移动距离
@@ -266,8 +271,8 @@
     BtnImgSliderMaxPositionY = state.VerifyImgHostRef.clientHeight - state.BtnImgSliderHeight;
 
     //设置默认位置
-    state.BtnImgSliderPositionX = imgVerifyModel.ImgBtnPositionX * widthScale;
-    state.BtnImgSliderPositionY = imgVerifyModel.ImgBtnPositionY * heightScale;
+    state.BtnImgSliderPositionX = imgVerifyModel.ImgBtnPositionX * WidthScale;
+    state.BtnImgSliderPositionY = imgVerifyModel.ImgBtnPositionY * HeightScale;
 
     BtnImgSliderHistoryPositionX = state.BtnImgSliderPositionX;
     BtnImgSliderHistoryPositionY = state.BtnImgSliderPositionY;
@@ -336,13 +341,21 @@
   }
 
   //处理滑动按钮鼠标按下事件
-  function HandleBtnSliderMousedown(event: MouseEvent) {
+  async function HandleBtnSliderMousedown(event: MouseEvent): Promise<void> {
     if (state.BtnSliderRef == null) {
       return;
     }
     if (state.SliderBorderRef == null) {
       return;
     }
+
+    if (props.OnBtnSliderMousedown) {
+      let operateResult = await props.OnBtnSliderMousedown();
+      if (!operateResult.IsSuccess) {
+        return;
+      }
+    }
+
     IsBtnSliderDragging = true;
 
     BtnSliderStartX = event.clientX;
@@ -443,7 +456,12 @@
       const imgVerifyResultModel = new ImgVerifyResultModel();
       imgVerifyResultModel.MouseMovingTrack = state.MouseMovingTrack;
       //浅拷贝
-      imgVerifyResultModel.Verify = { ...state.Verify };
+      const verify = new RectModel();
+      verify.Left = state.Verify.Left / WidthScale;
+      verify.Top = state.Verify.Top / HeightScale;
+      verify.Width = state.Verify.Width / WidthScale;
+      verify.Height = state.Verify.Height / HeightScale;
+      imgVerifyResultModel.Verify = verify;
       imgVerifyResultModel.VerifySessionId = state.VerifySessionId;
       return GenericOperateResult.CreateSuccessResult<ImgVerifyResultModel>(imgVerifyResultModel);
     } else {
@@ -456,6 +474,11 @@
   defineExpose<IImgVerifyEvents>({
     GetImgVerifyResultAsync
   });
+
+  //// 定义要触发的事件
+  //const emits = defineEmits<{
+  //  (e: 'OnBtnSliderMousedown');
+  //}>();
 
 </script>
 

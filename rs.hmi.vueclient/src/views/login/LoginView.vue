@@ -39,7 +39,8 @@
           <ImgVerify
                      :ref="events => ViewModel.ImgVerifyEvents= events"
                      v-model:LoadingEvents="ViewModel.LoadingEvents"
-                     v-model:MessageEvents="ViewModel.MessageEvents">
+                     v-model:MessageEvents="ViewModel.MessageEvents"
+                     :OnBtnSliderMousedown="ViewModel.OnBtnSliderMousedown">
           </ImgVerify>
 
 

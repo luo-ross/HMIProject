@@ -358,7 +358,7 @@ namespace RS.HMIServer.BLL
             }
 
             //加密完之后 需要把酒店SessionId会话删除
-            var removeSessionModelResult = await GeneralDAL.RemoveSessionModelAsync(sessionId);
+            var removeSessionModelResult = await this.GeneralDAL.RemoveSessionModelAsync(sessionId);
             if (!removeSessionModelResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(removeSessionModelResult);
