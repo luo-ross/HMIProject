@@ -386,3 +386,5 @@ FodyWeavers.xsd
 /RS.Annotation/Assets/Videos/ocean.mp4
 /RS.Annotation/Assets/Videos/robot.mp4
 /RS.Annotation/Assets/Videos/shark.mp4
+/RS.Python/datasets/detect
+/RS.Python/yolov8n.pt
