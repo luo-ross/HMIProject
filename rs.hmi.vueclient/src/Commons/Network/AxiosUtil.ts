@@ -32,6 +32,7 @@ export class AxiosUtil {
         return config;
       }
 
+
       // 获取 aesKey, appId, token
       const getSessionModelResult = this.Cryptography.GetSessionModelFromStorage();
       if (!getSessionModelResult.IsSuccess) {

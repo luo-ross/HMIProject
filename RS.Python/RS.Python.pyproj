@@ -1,0 +1,110 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>c8c4be36-5e0a-4c1b-b746-75552bfe2284</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>detect\predict.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>RS.Python</Name>
+    <RootNamespace>RS.Python</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|YoloGPU</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="detect\predict.py" />
+    <Compile Include="FileReName.py" />
+    <Compile Include="detect\train.py" />
+    <Compile Include="RS.Python.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="datasets\detect\images\train\Img0000002.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000003.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000004.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000005.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000006.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000007.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000008.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000009.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000010.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000011.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000012.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000014.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000015.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000016.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000017.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000019.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000021.jpg" />
+    <Content Include="datasets\detect\images\train\Img0000022.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000023.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000024.jpeg" />
+    <Content Include="datasets\detect\images\train\Img0000025.jpeg" />
+    <Content Include="datasets\detect\images\val\Img0000001.jpeg" />
+    <Content Include="datasets\detect\images\val\Img0000013.jpeg" />
+    <Content Include="datasets\detect\images\val\Img0000018.jpeg" />
+    <Content Include="datasets\detect\images\val\Img0000020.jpeg" />
+    <Content Include="datasets\detect\labels\train.cache" />
+    <Content Include="datasets\detect\labels\train\Img0000002.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000003.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000004.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000005.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000006.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000007.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000008.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000009.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000010.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000011.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000012.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000014.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000015.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000016.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000017.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000019.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000021.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000022.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000023.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000024.txt" />
+    <Content Include="datasets\detect\labels\train\Img0000025.txt" />
+    <Content Include="datasets\detect\labels\val.cache" />
+    <Content Include="datasets\detect\labels\val\Img0000001.txt" />
+    <Content Include="datasets\detect\labels\val\Img0000013.txt" />
+    <Content Include="datasets\detect\labels\val\Img0000018.txt" />
+    <Content Include="datasets\detect\labels\val\Img0000020.txt" />
+    <Content Include="detect\detect.yaml" />
+    <Content Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|YoloGPU" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="datasets\" />
+    <Folder Include="datasets\detect\" />
+    <Folder Include="datasets\detect\images\" />
+    <Folder Include="datasets\detect\images\test\" />
+    <Folder Include="datasets\detect\images\train\" />
+    <Folder Include="datasets\detect\images\val\" />
+    <Folder Include="datasets\detect\labels\" />
+    <Folder Include="datasets\detect\labels\train\" />
+    <Folder Include="datasets\detect\labels\val\" />
+    <Folder Include="detect\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

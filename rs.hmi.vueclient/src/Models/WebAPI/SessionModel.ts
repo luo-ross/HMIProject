@@ -17,4 +17,9 @@ export class SessionModel {
    */
   public Token: string | null = null;
 
+  /**
+  * 是否登录
+  */
+  public IsLogin: boolean  = false;
+
 }

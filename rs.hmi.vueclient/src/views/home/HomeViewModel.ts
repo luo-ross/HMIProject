@@ -1,24 +1,23 @@
-//import { ref } from 'vue'
-//import { UserModel } from '../../models/UserModel'
-//import type { UserInfo } from '../../models/UserModel'
+import { ref } from 'vue'
+import { HomeModel } from '../../Models/HomeModel'
+import { HomeViewModelBase } from '../../Models/HomeViewModelBase';
 
-//export class HomeViewModel {
-//  private userModel: UserModel
-  
-//  public userInfo = ref<UserInfo | null>(null)
 
-//  constructor() {
-//    this.userModel = UserModel.getInstance()
-//    this.userInfo.value = this.userModel.getUserInfo()
-    
-//    // 检查用户是否已登录，如果未登录则跳转到登录页
-//    if (!this.userInfo.value) {
-//      window.location.href = '/login.html'
-//    }
-//  }
+export class HomeViewModel extends HomeViewModelBase {
+  private homeModel = ref<HomeModel>(new HomeModel());
+  constructor() {
+    super();
+  }
 
-//  public handleLogout(): void {
-//    this.userModel.logout()
-//    window.location.href = '/login.html'
-//  }
-//} 
+  public get HomeModel(): HomeModel {
+    return this.homeModel.value;
+  }
+
+  public set HomeModel(viewModel: HomeModel) {
+    this.homeModel.value = viewModel;
+  }
+
+  public handleLogout(): void {
+   
+  }
+} 

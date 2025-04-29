@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteLocationNormalized, NavigationGuardNext, Router } from 'vue-router'
 import { Cryptography } from '../Cryptography/Cryptography'
 import { Utils } from '../Utils';
-import  { AxiosUtil } from './AxiosUtil';
+import { AxiosUtil } from './AxiosUtil';
 import { SimpleOperateResult, type GenericOperateResult } from '../OperateResult/OperateResult';
 import { SessionRequestModel } from '../../Models/WebAPI/SessionRequestModel';
 import { MemoryCacheKey } from '../../Models/WebAPI/MemoryCacheKey';
@@ -59,8 +59,8 @@ export class RouterUtil {
     this.Router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 
       // 白名单，不需要验证的路由
-      const whiteList = ['/Login','/EmailPasswordReset']
-      
+      const whiteList = ['/Login', '/EmailPasswordReset']
+
       // 检查当前路径是否匹配白名单中的任何路径（忽略查询参数）
       const isInWhiteList = whiteList.some(path => {
         // 移除查询参数进行比较
@@ -105,7 +105,7 @@ export class RouterUtil {
   }
 
 
-  public GetRouter():Router {
+  public GetRouter(): Router {
     return this.Router;
   }
 
@@ -115,6 +115,13 @@ export class RouterUtil {
 
 
   private async InitSessionAsync(): Promise<SimpleOperateResult> {
+
+    //做一个检查 尝试获取SessionModel 如果没有再获取
+    // 获取 aesKey, appId, token
+    const getSessionModelResultExist = this.Cryptography.GetSessionModelFromStorage();
+    if (getSessionModelResultExist.IsSuccess) {
+      return SimpleOperateResult.CreateSuccessResult();;
+    }
 
     const initRSASecurityKeyDataResult = await this.Cryptography.InitRSASecurityKeyDataAsync();
     if (!initRSASecurityKeyDataResult.IsSuccess) {
@@ -156,6 +163,8 @@ export class RouterUtil {
     if (!getSessionModelResult.IsSuccess) {
       return getSessionModelResult;
     }
+
+
     return SimpleOperateResult.CreateSuccessResult();
   }
 

@@ -6,6 +6,7 @@ import { ViewModelBase } from '../../Models/ViewModelBase';
 import type { IImgVerifyEvents } from '../../Interfaces/IImgVerifyEvents';
 import { LoginValidModel } from '../../Models/WebAPI/LoginValidModel';
 import { SimpleOperateResult } from '../../Commons/OperateResult/OperateResult';
+import { LoginResultModel } from '../../Models/WebAPI/LoginResultModel';
 
 export class LoginViewModel extends ViewModelBase {
   private loginModel = ref<LoginModel>(new LoginModel());
@@ -79,14 +80,30 @@ export class LoginViewModel extends ViewModelBase {
       loginValidModel.VerifySessionId = this.LoginModel.ImgVerifyResult.VerifySessionId;
       loginValidModel.Verify = this.LoginModel.ImgVerifyResult.Verify;
 
-      return await this.AxiosUtil.AESEncryptPost<LoginValidModel>('/api/v1/Security/ValidLogin', loginValidModel);
+      const getloginResult = await this.AxiosUtil.AESEnAndDecryptPost<LoginValidModel, LoginResultModel>('/api/v1/Security/ValidLogin', loginValidModel, LoginResultModel);
+      if (!getloginResult.IsSuccess) {
+        return getloginResult;
+      }
+      const loginResult = getloginResult.Data;
+
+      if (loginResult == null) {
+        return SimpleOperateResult.CreateFailResult("登录失败!");
+      }
+      //获取新的会话
+      const sessionModel = loginResult.SessionModel;
+      if (sessionModel != null) {
+        sessionModel.IsLogin = true;
+      }
+      sessionStorage.setItem('SessionModel', JSON.stringify(sessionModel))
+      return SimpleOperateResult.CreateSuccessResult();
     });
 
     if (!loginResult.IsSuccess) {
       this.MessageEvents?.ShowDangerMsg(loginResult.Message);
       return;
     }
-    this.MessageEvents?.ShowSuccessMsg("登录成功啦");
+
+    this.RouterUtil.Push("/Home");
   }
 
   public override  ValidateForm(): boolean {
