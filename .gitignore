@@ -389,3 +389,4 @@ FodyWeavers.xsd
 /RS.Python/datasets/detect
 /RS.Python/yolov8n.pt
 /RS.Python/runs/detect/test-detect
+/RS.Python/result.jpg
