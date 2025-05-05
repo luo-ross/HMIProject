@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace RS.HMI.Client.Views.Home
+namespace RS.HMI.Client.Views
 {
 
     [ServiceInjectConfig(ServiceLifetime.Singleton)]

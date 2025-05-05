@@ -344,81 +344,49 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="RSApp.Styles.LoginButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="MinWidth" Value="60" />
-        <Setter Property="VerticalAlignment" Value="Center" />
+
+    <Style
+        x:Key="RSApp.Styles.LoginButtonStyle"
+        BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
+        TargetType="{x:Type Button}">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="#198cff" />
+        <Setter Property="Foreground" Value="#fff" />
+        <Setter Property="Margin" Value="0,5,0,5" />
+        <Setter Property="Padding" Value="15,10,15,10" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="8,8,8,8" />
-        <!--<Setter Property="Margin" Value="5,5,5,5" />-->
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border
-                        x:Name="border"
+                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                        SnapsToDevicePixels="true">
-                        <ContentPresenter
-                            x:Name="contentPresenter"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Focusable="False"
-                            RecognizesAccessKey="True"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                        <Grid>
+                            <ContentControl
+                                x:Name="PART_Content"
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                FontSize="{TemplateBinding FontSize}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="Background" Value="#2d96ff" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#0072ef" />
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background">
-                                <Setter.Value>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#235563" />
-                                        <GradientStop Offset="1" Color="#155b2c" />
-                                    </LinearGradientBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Foreground" Value="#626468" />
+                            <Setter Property="Background" Value="#949494" />
                         </Trigger>
-
-                        <Trigger Property="IsEnabled" Value="True">
-                            <Setter Property="Background">
-                                <Setter.Value>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#2FCDF3" />
-                                        <GradientStop Offset="1" Color="#00E138" />
-                                    </LinearGradientBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Foreground" Value="#FFF" />
-                        </Trigger>
-
-
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsEnabled" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
-
-                            <Setter Property="Background">
-                                <Setter.Value>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Offset="0" Color="#2CBDDC" />
-                                        <GradientStop Offset="1" Color="#03CE36" />
-                                    </LinearGradientBrush>
-                                </Setter.Value>
-                            </Setter>
-                        </MultiTrigger>
-
                     </ControlTemplate.Triggers>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

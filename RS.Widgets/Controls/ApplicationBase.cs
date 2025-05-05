@@ -32,10 +32,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         public static IHost AppHost { get; set; }
 
-        /// <summary>
-        /// 主机地址
-        /// </summary>
-        public static string AppHostAddress = "http://localhost:7109";
+        public virtual string AppHostAddress { get; set; } = "http://www.hmiproject.com/";
 
         /// <summary>
         /// 秘钥存储路径
@@ -89,7 +86,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 心跳检测间隔（毫秒）
         /// </summary>
-        private const int HeartbeatInterval = 1000;
+        private  int HeartbeatInterval = 1000;
 
         /// <summary>
         /// 心跳检测线程
@@ -100,22 +97,14 @@ namespace RS.Widgets.Controls
         /// 心跳检测取消标记
         /// </summary>
         private CancellationTokenSource heartbeatCancellation = new CancellationTokenSource();
-
         #endregion
-
-        /// <summary>
-        /// 静态构造方法
-        /// </summary>
-        static ApplicationBase()
-        {
-            ViewModel = new ApplicationViewModel();
-        }
 
         /// <summary>
         /// 默认构造方法
         /// </summary>
         public ApplicationBase()
         {
+            ViewModel = new ApplicationViewModel();
             this.OnServerConnect += ApplicationBase_OnServerConnect;
         }
 
@@ -124,7 +113,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         private async void ApplicationBase_OnServerConnect()
         {
-
+            //如果未和服务端创建会话
             if (!ViewModel.IsGetSessionModelSuccess)
             {
                 //从服务端获取会话Token和数据交换密钥
@@ -165,18 +154,18 @@ namespace RS.Widgets.Controls
                     if (heartBeatCheckResult.IsSuccess)
                     {
                         ViewModel.IsServerConnectSuccess = true;
-                        OnServerConnect?.Invoke();
+                        this.OnServerConnect?.Invoke();
                     }
                     else
                     {
                         // 检查是否有可用的网络连接
                         ViewModel.IsServerConnectSuccess = false;
-                        OnServerDisconnect?.Invoke();
+                        this.OnServerDisconnect?.Invoke();
                     }
 
                     try
                     {
-                        await Task.Delay(HeartbeatInterval, heartbeatCancellation.Token);
+                        await Task.Delay(this.HeartbeatInterval, heartbeatCancellation.Token);
                     }
                     catch (TaskCanceledException)
                     {
@@ -206,7 +195,7 @@ namespace RS.Widgets.Controls
 
             //获取客户端解密私钥
             MemoryCache.TryGetValue(MemoryCacheKey.GlobalRSAEncryptPrivateKey, out byte[] globalRSAEncryptPrivateKey);
-            if (globalRSAEncryptPrivateKey==null)
+            if (globalRSAEncryptPrivateKey == null)
             {
                 return OperateResult.CreateFailResult("获取客户端加密私钥失败！");
             }

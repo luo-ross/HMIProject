@@ -1,0 +1,87 @@
+﻿<UserControl
+    x:Class="RS.HMI.Client.Controls.RSImgVerify"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.HMI.Client.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/Widgets"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type local:RSImgVerify}">
+                <Setter Property="Margin" Value="3,0,3,0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type local:RSImgVerify}">
+                            <Border
+                                Background="#F5F5F5"
+                                BorderBrush="#198cff"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                                <Grid>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="#666666"
+                                        Text="向右滑动滑块进行验证" />
+                                    <Border
+                                        Width="{TemplateBinding SliderMaskWidth}"
+                                        HorizontalAlignment="Left"
+                                        Background="#33198CFF" />
+                                    <Canvas x:Name="PART_BtnSliderHost" Height="38">
+
+                                        <Thumb
+                                            x:Name="PART_BtnSlider"
+                                            Canvas.Left="0"
+                                            Canvas.Top="0"
+                                            Width="38"
+                                            Height="38"
+                                            rs:ControlsHelper.IconData="M567.32505 547.18536c20.970614-21.479197 20.970614-56.307424 0-77.790714L185.251168 77.115332c-20.971637-21.47715-54.975079-21.47715-75.948763 0-20.973684 21.484314-20.973684 56.30947 0 77.793784l344.188016 353.383446-344.188016 353.384469c-20.973684 21.484314-20.973684 56.311517 0 77.79276 20.971637 21.482267 54.975079 21.482267 75.948763 0l382.072858-392.280337 0.001024-0.004094zM440.60802 154.908092l344.18597 353.383446-344.18597 353.385493c-20.973684 21.484314-20.973684 56.311517 0 77.79276 20.972661 21.482267 54.975079 21.482267 75.949786 0l382.074905-392.281361c20.966521-21.478174 20.966521-56.307424 0-77.790714L516.555759 77.115332c-20.972661-21.47715-54.975079-21.47715-75.949786 0-20.971637 21.48329-20.971637 56.30947 0.002047 77.79276z"
+                                            Foreground="#fff"
+                                            Style="{StaticResource RSApp.Styles.IconThumb}" />
+
+
+                                        <Border
+                                            x:Name="PART_BtnImgSliderHost"
+                                            Canvas.Left="0"
+                                            Canvas.Top="-203"
+                                            Width="{Binding ElementName=PART_BtnSliderHost, Path=ActualWidth}"
+                                            Height="200"
+                                            CornerRadius="5"
+                                            Visibility="Collapsed">
+                                            <Border.Background>
+                                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImgVerifyBackground}" />
+                                            </Border.Background>
+                                        </Border>
+
+                                        <Thumb
+                                            x:Name="PART_BtnImgSlider"
+                                            Canvas.Left="0"
+                                            Canvas.Top="-203"
+                                            Width="{TemplateBinding BtnImgWidth}"
+                                            Height="{TemplateBinding BtnImgHeight}"
+                                            rs:ControlsHelper.ImageData="{TemplateBinding BtnImgSource}"
+                                            Style="{StaticResource RSApp.Styles.ImgThumb}"
+                                            Visibility="{Binding ElementName=PART_BtnImgSliderHost, Path=Visibility}" />
+                                    </Canvas>
+                                </Grid>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsShowVerifyImg" Value="False">
+                                    <Setter TargetName="PART_BtnImgSliderHost" Property="Visibility" Value="Hidden" />
+                                </Trigger>
+                                <Trigger Property="IsShowVerifyImg" Value="True">
+                                    <Setter TargetName="PART_BtnImgSliderHost" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+</UserControl>

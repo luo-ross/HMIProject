@@ -11,6 +11,26 @@ namespace RS.Widgets.Controls
 {
     public static class ControlsHelper
     {
+        /// <summary>
+        /// 图像资源
+        /// </summary>
+        public static readonly DependencyProperty ImageDataProperty =
+            DependencyProperty.RegisterAttached(
+                "ImageData",
+                typeof(ImageSource),
+                typeof(ControlsHelper),
+                new PropertyMetadata(null));
+        public static ImageSource GetImageData(DependencyObject obj)
+        {
+            return (ImageSource)obj.GetValue(ImageDataProperty);
+        }
+
+        public static void SetImageData(DependencyObject obj, ImageSource value)
+        {
+            obj.SetValue(ImageDataProperty, value);
+        }
+
+
 
         /// <summary>
         /// 这是自定义Pata 路径

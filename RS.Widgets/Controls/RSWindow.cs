@@ -151,6 +151,11 @@ namespace RS.Widgets.Controls
             return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig);
         }
 
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null)
+        {
+            return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig);
+        }
+
         private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
         {
             RSCommands.CleanText(e.Parameter);

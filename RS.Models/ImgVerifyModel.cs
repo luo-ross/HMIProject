@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RS.HMIServer.Models
+namespace RS.Models
 {
     public class ImgVerifyModel
     {

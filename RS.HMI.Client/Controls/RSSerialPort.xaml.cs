@@ -1,5 +1,4 @@
-﻿using HslCommunication.ModBus;
-using IdGen;
+﻿using IdGen;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using NPOI.OpenXml4Net.OPC.Internal;
@@ -8,7 +7,7 @@ using NPOI.SS.Util;
 using RS.Commons;
 using RS.Commons.Enums;
 using RS.Commons.Extensions;
-using RS.HMI.CommuLib.Models;
+using RS.HMI.Client.Models;
 using RS.Widgets.Models;
 using RS.Widgets.Controls;
 using System.Collections.ObjectModel;
@@ -23,8 +22,9 @@ using System.Windows.Input;
 using RS.HMI.ClientData.DbContexts;
 using RS.HMI.ClientData.Entities;
 using RS.Commons.Helper;
+using HslCommunication.ModBus;
 
-namespace RS.HMI.CommuLib.Controls
+namespace RS.HMI.Client.Controls
 {
     /// <summary>
     /// RSSerialPort.xaml 的交互逻辑
@@ -63,7 +63,7 @@ namespace RS.HMI.CommuLib.Controls
             CellValueEditChangedCommand = new RelayCommand<string>(CellValueEditChanged);
 
             this.Loaded += RSSerialPort_Loaded;
-            this.ModbusCommuConfigModelList = new ObservableCollection<ModbusCommuConfigModel>();
+            this.ModbusCommuConfigModelList = new ObservableCollection<ModbusConfigModel>();
         }
 
         public static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
@@ -274,13 +274,13 @@ namespace RS.HMI.CommuLib.Controls
 
         [Description("设备数据")]
         [DefaultValue(null)]
-        public ObservableCollection<ModbusCommuConfigModel> ModbusCommuConfigModelList
+        public ObservableCollection<ModbusConfigModel> ModbusCommuConfigModelList
         {
-            get { return (ObservableCollection<ModbusCommuConfigModel>)GetValue(ModbusCommuConfigModelListProperty); }
+            get { return (ObservableCollection<ModbusConfigModel>)GetValue(ModbusCommuConfigModelListProperty); }
             set { SetValue(ModbusCommuConfigModelListProperty, value); }
         }
         public static readonly DependencyProperty ModbusCommuConfigModelListProperty =
-            DependencyProperty.Register("ModbusCommuConfigModelList", typeof(ObservableCollection<ModbusCommuConfigModel>), typeof(RSSerialPort), new PropertyMetadata(null));
+            DependencyProperty.Register("ModbusCommuConfigModelList", typeof(ObservableCollection<ModbusConfigModel>), typeof(RSSerialPort), new PropertyMetadata(null));
 
 
 
@@ -323,14 +323,14 @@ namespace RS.HMI.CommuLib.Controls
 
 
         [Description("配置选中项")]
-        public ModbusCommuConfigModel ModbusCommuConfigModelSelected
+        public ModbusConfigModel ModbusCommuConfigModelSelected
         {
-            get { return (ModbusCommuConfigModel)GetValue(ModbusCommuConfigModelSelectedProperty); }
+            get { return (ModbusConfigModel)GetValue(ModbusCommuConfigModelSelectedProperty); }
             set { SetValue(ModbusCommuConfigModelSelectedProperty, value); }
         }
 
         public static readonly DependencyProperty ModbusCommuConfigModelSelectedProperty =
-            DependencyProperty.Register("ModbusCommuConfigModelSelected", typeof(ModbusCommuConfigModel), typeof(RSSerialPort), new PropertyMetadata(null));
+            DependencyProperty.Register("ModbusCommuConfigModelSelected", typeof(ModbusConfigModel), typeof(RSSerialPort), new PropertyMetadata(null));
 
 
 
@@ -543,7 +543,7 @@ namespace RS.HMI.CommuLib.Controls
         /// <param name="property">编辑属性名称</param>
         private void CellValueEditChanged(string property)
         {
-            List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
+            List<ModbusConfigModel> modbusCommuConfigModelList = new List<ModbusConfigModel>();
             this.Dispatcher.Invoke(() =>
             {
                 modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
@@ -551,7 +551,7 @@ namespace RS.HMI.CommuLib.Controls
             switch (property)
             {
                 //数据标签
-                case nameof(ModbusCommuConfigModel.DataId):
+                case nameof(ModbusConfigModel.DataId):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -561,18 +561,18 @@ namespace RS.HMI.CommuLib.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据编号重复"));
-                                item.AddErrors(nameof(ModbusCommuConfigModel.DataId), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusConfigModel.DataId), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(ModbusCommuConfigModel.DataId), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusConfigModel.DataId), CellValueEditErrorKey);
                             }
                         }
                     }
                     break;
 
                 //通讯站号
-                case nameof(ModbusCommuConfigModel.StationNumber):
+                case nameof(ModbusConfigModel.StationNumber):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -582,7 +582,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //功能码
-                case nameof(ModbusCommuConfigModel.FunctionCode):
+                case nameof(ModbusConfigModel.FunctionCode):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -592,7 +592,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //读取地址
-                case nameof(ModbusCommuConfigModel.Address):
+                case nameof(ModbusConfigModel.Address):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -601,7 +601,7 @@ namespace RS.HMI.CommuLib.Controls
                     }
                     break;
                 //读取字节顺序
-                case nameof(ModbusCommuConfigModel.ByteOrder):
+                case nameof(ModbusConfigModel.ByteOrder):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -611,7 +611,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //数据类型
-                case nameof(ModbusCommuConfigModel.DataType):
+                case nameof(ModbusConfigModel.DataType):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -621,7 +621,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //字符长度
-                case nameof(ModbusCommuConfigModel.CharacterLength):
+                case nameof(ModbusConfigModel.CharacterLength):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -631,18 +631,18 @@ namespace RS.HMI.CommuLib.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("长度不能小于0"));
-                                item.AddErrors(nameof(ModbusCommuConfigModel.CharacterLength), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusConfigModel.CharacterLength), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(ModbusCommuConfigModel.CharacterLength), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusConfigModel.CharacterLength), CellValueEditErrorKey);
                             }
                         }
                     }
                     break;
 
                 //是否字符串颠倒
-                case nameof(ModbusCommuConfigModel.IsStringInverse):
+                case nameof(ModbusConfigModel.IsStringInverse):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -652,7 +652,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //读写权限
-                case nameof(ModbusCommuConfigModel.ReadWritePermission):
+                case nameof(ModbusConfigModel.ReadWritePermission):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -662,7 +662,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //最小值
-                case nameof(ModbusCommuConfigModel.MinValue):
+                case nameof(ModbusConfigModel.MinValue):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -671,7 +671,7 @@ namespace RS.HMI.CommuLib.Controls
                     }
                     break;
                 //最大值
-                case nameof(ModbusCommuConfigModel.MaxValue):
+                case nameof(ModbusConfigModel.MaxValue):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -680,7 +680,7 @@ namespace RS.HMI.CommuLib.Controls
                     }
                     break;
                 //小数位数
-                case nameof(ModbusCommuConfigModel.DigitalNumber):
+                case nameof(ModbusConfigModel.DigitalNumber):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -690,18 +690,18 @@ namespace RS.HMI.CommuLib.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("小数表留长度在0-8之间"));
-                                item.AddErrors(nameof(ModbusCommuConfigModel.DigitalNumber), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusConfigModel.DigitalNumber), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(ModbusCommuConfigModel.DigitalNumber), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusConfigModel.DigitalNumber), CellValueEditErrorKey);
                             }
                         }
                     }
                     break;
 
                 //数据分组
-                case nameof(ModbusCommuConfigModel.DataGroup):
+                case nameof(ModbusConfigModel.DataGroup):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -711,7 +711,7 @@ namespace RS.HMI.CommuLib.Controls
                     break;
 
                 //数据描述
-                case nameof(ModbusCommuConfigModel.DataDescription):
+                case nameof(ModbusConfigModel.DataDescription):
                     {
                         foreach (var item in modbusCommuConfigModelList)
                         {
@@ -722,11 +722,11 @@ namespace RS.HMI.CommuLib.Controls
                             {
                                 ICollection<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
                                 validationResults.Add(new System.ComponentModel.DataAnnotations.ValidationResult("数据描述重复"));
-                                item.AddErrors(nameof(ModbusCommuConfigModel.DataDescription), validationResults, CellValueEditErrorKey);
+                                item.AddErrors(nameof(ModbusConfigModel.DataDescription), validationResults, CellValueEditErrorKey);
                             }
                             else
                             {
-                                item.RemoveErrors(nameof(ModbusCommuConfigModel.DataDescription), CellValueEditErrorKey);
+                                item.RemoveErrors(nameof(ModbusConfigModel.DataDescription), CellValueEditErrorKey);
                             }
                         }
                     }
@@ -768,12 +768,12 @@ namespace RS.HMI.CommuLib.Controls
 
         #region Command实现
 
-        private ModbusCommuConfigModel ModbusCommuConfigModelAdd;
+        private ModbusConfigModel ModbusCommuConfigModelAdd;
         private async void AddData(object parameter)
         {
             if (this.ModbusCommuConfigModelList == null)
             {
-                this.ModbusCommuConfigModelList = new ObservableCollection<ModbusCommuConfigModel>();
+                this.ModbusCommuConfigModelList = new ObservableCollection<ModbusConfigModel>();
             }
             var seviceDataModelSelected = this.ModbusCommuConfigModelSelected;
             var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
@@ -793,7 +793,7 @@ namespace RS.HMI.CommuLib.Controls
                     seviceDataModelSelected = modbusCommuConfigModelList.LastOrDefault();
                 }
 
-                ModbusCommuConfigModel modbusCommuConfigModel = null;
+                ModbusConfigModel modbusCommuConfigModel = null;
                 if (seviceDataModelSelected != null)
                 {
                     ModbusCommuConfigModelAdd = seviceDataModelSelected.Clone();
@@ -802,7 +802,7 @@ namespace RS.HMI.CommuLib.Controls
                 if (modbusCommuConfigModel == null)
                 {
                     //验证通过继续下一步
-                    modbusCommuConfigModel = new ModbusCommuConfigModel();
+                    modbusCommuConfigModel = new ModbusConfigModel();
                 }
 
                 modbusCommuConfigModel.DataDescription = null;
@@ -829,7 +829,7 @@ namespace RS.HMI.CommuLib.Controls
             }
         }
 
-        private OperateResult ModbusCommuConfigModelValid(List<ModbusCommuConfigModel> dataList)
+        private OperateResult ModbusCommuConfigModelValid(List<ModbusConfigModel> dataList)
         {
             if (dataList.Count == 0)
             {
@@ -865,7 +865,7 @@ namespace RS.HMI.CommuLib.Controls
             return OperateResult.CreateSuccessResult();
         }
 
-        private void ScrollModbusCommuConfigModelIntoView(ModbusCommuConfigModel modbusCommuConfigModel)
+        private void ScrollModbusCommuConfigModelIntoView(ModbusConfigModel modbusCommuConfigModel)
         {
             this.PART_DataGrid?.ScrollIntoView(modbusCommuConfigModel);
         }
@@ -889,7 +889,7 @@ namespace RS.HMI.CommuLib.Controls
                   //这是删除一行
                   if (parameter.Equals("0"))
                   {
-                      ModbusCommuConfigModel modbusCommuConfigModelSelected = null;
+                      ModbusConfigModel modbusCommuConfigModelSelected = null;
                       this.Dispatcher.Invoke(() =>
                       {
                           modbusCommuConfigModelSelected = this.ModbusCommuConfigModelSelected;
@@ -948,20 +948,20 @@ namespace RS.HMI.CommuLib.Controls
         /// <param name="dataList"></param>
         /// <param name="exceptPropertyList"></param>
         /// <returns></returns>
-        private List<ModbusCommuConfigModel> GetDuplicateData(List<ModbusCommuConfigModel> dataList, List<string> exceptPropertyList = null)
+        private List<ModbusConfigModel> GetDuplicateData(List<ModbusConfigModel> dataList, List<string> exceptPropertyList = null)
         {
             var validPropertyList = new List<string>()
             {
-                nameof(ModbusCommuConfigModel.DataId),
-                nameof(ModbusCommuConfigModel.StationNumber),
-                nameof(ModbusCommuConfigModel.FunctionCode),
-                nameof(ModbusCommuConfigModel.Address),
-                nameof(ModbusCommuConfigModel.DataType),
-                nameof(ModbusCommuConfigModel.CharacterLength),
-                nameof(ModbusCommuConfigModel.ReadWritePermission),
-                nameof(ModbusCommuConfigModel.ByteOrder),
-                nameof(ModbusCommuConfigModel.DataGroup),
-                nameof(ModbusCommuConfigModel.DataDescription),
+                nameof(ModbusConfigModel.DataId),
+                nameof(ModbusConfigModel.StationNumber),
+                nameof(ModbusConfigModel.FunctionCode),
+                nameof(ModbusConfigModel.Address),
+                nameof(ModbusConfigModel.DataType),
+                nameof(ModbusConfigModel.CharacterLength),
+                nameof(ModbusConfigModel.ReadWritePermission),
+                nameof(ModbusConfigModel.ByteOrder),
+                nameof(ModbusConfigModel.DataGroup),
+                nameof(ModbusConfigModel.DataDescription),
             };
 
             if (exceptPropertyList != null)
@@ -1025,20 +1025,20 @@ namespace RS.HMI.CommuLib.Controls
                     }
 
                     //触发数据验证
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataId));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.StationNumber));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.FunctionCode));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.Address));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.ByteOrder));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataType));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.CharacterLength));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.IsStringInverse));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.ReadWritePermission));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.MinValue));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.MaxValue));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DigitalNumber));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataGroup));
-                    CellValueEditChanged(nameof(ModbusCommuConfigModel.DataDescription));
+                    CellValueEditChanged(nameof(ModbusConfigModel.DataId));
+                    CellValueEditChanged(nameof(ModbusConfigModel.StationNumber));
+                    CellValueEditChanged(nameof(ModbusConfigModel.FunctionCode));
+                    CellValueEditChanged(nameof(ModbusConfigModel.Address));
+                    CellValueEditChanged(nameof(ModbusConfigModel.ByteOrder));
+                    CellValueEditChanged(nameof(ModbusConfigModel.DataType));
+                    CellValueEditChanged(nameof(ModbusConfigModel.CharacterLength));
+                    CellValueEditChanged(nameof(ModbusConfigModel.IsStringInverse));
+                    CellValueEditChanged(nameof(ModbusConfigModel.ReadWritePermission));
+                    CellValueEditChanged(nameof(ModbusConfigModel.MinValue));
+                    CellValueEditChanged(nameof(ModbusConfigModel.MaxValue));
+                    CellValueEditChanged(nameof(ModbusConfigModel.DigitalNumber));
+                    CellValueEditChanged(nameof(ModbusConfigModel.DataGroup));
+                    CellValueEditChanged(nameof(ModbusConfigModel.DataDescription));
                     return OperateResult.CreateSuccessResult();
                 });
 
@@ -1498,13 +1498,13 @@ namespace RS.HMI.CommuLib.Controls
         /// </summary>
         /// <param name="filePath">配置文件绝对路径</param>
         /// <returns></returns>
-        private List<ModbusCommuConfigModel> GetModbusCommuConfigModelConfig(IWorkbook workbook, ISheet sheet)
+        private List<ModbusConfigModel> GetModbusCommuConfigModelConfig(IWorkbook workbook, ISheet sheet)
         {
-            List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
+            List<ModbusConfigModel> modbusCommuConfigModelList = new List<ModbusConfigModel>();
             // 遍历行和单元格并读取数据
             for (int row = 4; row <= sheet.LastRowNum; row++)
             {
-                ModbusCommuConfigModel modbusCommuConfigModel = new ModbusCommuConfigModel();
+                ModbusConfigModel modbusCommuConfigModel = new ModbusConfigModel();
                 IRow currentRow = sheet.GetRow(row);
                 if (currentRow != null)
                 {
@@ -1999,7 +1999,7 @@ namespace RS.HMI.CommuLib.Controls
                     serialPortConfig.Id = this.Id;
                 }
 
-                List<ModbusCommuConfigModel> modbusCommuConfigModelList = new List<ModbusCommuConfigModel>();
+                List<ModbusConfigModel> modbusCommuConfigModelList = new List<ModbusConfigModel>();
                 this.Dispatcher.Invoke(() =>
                 {
                     modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();

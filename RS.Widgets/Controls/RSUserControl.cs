@@ -55,6 +55,11 @@ namespace RS.Widgets.Controls
             return await this.PART_Loading.InvokeLoadingActionAsync(func, loadingConfig);
         }
 
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null)
+        {
+            return await this.PART_Loading.InvokeLoadingActionAsync<T>(func, loadingConfig);
+        }
+
         public double CaptionHeight
         {
             get { return (double)GetValue(CaptionHeightProperty); }

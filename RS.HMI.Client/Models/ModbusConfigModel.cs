@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace RS.HMI.CommuLib.Models
+namespace RS.HMI.Client.Models
 {
-    public class ModbusCommuConfigModel : NotifyBase
+    public class ModbusConfigModel : NotifyBase
     {
         /// <summary>
         /// 数据唯一主键
@@ -362,9 +362,9 @@ namespace RS.HMI.CommuLib.Models
         /// 想用其克隆方式，可以去Nuget安装什么浅拷贝或者深拷贝啥的
         /// </summary>
         /// <returns></returns>
-        public ModbusCommuConfigModel Clone()
+        public ModbusConfigModel Clone()
         {
-            return new ModbusCommuConfigModel()
+            return new ModbusConfigModel()
             {
                 Address = this.Address,
                 ByteOrder = this.ByteOrder,

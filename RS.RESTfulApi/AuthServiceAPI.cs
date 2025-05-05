@@ -59,10 +59,17 @@ namespace RS.RESTfulApi
             /// </summary>
             public static readonly string GetUser = $"/Api/{ApiVersion}/User/GetUser";
 
-            /// <summary>
-            /// 验证登录接口
-            /// </summary>
-            public static readonly string ValidLogin = $"/Api/{ApiVersion}/User/ValidLogin";
+        }
+
+
+        /// <summary>
+        /// 安全相关
+        /// </summary>
+        public static class Security
+        {
+            public static readonly string ValidLogin = $"/Api/{ApiVersion}/Security/ValidLogin";
+
+            public static readonly string GetImgVerifyModel = $"/Api/{ApiVersion}/Security/GetImgVerifyModel";
         }
     }
 }

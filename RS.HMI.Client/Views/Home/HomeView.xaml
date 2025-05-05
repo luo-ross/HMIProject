@@ -1,12 +1,12 @@
 ﻿<rs:RSWindow
-    x:Class="RS.HMI.Client.Views.Home.HomeView"
+    x:Class="RS.HMI.Client.Views.HomeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:RS.HMI.Client.Views.Home"
+    xmlns:hmi="clr-namespace:RS.HMI.Client.Controls"
+    xmlns:local="clr-namespace:RS.HMI.Client.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:RS.HMI.Client.Views.Home"
-    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    xmlns:rs="https://github.com/luo-ross/Widgets"
     Title="HomeView"
     MinWidth="1024"
     MinHeight="600"
@@ -162,7 +162,7 @@
                 Margin="10,10,10,0"
                 Background="#fff">
                 <Grid>
-                    <rs:RSSerialPort
+                    <hmi:RSSerialPort
                         Title="Modbus RTU通讯"
                         Margin="0"
                         rs:ControlsHelper.CornerRadius="0" />

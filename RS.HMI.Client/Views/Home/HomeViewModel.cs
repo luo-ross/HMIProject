@@ -4,10 +4,8 @@ using System.IO.Ports;
 using System.Windows;
 using System.Windows.Input;
 
-namespace RS.HMI.Client.Views.Home
+namespace RS.HMI.Client.Views
 {
-
-
     public class HomeViewModel : NotifyBase
     {
 

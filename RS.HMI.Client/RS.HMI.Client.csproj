@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
+		<PackageReference Include="System.IO.Ports" Version="9.0.2" />
 
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
 		<PackageReference Include="IdGen" Version="3.0.7" />
@@ -62,11 +62,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\HslCommunication\HslCommunication.csproj" />
 		<ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
 		<ProjectReference Include="..\RS.HMI.BLL\RS.HMI.BLL.csproj" />
-		<ProjectReference Include="..\RS.HMI.ClientData\RS.HMI.ClientData.csproj" />
-		<ProjectReference Include="..\RS.HMI.CommuLib\RS.HMI.CommuLib.csproj" />
 		<ProjectReference Include="..\RS.HMI.IBLL\RS.HMI.IBLL.csproj" />
+		<ProjectReference Include="..\RS.HMI.SQLite\RS.HMI.SQLite.csproj" />
 		<ProjectReference Include="..\RS.Widgets\RS.Widgets.csproj" />
 	</ItemGroup>
 
@@ -96,6 +96,22 @@
 	  <None Update="Configs\log4net.config">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Temlates\ModbusRTU数据导入模版.xlsx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Views\Areas\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Controls\MySlider.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Controls\RSSerialPort.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

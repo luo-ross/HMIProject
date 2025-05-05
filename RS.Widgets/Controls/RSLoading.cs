@@ -59,6 +59,34 @@ namespace RS.Widgets.Controls
             });
         }
 
+
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<Task<OperateResult<T>>> func, LoadingConfig loadingConfig)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Visibility = Visibility.Visible;
+                this.LoadingConfig = loadingConfig == null ? new LoadingConfig() : loadingConfig;
+            });
+            return await await Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    return await func?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    return OperateResult.CreateFailResult<T>(ex.Message);
+                }
+                finally
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.Visibility = Visibility.Collapsed;
+                    });
+                }
+            });
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();

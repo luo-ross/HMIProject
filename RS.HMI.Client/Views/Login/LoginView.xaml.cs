@@ -2,7 +2,6 @@
 using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Extensions;
-using RS.HMI.Client.Views.Home;
 using RS.HMI.IBLL;
 using RS.Models;
 using RS.RESTfulApi;
@@ -12,7 +11,7 @@ using RS.Widgets.Models;
 using System.Diagnostics;
 using System.Windows;
 
-namespace RS.HMI.Client.Views.Logoin
+namespace RS.HMI.Client.Views
 {
 
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
@@ -107,7 +106,7 @@ namespace RS.HMI.Client.Views.Logoin
             var operateResult = await this.LoginForm.InvokeLoadingActionAsync(async () =>
               {
                   //验证用户登录
-                  var validLoginResult = await RSAppAPI.User.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
+                  var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
                   {
                       UserName = this.ViewModel.LoginModel.Name,
                       Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.LoginModel.Password),
@@ -118,7 +117,7 @@ namespace RS.HMI.Client.Views.Logoin
                       return validLoginResult;
                   }
 
-                 await Task.Delay(5000);
+                  await Task.Delay(5000);
 
                   return OperateResult.CreateSuccessResult();
               }, loadingConfig);
@@ -127,7 +126,7 @@ namespace RS.HMI.Client.Views.Logoin
             //如果验证成功
             if (!operateResult.IsSuccess)
             {
-                 this.ShowInfoAsync(operateResult.Message,InfoType.Warning);
+                this.ShowInfoAsync(operateResult.Message, InfoType.Warning);
                 return;
             }
 
@@ -192,6 +191,32 @@ namespace RS.HMI.Client.Views.Logoin
             });
         }
 
+        /// <summary>
+        /// 请求获取滑动图像验证数据
+        /// </summary>
+        /// <returns></returns>
+        private async Task<OperateResult<ImgVerifyModel>> RSImgVerify_InitVerifyControlAsync()
+        {
+            var loadingConfig = new LoadingConfig()
+            {
+                LoadingType = LoadingType.ProgressBar,
+                //Minimum = 0,
+                Maximum = 100,
+                Value = 0,
+                IsIndeterminate = true,
+            };
+            var getImgVerifyModelResult = await this.LoginForm.InvokeLoadingActionAsync<ImgVerifyModel>(async () =>
+              {
+                  //await Task.Delay(2000);
+                  return await RSAppAPI.Security.GetImgVerifyModel.AESHttpGetAsync<ImgVerifyModel>(nameof(RSAppAPI));
+              }, loadingConfig);
 
+            if (!getImgVerifyModelResult.IsSuccess)
+            {
+                await this.WinMessageBox.ShowAsync(getImgVerifyModelResult.Message);
+            }
+
+            return getImgVerifyModelResult;
+        }
     }
 }

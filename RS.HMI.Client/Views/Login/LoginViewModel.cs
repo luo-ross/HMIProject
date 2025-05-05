@@ -16,9 +16,9 @@ using System.Windows.Media;
 using MathNet.Numerics;
 using System.Windows.Media.Media3D;
 using System.Windows;
-using RS.HMI.CommuLib.Controls;
+using RS.HMI.Client.Controls;
 
-namespace RS.HMI.Client.Views.Logoin
+namespace RS.HMI.Client.Views
 {
     public class LoginViewModel : NotifyBase
     {

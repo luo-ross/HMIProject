@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RS.HMI.CommuLib.Controls
+namespace RS.HMI.Client.Controls
 {
     public partial class MySlider : UserControl
     {
