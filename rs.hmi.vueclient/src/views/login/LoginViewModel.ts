@@ -49,7 +49,6 @@ export class LoginViewModel extends ViewModelBase {
     }
     this.LoginModel.ImgVerifyResult = getImgVerifyResult.Data;
     if (this.LoginModel.ImgVerifyResult == null
-      || this.LoginModel.ImgVerifyResult.MouseMovingTrack.length == 0
       || this.LoginModel.ImgVerifyResult.Verify == null
       || this.LoginModel.ImgVerifyResult.VerifySessionId == null
     ) {

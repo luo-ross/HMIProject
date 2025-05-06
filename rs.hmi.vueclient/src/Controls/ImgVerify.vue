@@ -96,7 +96,7 @@
   <div class="form-row" ref="elementRef">
     <div :ref="el =>state. SliderBorderRef = el"
          class="slider-border">
-      <span class="slider-text">向右滑动滑块进行验证</span>
+      <span class="slider-text">向右滑动滑块触发图像验证</span>
       <div :style="{width: state.BackgroundFillPercent+'%' }"
            class="background-fill">
       </div>
@@ -188,11 +188,12 @@
     BtnSliderRef: null,
     VerifyImgHostRef: null,
     BtnImgSliderRef: null,
-    MouseMovingTrack: [],
+ 
     Verify: null as RectModel, 
     VerifySessionId: null,
   })
 
+  let MouseMovingTrack = [];
   let IsBtnSliderDragging = false;
   let BtnSliderStartX = 0;
   let BtnSliderHistoryPositionX = 0;
@@ -330,11 +331,11 @@
     state.BtnImgSliderPositionY = newPositionY;
 
 
-    if (state.MouseMovingTrack.length > MAX_POINTS) {
-      state.MouseMovingTrack.shift();
+    if (MouseMovingTrack.length > MAX_POINTS) {
+     MouseMovingTrack.shift();
     }
 
-    state.MouseMovingTrack.push({
+    MouseMovingTrack.push({
       x: event.clientX,
       y: event.clientY
     });
@@ -371,7 +372,7 @@
       return;
     }
     IsBtnImgSliderDragging = true;
-    state.MouseMovingTrack = [];
+    MouseMovingTrack = [];
     BtnImgSliderStartX = event.clientX;
     BtnImgSliderStartY = event.clientY;
   }
@@ -454,8 +455,6 @@
   function GetImgVerifyResultAsync() {
     if (state.IsShowVerifyImg) {
       const imgVerifyResultModel = new ImgVerifyResultModel();
-      imgVerifyResultModel.MouseMovingTrack = state.MouseMovingTrack;
-      //浅拷贝
       const verify = new RectModel();
       verify.Left = state.Verify.Left / WidthScale;
       verify.Top = state.Verify.Top / HeightScale;

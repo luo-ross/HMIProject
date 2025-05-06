@@ -112,6 +112,9 @@
 	  <Compile Update="Controls\RSSerialPort.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
+	  <Compile Update="Views\EmailVerify\EmailVerifyView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

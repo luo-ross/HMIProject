@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,34 +11,19 @@ namespace RS.HMI.Client.Models
 {
     public class UserModel : NotifyBase
     {
-        private string name;
+        private string userName;
         /// <summary>
         /// 用户名
         /// </summary>
         [MaxLength(30,ErrorMessage = "用户名长度不能超过30")]
         [Required(ErrorMessage = "用户名不能为空")]
-        public string Name
+        [RegularExpression("^(?(\")(\".+?\"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,6}))$", ErrorMessage ="用户名格式不正确")]
+        public string UserName
         {
-            get { return name; }
+            get { return userName; }
             set
             {
-                this.OnPropertyChanged(ref name, value);
-                this.ValidProperty(value);
-            }
-        }
-
-
-        private string email;
-        /// <summary>
-        /// 用户邮箱
-        /// </summary>
-        //[RegularExpression(@"^[a-zA - Z0 - 9_.+-]+@[a-zA - Z0 - 9 -]+\.[a-zA - Z0 - 9-.]+$", ErrorMessage = "电子邮件格式不正确")]
-        public string Email
-        {
-            get { return email; }
-            set
-            {
-                this.OnPropertyChanged(ref email, value);
+                this.OnPropertyChanged(ref userName, value);
                 this.ValidProperty(value);
             }
         }

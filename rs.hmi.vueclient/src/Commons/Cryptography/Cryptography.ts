@@ -69,7 +69,7 @@ export class Cryptography {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-      return GenericOperateResult.CreateSuccessResult(hashHex);
+      return GenericOperateResult.CreateSuccessResult(hashHex.toUpperCase());
     } catch (error) {
       return GenericOperateResult.CreateFailResult(`计算SHA256哈希值失败: ${error}`);
     }

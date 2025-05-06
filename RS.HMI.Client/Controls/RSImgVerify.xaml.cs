@@ -31,8 +31,14 @@ namespace RS.HMI.Client.Controls
         private Thumb PART_BtnSlider { get; set; }
         private Thumb PART_BtnImgSlider { get; set; }
         private Canvas PART_BtnSliderHost { get; set; }
-
         private Border PART_BtnImgSliderHost { get; set; }
+        private bool IsCanDrag;
+        private double WidthScale = 1;
+        private double HeightScale = 1;
+        private string VerifySessionId;
+        private List<Point> MouseMovingTrack = new List<Point>();
+        public event Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsync;
+
         public RSImgVerify()
         {
             InitializeComponent();
@@ -113,6 +119,41 @@ namespace RS.HMI.Client.Controls
 
 
 
+        public event Func<OperateResult> OnBtnSliderDragStarted;
+
+        public OperateResult<ImgVerifyResultModel> GetImgVerifyResultAsync()
+        {
+            if (string.IsNullOrEmpty(this.VerifySessionId)
+                || string.IsNullOrWhiteSpace(this.VerifySessionId))
+            {
+                return OperateResult.CreateFailResult<ImgVerifyResultModel>("获取验证码失败");
+            }
+
+            //获取图像拖拽thumb的left 和top
+            var imgBtnWidth = this.PART_BtnImgSlider.ActualWidth;
+            var imgBtnHeight = this.PART_BtnImgSlider.ActualHeight;
+
+            //获取容器的CanvasLeft和Top
+            var hostCanvasLeft = Canvas.GetLeft(this.PART_BtnImgSliderHost);
+            var hostCanvasTop = Canvas.GetTop(this.PART_BtnImgSliderHost);
+
+            //计算拖拽按钮在Canvas容器里左上角横坐标Left值
+            var imgBtnCanvasLeft = Canvas.GetLeft(this.PART_BtnImgSlider);
+            var imgBtnCanvasTop = Canvas.GetTop(this.PART_BtnImgSlider);
+
+
+            ImgVerifyResultModel imgVerifyResultModel = new ImgVerifyResultModel();
+            double left = (imgBtnCanvasLeft - hostCanvasLeft) / this.WidthScale;
+            double top = (imgBtnCanvasTop - hostCanvasTop) / this.HeightScale;
+            double width = imgBtnWidth / this.WidthScale;
+            double height = imgBtnHeight / this.HeightScale;
+            var verify = new RectModel(left, top, width, height);
+            imgVerifyResultModel.Verify = verify;
+            imgVerifyResultModel.VerifySessionId = this.VerifySessionId;
+
+            return OperateResult.CreateSuccessResult(imgVerifyResultModel);
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -124,16 +165,44 @@ namespace RS.HMI.Client.Controls
             if (this.PART_BtnSlider != null)
             {
                 this.PART_BtnSlider.DragDelta += PART_BtnSlider_DragDelta;
+                this.PART_BtnSlider.DragStarted += PART_BtnSlider_DragStarted;
+                this.PART_BtnSlider.DragCompleted += PART_BtnSlider_DragCompleted;
             }
-
             if (this.PART_BtnImgSlider != null)
             {
                 this.PART_BtnImgSlider.DragDelta += PART_BtnImgSlider_DragDelta;
+                this.PART_BtnImgSlider.DragStarted += PART_BtnImgSlider_DragStarted;
+
+
             }
         }
 
+        private void PART_BtnImgSlider_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            this.MouseMovingTrack.Clear();
+        }
+
+        private void PART_BtnSlider_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            this.IsCanDrag = false;
+        }
+
+        private void PART_BtnSlider_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            var operateResult = OnBtnSliderDragStarted?.Invoke();
+            if (operateResult == null || !operateResult.IsSuccess)
+            {
+                return;
+            }
+            this.IsCanDrag = true;
+
+        }
+
+
+
         private void PART_BtnImgSlider_DragDelta(object sender, DragDeltaEventArgs e)
         {
+
             //获取拖拽按钮的容器的宽度和高度
             var imgHostWidth = this.PART_BtnImgSliderHost.ActualWidth;
             var imgHostHeight = this.PART_BtnImgSliderHost.ActualHeight;
@@ -165,15 +234,21 @@ namespace RS.HMI.Client.Controls
             //这里设置值
             Canvas.SetLeft(this.PART_BtnImgSlider, imgBtnCanvasLeft);
             Canvas.SetTop(this.PART_BtnImgSlider, imgBtnCanvasTop);
-
-            ////这里计算拖拽按钮移动时背景色的宽度
-            //this.SliderMaskWidth = canvasLeft;
+            this.MouseMovingTrack.Add(Mouse.GetPosition(this.PART_BtnImgSliderHost));
+            if (this.MouseMovingTrack.Count > 200)
+            {
+                this.MouseMovingTrack.RemoveAt(0);
+            }
         }
 
-        public event Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsync;
 
         private async void PART_BtnSlider_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (!this.IsCanDrag)
+            {
+                return;
+            }
+
             if (this.PART_BtnSliderHost == null)
             {
                 return;
@@ -218,15 +293,15 @@ namespace RS.HMI.Client.Controls
                 var imgVerifyModel = initVerifyControlResult.Data;
 
                 //计算长宽比例
-                var widthScale = imgHostWidth / imgVerifyModel.ImgWidth;
-                var heightScale = imgHostHeight / imgVerifyModel.ImgHeight;
+                this.WidthScale = imgHostWidth / imgVerifyModel.ImgWidth;
+                this.HeightScale = imgHostHeight / imgVerifyModel.ImgHeight;
 
-                this.BtnImgWidth = widthScale * imgVerifyModel.IconWidth;
-                this.BtnImgHeight = heightScale * imgVerifyModel.IconHeight;
+                this.BtnImgWidth = this.WidthScale * imgVerifyModel.IconWidth;
+                this.BtnImgHeight = this.HeightScale * imgVerifyModel.IconHeight;
 
                 //设置图像按钮默认位置
-                var imgSliderCanvasLeft = imgVerifyModel.ImgBtnPositionX * widthScale;
-                var imgSliderCanvasTop = imgVerifyModel.ImgBtnPositionY * heightScale;
+                var imgSliderCanvasLeft = imgVerifyModel.ImgBtnPositionX * this.WidthScale;
+                var imgSliderCanvasTop = imgVerifyModel.ImgBtnPositionY * this.HeightScale;
 
 
                 //获取容器的CanvasLeft和Top
@@ -239,6 +314,8 @@ namespace RS.HMI.Client.Controls
 
                 //如果成功获取 则进行数据渲染
                 this.ParsingImgBuffer(imgVerifyModel.ImgBuffer);
+
+                this.VerifySessionId = imgVerifyModel.VerifySessionId;
             }
 
             if (movePercent < 0.2 && this.IsShowVerifyImg)

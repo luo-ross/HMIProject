@@ -1,0 +1,96 @@
+﻿<rs:RSUserControl
+    x:Class="RS.HMI.Client.Views.EmailVerifyView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.HMI.Client.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/Widgets"
+    mc:Ignorable="d">
+    <rs:RSUserControl.DataContext>
+        <local:RegisterViewModel />
+    </rs:RSUserControl.DataContext>
+    <rs:RSUserControl.Resources>
+        <ResourceDictionary>
+            <Style
+                x:Key="RSApp.Styles.VerifyCodeInputStyle"
+                BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}"
+                TargetType="{x:Type TextBox}">
+                <Setter Property="Width" Value="50" />
+                <Setter Property="Height" Value="50" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="rs:TextBoxHelper.Watermark" Value="{x:Null}" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="MaxLength" Value="1" />
+            </Style>
+        </ResourceDictionary>
+    </rs:RSUserControl.Resources>
+    <Grid>
+        <StackPanel Margin="0,50,0,0" Orientation="Vertical">
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="25"
+                Text="邮箱验证" />
+
+            <TextBlock
+                Margin="0,20,0,0"
+                HorizontalAlignment="Center"
+                FontSize="14"
+                Foreground="#949494"
+                Text="请查看邮箱获取验证码" />
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="14"
+                Foreground="#949494"
+                Text="1845960295@qq.com" />
+
+            <StackPanel
+                x:Name="PART_VerifyCodeHost"
+                Margin="0,30,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBox
+                    x:Name="TxtVerifyCode0"
+                    PreviewKeyDown="TxtVerifyCode_KeyDown"
+                    Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                    TextChanged="TxtVerifyCode_TextChanged" />
+                <TextBox
+                    x:Name="TxtVerifyCode1"
+                    PreviewKeyDown="TxtVerifyCode_KeyDown"
+                    Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                    TextChanged="TxtVerifyCode_TextChanged" />
+                <TextBox
+                    x:Name="TxtVerifyCode2"
+                    PreviewKeyDown="TxtVerifyCode_KeyDown"
+                    Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                    TextChanged="TxtVerifyCode_TextChanged" />
+                <TextBox
+                    x:Name="TxtVerifyCode3"
+                    PreviewKeyDown="TxtVerifyCode_KeyDown"
+                    Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                    TextChanged="TxtVerifyCode_TextChanged" />
+                <TextBox
+                    x:Name="TxtVerifyCode4"
+                    PreviewKeyDown="TxtVerifyCode_KeyDown"
+                    Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                    TextChanged="TxtVerifyCode_TextChanged" />
+                <TextBox
+                    x:Name="TxtVerifyCode5"
+                    PreviewKeyDown="TxtVerifyCode_KeyDown"
+                    Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                    TextChanged="TxtVerifyCode_TextChanged" />
+            </StackPanel>
+            <Button
+                x:Name="BtnVerifyConfirm"
+                Width="{Binding ElementName=PART_VerifyCodeHost, Path=ActualWidth}"
+                Margin="3,50,3,0"
+                Click="BtnVerifyConfirm_Click"
+                Content="确认"
+                Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+        </StackPanel>
+    </Grid>
+
+
+</rs:RSUserControl>

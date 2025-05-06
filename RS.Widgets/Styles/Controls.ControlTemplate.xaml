@@ -68,24 +68,29 @@
             <Grid>
                 <AdornedElementPlaceholder>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="auto" />
-                        </Grid.ColumnDefinitions>
                         <Border
                             x:Name="PART_ValidErrorTipHost"
-                            Grid.Column="1"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
                             Visibility="Visible">
-                            <TextBlock
+                            <!--<TextBlock
                                 x:Name="PART_ValidErrorTip"
-                                Margin="2,0,2,0"
+                                Margin="0,0,0,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="11"
                                 Foreground="Red"
-                                Text="❋" />
+                                Text="❋" />-->
+                            <Path
+                                x:Name="PART_ValidErrorTip"
+                                Width="8"
+                                Height="8"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Data="M0,0 1,0 1,1Z"
+                                Fill="Red"
+                                Stretch="Fill" />
                         </Border>
                     </Grid>
                 </AdornedElementPlaceholder>
@@ -98,7 +103,7 @@
                     PlacementTarget="{Binding ElementName=PART_ValidErrorTipHost}"
                     StaysOpen="True"
                     VerticalOffset="-1">
-                    <Border Padding="10,5,10,5" Background="#ff5b5b">
+                    <Border Padding="5,3,5,3" Background="#ff5b5b">
                         <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
                     </Border>
                 </Popup>
@@ -106,7 +111,7 @@
         </Border>
 
         <ControlTemplate.Triggers>
-            <Trigger SourceName="PART_ValidErrorTipHost" Property="IsMouseOver" Value="True">
+            <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
                 <Setter TargetName="PART_ErrorPopup" Property="IsOpen" Value="True" />
             </Trigger>
         </ControlTemplate.Triggers>

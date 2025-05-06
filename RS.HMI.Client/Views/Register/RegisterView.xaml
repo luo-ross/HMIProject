@@ -14,7 +14,7 @@
     </rs:RSUserControl.DataContext>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Grid>
+            <Grid Margin="0,5,0,5">
                 <TextBox
                     Padding="3,5,3,5"
                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
@@ -22,7 +22,7 @@
                     rs:TextBoxHelper.Watermark="请输入用户名"
                     MaxLength="30"
                     Style="{StaticResource RSApp.Styles.IconTextBox}"
-                    Text="{Binding SignUpModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                    Text="{Binding SignUpModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
             </Grid>
             <Grid Margin="0,5,0,5">
                 <PasswordBox
@@ -46,6 +46,7 @@
             </Grid>
             <Button
                 x:Name="BtnSignUpNext"
+                Margin="3,20,3,0"
                 Click="BtnSignUpNext_Click"
                 Content="下一步"
                 Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />

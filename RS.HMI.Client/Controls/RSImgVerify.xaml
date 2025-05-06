@@ -21,10 +21,10 @@
                                 CornerRadius="5">
                                 <Grid>
                                     <TextBlock
+                                        x:Name="PART_ActionToolTip"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Foreground="#666666"
-                                        Text="向右滑动滑块进行验证" />
+                                        Foreground="#666666" />
                                     <Border
                                         Width="{TemplateBinding SliderMaskWidth}"
                                         HorizontalAlignment="Left"
@@ -45,9 +45,9 @@
                                         <Border
                                             x:Name="PART_BtnImgSliderHost"
                                             Canvas.Left="0"
-                                            Canvas.Top="-203"
+                                            Canvas.Top="-153"
                                             Width="{Binding ElementName=PART_BtnSliderHost, Path=ActualWidth}"
-                                            Height="200"
+                                            Height="150"
                                             CornerRadius="5"
                                             Visibility="Collapsed">
                                             <Border.Background>
@@ -55,10 +55,11 @@
                                             </Border.Background>
                                         </Border>
 
+
                                         <Thumb
                                             x:Name="PART_BtnImgSlider"
                                             Canvas.Left="0"
-                                            Canvas.Top="-203"
+                                            Canvas.Top="-153"
                                             Width="{TemplateBinding BtnImgWidth}"
                                             Height="{TemplateBinding BtnImgHeight}"
                                             rs:ControlsHelper.ImageData="{TemplateBinding BtnImgSource}"
@@ -71,9 +72,13 @@
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsShowVerifyImg" Value="False">
                                     <Setter TargetName="PART_BtnImgSliderHost" Property="Visibility" Value="Hidden" />
+                                    <Setter TargetName="PART_ActionToolTip" Property="Text" Value="向右滑动滑块触发图像验证" />
+
                                 </Trigger>
                                 <Trigger Property="IsShowVerifyImg" Value="True">
                                     <Setter TargetName="PART_BtnImgSliderHost" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="PART_ActionToolTip" Property="Text" Value="有2个相同的图案，请拖拽还原它" />
+
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

@@ -65,6 +65,13 @@
                                 Data="{TemplateBinding rs:ControlsHelper.IconData}"
                                 Fill="{TemplateBinding Foreground}"
                                 Stretch="Fill" />
+                            <Border.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="18"
+                                    Opacity="0.1"
+                                    ShadowDepth="0"
+                                    Color="#000000" />
+                            </Border.Effect>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

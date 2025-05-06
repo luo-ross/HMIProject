@@ -13,7 +13,7 @@ namespace RS.HMI.Client
         /// <summary>
         /// 可以重新赋值主机地址
         /// </summary>
-        public override string AppHostAddress { get; set; } = "http://www.hmiproject.com/";
+        public override string AppHostAddress { get; set; } = "http://localhost:7109/";
       
         public App()
         {

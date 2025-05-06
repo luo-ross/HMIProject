@@ -24,20 +24,20 @@ namespace RS.HMI.Client.Models
         }
 
 
-        private string verify;
-        /// <summary>
-        /// 验证码
-        /// </summary>
-        [MaxLength(11, ErrorMessage = "验证码长度不能超过11位")]
-        [Required(ErrorMessage = "验证码不能为空")]
-        public string Verify
-        {
-            get { return verify; }
-            set
-            {
-                this.OnPropertyChanged(ref verify, value);
-                this.ValidProperty(value);
-            }
-        }
+        //private string verify;
+        ///// <summary>
+        ///// 验证码
+        ///// </summary>
+        //[MaxLength(11, ErrorMessage = "验证码长度不能超过11位")]
+        //[Required(ErrorMessage = "验证码不能为空")]
+        //public string Verify
+        //{
+        //    get { return verify; }
+        //    set
+        //    {
+        //        this.OnPropertyChanged(ref verify, value);
+        //        this.ValidProperty(value);
+        //    }
+        //}
     }
 }

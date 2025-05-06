@@ -36,23 +36,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Clip="{TemplateBinding BorderClipRect}">
-
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <Border
-                                    x:Name="PART_InfoBorder"
-                                    Padding="5"
-                                    VerticalAlignment="Top"
-                                    Background="#eee"
-                                    Visibility="Visible">
-                                    <TextBlock
-                                        x:Name="PART_TxtInfo"
-                                        HorizontalAlignment="Center"
-                                        Foreground="#333" />
-                                </Border>
                                 <rs:RSUserControl x:Name="PART_WinContentHost" Grid.Row="1">
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -131,6 +115,17 @@
                                         </Grid>
                                     </Grid>
                                 </rs:RSUserControl>
+                                <Border
+                                    x:Name="PART_InfoBorder"
+                                    Padding="5"
+                                    VerticalAlignment="Top"
+                                    Background="#eee"
+                                    Visibility="Visible">
+                                    <TextBlock
+                                        x:Name="PART_TxtInfo"
+                                        HorizontalAlignment="Center"
+                                        Foreground="#333" />
+                                </Border>
                             </Grid>
                         </Border>
                     </Border>

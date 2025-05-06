@@ -53,22 +53,7 @@ namespace RS.HMI.Client.Views
         {
             Process.Start("explorer.exe", e.Uri.ToString());
         }
-
-        /// <summary>
-        /// 获取验证码
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void BtnVerify_Click(object sender, RoutedEventArgs e)
-        {
-            var operateResult = await this.LoginForm.InvokeLoadingActionAsync(async () =>
-            {
-
-                await Task.Delay(2000);
-
-                return OperateResult.CreateSuccessResult();
-            });
-        }
+        
 
         /// <summary>
         /// 登录点击事件
@@ -89,6 +74,16 @@ namespace RS.HMI.Client.Views
                 return;
             }
 
+            //获取验证码
+            var getImgVerifyResult = this.ImgVerify.GetImgVerifyResultAsync();
+            if (!getImgVerifyResult.IsSuccess)
+            {
+                this.ShowInfoAsync(getImgVerifyResult.Message, InfoType.Warning);
+                return;
+            }
+
+            var imgVerifyResultModel = getImgVerifyResult.Data;
+
             var loadingConfig = new LoadingConfig()
             {
                 LoadingType = LoadingType.ProgressBar,
@@ -108,8 +103,10 @@ namespace RS.HMI.Client.Views
                   //验证用户登录
                   var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
                   {
-                      UserName = this.ViewModel.LoginModel.Name,
+                      UserName = this.ViewModel.LoginModel.UserName,
                       Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.LoginModel.Password),
+                      Verify = imgVerifyResultModel.Verify,
+                      VerifySessionId = imgVerifyResultModel.VerifySessionId,
                   });
 
                   if (!validLoginResult.IsSuccess)
@@ -139,20 +136,7 @@ namespace RS.HMI.Client.Views
 
 
 
-        /// <summary>
-        /// 注册点击事件
-        /// </summary>
-        private void BtnSignUp_Click(object sender, RoutedEventArgs e)
-        {
-            //注册信息验证
-            var validResult = this.ViewModel.SignUpModel.ValidObject();
-            if (!validResult)
-            {
-                return;
-            }
-
-
-        }
+    
 
         private void QRCodeLogin_OnCancelQRCodeLogin(QRCodeLoginResultModel loginQRCodeResult)
         {
@@ -217,6 +201,22 @@ namespace RS.HMI.Client.Views
             }
 
             return getImgVerifyModelResult;
+        }
+
+        private OperateResult RSImgVerify_OnBtnSliderDragStarted()
+        {
+            // 验证用户名和输入密码是否符合要求
+            var validResult = this.ViewModel.LoginModel.ValidObject();
+            if (!validResult)
+            {
+                return OperateResult.CreateFailResult();
+            }
+            return OperateResult.CreateSuccessResult();
+        }
+
+        private RSUserControl RegisterView_GetLoadingControl()
+        {
+            return this.LoginForm;
         }
     }
 }
