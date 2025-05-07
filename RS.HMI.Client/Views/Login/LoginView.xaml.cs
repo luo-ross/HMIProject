@@ -218,5 +218,15 @@ namespace RS.HMI.Client.Views
         {
             return this.LoginForm;
         }
+
+        /// <summary>
+        /// 邮箱验证
+        /// </summary>
+        /// <param name="obj"></param>
+        private void EmailVerifyView_OnVerifyConfirm(string obj)
+        {
+
+        }
+      
     }
 }

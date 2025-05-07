@@ -8,7 +8,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type ToolTip}">
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="Padding" Value="5,5,5,5" />
         <Setter Property="Background" Value="#FFF" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Foreground" Value="#333333" />

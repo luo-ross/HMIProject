@@ -162,7 +162,7 @@ namespace RS.Annotation.Views
             {
                 //this.SetLoadingText("正在登录中...");
                 //验证用户登录
-                var validLoginResult = await RSAppAPI.User.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
+                var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
                 {
                     UserName = this.ViewModel.PasswordLoginModel.UserName,
                     Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.PasswordLoginModel.Password),
@@ -195,9 +195,9 @@ namespace RS.Annotation.Views
         /// </summary>
         private void BtnForgetPassword_Click(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo processStartInfo = new ProcessStartInfo($"{App.AppHostAddress}/password/new");
-            processStartInfo.UseShellExecute = true;
-            Process.Start(processStartInfo);
+            //ProcessStartInfo processStartInfo = new ProcessStartInfo($"{App.AppHostAddress}/password/new");
+            //processStartInfo.UseShellExecute = true;
+            //Process.Start(processStartInfo);
         }
 
         private void BtnRegister_Click(object sender, RoutedEventArgs e)

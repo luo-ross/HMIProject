@@ -12,6 +12,7 @@ using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,26 +26,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RS.HMI.Client.Views
+namespace RS.HMI.Client.Controls
 {
-    /// <summary>
-    /// EmailVerifyView.xaml 的交互逻辑
-    /// </summary>
-    public partial class EmailVerifyView : RSUserControl
+
+    public partial class RSEmailVerify : RSUserControl
     {
-        private readonly EmailVerifyViewModel ViewModel;
-        private readonly IGeneralBLL GeneralBLL;
-        private readonly ICryptographyBLL CryptographyBLL;
         private List<TextBox> VerifyCodeInputList { get; set; }
-        public EmailVerifyView()
+        public event Action<string> OnVerifyConfirm;
+        public event Action OnBtnReturnClick;
+
+        public RSEmailVerify()
         {
             InitializeComponent();
-            this.ViewModel = this.DataContext as EmailVerifyViewModel;
-            if (App.AppHost != null)
-            {
-                this.GeneralBLL = App.AppHost.Services.GetRequiredService<IGeneralBLL>();
-                this.CryptographyBLL = App.AppHost.Services.GetRequiredService<ICryptographyBLL>();
-            }
+
             VerifyCodeInputList = new List<TextBox>();
             VerifyCodeInputList.Add(this.TxtVerifyCode0);
             VerifyCodeInputList.Add(this.TxtVerifyCode1);
@@ -54,56 +48,16 @@ namespace RS.HMI.Client.Views
             VerifyCodeInputList.Add(this.TxtVerifyCode5);
         }
 
-        public event Func<RSUserControl> GetLoadingControl;
-        private async void BtnSignUpNext_Click(object sender, RoutedEventArgs e)
+
+        [Description("邮箱绑定")]
+        public string Email
         {
-            //注册信息验证
-            var validResult = this.ViewModel.SignUpModel.ValidObject();
-            if (!validResult)
-            {
-                return;
-            }
-
-            var loadingConfig = new LoadingConfig()
-            {
-                LoadingType = LoadingType.ProgressBar,
-                Maximum = 100,
-                Value = 0,
-                IsIndeterminate = true,
-            };
-
-            //获取自定义
-            var loading = GetLoadingControl?.Invoke();
-            if (loading == null)
-            {
-                loading = this;
-            }
-
-            var operateResult = await loading.InvokeLoadingActionAsync(async () =>
-            {
-
-                var emailRegisterPostModel = new EmailRegisterPostModel();
-                emailRegisterPostModel.Email = this.ViewModel.SignUpModel.UserName;
-                emailRegisterPostModel.Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.SignUpModel.PasswordConfirm);
-
-                //获取邮箱验证码结果
-                var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(nameof(RSAppAPI), emailRegisterPostModel);
-
-                if (!getEmailVerifyResult.IsSuccess)
-                {
-                    return getEmailVerifyResult;
-                }
-
-                return getEmailVerifyResult;
-            }, loadingConfig);
-
-            //如果验证成功
-            if (!operateResult.IsSuccess)
-            {
-                this.TryFindParent<RSWindow>()?.ShowInfoAsync(operateResult.Message, InfoType.Warning);
-                return;
-            }
+            get { return (string)GetValue(EmailProperty); }
+            set { SetValue(EmailProperty, value); }
         }
+
+        public static readonly DependencyProperty EmailProperty =
+            DependencyProperty.Register("Email", typeof(string), typeof(RSEmailVerify), new PropertyMetadata(null));
 
 
 
@@ -114,7 +68,9 @@ namespace RS.HMI.Client.Views
         /// <param name="e"></param>
         private void BtnVerifyConfirm_Click(object sender, RoutedEventArgs e)
         {
-
+            var textList = VerifyCodeInputList.Select(t => t.Text).ToList();
+            var verify = string.Join("", textList);
+            OnVerifyConfirm?.Invoke(verify);
         }
 
         private void TxtVerifyCode_TextChanged(object sender, TextChangedEventArgs e)
@@ -126,8 +82,6 @@ namespace RS.HMI.Client.Views
                 this.VerifyCodeInputList[index + 1].Focus();
             }
         }
-
-
 
         private void TxtVerifyCode_KeyDown(object sender, KeyEventArgs e)
         {
@@ -163,8 +117,12 @@ namespace RS.HMI.Client.Views
                     }
                 }
             }
+        }
 
-
+        private void BtnReturn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Visibility = Visibility.Collapsed;
+            this.OnBtnReturnClick?.Invoke();
         }
     }
 }

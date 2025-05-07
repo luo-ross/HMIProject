@@ -23,36 +23,37 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RS.HMI.Client.Views
+namespace RS.HMI.Client.Controls
 {
     /// <summary>
     /// RegisterView.xaml 的交互逻辑
     /// </summary>
-    public partial class RegisterView : RSUserControl
+    public partial class RSRegister : RSUserControl
     {
-        private readonly RegisterViewModel ViewModel;
         private readonly IGeneralBLL GeneralBLL;
         private readonly ICryptographyBLL CryptographyBLL;
-        public RegisterView()
-        {
-            InitializeComponent();
-            this.ViewModel = this.DataContext as RegisterViewModel;
-            if (App.AppHost != null)
-            {
-                this.GeneralBLL = App.AppHost.Services.GetRequiredService<IGeneralBLL>();
-                this.CryptographyBLL = App.AppHost.Services.GetRequiredService<ICryptographyBLL>();
-            }
-        }
 
         public event Func<RSUserControl> GetLoadingControl;
+
+        public event Action<OperateResult> OnBtnSignUpNextClick;
+        public RSRegister()
+        {
+            InitializeComponent();
+            //if (App.AppHost != null)
+            //{
+            //    this.GeneralBLL = App.AppHost.Services.GetRequiredService<IGeneralBLL>();
+            //    this.CryptographyBLL = App.AppHost.Services.GetRequiredService<ICryptographyBLL>();
+            //}
+        }
+
         private async void BtnSignUpNext_Click(object sender, RoutedEventArgs e)
         {
-            //注册信息验证
-            var validResult = this.ViewModel.SignUpModel.ValidObject();
-            if (!validResult)
-            {
-                return;
-            }
+            ////注册信息验证
+            //var validResult = this.ViewModel.SignUpModel.ValidObject();
+            //if (!validResult)
+            //{
+            //    return;
+            //}
 
             var loadingConfig = new LoadingConfig()
             {
@@ -63,7 +64,7 @@ namespace RS.HMI.Client.Views
             };
 
             //获取自定义
-            var loading = GetLoadingControl?.Invoke();
+            var loading =this. GetLoadingControl?.Invoke();
             if (loading == null)
             {
                 loading = this;
@@ -72,8 +73,8 @@ namespace RS.HMI.Client.Views
             var operateResult = await loading.InvokeLoadingActionAsync(async () =>
             {
                 var emailRegisterPostModel = new EmailRegisterPostModel();
-                emailRegisterPostModel.Email = this.ViewModel.SignUpModel.UserName;
-                emailRegisterPostModel.Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.SignUpModel.PasswordConfirm);
+                //emailRegisterPostModel.Email = this.ViewModel.SignUpModel.UserName;
+                //emailRegisterPostModel.Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.SignUpModel.PasswordConfirm);
 
                 //获取邮箱验证码结果
                 var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(nameof(RSAppAPI), emailRegisterPostModel);
@@ -92,6 +93,9 @@ namespace RS.HMI.Client.Views
                 this.TryFindParent<RSWindow>()?.ShowInfoAsync(operateResult.Message, InfoType.Warning);
                 return;
             }
+
         }
+
+      
     }
 }

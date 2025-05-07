@@ -134,8 +134,7 @@
                 Grid.Column="1"
                 Background="#fff">
                 <Grid>
-                    <Grid Visibility="Collapsed">
-
+                    <Grid>
                         <Border x:Name="PART_PasswordLoginArea" Padding="28,30,28,50">
                             <Grid Margin="0,20,0,0" VerticalAlignment="Top">
                                 <Grid.RowDefinitions>
@@ -238,7 +237,7 @@
                                         </StackPanel>
                                     </Grid>
 
-                                    <local:RegisterView GetLoadingControl="RegisterView_GetLoadingControl" Visibility="{Binding ElementName=RadBtnSignUp, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <hmi:RSRegister GetLoadingControl="RegisterView_GetLoadingControl" Visibility="{Binding ElementName=RadBtnSignUp, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </Grid>
                             </Grid>
                             <Border.Style>
@@ -297,9 +296,13 @@
                             </ToggleButton.Foreground>
                         </ToggleButton>
                     </Grid>
-                    <Border Padding="28,30,28,50">
-                        <local:EmailVerifyView />
-                    </Border>
+
+
+                    <hmi:RSEmailVerify
+                        x:Name="EmailVerify"
+                        OnVerifyConfirm="EmailVerifyView_OnVerifyConfirm"
+                        Visibility="Collapsed" />
+
                 </Grid>
 
             </rs:RSUserControl>
