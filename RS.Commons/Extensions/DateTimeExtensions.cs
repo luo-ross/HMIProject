@@ -31,25 +31,13 @@ namespace RS.Commons.Extensions
 
 
         /// <summary>
-        /// 将DateTime转换为Unix时间戳
-        /// </summary>
-        /// <param name="dateTime">日期时间</param>
-        /// <returns>Unix时间戳</returns>
-        public static long ToUnixTimeStamp(this DateTime dateTime)
-        {
-            var timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            return (long)timeSpan.TotalSeconds;
-        }
-
-        /// <summary>
         /// 将Unix时间戳转换为DateTime
         /// </summary>
         /// <param name="unixTimeStamp">Unix时间戳</param>
         /// <returns>DateTime对象</returns>
         public static DateTime FromUnixTimeStamp(this long unixTimeStamp)
         {
-            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            return dateTime.AddSeconds(unixTimeStamp);
+            return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeStamp).LocalDateTime;
         }
 
         /// <summary>

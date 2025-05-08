@@ -97,10 +97,13 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="True">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="rs:TextBoxHelper.IsShowClearButton" Value="True" />
+                            </MultiTrigger.Conditions>
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
-                        </DataTrigger>
+                        </MultiTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="False">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
@@ -205,9 +208,13 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="True">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="rs:TextBoxHelper.IsShowClearButton" Value="True" />
+                            </MultiTrigger.Conditions>
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
-                        </DataTrigger>
+                        </MultiTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="False">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
@@ -223,6 +230,7 @@
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+
 
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

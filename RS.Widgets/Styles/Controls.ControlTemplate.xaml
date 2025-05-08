@@ -118,7 +118,7 @@
     </ControlTemplate>
 
 
-    <ControlTemplate x:Key="RSApp.Styles.DataErrorTemplates">
+    <ControlTemplate x:Key="RSApp.Styles.DataErrorTemplate">
         <AdornedElementPlaceholder x:Name="PART_Adorned">
             <Border>
                 <Grid>
@@ -139,6 +139,7 @@
             </Border>
         </AdornedElementPlaceholder>
     </ControlTemplate>
+
 
 
 </ResourceDictionary>

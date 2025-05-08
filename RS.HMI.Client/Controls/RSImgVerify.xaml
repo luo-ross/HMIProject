@@ -10,15 +10,21 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <Style TargetType="{x:Type local:RSImgVerify}">
+                <Setter Property="MinHeight" Value="38" />
                 <Setter Property="Margin" Value="3,0,3,0" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Background" Value="#F5F5F5" />
+                <Setter Property="BorderBrush" Value="#198cff" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type local:RSImgVerify}">
                             <Border
-                                Background="#F5F5F5"
-                                BorderBrush="#198cff"
-                                BorderThickness="1"
-                                CornerRadius="5">
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
                                 <Grid>
                                     <TextBlock
                                         x:Name="PART_ActionToolTip"
@@ -29,14 +35,13 @@
                                         Width="{TemplateBinding SliderMaskWidth}"
                                         HorizontalAlignment="Left"
                                         Background="#33198CFF" />
-                                    <Canvas x:Name="PART_BtnSliderHost" Height="38">
-
+                                    <Canvas x:Name="PART_BtnSliderHost" Height="{TemplateBinding Height}">
                                         <Thumb
                                             x:Name="PART_BtnSlider"
                                             Canvas.Left="0"
                                             Canvas.Top="0"
                                             Width="38"
-                                            Height="38"
+                                            Height="{Binding ElementName=PART_BtnSliderHost, Path=ActualHeight}"
                                             rs:ControlsHelper.IconData="M567.32505 547.18536c20.970614-21.479197 20.970614-56.307424 0-77.790714L185.251168 77.115332c-20.971637-21.47715-54.975079-21.47715-75.948763 0-20.973684 21.484314-20.973684 56.30947 0 77.793784l344.188016 353.383446-344.188016 353.384469c-20.973684 21.484314-20.973684 56.311517 0 77.79276 20.971637 21.482267 54.975079 21.482267 75.948763 0l382.072858-392.280337 0.001024-0.004094zM440.60802 154.908092l344.18597 353.383446-344.18597 353.385493c-20.973684 21.484314-20.973684 56.311517 0 77.79276 20.972661 21.482267 54.975079 21.482267 75.949786 0l382.074905-392.281361c20.966521-21.478174 20.966521-56.307424 0-77.790714L516.555759 77.115332c-20.972661-21.47715-54.975079-21.47715-75.949786 0-20.971637 21.48329-20.971637 56.30947 0.002047 77.79276z"
                                             Foreground="#fff"
                                             Style="{StaticResource RSApp.Styles.IconThumb}" />
@@ -54,7 +59,6 @@
                                                 <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImgVerifyBackground}" />
                                             </Border.Background>
                                         </Border>
-
 
                                         <Thumb
                                             x:Name="PART_BtnImgSlider"
@@ -78,7 +82,6 @@
                                 <Trigger Property="IsShowVerifyImg" Value="True">
                                     <Setter TargetName="PART_BtnImgSliderHost" Property="Visibility" Value="Visible" />
                                     <Setter TargetName="PART_ActionToolTip" Property="Text" Value="有2个相同的图案，请拖拽还原它" />
-
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

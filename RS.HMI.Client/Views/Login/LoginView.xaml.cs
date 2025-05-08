@@ -23,18 +23,20 @@ namespace RS.HMI.Client.Views
         private readonly LoginViewModel ViewModel;
         private readonly IGeneralBLL GeneralBLL;
         private readonly ICryptographyBLL CryptographyBLL;
-
+        private readonly RegisterView RegisterView;
         /// <summary>
         /// 默认构造方法
         /// </summary>
-        public LoginView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL)
+        public LoginView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL,RegisterView registerView)
         {
             InitializeComponent();
             this.GeneralBLL = generalBLL;
             this.CryptographyBLL = cryptographyBLL;
+            this.RegisterView = registerView;
             this.ViewModel = this.DataContext as LoginViewModel;
             this.Closed += LoginView_Closed;
             this.Loaded += LoginView_Loaded;
+            this.PART_ContentHost.Children.Add(this.RegisterView);
         }
 
         private void LoginView_Closed(object? sender, EventArgs e)
@@ -213,11 +215,7 @@ namespace RS.HMI.Client.Views
             }
             return OperateResult.CreateSuccessResult();
         }
-
-        private RSUserControl RegisterView_GetLoadingControl()
-        {
-            return this.LoginForm;
-        }
+     
 
         /// <summary>
         /// 邮箱验证
@@ -227,6 +225,15 @@ namespace RS.HMI.Client.Views
         {
 
         }
-      
+
+        private void BtnForgetPassword_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnRegister_Click(object sender, RoutedEventArgs e)
+        {
+            this.RegisterView.Visibility = Visibility.Visible;
+        }
     }
 }
