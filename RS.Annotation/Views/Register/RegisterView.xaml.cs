@@ -110,12 +110,12 @@ namespace RS.Annotation.Views
         {
 
             //如果邮箱验证通过 则往服务端发起验证码发送请求，
-            var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(nameof(RSAppAPI), new EmailRegisterPostModel()
+            var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(new EmailRegisterPostModel()
             {
                 Email = this.ViewModel.EmailRegisterModel.Email,
                 //这里需要将秘密进行SHA256加密
                 Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.EmailRegisterModel.Password),
-            });
+            }, nameof(RSAppAPI));
             if (!getEmailVerifyResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<VerifyModel>(getEmailVerifyResult);
@@ -152,11 +152,11 @@ namespace RS.Annotation.Views
             }
 
             //往服务端发起请求验证用户输入的验证码是否和服务端存储的验证码一致
-            var emailVerifyValidResult = await RSAppAPI.Register.EmailVerifyValid.AESHttpPostAsync(nameof(RSAppAPI), new RegisterVerifyValidModel()
+            var emailVerifyValidResult = await RSAppAPI.Register.EmailVerifyValid.AESHttpPostAsync(new RegisterVerifyValidModel()
             {
                 RegisterSessionId = this.ViewModel.RegisterVerifyModel.RegisterSessionId,
                 Verify = this.ViewModel.EmailRegisterModel.Verify,
-            });
+            }, nameof(RSAppAPI));
             if (!emailVerifyValidResult.IsSuccess)
             {
                 return emailVerifyValidResult;

@@ -1,4 +1,5 @@
-﻿using RS.Models;
+﻿using Newtonsoft.Json.Linq;
+using RS.Models;
 using RS.RESTfulApi;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,12 @@ namespace RS.Commons.Extensions
         /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="apiUrl">接口Url</param>
         /// <returns></returns>
-        public static async Task<OperateResult<TResult>> AESHttpGetAsync<TResult>(this string apiUrl, string clientName)
+        public static async Task<OperateResult<TResult>> AESHttpGetAsync<TResult>(this string apiUrl, string clientName, string token = null)
         {
             //获取加解密服务
             var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
 
-            var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName);
+            var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName, token);
             if (!getHttpGetJsonResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(getHttpGetJsonResult);
@@ -54,9 +55,9 @@ namespace RS.Commons.Extensions
         /// <typeparam name="TResult">返回数据类型</typeparam>
         /// <param name="apiUrl">接口Url</param>
         /// <returns></returns>
-        public static async Task<OperateResult<TResult>> HttpGetAsync<TResult>(this string apiUrl, string clientName)
+        public static async Task<OperateResult<TResult>> HttpGetAsync<TResult>(this string apiUrl, string clientName, string token = null)
         {
-            var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName);
+            var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName, token);
             if (!getHttpGetJsonResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(getHttpGetJsonResult);
@@ -74,9 +75,9 @@ namespace RS.Commons.Extensions
         /// </summary>
         /// <param name="apiUrl">接口Url</param>
         /// <returns></returns>
-        public static async Task<OperateResult> HttpGetAsync(this string apiUrl, string clientName)
+        public static async Task<OperateResult> HttpGetAsync(this string apiUrl, string clientName, string token = null)
         {
-            var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName);
+            var getHttpGetJsonResult = await apiUrl.HttpGetJsonResultAsync(clientName, token);
             if (!getHttpGetJsonResult.IsSuccess)
             {
                 return getHttpGetJsonResult;
@@ -98,9 +99,9 @@ namespace RS.Commons.Extensions
         /// <param name="apiUrl">接口Url</param>
         /// <param name="postModel">Post数据</param>
         /// <returns></returns>
-        public static async Task<OperateResult<TResult>> AESHttpPostAsync<TPost, TResult>(this string apiUrl, string clientName, TPost postModel) where TPost : class
+        public static async Task<OperateResult<TResult>> AESHttpPostAsync<TPost, TResult>(this string apiUrl, TPost postModel, string clientName, string token = null) where TPost : class
         {
-           
+
             var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
             //AES对称加密数据
             var aesEncryptResult = cryptographyBLL.AESEncryptSimple(postModel);
@@ -110,7 +111,7 @@ namespace RS.Commons.Extensions
             }
 
             //往服务端发送数据 并获取回传数据
-            var aesEncryptModelResult = await apiUrl.HttpPostAsync<AESEncryptModel, AESEncryptModel>(clientName, aesEncryptResult.Data);
+            var aesEncryptModelResult = await apiUrl.HttpPostAsync<AESEncryptModel, AESEncryptModel>(aesEncryptResult.Data, clientName, token);
             if (!aesEncryptModelResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(aesEncryptModelResult);
@@ -133,7 +134,7 @@ namespace RS.Commons.Extensions
         /// <param name="apiUrl">接口Url</param>
         /// <param name="postModel">Post数据</param>
         /// <returns></returns>
-        public static async Task<OperateResult> AESHttpPostAsync<TPost>(this string apiUrl, string clientName, TPost postModel) where TPost : class
+        public static async Task<OperateResult> AESHttpPostAsync<TPost>(this string apiUrl, TPost postModel, string clientName, string token = null) where TPost : class
         {
             var cryptographyBLL = ServiceProviderExtensions.GetService<ICryptographyBLL>();
             //AES对称加密数据
@@ -142,7 +143,7 @@ namespace RS.Commons.Extensions
             {
                 return aesEncryptResult;
             }
-            return await apiUrl.HttpPostAsync(clientName, aesEncryptResult.Data);
+            return await apiUrl.HttpPostAsync(aesEncryptResult.Data, clientName, token);
         }
 
         /// <summary>
@@ -153,9 +154,9 @@ namespace RS.Commons.Extensions
         /// <param name="apiUrl">接口Url</param>
         /// <param name="postModel">Post数据</param>
         /// <returns></returns>
-        public static async Task<OperateResult<TResult>> HttpPostAsync<TPost, TResult>(this string apiUrl, string clientName, TPost postModel) where TPost : class
+        public static async Task<OperateResult<TResult>> HttpPostAsync<TPost, TResult>(this string apiUrl, TPost postModel, string clientName, string token = null) where TPost : class
         {
-            var getHttpPostJsonResult = await apiUrl.HttpPostJsonResultAsync<TPost>(clientName, postModel);
+            var getHttpPostJsonResult = await apiUrl.HttpPostJsonResultAsync<TPost>(postModel, clientName, token);
             if (!getHttpPostJsonResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<TResult>(getHttpPostJsonResult);
@@ -176,9 +177,9 @@ namespace RS.Commons.Extensions
         /// <param name="apiUrl">接口Url</param>
         /// <param name="postModel">Post数据</param>
         /// <returns></returns>
-        public static async Task<OperateResult> HttpPostAsync<TPost>(this string apiUrl, string clientName, TPost postModel) where TPost : class
+        public static async Task<OperateResult> HttpPostAsync<TPost>(this string apiUrl, TPost postModel,  string clientName, string token = null) where TPost : class
         {
-            var getHttpPostJsonResult = await apiUrl.HttpPostJsonResultAsync<TPost>(clientName, postModel);
+            var getHttpPostJsonResult = await apiUrl.HttpPostJsonResultAsync<TPost>(postModel, clientName, token);
             if (!getHttpPostJsonResult.IsSuccess)
             {
                 return getHttpPostJsonResult;
@@ -196,11 +197,11 @@ namespace RS.Commons.Extensions
         /// </summary>
         /// <param name="apiUrl">接口Url</param>
         /// <returns></returns>
-        public static async Task<OperateResult<string>> HttpGetJsonResultAsync(this string apiUrl, string clientName)
+        public static async Task<OperateResult<string>> HttpGetJsonResultAsync(this string apiUrl, string clientName, string token)
         {
             var handleHttpRequestExceptionResult = await HandleHttpRequestException(async () =>
             {
-                return await ServiceProviderExtensions.GetHttpClient(clientName).GetAsync(apiUrl);
+                return await ServiceProviderExtensions.GetHttpClient(clientName, token).GetAsync(apiUrl);
             });
             if (!handleHttpRequestExceptionResult.IsSuccess)
             {
@@ -223,7 +224,7 @@ namespace RS.Commons.Extensions
         /// <param name="apiUrl">接口Url</param>
         /// <param name="postModel">Post数据类型</param>
         /// <returns></returns>
-        public static async Task<OperateResult<string>> HttpPostJsonResultAsync<TPost>(this string apiUrl, string clientName, TPost postModel) where TPost : class
+        public static async Task<OperateResult<string>> HttpPostJsonResultAsync<TPost>(this string apiUrl, TPost postModel, string clientName, string token) where TPost : class
         {
             if (string.IsNullOrEmpty(apiUrl) || string.IsNullOrWhiteSpace(apiUrl))
             {
@@ -232,7 +233,7 @@ namespace RS.Commons.Extensions
 
             var handleHttpRequestExceptionResult = await HandleHttpRequestException(async () =>
             {
-                return await ServiceProviderExtensions.GetHttpClient(clientName).PostAsync(apiUrl, postModel.ToStringContent());
+                return await ServiceProviderExtensions.GetHttpClient(clientName, token).PostAsync(apiUrl, postModel.ToStringContent());
             });
 
             if (!handleHttpRequestExceptionResult.IsSuccess)

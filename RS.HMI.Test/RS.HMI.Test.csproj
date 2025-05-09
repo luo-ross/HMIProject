@@ -5,6 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,6 +32,7 @@
 		<PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
 		<PackageReference Include="RazorLight" Version="2.3.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageReference Include="ZXing.Net" Version="0.16.10" />
 	</ItemGroup>
 
 	<ItemGroup>

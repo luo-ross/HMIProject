@@ -23,20 +23,20 @@ namespace RS.HMI.Client.Views
         private readonly LoginViewModel ViewModel;
         private readonly IGeneralBLL GeneralBLL;
         private readonly ICryptographyBLL CryptographyBLL;
-        private readonly RegisterView RegisterView;
+        private RegisterView RegisterView;
+        private SecurityView SecurityView;
         /// <summary>
         /// 默认构造方法
         /// </summary>
-        public LoginView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL,RegisterView registerView)
+        public LoginView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL)
         {
             InitializeComponent();
             this.GeneralBLL = generalBLL;
             this.CryptographyBLL = cryptographyBLL;
-            this.RegisterView = registerView;
             this.ViewModel = this.DataContext as LoginViewModel;
             this.Closed += LoginView_Closed;
             this.Loaded += LoginView_Loaded;
-            this.PART_ContentHost.Children.Add(this.RegisterView);
+
         }
 
         private void LoginView_Closed(object? sender, EventArgs e)
@@ -55,7 +55,7 @@ namespace RS.HMI.Client.Views
         {
             Process.Start("explorer.exe", e.Uri.ToString());
         }
-        
+
 
         /// <summary>
         /// 登录点击事件
@@ -103,13 +103,13 @@ namespace RS.HMI.Client.Views
             var operateResult = await this.LoginForm.InvokeLoadingActionAsync(async () =>
               {
                   //验证用户登录
-                  var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
+                  var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(new LoginValidModel()
                   {
                       UserName = this.ViewModel.LoginModel.UserName,
                       Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.LoginModel.Password),
                       Verify = imgVerifyResultModel.Verify,
                       VerifySessionId = imgVerifyResultModel.VerifySessionId,
-                  });
+                  }, nameof(RSAppAPI));
 
                   if (!validLoginResult.IsSuccess)
                   {
@@ -138,7 +138,7 @@ namespace RS.HMI.Client.Views
 
 
 
-    
+
 
         private void QRCodeLogin_OnCancelQRCodeLogin(QRCodeLoginResultModel loginQRCodeResult)
         {
@@ -217,23 +217,38 @@ namespace RS.HMI.Client.Views
         }
      
 
-        /// <summary>
-        /// 邮箱验证
-        /// </summary>
-        /// <param name="obj"></param>
-        private void EmailVerifyView_OnVerifyConfirm(string obj)
-        {
-
-        }
-
         private void BtnForgetPassword_Click(object sender, RoutedEventArgs e)
         {
+            //这里每次都需要重新获取服务
+            this.SecurityView = App.AppHost.Services.GetService<SecurityView>();
+            this.SecurityView.OnBtnReturnClick += SecurityView_OnBtnReturnClick;
+            this.PART_ContentHost.Children.Add(this.SecurityView);
+        }
 
+        private void SecurityView_OnBtnReturnClick()
+        {
+            if (this.SecurityView != null)
+            {
+                this.SecurityView.OnBtnReturnClick -= SecurityView_OnBtnReturnClick;
+                this.PART_ContentHost.Children.Remove(this.SecurityView);
+            }
         }
 
         private void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
-            this.RegisterView.Visibility = Visibility.Visible;
+            //这里每次都需要重新获取服务
+            this.RegisterView = App.AppHost.Services.GetService<RegisterView>();
+            this.RegisterView.OnBtnReturnClick += RegisterView_OnBtnReturnClick;
+            this.PART_ContentHost.Children.Add(this.RegisterView);
+        }
+
+        private void RegisterView_OnBtnReturnClick()
+        {
+            if (this.RegisterView!=null)
+            {
+                this.RegisterView.OnBtnReturnClick -= RegisterView_OnBtnReturnClick;
+                this.PART_ContentHost.Children.Remove(this.RegisterView);
+            }
         }
     }
 }

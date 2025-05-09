@@ -170,22 +170,15 @@
                 Grid.Column="1"
                 Background="#fff">
                 <Grid x:Name="PART_ContentHost">
-                    <Grid x:Name="PART_LoginHost" Margin="28,30,28,50">
+                    <Grid x:Name="PART_LoginHost" Margin="28,20,28,50">
                         <Border>
                             <StackPanel Margin="0,40,0,0" Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Border
-                                        Width="3"
-                                        Height="20"
-                                        Background="#198cff" />
-                                    <TextBlock
-                                        Margin="8,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        FontSize="22"
-                                        Foreground="#333"
-                                        Text="登录" />
-                                </StackPanel>
-
+                                <TextBlock
+                                    Margin="8,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    FontSize="22"
+                                    Foreground="#333"
+                                    Text="登录" />
 
                                 <TextBox
                                     Margin="0,40,0,5"
@@ -215,7 +208,7 @@
 
                                 <Button
                                     x:Name="BtnLogin"
-                                    Margin="0,30,0,0"
+                                    Margin="0,40,0,0"
                                     Click="BtnLogin_Click"
                                     Content="登录"
                                     Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />

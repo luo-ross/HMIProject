@@ -9,7 +9,6 @@
     xmlns:rs="https://github.com/luo-ross/Widgets"
     d:DesignHeight="450"
     d:DesignWidth="500"
-    Visibility="Collapsed"
     mc:Ignorable="d">
     <rs:RSUserControl.DataContext>
         <local:RegisterViewModel />
@@ -31,149 +30,181 @@
         </ResourceDictionary>
     </rs:RSUserControl.Resources>
     <Grid Background="#fff">
-        <Grid Margin="28,30,28,50">
-            <StackPanel
-                x:Name="PART_Register"
-                Margin="0,40,0,0"
-                Orientation="Vertical">
+        <Grid>
+            <Grid Margin="28,30,28,50">
+                <StackPanel
+                    x:Name="PART_Register"
+                    Margin="0,40,0,0"
+                    Orientation="Vertical">
 
-                <StackPanel Orientation="Horizontal">
-                    <Border
-                        Width="3"
-                        Height="20"
-                        Background="#198cff" />
                     <TextBlock
                         Margin="8,0,0,0"
-                        HorizontalAlignment="Left"
+                        HorizontalAlignment="Center"
                         FontSize="22"
                         Foreground="#333"
                         Text="注册" />
-                </StackPanel>
 
-
-                <TextBox
-                    Margin="0,50,0,5"
-                    Padding="3,5,3,5"
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
-                    rs:TextBoxHelper.IsShowClearButton="True"
-                    rs:TextBoxHelper.Watermark="请输入用户名"
-                    MaxLength="30"
-                    Style="{StaticResource RSApp.Styles.IconTextBox}"
-                    Text="{Binding SignUpModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
-                <PasswordBox
-                    Margin="0,5,0,5"
-                    Padding="3,5,3,5"
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
-                    rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
-                    rs:TextBoxHelper.IsShowClearButton="True"
-                    rs:TextBoxHelper.Watermark="请输入密码"
-                    MaxLength="30"
-                    Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
-                <PasswordBox
-                    Margin="0,5,0,5"
-                    Padding="3,5,3,5"
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
-                    rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, ValidatesOnNotifyDataErrors=True}"
-                    rs:TextBoxHelper.IsShowClearButton="True"
-                    rs:TextBoxHelper.Watermark="请输入确认密码"
-                    MaxLength="30"
-                    Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
-                <Button
-                    x:Name="BtnSignUpNext"
-                    Margin="0,30,0,0"
-                    Click="BtnSignUpNext_Click"
-                    Content="下一步"
-                    Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
-            </StackPanel>
-
-            <Border
-                x:Name="PART_EmailVerify"
-                Background="#fff"
-                Visibility="Collapsed">
-                <StackPanel Margin="0,50,0,0" Orientation="Vertical">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="25"
-                        Text="邮箱验证" />
-
-                    <TextBlock
-                        Margin="0,20,0,0"
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Foreground="#949494"
-                        Text="请查看邮箱获取验证码" />
-
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Foreground="#949494"
-                        Text="{Binding SignUpModel.UserName}" />
-
-                    <StackPanel
-                        x:Name="PART_VerifyCodeHost"
-                        Margin="0,30,0,0"
-                        HorizontalAlignment="Center"
-                        Orientation="Horizontal">
-                        <TextBox
-                            x:Name="TxtVerifyCode0"
-                            PreviewKeyDown="TxtVerifyCode_KeyDown"
-                            Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
-                            TextChanged="TxtVerifyCode_TextChanged" />
-                        <TextBox
-                            x:Name="TxtVerifyCode1"
-                            PreviewKeyDown="TxtVerifyCode_KeyDown"
-                            Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
-                            TextChanged="TxtVerifyCode_TextChanged" />
-                        <TextBox
-                            x:Name="TxtVerifyCode2"
-                            PreviewKeyDown="TxtVerifyCode_KeyDown"
-                            Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
-                            TextChanged="TxtVerifyCode_TextChanged" />
-                        <TextBox
-                            x:Name="TxtVerifyCode3"
-                            PreviewKeyDown="TxtVerifyCode_KeyDown"
-                            Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
-                            TextChanged="TxtVerifyCode_TextChanged" />
-                        <TextBox
-                            x:Name="TxtVerifyCode4"
-                            PreviewKeyDown="TxtVerifyCode_KeyDown"
-                            Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
-                            TextChanged="TxtVerifyCode_TextChanged" />
-                        <TextBox
-                            x:Name="TxtVerifyCode5"
-                            PreviewKeyDown="TxtVerifyCode_KeyDown"
-                            Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
-                            TextChanged="TxtVerifyCode_TextChanged" />
-                    </StackPanel>
+                    <TextBox
+                        Margin="0,50,0,5"
+                        Padding="3,5,3,5"
+                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
+                        rs:TextBoxHelper.IsShowClearButton="True"
+                        rs:TextBoxHelper.Watermark="请输入用户名"
+                        MaxLength="30"
+                        Style="{StaticResource RSApp.Styles.IconTextBox}"
+                        Text="{Binding SignUpModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                    <PasswordBox
+                        Margin="0,5,0,5"
+                        Padding="3,5,3,5"
+                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
+                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                        rs:TextBoxHelper.IsShowClearButton="True"
+                        rs:TextBoxHelper.Watermark="请输入密码"
+                        MaxLength="30"
+                        Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
+                    <PasswordBox
+                        Margin="0,5,0,5"
+                        Padding="3,5,3,5"
+                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
+                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, ValidatesOnNotifyDataErrors=True}"
+                        rs:TextBoxHelper.IsShowClearButton="True"
+                        rs:TextBoxHelper.Watermark="请输入确认密码"
+                        MaxLength="30"
+                        Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
                     <Button
-                        x:Name="BtnVerifyConfirm"
-                        Width="{Binding ElementName=PART_VerifyCodeHost, Path=ActualWidth}"
-                        Margin="3,35,3,0"
-                        Click="BtnVerifyConfirm_Click"
-                        Content="确认"
+                        x:Name="BtnSignUpNext"
+                        Margin="0,30,0,0"
+                        Click="BtnSignUpNext_Click"
+                        Content="下一步"
                         Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
-
-                    <TextBlock
-                        Margin="0,15,0,0"
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Foreground="{StaticResource RSApp.Styles.Danger}">
-                        <Run Text="剩余时间" />
-                        <Run Text="{Binding RemainingTime, StringFormat='{}{0:F0}'}" />
-                        <Run Text="秒" />
-                    </TextBlock>
                 </StackPanel>
-            </Border>
+
+                <Border
+                    x:Name="PART_EmailVerify"
+                    Background="#fff"
+                    Visibility="Collapsed">
+                    <StackPanel Margin="0,40,0,0" Orientation="Vertical">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="25"
+                            Text="邮箱验证" />
+
+                        <TextBlock
+                            Margin="0,20,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Foreground="#949494"
+                            Text="请查看邮箱获取验证码" />
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Foreground="#949494"
+                            Text="{Binding SignUpModel.UserName}" />
+
+                        <StackPanel
+                            x:Name="PART_VerifyCodeHost"
+                            Margin="0,30,0,0"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBox
+                                x:Name="TxtVerifyCode0"
+                                PreviewKeyDown="TxtVerifyCode_KeyDown"
+                                Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                                TextChanged="TxtVerifyCode_TextChanged" />
+                            <TextBox
+                                x:Name="TxtVerifyCode1"
+                                PreviewKeyDown="TxtVerifyCode_KeyDown"
+                                Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                                TextChanged="TxtVerifyCode_TextChanged" />
+                            <TextBox
+                                x:Name="TxtVerifyCode2"
+                                PreviewKeyDown="TxtVerifyCode_KeyDown"
+                                Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                                TextChanged="TxtVerifyCode_TextChanged" />
+                            <TextBox
+                                x:Name="TxtVerifyCode3"
+                                PreviewKeyDown="TxtVerifyCode_KeyDown"
+                                Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                                TextChanged="TxtVerifyCode_TextChanged" />
+                            <TextBox
+                                x:Name="TxtVerifyCode4"
+                                PreviewKeyDown="TxtVerifyCode_KeyDown"
+                                Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                                TextChanged="TxtVerifyCode_TextChanged" />
+                            <TextBox
+                                x:Name="TxtVerifyCode5"
+                                PreviewKeyDown="TxtVerifyCode_KeyDown"
+                                Style="{StaticResource RSApp.Styles.VerifyCodeInputStyle}"
+                                TextChanged="TxtVerifyCode_TextChanged" />
+                        </StackPanel>
+                        <Button
+                            x:Name="BtnVerifyConfirm"
+                            Width="{Binding ElementName=PART_VerifyCodeHost, Path=ActualWidth}"
+                            Margin="3,35,3,0"
+                            Click="BtnVerifyConfirm_Click"
+                            Content="确认"
+                            Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+
+                        <TextBlock
+                            Margin="0,15,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Foreground="{StaticResource RSApp.Styles.Danger}">
+                            <Run Text="剩余时间" />
+                            <Run Text="{Binding RemainingTime, StringFormat='{}{0:F0}'}" />
+                            <Run Text="秒" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Button
+                x:Name="BtnReturn"
+                Margin="10,3,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Return}"
+                Click="BtnReturn_Click"
+                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                ToolTip="返回" />
         </Grid>
-        <Button
-            x:Name="BtnReturn"
-            Margin="10,3,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Return}"
-            Click="BtnReturn_Click"
-            Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-            ToolTip="返回" />
+
+
+        <Grid
+            x:Name="PART_RegisterSuccess"
+            Background="#fff"
+            Visibility="Collapsed">
+            <StackPanel Margin="28,70,28,100">
+                <Path
+                    x:Name="PART_Icon"
+                    Width="45"
+                    Height="45"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="{StaticResource RSApp.Icons.Checked}"
+                    Fill="#06b025"
+                    Stretch="Fill" />
+                <TextBlock
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="22"
+                    Foreground="#333"
+                    Text="注册成功" />
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="14"
+                    Foreground="#949494"
+                    Text="请点击下面按钮返回登录界面" />
+            </StackPanel>
+            <Button
+                x:Name="BtnReturnLogin"
+                Margin="28,35,28,100"
+                VerticalAlignment="Bottom"
+                Click="BtnReturnLogin_Click"
+                Content="返回登录"
+                Style="{StaticResource RSApp.Styles.LoginButtonStyle}" />
+        </Grid>
     </Grid>
 
 

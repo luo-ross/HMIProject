@@ -1,408 +1,486 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>叶强自动化PLC - 专业工业自动化解决方案</title>
-    <meta name="keywords" content="PLC编程,工业自动化,电气自动化,西门子PLC,汇川PLC,非标自动化,叶强自动化">
-    <meta name="description" content="叶强自动化PLC提供专业的工业自动化解决方案，包括PLC编程、电气自动化、IT物联网技术及AI人工智能应用">
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- AOS动画库 -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-    <!-- 自定义样式 -->
+    <title>登录</title>
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     <style>
-        :root {
-            --primary-color: #1a237e;
-            --secondary-color: #0d47a1;
-            --accent-color: #2962ff;
-            --text-color: #333;
-            --light-bg: #f8f9fa;
+        input {
+            color: #333 !important;
         }
-        
+
+        html {
+            width: 100%;
+            height: 100%;
+            font-size: 14px;
+            background-color: #f4f6fa;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+
+        input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px white inset;
+        }
+
+        input[type=text]:focus, input[type=password]:focus, textarea:focus {
+            -webkit-box-shadow: 0 0 0 1000px white inset;
+            /*  border: none;*/
+            /*  box-shadow: none;*/
+        }
+
+
+        a {
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+
+            a:hover {
+                color: #333;
+            }
+
+            a:hover, button:hover {
+                opacity: 0.8;
+            }
+
+            a:active, button:active {
+                opacity: 0.7;
+            }
+
         body {
-            font-family: "Microsoft YaHei", -apple-system, system-ui, sans-serif;
-            color: var(--text-color);
-            line-height: 1.6;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .navbar {
-            background-color: var(--primary-color);
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.9) !important;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #fff !important;
-            transform: translateY(-2px);
-        }
-
-        .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('./叶强自动化PLC_files/主页.png');
-            background-size: cover;
-            background-position: center;
-            padding: 150px 0;
-            color: white;
-        }
-
-        .section-title {
+        .div-main {
             position: relative;
-            margin-bottom: 3rem;
-            padding-bottom: 1rem;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background-color: var(--accent-color);
-        }
-
-        .service-card {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        .news-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .news-card:hover {
-            transform: translateX(10px);
-        }
-
-        .product-showcase {
-            position: relative;
+            display: flex;
+            border-radius: 5px;
+            box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
             overflow: hidden;
-            border-radius: 10px;
-            margin-bottom: 2rem;
+            flex-direction: column;
         }
 
-        .product-showcase img {
+
+        .general-content {
+            position: relative;
+            display: flex;
+            background: url('public/loginbg.jpg');
+            background-size: cover;
+            width: 800px;
+            height: 450px;
+        }
+
+        .general-content-left {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .general-content-right {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            padding: 60px 35px 0px 35px;
+        }
+
+        .form-row {
+            display: flex;
             width: 100%;
             height: auto;
-            transition: transform 0.3s ease;
+            position: relative;
         }
 
-        .product-showcase:hover img {
-            transform: scale(1.05);
+        .form-input-border {
+            border: 1px solid #eee;
+            display: flex;
+            width: 100%;
+            border-radius: 5px;
+            margin: 2px 3px;
+            overflow: hidden;
         }
 
-        .footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 4rem 0 2rem;
+        .svg-icon {
+            fill: #adc1cc;
+            margin: 5px;
+            width: 25px;
+            height: 25px;
         }
 
-        .footer a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: color 0.3s ease;
+        .form-input {
+            border: none;
+            vertical-align: middle;
+            width: 100%;
+            font-size: 14px;
+            text-align: left;
         }
 
-        .footer a:hover {
-            color: white;
+        :focus-visible {
+            outline: none;
         }
 
-        .social-links a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
+        input::placeholder, textarea::placeholder {
+            color: #949494;
+        }
+
+        ::-ms-reveal {
+            display: none
+        }
+
+        .btn-password-openclose {
+            background: #ffffffff;
+            border: none;
+            cursor: pointer;
+        }
+
+
+
+        .form-row {
+            margin: 5px 0px;
+        }
+
+        .img-border {
+            width: 150px;
+        }
+
+        .img-verify {
+            width: 100%;
+            cursor: pointer;
+        }
+
+
+        .btn-custorm-primary {
+            width: 100%;
+            padding: 8px 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #198cff;
+            color: #fff;
+            margin: 35px 3px 0px 3px;
+        }
+
+            .btn-custorm-primary:hover {
+                opacity: 0.8;
+            }
+
+            .btn-custorm-primary:active {
+                opacity: 0.7;
+            }
+
+        .tab-border {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 45px;
+        }
+
+            .tab-border input[type="radio"] {
+                display: none;
+            }
+
+            .tab-border label {
+                cursor: pointer;
+                color: #333;
+                margin: 0px 15px;
+                position: relative;
+            }
+
+                .tab-border label:hover {
+                    opacity: 0.8;
+                }
+
+            .tab-border input[type="radio"]:checked + label::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -15px;
+                width: 100%;
+                height: 2px;
+                background-color: #198cff;
+            }
+
+        .btn-qrcode-login, .btn-password-login {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            margin: 3px 0px 0px 3px;
+        }
+
+        .icon-qrcode {
+            width: 50px;
+            height: 50px;
+        }
+
+        .btn-qrcode-login:hover {
+            opacity: 0.8;
+        }
+
+        .btn-redirect {
+            display: block;
+            justify-content: flex-end;
+            color: #949494;
+            margin: 0px 5px 0px 0px;
+            text-align: right;
+            position: absolute;
+            right: 0px;
+        }
+
+
+        .btn-verifyrequest {
+            border: none;
+            width: 130px;
+            border-radius: 5px;
+            margin: 2px 3px;
+            color: #949494;
+        }
+
+            .btn-verifyrequest:hover {
+                opacity: 0.8;
+            }
+
+            .btn-verifyrequest:active {
+                opacity: 0.7;
+            }
+
+        .btn-custorm-primary {
+            margin: 10px 3px 2px 3px;
+        }
+
+        .btn-verifyrequest {
+            width: auto;
+        }
+
+        .verifyrequest-desborder {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .div-des, .div-verifytime {
+            white-space: nowrap;
+        }
+
+        .div-verifytime {
+            margin: 0px 5px 0px 5px;
+        }
+
+
+        .loading {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            position: relative;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .loading-border {
+            display: flex;
+            width: 100%;
+            position: absolute;
+            height: 100%;
+            background-color: #00000008;
+        }
+
+        .progress {
+            width: 100%;
+            position: absolute;
+            justify-content: center;
+            align-items: center;
+            min-height: 2px;
+            left: 0px;
+            top: 0px;
+            right: 0px;
+            border-radius: 0px;
+            height: auto;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #0d6efd;
+            transition: width 0.6s ease;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+
+        .progress-bar-animated {
+            animation: progress-bar-stripes 1s linear infinite;
+        }
+
+        .progress-bar-indeterminate {
+            width: 30%;
+            animation: indeterminate-progress 1.5s ease-in-out infinite;
+        }
+
+        @keyframes progress-bar-stripes {
+            from {
+                background-position: 1rem 0;
+            }
+
+            to {
+                background-position: 0 0;
+            }
+        }
+
+        @keyframes indeterminate-progress {
+            0% {
+                left: -30%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .loading-text {
+            color: #6c757d;
+            font-size: 0.875rem;
+            padding: 2px 0px 2px 0px;
+        }
+
+
+        .icon-loading {
+            width: 30px;
+            height: 30px;
+        }
+
+
+        .circle-rotate-progress-animated {
+            animation: circle-rotate-progress 1.2s linear infinite;
+        }
+
+
+        @keyframes circle-rotate-progress {
+            from {
+                transform-origin: center;
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform-origin: center;
+                transform: rotate(360deg);
+            }
+        }
+
+        .rotate-loading {
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .icon-success {
+            width: 54px;
+            height: 54px;
+        }
+
+        .lable-succes {
+            font-size: calc(1.375rem + 1.5vw);
+        }
+
+        .label-welcome {
+            font-size: calc(1.375rem + 1.5vw);
+        }
+
+        .email-verify-header {
+            font-weight: 600;
+            font-size: 20px;
+            color: #303133;
+            justify-content: center;
+            display: flex;
             text-align: center;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            margin-right: 10px;
-            transition: all 0.3s ease;
+            width: 100%;
+            padding: 0px 0px 0px 5px;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
-        .social-links a:hover {
-            background: var(--accent-color);
-            transform: translateY(-3px);
+        .verify-input-border {
+            display: flex;
+            width: 100%;
+            margin: 30px 0px 24px 0px;
+            padding: 0px 1px 0px 1px;
         }
 
-        .contact-info i {
-            margin-right: 10px;
-            color: var(--accent-color);
+        .verify-input {
+            aspect-ratio: 1;
+            width: 100%;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 500;
+            color: #303133;
+            transition: all 0.3s;
+            outline: none;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 5px;
+        }
+
+        .form-row {
+            width: 100%;
+        }
+
+        .email-info {
+            text-align: center;
+            color: #949494;
+            word-break: break-all;
+            overflow: hidden;
+            display: block;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-text {
+            color: #409eff;
+            font-weight: 500;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .countdown {
+            margin-top: 10px;
+            color: #f56c6c;
+            font-weight: 500;
+        }
+
+        .security-email {
+            margin: 50px 0px 35px 0px;
         }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">叶强自动化PLC</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#home">首页</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">关于我们</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">服务项目</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#products">产品展示</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#news">新闻动态</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">联系我们</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero区域 -->
-    <section id="home" class="hero-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="display-4 mb-4" data-aos="fade-up">专业的工业自动化解决方案</h1>
-                    <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">
-                        致力于非标自动化PLC编程，电气IT物联网技术、AI人工智能大模型应用
-                    </p>
-                    <a href="#contact" class="btn btn-primary btn-lg" data-aos="fade-up" data-aos-delay="200">
-                        立即咨询
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 关于我们 -->
-    <section id="about" class="py-5">
-        <div class="container">
-            <h2 class="text-center section-title" data-aos="fade-up">关于我们</h2>
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <img src="./叶强自动化PLC_files/公司2.png" alt="公司简介" class="img-fluid rounded shadow">
-                </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <h3 class="mb-4">叶强自动化PLC</h3>
-                    <p class="lead">
-                        位于无锡江阴，创始人：叶强（著名抖音工控自媒体博主），公司成立于2023年2月。
-                    </p>
-                    <p>
-                        我们专注于：
-                    </p>
-                    <ul class="list-unstyled">
-                        <li><i class="bi bi-check-circle-fill text-primary"></i> 非标自动化PLC编程</li>
-                        <li><i class="bi bi-check-circle-fill text-primary"></i> 电气IT物联网技术</li>
-                        <li><i class="bi bi-check-circle-fill text-primary"></i> AI人工智能大模型应用</li>
-                        <li><i class="bi bi-check-circle-fill text-primary"></i> 西门子、汇川PLC技术支持</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 服务项目 -->
-    <section id="services" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center section-title" data-aos="fade-up">服务项目</h2>
-            <div class="row">
-                <div class="col-lg-4" data-aos="fade-up">
-                    <div class="service-card">
-                        <i class="bi bi-cpu fs-1 text-primary mb-4"></i>
-                        <h4>PLC编程</h4>
-                        <p>专业的西门子、汇川PLC编程服务，提供完整的自动化控制解决方案。</p>
-                    </div>
-                </div>
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-card">
-                        <i class="bi bi-diagram-3 fs-1 text-primary mb-4"></i>
-                        <h4>物联网技术</h4>
-                        <p>工业物联网解决方案，实现设备互联互通和智能化管理。</p>
-                    </div>
-                </div>
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-card">
-                        <i class="bi bi-robot fs-1 text-primary mb-4"></i>
-                        <h4>AI应用</h4>
-                        <p>人工智能技术在工业自动化中的创新应用，提升生产效率。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 产品展示 -->
-    <section id="products" class="py-5">
-        <div class="container">
-            <h2 class="text-center section-title" data-aos="fade-up">产品展示</h2>
-            <div class="row">
-                <div class="col-md-3" data-aos="fade-up">
-                    <div class="product-showcase">
-                        <img src="./叶强自动化PLC_files/入门转盘机.png" alt="入门转盘机" class="img-fluid">
-                        <div class="p-3">
-                            <h5>入门转盘机</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
-                    <div class="product-showcase">
-                        <img src="./叶强自动化PLC_files/点焊机.png" alt="耳带点焊机" class="img-fluid">
-                        <div class="p-3">
-                            <h5>耳带点焊机</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-                    <div class="product-showcase">
-                        <img src="./叶强自动化PLC_files/五轴移栽机械手.png" alt="五轴移栽机械手" class="img-fluid">
-                        <div class="p-3">
-                            <h5>五轴移栽机械手</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
-                    <div class="product-showcase">
-                        <img src="./叶强自动化PLC_files/工业机器人.png" alt="工业机器人" class="img-fluid">
-                        <div class="p-3">
-                            <h5>工业机器人</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 新闻动态 -->
-    <section id="news" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center section-title" data-aos="fade-up">新闻动态</h2>
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <div class="news-card" data-aos="fade-up">
-                        <h5>叶强亲手开发的网站，参考新阁模板</h5>
-                        <p class="text-muted">2025-05-07</p>
-                    </div>
-                    <div class="news-card" data-aos="fade-up" data-aos-delay="100">
-                        <h5>IT尊师新阁常老师</h5>
-                        <p class="text-muted">2025-05-07</p>
-                    </div>
-                    <div class="news-card" data-aos="fade-up" data-aos-delay="200">
-                        <h5>叶强PLC，主西门子、汇川</h5>
-                        <p class="text-muted">2025-05-07</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 联系我们 -->
-    <section id="contact" class="py-5">
-        <div class="container">
-            <h2 class="text-center section-title" data-aos="fade-up">联系我们</h2>
-            <div class="row">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <div class="contact-info">
-                        <h4 class="mb-4">联系方式</h4>
-                        <p><i class="bi bi-geo-alt"></i> 地址：无锡江阴</p>
-                        <p><i class="bi bi-envelope"></i> 邮箱：contact@yeqiangplc.com</p>
-                        <div class="social-links mt-4">
-                            <h5 class="mb-3">关注我们</h5>
-                            <a href="#" title="抖音"><i class="bi bi-tiktok"></i></a>
-                            <a href="#" title="B站"><i class="bi bi-play-circle"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <form class="contact-form">
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="您的姓名">
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="您的邮箱">
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="5" placeholder="您的留言"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">发送留言</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4">
-                    <h5>关于我们</h5>
-                    <p>叶强自动化PLC致力于为客户提供专业的工业自动化解决方案。</p>
-                </div>
-                <div class="col-lg-4">
-                    <h5>快速链接</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#about">关于我们</a></li>
-                        <li><a href="#services">服务项目</a></li>
-                        <li><a href="#products">产品展示</a></li>
-                        <li><a href="#news">新闻动态</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <h5>关注我们</h5>
-                    <p>抖音号：叶强PLC</p>
-                    <p>B站：叶强PLC</p>
-                </div>
-            </div>
-            <hr class="mt-4">
-            <div class="text-center">
-                <p>Copyright © 2025 江阴叶强自动化科技有限公司 版权所有</p>
-                <p><a href="https://beian.miit.gov.cn/" target="_blank">苏ICP备2025178841号</a></p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script>
-        // 初始化AOS动画
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
-        
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-    </script>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

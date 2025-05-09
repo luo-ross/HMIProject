@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,9 +45,15 @@ namespace RS.Commons.Extensions
             return AppHost.Services.GetService<TResult>();
         }
 
-        public static HttpClient GetHttpClient(string clientName)
+        public static HttpClient GetHttpClient(string clientName,string token)
         {
-            return GetService<IHttpClientFactory>().CreateClient(clientName);
+            var httpClient = GetService<IHttpClientFactory>().CreateClient(clientName);
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
+            }
+            return httpClient;
         }
+      
     }
 }

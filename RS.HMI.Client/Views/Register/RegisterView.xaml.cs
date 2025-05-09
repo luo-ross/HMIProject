@@ -32,7 +32,7 @@ namespace RS.HMI.Client.Views
     /// <summary>
     /// 采用依赖注入使用的时候获取服务
     /// </summary>
-    [ServiceInjectConfig(ServiceLifetime.Scoped)]
+    [ServiceInjectConfig(ServiceLifetime.Transient)]
     public partial class RegisterView : RSUserControl
     {
         private readonly IGeneralBLL GeneralBLL;
@@ -47,6 +47,9 @@ namespace RS.HMI.Client.Views
         #endregion
 
 
+        /// <summary>
+        /// 依赖注入 构造函数
+        /// </summary>
         public RegisterView(IGeneralBLL generalBLL, ICryptographyBLL cryptographyBLL)
         {
             InitializeComponent();
@@ -63,8 +66,10 @@ namespace RS.HMI.Client.Views
             VerifyCodeInputList.Add(this.TxtVerifyCode5);
         }
 
-  
 
+        /// <summary>
+        /// 注册下一步事件
+        /// </summary>
         private async void BtnSignUpNext_Click(object sender, RoutedEventArgs e)
         {
             //注册信息验证
@@ -90,7 +95,7 @@ namespace RS.HMI.Client.Views
                 emailRegisterPostModel.Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.SignUpModel.PasswordConfirm);
 
                 //获取邮箱验证码结果
-                var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(nameof(RSAppAPI), emailRegisterPostModel);
+                var getEmailVerifyResult = await RSAppAPI.Register.GetEmailVerify.AESHttpPostAsync<EmailRegisterPostModel, RegisterVerifyModel>(emailRegisterPostModel, nameof(RSAppAPI));
 
                 if (!getEmailVerifyResult.IsSuccess)
                 {
@@ -107,7 +112,7 @@ namespace RS.HMI.Client.Views
                 return;
             }
 
-           this. RegisterVerifyModel = operateResult.Data;
+            this.RegisterVerifyModel = operateResult.Data;
 
             var expireTime = this.RegisterVerifyModel.ExpireTime.FromUnixTimeStamp();
 
@@ -127,6 +132,10 @@ namespace RS.HMI.Client.Views
                     this.Dispatcher.Invoke(() =>
                     {
                         this.PART_EmailVerify.Visibility = Visibility.Collapsed;
+                        foreach (var item in VerifyCodeInputList)
+                        {
+                            item.Text = null;
+                        }
                     });
                     this.DispatcherTimer.Stop();
                 }
@@ -160,7 +169,7 @@ namespace RS.HMI.Client.Views
             var textList = VerifyCodeInputList.Select(t => t.Text).ToList();
             var verify = string.Join("", textList);
 
-            if (verify.Length!=6)
+            if (verify.Length != 6)
             {
                 this.TryFindParent<RSWindow>()?.ShowInfoAsync("验证码验证失败！", InfoType.Warning);
                 return;
@@ -180,10 +189,10 @@ namespace RS.HMI.Client.Views
                 var registerVerifyValidModel = new RegisterVerifyValidModel();
                 registerVerifyValidModel.RegisterSessionId = this.RegisterVerifyModel.RegisterSessionId;
                 registerVerifyValidModel.Verify = verify;
-               
-               
+
+
                 //获取邮箱验证码结果
-                var emailVerifyValidResult = await RSAppAPI.Register.EmailVerifyValid.AESHttpPostAsync<RegisterVerifyValidModel, OperateResult>(nameof(RSAppAPI), registerVerifyValidModel);
+                var emailVerifyValidResult = await RSAppAPI.Register.EmailVerifyValid.AESHttpPostAsync<RegisterVerifyValidModel>(registerVerifyValidModel, nameof(RSAppAPI), RegisterVerifyModel.Token);
 
                 if (!emailVerifyValidResult.IsSuccess)
                 {
@@ -199,8 +208,14 @@ namespace RS.HMI.Client.Views
                 this.TryFindParent<RSWindow>()?.ShowInfoAsync(operateResult.Message, InfoType.Warning);
                 return;
             }
+
+            //如果注册成功 跳转到注册成功页面
+            this.PART_RegisterSuccess.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// 验证码输入框值变化事件
+        /// </summary>
         private void TxtVerifyCode_TextChanged(object sender, TextChangedEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -211,6 +226,9 @@ namespace RS.HMI.Client.Views
             }
         }
 
+        /// <summary>
+        /// 验证码输入框键盘按下事件
+        /// </summary>
         private void TxtVerifyCode_KeyDown(object sender, KeyEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -247,6 +265,9 @@ namespace RS.HMI.Client.Views
             }
         }
 
+        /// <summary>
+        /// 返回按钮事件
+        /// </summary>
         private void BtnReturn_Click(object sender, RoutedEventArgs e)
         {
             //停止定时器
@@ -262,7 +283,7 @@ namespace RS.HMI.Client.Views
                 item.Text = null;
             }
 
-            
+
             if (this.PART_EmailVerify.Visibility == Visibility.Visible)
             {
                 this.PART_EmailVerify.Visibility = Visibility.Collapsed;
@@ -279,6 +300,11 @@ namespace RS.HMI.Client.Views
         }
         #endregion
 
+        private void BtnReturnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            this.Visibility = Visibility.Collapsed;
+            this.OnBtnReturnClick?.Invoke();
+        }
     }
 
 

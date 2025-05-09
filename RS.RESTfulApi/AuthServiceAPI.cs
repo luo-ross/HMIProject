@@ -67,6 +67,8 @@ namespace RS.RESTfulApi
         /// </summary>
         public static class Security
         {
+            public static readonly string PasswordResetEmailSend = $"/Api/{ApiVersion}/Security/PasswordResetEmailSend";
+
             public static readonly string ValidLogin = $"/Api/{ApiVersion}/Security/ValidLogin";
 
             public static readonly string GetImgVerifyModel = $"/Api/{ApiVersion}/Security/GetImgVerifyModel";

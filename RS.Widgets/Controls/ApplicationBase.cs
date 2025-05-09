@@ -251,7 +251,7 @@ namespace RS.Widgets.Controls
             sessionRequestModel.MsgSignature = rsaSignDataResult.Data;
 
             //往服务端发送数据 并获取回传数据
-            var aesEncryptModelResult = await RSAppAPI.General.GetSessionModel.HttpPostAsync<SessionRequestModel, SessionResultModel>(nameof(RSAppAPI), sessionRequestModel);
+            var aesEncryptModelResult = await RSAppAPI.General.GetSessionModel.HttpPostAsync<SessionRequestModel, SessionResultModel>(sessionRequestModel, nameof(RSAppAPI));
             if (!aesEncryptModelResult.IsSuccess)
             {
                 return aesEncryptModelResult;

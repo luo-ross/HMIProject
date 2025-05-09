@@ -162,11 +162,11 @@ namespace RS.Annotation.Views
             {
                 //this.SetLoadingText("正在登录中...");
                 //验证用户登录
-                var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(nameof(RSAppAPI), new LoginValidModel()
+                var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(new LoginValidModel()
                 {
                     UserName = this.ViewModel.PasswordLoginModel.UserName,
                     Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.PasswordLoginModel.Password),
-                });
+                }, nameof(RSAppAPI));
 
                 return validLoginResult;
             });

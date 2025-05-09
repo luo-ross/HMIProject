@@ -4,6 +4,10 @@ using OpenCvSharp;
 using OpenCvSharp.Internal.Vectors;
 using System.Diagnostics;
 using System.Xml.Schema;
+using ZXing.Common;
+using ZXing;
+using ZXing.QrCode;
+using static ZXing.Rendering.SvgRenderer;
 
 namespace RS.HMI.Test
 {
@@ -23,6 +27,150 @@ namespace RS.HMI.Test
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// 使用Zxing结合Opencv 批量识别条码并检测位置
+        /// </summary>
+        [TestMethod]
+        public void BarcodeRecognitionTest()
+        {
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            string filePath = @"D:\Users\Administrator\Desktop\QQ20250510-000917.png";
+            var imgMat = Cv2.ImRead(filePath);
+
+            Mat grayMat = new Mat();
+            Cv2.CvtColor(imgMat, grayMat, ColorConversionCodes.BGR2GRAY);
+
+            Mat thresholdMat = new Mat();
+            Cv2.Threshold(grayMat, thresholdMat,127, 255, ThresholdTypes.BinaryInv);
+            //Cv2.ImShow("123", thresholdMat);
+            //Cv2.WaitKey(0);
+
+
+            //Mat medianBlurMat = new Mat();
+            //Cv2.MedianBlur(thresholdMat, medianBlurMat, 7);
+            //Cv2.ImShow("123", medianBlurMat);
+            //Cv2.WaitKey(0);
+
+
+            Mat kernelRect = Cv2.GetStructuringElement(
+                MorphShapes.Rect,
+                new Size(6, 6));
+            //Mat dilateMat = new Mat();
+            //Cv2.Dilate(thresholdMat, dilateMat, kernelRect, iterations: 2);
+            //Cv2.ImShow("123", dilateMat);
+            //Cv2.WaitKey(0);
+
+            Mat erodeMat = new Mat();
+            Cv2.Dilate(thresholdMat, erodeMat, kernelRect, iterations: 2);
+            Cv2.Erode(erodeMat, erodeMat, kernelRect, iterations: 2);
+            //Cv2.ImShow("123", erodeMat);
+            //Cv2.WaitKey(0);
+
+            // 查找轮廓
+            Cv2.FindContours(
+                erodeMat,
+                out OpenCvSharp.Point[][] contours,
+                out HierarchyIndex[] hierarchy,
+                RetrievalModes.Tree,
+                ContourApproximationModes.ApproxSimple
+            );
+
+
+            Mat mask = new Mat(erodeMat.Rows, erodeMat.Cols, MatType.CV_8UC1, new Scalar(0));
+          
+           
+
+
+            List<Point[]> points = new List<Point[]>();
+            foreach (var item in contours)
+            {
+                var area = Cv2.ContourArea(item);
+                if (area > 5000)
+                {
+                    points.Add(item);
+                }
+            }
+
+            // 绘制所有轮廓
+            Cv2.DrawContours(mask, points.ToArray(), -1, new Scalar(255, 255, 255), -1);
+            Cv2.Dilate(mask, mask, kernelRect, iterations: 2);
+
+            // 查找轮廓
+            Cv2.FindContours(
+                mask,
+                out contours,
+                out hierarchy,
+                RetrievalModes.Tree,
+                ContourApproximationModes.ApproxSimple
+            );
+
+
+
+            List<Rect> rects = new List<Rect>();
+
+            foreach (var item in contours)
+            {
+                Rect boundingRect = Cv2.BoundingRect(item);
+                boundingRect.X = boundingRect.X - 10;
+                boundingRect.Y = boundingRect.Y - 10;
+                boundingRect.Width = boundingRect.Width + 10;
+                boundingRect.Height = boundingRect.Height + 10;
+                if (boundingRect.X<0 
+                    || boundingRect.Y<0
+                    || boundingRect.Width>= 600
+                    || boundingRect.Height>= 250
+                    )
+                {
+                    continue;
+                }
+                rects.Add(boundingRect);
+                //Cv2.Rectangle(imgMat, boundingRect, new Scalar(255, 0, 0), 2);
+                //Cv2.ImShow("123", imgMat);
+                //Cv2.WaitKey(0);
+            }
+
+            List<Mat> matList = new List<Mat>();
+            foreach (var item in rects)
+            {
+                var itemClone = imgMat.Clone(item);
+                matList.Add(itemClone);
+            }
+            var reader = new BarcodeReaderImage();
+            foreach (var item in matList)
+            {
+                var result = reader.Decode(item);
+                if (result==null)
+                {
+                    continue;
+                }
+                var index = matList.IndexOf(item);
+                var rect = rects[index];
+                Cv2.Rectangle(imgMat, rect, new Scalar(255, 0, 0), 2);
+                Point textPosition = new Point(
+              rect.X +2,  
+              rect.Y +2                
+          );
+
+                // 绘制面积文本
+                Cv2.PutText(
+                    imgMat,
+                    $"result: {result.Text}",
+                    textPosition,
+                    HersheyFonts.HersheySimplex,
+                    0.7,           // 字体大小
+                    new Scalar(255, 0, 0),  // 蓝色文本
+                    1              // 线宽
+                );
+                //Debug.WriteLine(result.Text);
+                //Debug.WriteLine(result.BarcodeFormat.ToString());
+            }
+            Debug.WriteLine($"{sw.ElapsedMilliseconds}");
+            Cv2.ImShow("123", imgMat);
+            Cv2.WaitKey(0);
+
+        }
 
         public string Test(string s, int len)
         {
