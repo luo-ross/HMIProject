@@ -47,12 +47,10 @@ namespace RS.HMI.Test
             //Cv2.ImShow("123", thresholdMat);
             //Cv2.WaitKey(0);
 
-
             //Mat medianBlurMat = new Mat();
             //Cv2.MedianBlur(thresholdMat, medianBlurMat, 7);
             //Cv2.ImShow("123", medianBlurMat);
             //Cv2.WaitKey(0);
-
 
             Mat kernelRect = Cv2.GetStructuringElement(
                 MorphShapes.Rect,
@@ -77,11 +75,7 @@ namespace RS.HMI.Test
                 ContourApproximationModes.ApproxSimple
             );
 
-
             Mat mask = new Mat(erodeMat.Rows, erodeMat.Cols, MatType.CV_8UC1, new Scalar(0));
-          
-           
-
 
             List<Point[]> points = new List<Point[]>();
             foreach (var item in contours)
@@ -105,8 +99,6 @@ namespace RS.HMI.Test
                 RetrievalModes.Tree,
                 ContourApproximationModes.ApproxSimple
             );
-
-
 
             List<Rect> rects = new List<Rect>();
 
