@@ -68,7 +68,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
       return;
     }
     //在这里发起注册事件
-    const verifyValidResult = await this.LoadingEvents.SimpleLoadingActionAsync(async () => {
+    const verifyValidResult = await this.LoadingEvents.value?.SimpleLoadingActionAsync(async () => {
       const registerVerifyValidModel = new RegisterVerifyValidModel();
       registerVerifyValidModel.RegisterSessionId = this.EmailVerifyModel.RegisterSessionId;
       registerVerifyValidModel.Verify = this.EmailVerifyModel.Verify;
@@ -76,8 +76,8 @@ export class EmailVerifyViewModel extends ViewModelBase {
     });
 
     //验证结果
-    if (!verifyValidResult.IsSuccess) {
-      this.MessageEvents?.ShowWarningMsg(verifyValidResult.Message);
+    if (verifyValidResult != null && !verifyValidResult.IsSuccess) {
+      this.MessageEvents.value?.ShowWarningMsg(verifyValidResult.Message);
       return;
     }
 
@@ -115,7 +115,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
       if (!this.EmailVerifyModel.VerifyList[i]) {
         // 如果发现空输入框，设置焦点并显示提示
         this.EmailVerifyModel.InputList[i]?.focus();
-        this.MessageEvents?.ShowWarningMsg('请输入完整的验证码');
+        this.MessageEvents.value?.ShowWarningMsg('请输入完整的验证码');
         return false;
       }
     }
@@ -123,7 +123,7 @@ export class EmailVerifyViewModel extends ViewModelBase {
     // 所有输入框都有值，继续处理验证逻辑
     this.EmailVerifyModel.Verify = this.EmailVerifyModel.VerifyList.join('');
     if (this.EmailVerifyModel.Verify.length != 6) {
-      this.MessageEvents?.ShowWarningMsg('请输入完整的验证码');
+      this.MessageEvents.value?.ShowWarningMsg('请输入完整的验证码');
       return false;
     }
 

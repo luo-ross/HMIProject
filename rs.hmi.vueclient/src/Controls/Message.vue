@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import IMessageEvents from '../Interfaces/IMessageEvents'
+  import type { IMessageEvents } from '../Interfaces/IMessageEvents'
   import { MessageEnum } from '../Commons/Enums/MessageEnum'
 
   const Message = defineModel('Message');
@@ -124,7 +124,7 @@
   /**
    * 显示消息
    */
-  function ShowMsg(type: MessageType, msg: string| null): void {
+  function ShowMsg(type: MessageEnum, msg: string| null): void {
     ClearMsg();
     Message.value = msg;
     MessageType.value = type;

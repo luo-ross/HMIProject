@@ -1,10 +1,10 @@
 <template>
   <div class="div-main">
-    <Message :ref="events => ViewModel.MessageEvents= events"></Message>
+    <Message :ref="ViewModel.MessageEvents"></Message>
     <div class="general-content">
       <div class="general-content-left img">
       </div>
-      <Loading LoadingType="ProgressBar" :ref="events => ViewModel.LoadingEvents= events">
+      <Loading LoadingType="ProgressBar" :ref="ViewModel.LoadingEvents">
         <div class="general-content-right">
           <a class="btn-qrcode-login" href="/Login/QRCode?ClientId=@clientId&Timestamp=@timeStamp">
             <svg t="1743521881584" class="icon-qrcode" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9539" width="64" height="64">
@@ -28,18 +28,18 @@
 
 
           <Email Placeholder="请输入邮箱"
-                 v-model:Email="ViewModel.LoginModel.Email"
-                 :ref="events => ViewModel.EmailEvents= events" />
+                 v-model:Email="ViewModel.LoginModel.value.Email"
+                 :ref="ViewModel.EmailEvents" />
 
 
           <Password Placeholder="请输入密码"
-                    v-model:Password="ViewModel.LoginModel.Password"
-                    :ref="events => ViewModel.PasswordEvents= events" />
+                    v-model:Password="ViewModel.LoginModel.value.Password"
+                    :ref="ViewModel.PasswordEvents" />
 
           <ImgVerify
-                     :ref="events => ViewModel.ImgVerifyEvents= events"
-                     v-model:LoadingEvents="ViewModel.LoadingEvents"
-                     v-model:MessageEvents="ViewModel.MessageEvents"
+                     :ref="ViewModel.ImgVerifyEvents"
+                     v-model:LoadingEvents="ViewModel.LoadingEvents.value"
+                     v-model:MessageEvents="ViewModel.MessageEvents.value"
                      :OnBtnSliderMousedown="ViewModel.OnBtnSliderMousedown">
           </ImgVerify>
 
@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed } from 'vue'
+  import { ref, watch, computed, onMounted } from 'vue'
   import Message from '../../Controls/Message.vue'
   import Email from '../../Controls/Email.vue'
   import Password from '../../Controls/Password.vue'
@@ -73,13 +73,15 @@
   import { LoginViewModel } from './LoginViewModel'
   const ViewModel = new LoginViewModel()
 
-  //// 判断是否都已输入
-  //const canShowCaptcha = computed(() => {
-  //  return ViewModel.LoginModel.Email != null
-  //    && ViewModel.LoginModel.Password != null
-  //    && ViewModel.LoginModel.Email?.trim() !== ''
-  //    && ViewModel.LoginModel.Password?.trim() !== '';
-  //});
+  // 判断是否都已输入
+  const canShowCaptcha = computed(() => {
+    //return ViewModel.LoginModel.value.Email != null
+    //  && ViewModel.LoginModel.value.Password != null
+    //  && ViewModel.LoginModel.value.Email?.trim() !== ''
+    //  && ViewModel.LoginModel.value.Password?.trim() !== '';
+  });
+
+ 
 </script>
 
 

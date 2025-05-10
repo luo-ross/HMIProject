@@ -15,24 +15,46 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import { IInputEvents } from '../Interfaces/IInputEvents'
-  const Email = defineModel('Email', {
+  import type { IInputEvents } from '../Interfaces/IInputEvents'
+  const Email = defineModel<string | null>('Email', {
     type: String,
+    default: null
   });
   const Placeholder = defineModel('Placeholder', {
     type: String,
     default: '请输入邮箱'
   });
   // 创建输入框的引用
-  const EmailElement = ref<HTMLInputElement | null>(null);
+  const EmailElement = ref<HTMLInputElement>();
   // 添加获取焦点的方法
   const Focus = () => {
     if (EmailElement.value) {
       EmailElement.value.focus();
     }
-  };
+  }
+
+  function Blur() {
+    if (EmailElement.value) {
+      EmailElement.value.blur();
+    }
+  }
+
+  function Clear() {
+    if (EmailElement.value) {
+      EmailElement.value.value = '';
+      Email.value = '';
+    }
+  }
+
+  function Validate(): boolean {
+    // 这里可以添加密码验证逻辑
+    return true;
+  }
   // 暴露方法给父组件
   defineExpose<IInputEvents>({
-    Focus
+    Focus,
+    Blur,
+    Clear,
+    Validate,
   });
 </script>

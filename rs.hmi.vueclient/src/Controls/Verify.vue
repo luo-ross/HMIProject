@@ -37,10 +37,33 @@
     }
   }
 
+
+  function Blur() {
+    if (VerifyElement.value) {
+      VerifyElement.value.blur();
+    }
+  }
+
+  function Clear() {
+    if (VerifyElement.value) {
+      VerifyElement.value.value = '';
+      Verify.value = '';
+    }
+  }
+
+  function Validate(): boolean {
+    // 这里可以添加密码验证逻辑
+    return true;
+  }
   // 暴露方法给父组件
   defineExpose<IInputEvents>({
-    Focus
+    Focus,
+    Blur,
+    Clear,
+    Validate,
   });
+
+  
 </script>
 
 

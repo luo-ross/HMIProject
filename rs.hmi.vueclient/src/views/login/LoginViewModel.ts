@@ -9,23 +9,23 @@ import { SimpleOperateResult } from '../../Commons/OperateResult/OperateResult';
 import { LoginResultModel } from '../../Models/WebAPI/LoginResultModel';
 
 export class LoginViewModel extends ViewModelBase {
-  private loginModel = ref<LoginModel>(new LoginModel());
+  public LoginModel = ref<LoginModel>(new LoginModel());
 
   // 定义ref引用
-  public EmailEvents: IInputEvents | null = null;
-  public PasswordEvents: IInputEvents | null = null;
-  public ImgVerifyEvents: IImgVerifyEvents | null = null;
+  public EmailEvents = ref<IInputEvents>(); 
+  public PasswordEvents= ref<IInputEvents>();
+  public ImgVerifyEvents = ref<IImgVerifyEvents>();  
   constructor() {
     super();
   }
 
-  public get LoginModel(): LoginModel {
-    return this.loginModel.value;
-  }
+  //public get LoginModel(): LoginModel {
+  //  return this.loginModel.value;
+  //}
 
-  public set LoginModel(viewModel: LoginModel) {
-    this.loginModel.value = viewModel;
-  }
+  //public set LoginModel(viewModel: LoginModel) {
+  //  this.loginModel.value = viewModel;
+  //}
 
   public HandleRegister(): void {
     this.RouterUtil.Push('/Register')
@@ -43,16 +43,19 @@ export class LoginViewModel extends ViewModelBase {
     }
 
     //获取验证码信息
-    const getImgVerifyResult = await this.ImgVerifyEvents.GetImgVerifyResultAsync();
-    if (!getImgVerifyResult.IsSuccess) {
-      this.MessageEvents?.ShowDangerMsg(getImgVerifyResult.Message);
+    const getImgVerifyResult = await this.ImgVerifyEvents.value?.GetImgVerifyResultAsync();
+    if (getImgVerifyResult!=null&&!getImgVerifyResult.IsSuccess) {
+      this.MessageEvents.value?.ShowDangerMsg(getImgVerifyResult.Message);
     }
-    this.LoginModel.ImgVerifyResult = getImgVerifyResult.Data;
-    if (this.LoginModel.ImgVerifyResult == null
-      || this.LoginModel.ImgVerifyResult.Verify == null
-      || this.LoginModel.ImgVerifyResult.VerifySessionId == null
+    if (getImgVerifyResult!=null) {
+      this.LoginModel.value.ImgVerifyResult = getImgVerifyResult.Data;
+    }
+
+    if (this.LoginModel.value.ImgVerifyResult == null
+      || this.LoginModel.value.ImgVerifyResult.Verify == null
+      || this.LoginModel.value.ImgVerifyResult.VerifySessionId == null
     ) {
-      this.MessageEvents?.ShowDangerMsg("未获取到验证码");
+      this.MessageEvents.value?.ShowDangerMsg("未获取到验证码");
       return;
     }
 
@@ -62,22 +65,22 @@ export class LoginViewModel extends ViewModelBase {
     }
 
     //进行登录
-    const loginResult = await this.LoadingEvents.SimpleLoadingActionAsync(async () => {
+    const loginResult = await this.LoadingEvents.value?.SimpleLoadingActionAsync(async () => {
 
       const loginValidModel = new LoginValidModel();
-      loginValidModel.UserName = this.LoginModel.Email;
+      loginValidModel.UserName = this.LoginModel.value.Email;
 
-      const getSHA256HashCodeResult = await this.Cryptography.GetSHA256HashCode(this.LoginModel.Password);
+      const getSHA256HashCodeResult = await this.Cryptography.GetSHA256HashCode(this.LoginModel.value.Password);
       if (!getSHA256HashCodeResult.IsSuccess) {
         return getSHA256HashCodeResult;
       }
-      if (this.LoginModel.ImgVerifyResult == null) {
+      if (this.LoginModel.value.ImgVerifyResult == null) {
         return SimpleOperateResult.CreateFailResult("未获取到验证码");
       }
 
       loginValidModel.Password = getSHA256HashCodeResult.Data;
-      loginValidModel.VerifySessionId = this.LoginModel.ImgVerifyResult.VerifySessionId;
-      loginValidModel.Verify = this.LoginModel.ImgVerifyResult.Verify;
+      loginValidModel.VerifySessionId = this.LoginModel.value.ImgVerifyResult.VerifySessionId;
+      loginValidModel.Verify = this.LoginModel.value.ImgVerifyResult.Verify;
 
       const getloginResult = await this.AxiosUtil.AESEnAndDecryptPost<LoginValidModel, LoginResultModel>('/api/v1/Security/ValidLogin', loginValidModel, LoginResultModel);
       if (!getloginResult.IsSuccess) {
@@ -97,8 +100,8 @@ export class LoginViewModel extends ViewModelBase {
       return SimpleOperateResult.CreateSuccessResult();
     });
 
-    if (!loginResult.IsSuccess) {
-      this.MessageEvents?.ShowDangerMsg(loginResult.Message);
+    if (loginResult!=null&&!loginResult.IsSuccess) {
+      this.MessageEvents.value?.ShowDangerMsg(loginResult.Message);
       return;
     }
 
@@ -106,29 +109,29 @@ export class LoginViewModel extends ViewModelBase {
   }
 
   public override  ValidateForm(): boolean {
-    const email = this.LoginModel.Email;
-    const password = this.LoginModel.Password;
+    const email = this.LoginModel.value.Email;
+    const password = this.LoginModel.value.Password;
 
     if (!email) {
-      this.MessageEvents?.ShowWarningMsg('邮箱不能为空');
-      this.EmailEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('邮箱不能为空');
+      this.EmailEvents.value?.Focus();
       return false;
     }
     if (!ValidHelper.IsEmail(email)) {
-      this.MessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
-      this.EmailEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('邮箱输入格式不正确');
+      this.EmailEvents.value?.Focus();
       return false;
     }
 
     if (!password) {
-      this.MessageEvents?.ShowWarningMsg('密码不能为空');
-      this.PasswordEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('密码不能为空');
+      this.PasswordEvents.value?.Focus();
       return false;
     }
 
     if (password.length < 8) {
-      this.MessageEvents?.ShowWarningMsg('密码长度至少8位');
-      this.PasswordEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('密码长度至少8位');
+      this.PasswordEvents.value?.Focus();
       return false;
     }
 

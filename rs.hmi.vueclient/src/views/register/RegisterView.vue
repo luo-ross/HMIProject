@@ -2,12 +2,12 @@
 <template>
 
   <div class="div-main">
-    <Message :ref="events => ViewModel.MessageEvents= events"></Message>
+    <Message :ref="ViewModel.MessageEvents"></Message>
    
     <div class="general-content">
       <div class="general-content-left img">
       </div>
-      <Loading LoadingType="Rotate" :ref="events => ViewModel.LoadingEvents= events">
+      <Loading LoadingType="Rotate" :ref="ViewModel.LoadingEvents">
         <div class="general-content-right">
           <div class="tab-border">
             <input type="radio" id="radio-login" name="tab" value="radio-login">
@@ -19,15 +19,15 @@
 
           <Email Placeholder="请输入邮箱"
                    v-model:Email="ViewModel.RegisterModel.Email"
-                   :ref="events => ViewModel.EmailEvents= events" />
+                   :ref="ViewModel.EmailEvents" />
 
           <Password Placeholder="请输入密码"
                       v-model:Password="ViewModel.RegisterModel.Password"
-                      :ref="events => ViewModel.PasswordEvents= events" />
+                      :ref="ViewModel.PasswordEvents" />
 
           <Password Placeholder="请确认密码"
                       v-model:Password="ViewModel.RegisterModel.PasswordConfirm"
-                      :ref="events => ViewModel.PasswordConfirmEvents= events" />
+                      :ref="ViewModel.PasswordConfirmEvents" />
 
           <div class="form-row">
             <button type="button" class="btn-custorm-primary" @click="ViewModel.RegisterNextCommand.Execute()">下一步</button>

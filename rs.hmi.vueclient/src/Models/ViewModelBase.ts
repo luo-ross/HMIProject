@@ -4,24 +4,25 @@ import { ref } from 'vue';
 import { ModelBase } from './ModelBase';
 
 export abstract class ViewModelBase extends ModelBase {
-  private _LoadingEvents = ref<ILoadingEvents | null>(null);
-  private _MessageEvents = ref<IMessageEvents | null>(null);
+  public LoadingEvents = ref<ILoadingEvents | null>(null);
+  public MessageEvents = ref<IMessageEvents | null>(null);
+ 
 
   constructor() {
     super();
   }
 
-  public get LoadingEvents(): ILoadingEvents | null{
-    return this._LoadingEvents.value
-  }
-  public set LoadingEvents(value: ILoadingEvents | null) {
-    this._LoadingEvents.value = value;
-  }
+  //public get LoadingEvents(): ILoadingEvents | null{
+  //  return this._LoadingEvents.value
+  //}
+  //public set LoadingEvents(value: ILoadingEvents | null) {
+  //  this._LoadingEvents.value = value;
+  //}
 
-  public get MessageEvents(): IMessageEvents | null {
-    return this._MessageEvents.value
-  }
-  public set MessageEvents(value: IMessageEvents | null) {
-    this._MessageEvents.value = value;
-  }
+  //public get MessageEvents(): IMessageEvents | null {
+  //  return this._MessageEvents.value
+  //}
+  //public set MessageEvents(value: IMessageEvents | null) {
+  //  this._MessageEvents.value = value;
+  //}
 }

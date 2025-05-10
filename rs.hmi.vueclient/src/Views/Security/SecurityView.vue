@@ -2,17 +2,17 @@
 
 <template>
   <div class="div-main">
-    <Message :ref="events => ViewModel.MessageEvents= events"></Message>
+    <Message :ref="ViewModel.MessageEvents"></Message>
     <div class="general-content">
       <div class="general-content-left img">
       </div>
-      <Loading LoadingType="ProgressBar" :ref="events => ViewModel.LoadingEvents= events">
+      <Loading LoadingType="ProgressBar" :ref="ViewModel.LoadingEvents">
         <div v-if="!ViewModel.SecurityModel.IsEmailSendSuccucess" class="general-content-right">
           <h2 class="text-2xl font-bold text-gray-700 mb-4 mt-4 text-center">通过邮箱找回密码</h2>
           <Email Placeholder="请输入邮箱"
                    class="security-email"
                    v-model:Email="ViewModel.SecurityModel.Email"
-                   :ref="events => ViewModel.EmailEvents= events" />
+                   :ref="ViewModel.EmailEvents" />
 
           <div class="form-row">
             <button type="button" class="btn-custorm-primary mt-4" @click="ViewModel.HandSendEmailPasswordReset">发送重置邮件</button>

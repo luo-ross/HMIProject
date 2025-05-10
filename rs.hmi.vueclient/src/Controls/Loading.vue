@@ -1,4 +1,3 @@
-
 <template>
   <div class="loading">
     <slot></slot>
@@ -22,7 +21,7 @@
         </div>
 
         <div v-if="IsShowText" class="loading-text">
-          {{ text || '加载中...' }}
+          {{ LoadingText  }}
         </div>
       </div>
     </div>
@@ -36,9 +35,9 @@
 
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
-  import { Func } from '../Events/Func'
-  import { ILoadingEvents } from '../Interfaces/ILoadingEvents'
-  import { SimpleOperateResult } from '../Commons/OperateResult/OperateResult'
+  import type { Func } from '../Events/Func'
+  import type { ILoadingEvents } from '../Interfaces/ILoadingEvents'
+  import { GenericOperateResult } from '../Commons/OperateResult/OperateResult'
   import IconLoading from '../Controls/Icons/IconLoading.vue'
   import { LoadingEnum } from '../Commons/Enums/LoadingEnum'
   const LoadingType = defineModel('LoadingType', {
@@ -77,26 +76,28 @@
 
 
   async function GenericLoadingActionAsync<T> (func: Func<Promise<GenericOperateResult<T>>>)
-  : Promis <GenericOperateResult <T>> {
+    : Promise<GenericOperateResult<T>> {
     try {
       IsLoading.value = true;
       const operateResult = await func?.();
       IsLoading.value = false;
-      return operateResult;
+      return operateResult ?? GenericOperateResult.CreateFailResult<T>("操作失败");
     } catch(e) {
-
+      IsLoading.value = false;
+      return GenericOperateResult.CreateFailResult<T>(e instanceof Error ? e.message : "操作失败");
     }
   }
 
   async function SimpleLoadingActionAsync<T>(func: Func<Promise<GenericOperateResult<T>>>)
-    : Promis<GenericOperateResult<T>> {
+    : Promise<GenericOperateResult<T>> {
     try {
       IsLoading.value = true;
       const operateResult = await func?.();
       IsLoading.value = false;
-      return operateResult;
+      return operateResult ?? GenericOperateResult.CreateFailResult<T>("操作失败");
     } catch (e) {
-
+      IsLoading.value = false;
+      return GenericOperateResult.CreateFailResult<T>(e instanceof Error ? e.message : "操作失败");
     }
   }
 

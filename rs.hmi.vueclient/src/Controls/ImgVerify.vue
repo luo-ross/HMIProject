@@ -93,14 +93,14 @@
 </style>
 
 <template>
-  <div class="form-row" ref="elementRef">
-    <div :ref="el =>state. SliderBorderRef = el"
+  <div class="form-row" ref="ElementRef">
+    <div ref="SliderBorderRef"
          class="slider-border">
       <span class="slider-text">向右滑动滑块触发图像验证</span>
       <div :style="{width: state.BackgroundFillPercent+'%' }"
            class="background-fill">
       </div>
-      <button :ref="el => state.BtnSliderRef = el"
+      <button ref="BtnSliderRef"
               :style="{left:state.BtnSliderPositionX+'px' }"
               class="btn-slider"
               @mousedown="HandleBtnSliderMousedown">
@@ -119,7 +119,7 @@
       </button>
 
 
-      <div :ref="el => state.VerifyImgHostRef = el"
+      <div ref="VerifyImgHostRef"
            class="verify-img-host"
            :class="{'d-none': !state.IsShowVerifyImg }"
            :style="{'background-image':`url(${state.VerifyImgUrl})`}">
@@ -130,7 +130,7 @@
                    top: state.BtnImgSliderPositionY+'px',
                    'background-image':`url(${state.ImgSliderUrl})`
                    }"
-                :ref="el => state.BtnImgSliderRef = el"
+                ref="BtnImgSliderRef"
                 class="btn-imgslider"
                 @mousedown="HandleBtnImgSliderMousedown">
         </button>
@@ -142,6 +142,7 @@
 
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted, watch, reactive, nextTick } from 'vue'
+  import type { ComponentPublicInstance } from 'vue'
   import type { IInputEvents } from '../Interfaces/IInputEvents';
   import { GenericOperateResult, SimpleOperateResult } from '../Commons/OperateResult/OperateResult'
   import { AxiosUtil } from '../Commons/Network/AxiosUtil';
@@ -154,7 +155,10 @@
   import { RectModel } from '../Models/WebAPI/RectModel';
   const axiosUtil = new AxiosUtil();
 
-
+  interface MouseTrackPoint {
+    x: number;
+    y: number;
+  }
 
   const props = defineProps<{
     LoadingEvents: ILoadingEvents | null;
@@ -162,7 +166,14 @@
     OnBtnSliderMousedown?: () => Promise<SimpleOperateResult>;
   }>();
 
-
+  // 创建输入框的引用
+  const SliderBorderRef = ref<HTMLElement>();
+  const BtnSliderRef = ref<HTMLElement>();
+  const VerifyImgHostRef = ref<HTMLElement>();
+  const BtnImgSliderRef = ref<HTMLElement>();
+  // 监听组件显示状态变化
+  const ElementRef = ref<HTMLElement>();
+  const resizeObserver = ref<ResizeObserver>();
 
   const state = reactive({
     //这是滑块的位置X
@@ -180,20 +191,14 @@
     //图片滑动块位置Top
     BtnImgSliderPositionY: 0,
     //验证滑动块图像
-    ImgSliderUrl: null,
+    ImgSliderUrl: null as string | null,
     //验证背景
-    VerifyImgUrl: null,
-
-    SliderBorderRef: null,
-    BtnSliderRef: null,
-    VerifyImgHostRef: null,
-    BtnImgSliderRef: null,
- 
-    Verify: null as RectModel, 
-    VerifySessionId: null,
+    VerifyImgUrl: null as string | null,
+    Verify: null as RectModel | null,
+    VerifySessionId: null as string | null,
   })
 
-  let MouseMovingTrack = [];
+  let MouseMovingTrack: MouseTrackPoint[] = [];
   let IsBtnSliderDragging = false;
   let BtnSliderStartX = 0;
   let BtnSliderHistoryPositionX = 0;
@@ -219,19 +224,19 @@
 
   function InitBtnSliderControl() {
 
-    if (state.BtnSliderRef == null) {
+    if (BtnSliderRef.value == null) {
       return;
     }
 
-    if (state.SliderBorderRef == null) {
+    if (SliderBorderRef.value == null) {
       return;
     }
 
     //获取滑块的长度和宽度
-    BtnSliderWidth = state.BtnSliderRef.clientWidth
-    BtnSliderHeight = state.BtnSliderRef.clientHeight;
-    BtnSliderContainerWidth = state.SliderBorderRef.clientWidth;
-    BtnSliderContainerHeight = state.SliderBorderRef.clientHeight;
+    BtnSliderWidth = BtnSliderRef.value.clientWidth
+    BtnSliderHeight = BtnSliderRef.value.clientHeight;
+    BtnSliderContainerWidth = SliderBorderRef.value.clientWidth;
+    BtnSliderContainerHeight = SliderBorderRef.value.clientHeight;
     //获取最大移动距离
     BtnSliderMaxPositionX = BtnSliderContainerWidth - BtnSliderWidth;
 
@@ -240,11 +245,11 @@
 
   async function InitVerifyControlAsync(): Promise<SimpleOperateResult> {
     //计算按钮的大小和宽度
-    if (state.VerifyImgHostRef == null) {
+    if (VerifyImgHostRef.value == null) {
       return SimpleOperateResult.CreateFailResult("无法获取图像容器");
     }
 
-    if (state.BtnImgSliderRef == null) {
+    if (BtnImgSliderRef.value == null) {
       return SimpleOperateResult.CreateFailResult("无法获取验证控件");
     }
 
@@ -261,15 +266,15 @@
     state.VerifyImgUrl = imgVerifyModel.VerifyImgUrl;
     state.ImgSliderUrl = imgVerifyModel.ImgSliderUrl;
     state.VerifySessionId = imgVerifyModel.VerifySessionId;
-    WidthScale = state.VerifyImgHostRef.clientWidth / imgVerifyModel.ImgWidth;
-    HeightScale = state.VerifyImgHostRef.clientHeight / imgVerifyModel.ImgHeight;
+    WidthScale = VerifyImgHostRef.value.clientWidth / imgVerifyModel.ImgWidth;
+    HeightScale = VerifyImgHostRef.value.clientHeight / imgVerifyModel.ImgHeight;
     state.BtnImgSliderWidth = imgVerifyModel.IconWidth * WidthScale;
     state.BtnImgSliderHeight = imgVerifyModel.IconHeight * HeightScale;
 
 
     //获取最大移动距离
-    BtnImgSliderMaxPositionX = state.VerifyImgHostRef.clientWidth - state.BtnImgSliderWidth;
-    BtnImgSliderMaxPositionY = state.VerifyImgHostRef.clientHeight - state.BtnImgSliderHeight;
+    BtnImgSliderMaxPositionX = VerifyImgHostRef.value.clientWidth - state.BtnImgSliderWidth;
+    BtnImgSliderMaxPositionY = VerifyImgHostRef.value.clientHeight - state.BtnImgSliderHeight;
 
     //设置默认位置
     state.BtnImgSliderPositionX = imgVerifyModel.ImgBtnPositionX * WidthScale;
@@ -332,7 +337,7 @@
 
 
     if (MouseMovingTrack.length > MAX_POINTS) {
-     MouseMovingTrack.shift();
+      MouseMovingTrack.shift();
     }
 
     MouseMovingTrack.push({
@@ -343,10 +348,10 @@
 
   //处理滑动按钮鼠标按下事件
   async function HandleBtnSliderMousedown(event: MouseEvent): Promise<void> {
-    if (state.BtnSliderRef == null) {
+    if (BtnSliderRef.value == null) {
       return;
     }
-    if (state.SliderBorderRef == null) {
+    if (SliderBorderRef.value == null) {
       return;
     }
 
@@ -365,10 +370,10 @@
   //图像拖动快鼠标按下事件
   function HandleBtnImgSliderMousedown(event: MouseEvent) {
 
-    if (state.VerifyImgHostRef == null) {
+    if (VerifyImgHostRef.value == null) {
       return;
     }
-    if (state.BtnImgSliderRef == null) {
+    if (BtnImgSliderRef.value == null) {
       return;
     }
     IsBtnImgSliderDragging = true;
@@ -386,12 +391,11 @@
     BtnImgSliderHistoryPositionX = state.BtnImgSliderPositionX;
     BtnImgSliderHistoryPositionY = state.BtnImgSliderPositionY;
 
-    state.Verify = new RectModel(
-      state.BtnImgSliderPositionX,
-      state.BtnImgSliderPositionY,
-      state.BtnImgSliderWidth,
-      state.BtnImgSliderHeight
-    );
+    state.Verify = new RectModel();
+    state.Verify.Left = state.BtnImgSliderPositionX;
+    state.Verify.Top = state.BtnImgSliderPositionY;
+    state.Verify.Width = state.BtnImgSliderWidth;
+    state.Verify.Height = state.BtnImgSliderHeight;
   }
 
   //处理鼠标离开
@@ -418,9 +422,6 @@
   window.addEventListener('mouseleave', handleGlobalMouseleave);
 
 
-  // 监听组件显示状态变化
-  const elementRef = ref<HTMLElement | null>(null);
-  const resizeObserver = ref<ResizeObserver | null>(null);
 
   // 初始化ResizeObserver
   const initResizeObserver = () => {
@@ -429,13 +430,13 @@
     }
 
     resizeObserver.value = new ResizeObserver(() => {
-      if (elementRef.value?.offsetWidth > 0) {
+      if (ElementRef.value != null && ElementRef.value?.offsetWidth > 0) {
         InitBtnSliderControl();
       }
     });
 
-    if (elementRef.value) {
-      resizeObserver.value.observe(elementRef.value);
+    if (ElementRef.value) {
+      resizeObserver.value.observe(ElementRef.value);
     }
   };
 
@@ -452,21 +453,24 @@
     window.removeEventListener('mouseleave', handleGlobalMouseleave);
   });
 
-  function GetImgVerifyResultAsync() {
-    if (state.IsShowVerifyImg) {
-      const imgVerifyResultModel = new ImgVerifyResultModel();
-      const verify = new RectModel();
-      verify.Left = state.Verify.Left / WidthScale;
-      verify.Top = state.Verify.Top / HeightScale;
-      verify.Width = state.Verify.Width / WidthScale;
-      verify.Height = state.Verify.Height / HeightScale;
-      imgVerifyResultModel.Verify = verify;
-      imgVerifyResultModel.VerifySessionId = state.VerifySessionId;
-      return GenericOperateResult.CreateSuccessResult<ImgVerifyResultModel>(imgVerifyResultModel);
-    } else {
-      return GenericOperateResult.CreateFailResult<ImgVerifyResultModel>("获取验证码失败");
-    }
+  function GetImgVerifyResultAsync(): Promise<GenericOperateResult<ImgVerifyResultModel>> {
+    return new Promise((resolve) => {
+      if (state.IsShowVerifyImg) {
+        const imgVerifyResultModel = new ImgVerifyResultModel();
+        const verify = new RectModel();
 
+        verify.Left = state.Verify == null ? 0 : state.Verify.Left / WidthScale;
+        verify.Top = state.Verify == null ? 0 : state.Verify.Top / HeightScale;
+        verify.Width = state.Verify == null ? 0 : state.Verify.Width / WidthScale;
+        verify.Height = state.Verify == null ? 0 : state.Verify.Height / HeightScale;
+
+        imgVerifyResultModel.Verify = verify;
+        imgVerifyResultModel.VerifySessionId = state.VerifySessionId;
+        resolve(GenericOperateResult.CreateSuccessResult<ImgVerifyResultModel>(imgVerifyResultModel));
+      } else {
+        resolve(GenericOperateResult.CreateFailResult<ImgVerifyResultModel>("获取验证码失败"));
+      }
+    });
   }
 
   // 导出方法供父组件调用

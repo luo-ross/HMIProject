@@ -7,8 +7,8 @@
 </style>
 <template>
   <div class="home-main">
-    <Message :ref="events => ViewModel.MessageEvents= events"></Message>
-    <Loading LoadingType="ProgressBar" :ref="events => ViewModel.LoadingEvents= events">
+    <Message :ref="ViewModel.MessageEvents"></Message>
+    <Loading LoadingType="ProgressBar" :ref="ViewModel.LoadingEvents">
       <div>
         <div class="home-left">
           <div></div>

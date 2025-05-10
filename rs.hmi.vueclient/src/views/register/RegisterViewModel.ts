@@ -10,9 +10,9 @@ import { GenericOperateResult } from '../../Commons/OperateResult/OperateResult'
 
 export class RegisterViewModel extends ViewModelBase {
   private registerModel = ref<RegisterModel>(new RegisterModel());
-  public EmailEvents: IInputEvents | null = null;
-  public PasswordEvents: IInputEvents | null = null;
-  public PasswordConfirmEvents: IInputEvents | null = null;
+  public EmailEvents = ref<IInputEvents>();
+  public PasswordEvents = ref<IInputEvents>(); 
+  public PasswordConfirmEvents = ref<IInputEvents>(); 
 
   // 使用RelayCommand
   public RegisterNextCommand: RelayCommand;
@@ -50,7 +50,7 @@ export class RegisterViewModel extends ViewModelBase {
     }
 
     //在这里发起注册事件
-    const getRegisterVerifyResult = await this.LoadingEvents.GenericLoadingActionAsync<RegisterVerifyModel>(async () => {
+    const getRegisterVerifyResult = await this.LoadingEvents.value?.GenericLoadingActionAsync<RegisterVerifyModel>(async () => {
       //验证通过后 对密码进行加密处理
       const passwordSHA256HashCode = await this.Cryptography.GetSHA256HashCode(this.RegisterModel.PasswordConfirm);
       if (!passwordSHA256HashCode.IsSuccess) {
@@ -63,29 +63,29 @@ export class RegisterViewModel extends ViewModelBase {
     });
 
     //验证结果
-    if (!getRegisterVerifyResult.IsSuccess) {
-      this.MessageEvents?.ShowWarningMsg(getRegisterVerifyResult.Message);
+    if (getRegisterVerifyResult!=null&&!getRegisterVerifyResult.IsSuccess) {
+      this.MessageEvents.value?.ShowWarningMsg(getRegisterVerifyResult.Message);
       return;
     }
 
-    const registerVerifyModel = getRegisterVerifyResult.Data;
+    const registerVerifyModel = getRegisterVerifyResult?.Data;
     if (registerVerifyModel == null) {
-      this.MessageEvents?.ShowWarningMsg("未正确获取验证码");
+      this.MessageEvents.value?.ShowWarningMsg("未正确获取验证码");
       return;
     }
 
     if (registerVerifyModel.RegisterSessionId == null) {
-      this.MessageEvents?.ShowWarningMsg("未正确获取验证码");
+      this.MessageEvents.value?.ShowWarningMsg("未正确获取验证码");
       return;
     }
 
     if (registerVerifyModel.Token == null) {
-      this.MessageEvents?.ShowWarningMsg("未正确获取验证码");
+      this.MessageEvents.value?.ShowWarningMsg("未正确获取验证码");
       return;
     }
 
     if (this.Utils.IsTimestampExpired(registerVerifyModel.ExpireTime, 2)) {
-      this.MessageEvents?.ShowWarningMsg("验证码已失效");
+      this.MessageEvents.value?.ShowWarningMsg("验证码已失效");
       return;
     }
 
@@ -108,26 +108,26 @@ export class RegisterViewModel extends ViewModelBase {
 
   public override ValidateForm(): boolean {
     if (!this.RegisterModel.Email || !ValidHelper.IsEmail(this.RegisterModel.Email)) {
-      this.MessageEvents?.ShowWarningMsg('邮箱输入格式不正确');
-      this.EmailEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('邮箱输入格式不正确');
+      this.EmailEvents.value?.Focus();
       return false;
     }
 
     if (!this.RegisterModel.Password) {
-      this.MessageEvents?.ShowWarningMsg('请输入密码');
-      this.PasswordEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('请输入密码');
+      this.PasswordEvents.value?.Focus();
       return false
     }
 
     if (!this.RegisterModel.PasswordConfirm) {
-      this.MessageEvents?.ShowWarningMsg('请输入确认密码');
-      this.PasswordConfirmEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('请输入确认密码');
+      this.PasswordConfirmEvents.value?.Focus();
       return false
     }
 
     if (!(this.RegisterModel.Password === this.RegisterModel.PasswordConfirm)) {
-      this.MessageEvents?.ShowWarningMsg('2次密码输入不一致');
-      this.PasswordConfirmEvents?.Focus();
+      this.MessageEvents.value?.ShowWarningMsg('2次密码输入不一致');
+      this.PasswordConfirmEvents.value?.Focus();
       return false
     }
 
