@@ -14,13 +14,13 @@ export class AxiosUtil {
   constructor() {
     // 创建axios 实例
     this.AxiosInstance = axios.create({
-      baseURL: 'http://localhost:54293', // 替换为你的实际 API 基础 URL
+      baseURL: import.meta.env.VITE_APP_BASE_API, // 使用环境变量配置baseURL
       timeout: 10000,// 设置请求超时时间
       headers: {
         'Content-Type': 'application/json'
       }
     });
-
+  
     // 请求拦截器
     this.AxiosInstance.interceptors.request.use(config => {
       if (config.url == undefined) {

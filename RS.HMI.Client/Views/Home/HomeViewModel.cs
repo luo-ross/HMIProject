@@ -14,6 +14,17 @@ namespace RS.HMI.Client.Views
             this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
         }
 
+        private NotifyBase viewModelSelect;
+
+        public NotifyBase ViewModelSelect
+        {
+            get { return viewModelSelect; }
+            set
+            {
+                this.OnPropertyChanged(ref viewModelSelect, value);
+            }
+        }
+
 
         private bool isEnglish;
 

@@ -1,0 +1,22 @@
+﻿<rs:RSUserControl
+    x:Class="RS.HMI.Client.Views.Areas.UserView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.HMI.Client.Views.Areas"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/Widgets"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <rs:RSUserControl.DataContext>
+        <local:UserViewModel />
+    </rs:RSUserControl.DataContext>
+    <GroupBox>
+        <GroupBox.Header>
+            <Grid>
+                <TextBlock Text="用户管理" />
+            </Grid>
+        </GroupBox.Header>
+    </GroupBox>
+</rs:RSUserControl>

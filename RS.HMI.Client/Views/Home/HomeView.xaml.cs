@@ -11,7 +11,7 @@ namespace RS.HMI.Client.Views
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class HomeView : RSWindow
     {
-        public HomeViewModel ViewModel { get; set; }
+        private readonly HomeViewModel ViewModel;
 
         public HomeView()
         {

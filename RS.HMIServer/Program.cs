@@ -65,7 +65,19 @@ namespace RS.HMIServer
             //该实例用于配置应用程序的各个方面，包括日志记录、依赖注入（DI）容器中的服务注册等。
             var builder = WebApplication.CreateBuilder(args);
 
-          
+            //配置解决跨域问题
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowWebClients", policy =>
+                {
+                    var allowedOrigins = builder.Configuration.GetSection("AllowedClients:Origins").Get<string[]>();
+                    policy.WithOrigins(allowedOrigins)
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials();
+                });
+            });
+
 
             builder.Services.AddHttpContextAccessor();
 
@@ -322,6 +334,9 @@ namespace RS.HMIServer
             //通常是 UseEndpoints 中间件，后者负责执行与所选终结点关联的委托或处理程序。
             AppHost.UseRouting();
 
+
+            AppHost.UseCors("AllowWebClients");
+
             //UseAuthorization（授权）：
             //作用：UseAuthorization中间件用于授权用户访问资源。它会检查用户（已经通过UseAuthentication验证）是否具有访问特定资源的权限。
             //处理流程：如果用户具有访问权限，则允许其继续访问资源；如果用户没有访问权限，则返回403禁止访问响应。
@@ -346,15 +361,6 @@ namespace RS.HMIServer
             //初始化RSA非对称秘钥
             InitRSASecurityKeyData(AppHost);
 
-
-            //// 在Program.cs或Startup.cs中
-            //AppHost.UseCors(builder => builder
-            //    .WithOrigins(
-            //        "http://localhost:54293/",
-            //        "http://localhost:54296/"
-            //    )
-            //    .AllowAnyMethod()    // 允许任何HTTP方法
-            //    .AllowAnyHeader());  // 允许任何请求头
 
 
             //运行应用程序并阻止调用线程，直到主机关闭。

@@ -102,7 +102,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Views\Areas\" />
+	  <Folder Include="Views\Areas\Role\" />
+	  <Folder Include="Views\Areas\Department\" />
+	  <Folder Include="Views\Areas\Navigation\" />
+	  <Folder Include="Views\Areas\Company\" />
+	  <Folder Include="Views\Areas\Groups\" />
 	</ItemGroup>
 
 	<ItemGroup>
