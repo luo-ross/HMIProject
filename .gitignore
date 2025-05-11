@@ -391,3 +391,4 @@ FodyWeavers.xsd
 /RS.Python/runs/detect/test-detect
 /RS.Python/result.jpg
 /RS.HMIServer/Keys-Repository/key-131cd650-921d-4482-87b3-f07f24eeba9e.xml
+/rs.hmi.vueclient/.env.production
