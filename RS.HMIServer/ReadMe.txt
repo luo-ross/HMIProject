@@ -4,7 +4,7 @@
   },
 
   "AllowedHosts": "*",
-  "GeneratorIdClient": 1,
+  "IdGenClientId": 1,
   "ApplicationDiscriminator": "145164B9-11BA-4127-A678-17764D582031",
   "WebHost": "http://localhost:54293",
   "EmailService:Host": "smtp.qq.com",

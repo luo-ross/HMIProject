@@ -33,7 +33,7 @@ namespace RS.Annotation.Views
         private async void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
             bool isReisterSuccess = false;
-            var result = await this.InvokeLoadingActionAsync(async () =>
+            var result = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
               {
                   OperateResult? operateResult = null;
                   switch (this.ViewModel.TaskStatus)
@@ -260,7 +260,7 @@ namespace RS.Annotation.Views
         {
             VerifyModel verifyModel = new VerifyModel();
             var parentWin = this.TryFindParent<RSWindow>();
-            var loadingInvokeResult = await parentWin.InvokeLoadingActionAsync(async () =>
+            var loadingInvokeResult = await parentWin.InvokeLoadingActionAsync(async (cancellationToken) =>
                {
                    //如果邮箱验证通过 则往服务端发起验证码发送请求，
                    return await this.GetVerifyModelAsync();

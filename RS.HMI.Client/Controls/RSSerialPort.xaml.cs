@@ -777,7 +777,7 @@ namespace RS.HMI.Client.Controls
             }
             var seviceDataModelSelected = this.ModbusCommuConfigModelSelected;
             var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 //首先进行数据验证
                 var modbusCommuConfigModelValidResult = ModbusCommuConfigModelValid(modbusCommuConfigModelList);
@@ -884,7 +884,7 @@ namespace RS.HMI.Client.Controls
                 return;
             }
 
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
               {
                   //这是删除一行
                   if (parameter.Equals("0"))
@@ -989,7 +989,7 @@ namespace RS.HMI.Client.Controls
 
                 //获取数据副本
                 var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
-                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     //获取Excel工作簿
                     IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
@@ -1069,7 +1069,7 @@ namespace RS.HMI.Client.Controls
 
                 //获取数据副本
                 var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
-                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     //获取Excel工作簿
                     IWorkbook workbook = ExcelHelper.CreateWorkbook(filePath);
@@ -1608,7 +1608,7 @@ namespace RS.HMI.Client.Controls
             if (saveFileDialog.ShowDialog() == true)
             {
                 string filePathSelect = saveFileDialog.FileName;
-                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     var templateFilePath = PathHelper.MapPath("Temlates/ModbusRTU数据导入模版.xlsx");
 
@@ -1906,7 +1906,7 @@ namespace RS.HMI.Client.Controls
             var dataBits = (int)this.DataBits;
             var stopBits = this.StopBits;
             var parity = this.Parity;
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 try
                 {
@@ -1972,7 +1972,7 @@ namespace RS.HMI.Client.Controls
         private async void BtnSaveConfig_Click(object sender, RoutedEventArgs e)
         {
             //把数据保存到Sqlite本地数据库,假如后面我们上了WebAPI,我们可以把数据保存到WebAPI
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 //保存数据之前我们需要验证数据是否通过
                 bool isAdd = this.Id <= 0;

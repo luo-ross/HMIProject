@@ -32,7 +32,7 @@
     </Style>
 
 
-    <Style TargetType="{x:Type DataGrid}">
+    <Style x:Key="RSApp.Styles.DataGridStyle" TargetType="{x:Type DataGrid}">
         <Setter Property="Foreground" Value="#333" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Background" Value="#fff" />
@@ -58,8 +58,8 @@
         <Setter Property="EnableColumnVirtualization" Value="True" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="40" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="50" />
-        <Setter Property="EnableColumnVirtualization" Value="True" />
         <Setter Property="IsReadOnly" Value="True" />
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DataGrid}">
@@ -160,6 +160,7 @@
                 <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
             </Trigger>
         </Style.Triggers>
+
     </Style>
 
     <Style TargetType="{x:Type DataGridCell}">

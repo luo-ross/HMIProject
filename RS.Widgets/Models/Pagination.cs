@@ -10,39 +10,39 @@ namespace RS.Widgets.Models
     public class Pagination : NotifyBase
     {
 
-        private int _rows;
+        private int _Rows;
         /// <summary>
         /// 每页行数  
         /// </summary>
-        public int rows
+        public int Rows
         {
             get
             {
-                if (_rows == 0 || !rowlist.Contains(_rows))
+                if (_Rows == 0 || !Rowlist.Contains(_Rows))
                 {
-                    _rows = rowlist[0];
+                    _Rows = Rowlist[0];
                 }
-                return _rows;
+                return _Rows;
             }
             set
             {
-                if (OnPropertyChanged(ref _rows, value))
+                if (OnPropertyChanged(ref _Rows, value))
                 {
-                    page = 1;
+                    Page = 1;
                 }
-                OnPropertyChanged(nameof(total));
+                OnPropertyChanged(nameof(Total));
             }
         }
 
-        private int _page = 1;
+        private int _Page = 1;
         /// <summary>
         /// 当前页  
         /// </summary>
-        public int page
+        public int Page
         {
             get
             {
-                return _page;
+                return _Page;
             }
             set
             {
@@ -50,90 +50,90 @@ namespace RS.Widgets.Models
                 {
                     value = 1;
                 }
-                if (total > 0 && value > total)
+                if (Total > 0 && value > Total)
                 {
-                    value = total;
+                    value = Total;
                 }
-                OnPropertyChanged(ref _page, value);
+                OnPropertyChanged(ref _Page, value);
             }
         }
 
 
 
-        private string _sidx = "Id";
+        private string _Sidx = "Id";
         /// <summary>
         /// 排序列  
         /// </summary>
-        public string sidx
+        public string Sidx
         {
-            get { return _sidx; }
-            set { OnPropertyChanged(ref _sidx, value); }
+            get { return _Sidx; }
+            set { OnPropertyChanged(ref _Sidx, value); }
         }
 
 
-        private List<int> _rowlist;
+        private List<int> _Rowlist;
         /// <summary>
         /// 行数 
         /// </summary>
-        public List<int> rowlist
+        public List<int> Rowlist
         {
             get
             {
-                if (_rowlist == null)
+                if (_Rowlist == null)
                 {
-                    _rowlist = new List<int>() { 30, 50, 70, 100 };
+                    _Rowlist = new List<int>() { 30, 50, 70, 100 };
                 }
-                return _rowlist;
+                return _Rowlist;
             }
-            set { OnPropertyChanged(ref _rowlist, value); }
+            set { OnPropertyChanged(ref _Rowlist, value); }
         }
 
 
 
-        private string _sord = "desc";
+        private string _Sord = "desc";
         /// <summary>
         /// 排序类型  
         /// </summary>
-        public string sord
+        public string Sord
         {
-            get { return _sord; }
-            set { OnPropertyChanged(ref _sord, value); }
+            get { return _Sord; }
+            set { OnPropertyChanged(ref _Sord, value); }
         }
 
 
-        private int _records;
+        private int _Records;
         /// <summary>
         /// 总记录数  
         /// </summary>
-        public int records
+        public int Records
         {
-            get { return _records; }
+            get { return _Records; }
             set
             {
-                OnPropertyChanged(ref _records, value);
-                OnPropertyChanged(nameof(total));
+                OnPropertyChanged(ref _Records, value);
+                OnPropertyChanged(nameof(Total));
             }
         }
 
 
-        private int _total;
+        private int _Total;
         /// <summary>
         /// 总页数  
         /// </summary>
-        public int total
+        public int Total
         {
             get
             {
-                if (records > 0)
+                if (Records > 0)
                 {
-                    _total = records % rows == 0 ? records / rows : records / rows + 1; //分页核心算法
+                    _Total = Records % Rows == 0 ? Records / Rows : Records / Rows + 1; //分页核心算法
                 }
                 else
                 {
-                    _total = 0;
+                    _Total = 0;
                 }
 
-                return _total;
+                return _Total;
             }
         }
 

@@ -32,7 +32,7 @@ namespace RS.Widgets.Controls
             var loadingConfig = e.NewValue as LoadingConfig;
         }
 
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig)
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -43,7 +43,7 @@ namespace RS.Widgets.Controls
             {
                 try
                 {
-                    return await func?.Invoke();
+                    return await func?.Invoke(cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -56,11 +56,11 @@ namespace RS.Widgets.Controls
                         this.Visibility = Visibility.Collapsed;
                     });
                 }
-            });
+            }, cancellationToken);
         }
 
 
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<Task<OperateResult<T>>> func, LoadingConfig loadingConfig)
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -71,7 +71,7 @@ namespace RS.Widgets.Controls
             {
                 try
                 {
-                    return await func?.Invoke();
+                    return await func?.Invoke(cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -84,7 +84,7 @@ namespace RS.Widgets.Controls
                         this.Visibility = Visibility.Collapsed;
                     });
                 }
-            });
+            }, cancellationToken);
         }
 
         public override void OnApplyTemplate()

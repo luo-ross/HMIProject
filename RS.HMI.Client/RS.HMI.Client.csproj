@@ -8,6 +8,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UserSecretsId>e8104be4-0ec8-48ba-b334-c8a005ff8713</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,6 +24,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="appsettings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
 		<Content Include="Assets\logo.ico" />
 	</ItemGroup>
 

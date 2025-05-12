@@ -6,6 +6,10 @@ using System.Reflection;
 using System.Windows;
 using RS.HMI.BLL;
 using RS.HMI.Client.Views;
+using IdGen;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using RS.HMI.Client.Models;
 namespace RS.HMI.Client
 {
     public partial class App : ApplicationBase
@@ -14,7 +18,7 @@ namespace RS.HMI.Client
         /// 可以重新赋值主机地址
         /// </summary>
         public override string AppHostAddress { get; set; } = "http://localhost:7000/";
-      
+
         public App()
         {
             //配置依赖注入服务
@@ -24,20 +28,27 @@ namespace RS.HMI.Client
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var loginView = AppHost.Services.GetRequiredService<LoginView>();
-            loginView.Show();
-            //var homeView = AppHost.Services.GetRequiredService<HomeView>();
-            //homeView.Show();
+            //var loginView = AppHost.Services.GetRequiredService<LoginView>();
+            //loginView.Show();
+            var homeView = AppHost.Services.GetRequiredService<HomeView>();
+            homeView.Show();
         }
-     
+
 
         private void App_OnConfigIocServices(HostApplicationBuilder builder)
         {
             //注册当前程序集服务
             builder.Services.RegisterBLLService();
+
+            builder.Services.AddSingleton<IIdGenerator<long>>(service =>
+            {
+                int generatorId = Convert.ToInt32(builder.Configuration["IdGenClientId"]);
+                return new IdGenerator(generatorId, IdGeneratorOptions.Default);
+            });
+
             builder.Services.RegisterService(Assembly.GetExecutingAssembly());
         }
-      
+
     }
 
 }

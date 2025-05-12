@@ -88,7 +88,7 @@ namespace RS.HMI.Client.Views
             };
 
 
-            var operateResult = await this.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 var emailRegisterPostModel = new EmailRegisterPostModel();
                 emailRegisterPostModel.Email = this.ViewModel.SignUpModel.UserName;
@@ -183,7 +183,7 @@ namespace RS.HMI.Client.Views
                 IsIndeterminate = true,
             };
 
-            var operateResult = await this.InvokeLoadingActionAsync(async () =>
+            var operateResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
             {
 
                 var registerVerifyValidModel = new RegisterVerifyValidModel();

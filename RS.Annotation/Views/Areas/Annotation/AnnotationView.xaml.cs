@@ -3006,7 +3006,7 @@ namespace RS.Annotation.Views.Areas
             var messageBoxResult = await this.MessageBox.ShowAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                var validLoginResult = await this.InvokeLoadingActionAsync(async () =>
+                var validLoginResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     this.DeleteTagModel(tagModelSelect);
                     return OperateResult.CreateSuccessResult();

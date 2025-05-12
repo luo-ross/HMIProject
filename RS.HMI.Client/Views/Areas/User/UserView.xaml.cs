@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using IdGen;
+using Microsoft.Extensions.DependencyInjection;
 using RS.Commons.Attributs;
+using RS.Commons.Extensions;
+using RS.HMI.Client.Models;
 using RS.Widgets.Controls;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,5 +30,27 @@ namespace RS.HMI.Client.Views.Areas
             InitializeComponent();
             this.ViewModel = this.DataContext as UserViewModel;
         }
+
+        private async Task RSDataGrid_LoadMoreDataAsync(LoadMoreDataArgs loadMoreDataArgs)
+        {
+            var IdGenerator = ServiceProviderExtensions.GetService<IIdGenerator<long>>();
+            for (int i = 0; i < 50; i++)
+            {
+                this.Dispatcher.Invoke(() => {
+                    this.ViewModel.UserModelList.Add(new UserModel()
+                    {
+                        Id = IdGenerator.CreateId(),
+                        Email = $"184596029{i}@qq.com",
+                        NickName = "Ross",
+                        Phone = "111111111",
+                        UserPic = "sfsdfsdf",
+                    });
+                });
+                
+            }
+
+        }
+
+
     }
 }

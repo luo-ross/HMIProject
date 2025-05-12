@@ -166,7 +166,8 @@
                 Margin="10,10,10,0"
                 Background="#fff">
                 <Grid>
-                    <ContentPresenter />
+                    <areas:UserView />
+                    <!--<ContentPresenter />-->
                 </Grid>
             </Border>
             <Border Grid.Row="1" Padding="10">

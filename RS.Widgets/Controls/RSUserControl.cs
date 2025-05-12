@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,9 +14,9 @@ using System.Windows.Input;
 
 namespace RS.Widgets.Controls
 {
-    public class RSUserControl : ContentControl
+    public class RSUserControl : ContentControl, IRSLoading
     {
-        private RSLoading PART_Loading;
+        public RSLoading PART_Loading { get; set; }
         private RSMessageBox PART_MessageBox;
         private RSWindow ParentWin;
         public RSModal PART_Modal;
@@ -50,14 +51,14 @@ namespace RS.Widgets.Controls
             this.ParentWin = this.TryFindParent<RSWindow>();
         }
 
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            return await this.PART_Loading.InvokeLoadingActionAsync(func, loadingConfig);
+            return await this.PART_Loading.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
         }
 
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            return await this.PART_Loading.InvokeLoadingActionAsync<T>(func, loadingConfig);
+            return await this.PART_Loading.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
         }
 
         public double CaptionHeight

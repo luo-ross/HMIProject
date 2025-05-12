@@ -11,38 +11,88 @@ namespace RS.HMI.Client.Models
 {
     public class UserModel : NotifyBase
     {
-        private string userName;
+
         /// <summary>
-        /// 用户名
+        /// 数据主键
         /// </summary>
-        [MaxLength(30,ErrorMessage = "用户名长度不能超过30")]
-        [Required(ErrorMessage = "用户名不能为空")]
-        [RegularExpression("^(?(\")(\".+?\"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,6}))$", ErrorMessage ="用户名格式不正确")]
-        public string UserName
+        public long Id { get; set; }
+
+
+        private string email;
+        /// <summary>
+        /// 用户昵称
+        /// </summary>
+        [MaxLength(30, ErrorMessage = "邮箱长度不能超过30")]
+        [Required(ErrorMessage = "邮箱不能为空")]
+        [RegularExpression("^(?(\")(\".+?\"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,6}))$", ErrorMessage = "用户名格式不正确")]
+        public string Email
         {
-            get { return userName; }
+            get { return email; }
             set
             {
-                this.OnPropertyChanged(ref userName, value);
+                this.OnPropertyChanged(ref email, value);
                 this.ValidProperty(value);
             }
         }
 
 
-        private string password = string.Empty;
+
+        private string? nickName;
         /// <summary>
-        /// 用户密码
+        /// 用户昵称
         /// </summary>
-        [Required(ErrorMessage="用户密码不能为空")]
-        public string Password
+        public string? NickName
         {
-            get { return password; }
+            get { return nickName; }
             set
             {
-                if (OnPropertyChanged(ref password, value))
-                {
-                    ValidProperty(value);
-                }
+                this.OnPropertyChanged(ref nickName, value);
+            }
+        }
+
+        private string userPic;
+        /// <summary>
+        /// 用户头像
+        /// </summary>
+        public string UserPic
+        {
+            get { return userPic; }
+            set
+            {
+                this.OnPropertyChanged(ref userPic, value);
+            }
+        }
+
+
+        private string? phone;
+        /// <summary>
+        /// 电话 每个账户只能绑定一个手机号
+        /// </summary>
+        public string? Phone
+        {
+            get { return phone; }
+            set
+            {
+                this.OnPropertyChanged(ref phone, value);
+            }
+        }
+
+        /// <summary>
+        /// 关联实名认证
+        /// </summary>
+        public long? RealNameId { get; set; }
+
+
+        private bool? isDisabled;
+        /// <summary>
+        /// 是否禁用
+        /// </summary>
+        public bool? IsDisabled
+        {
+            get { return isDisabled; }
+            set
+            {
+                this.OnPropertyChanged(ref isDisabled, value);
             }
         }
     }

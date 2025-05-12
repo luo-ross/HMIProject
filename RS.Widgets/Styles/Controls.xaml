@@ -35,4 +35,7 @@
     <Style BasedOn="{StaticResource RSApp.Styles.MenuItemStyle}" TargetType="{x:Type MenuItem}" />
     <Style BasedOn="{StaticResource RSApp.Styles.SliderStyle}" TargetType="{x:Type Slider}" />
     <Style BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}" />
+    <Style BasedOn="{StaticResource RSApp.Styles.DataGridStyle}" TargetType="{x:Type DataGrid}" />
+
+
 </ResourceDictionary>

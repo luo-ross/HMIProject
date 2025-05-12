@@ -121,7 +121,7 @@ namespace RS.HMIServer
             builder.Services.AddSingleton<IIdGenerator<long>>(service =>
             {
                 var configuration = builder.Configuration;
-                int generatorId = Convert.ToInt32(configuration["GeneratorIdClient"]);
+                int generatorId = Convert.ToInt32(configuration["IdGenClientId"]);
                 return new IdGenerator(generatorId, IdGeneratorOptions.Default);
             });
 

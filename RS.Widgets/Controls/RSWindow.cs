@@ -146,12 +146,12 @@ namespace RS.Widgets.Controls
             });
         }
 
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<Task<OperateResult>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null)
         {
             return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig);
         }
 
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null)
         {
             return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig);
         }

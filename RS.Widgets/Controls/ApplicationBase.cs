@@ -328,8 +328,8 @@ namespace RS.Widgets.Controls
             builder.Services.RegisterInterceptorService();
             //注册当前程序集服务
             builder.Services.RegisterService(Assembly.GetExecutingAssembly());
-            //注册Id生成器
-            builder.Services.AddIdGen(1, () => new IdGeneratorOptions());
+            ////注册Id生成器
+            //builder.Services.AddIdGen(1, () => new IdGeneratorOptions());
             //注册DPAPI加解密服务
             builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(KeysRepository))
               .ProtectKeysWithDpapi()
