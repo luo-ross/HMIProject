@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public class LoadMoreDataArgs
+    public class LoadDataArgs
     {
         /// <summary>
         /// 每页行数  
@@ -28,16 +28,6 @@ namespace RS.Widgets.Models
         /// 排序类型  
         /// </summary>
         public string Sord { get; set; } = "desc";
-
-        /// <summary>
-        /// 总记录数  
-        /// </summary>
-        public int Records { get; set; } 
-
-        /// <summary>
-        /// 总页数  
-        /// </summary>
-        public int Total { get; set; }
 
         /// <summary>
         /// 取消

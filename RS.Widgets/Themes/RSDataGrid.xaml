@@ -1,24 +1,239 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
-    <Style TargetType="{x:Type rs:RSDataGrid}">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.DataGrid.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <converter:CurrentRowConverter x:Key="CurrentRowConverter" />
+    <converter:HowManyRowsConverter x:Key="HowManyRowsConverter" />
+
+    <Style BasedOn="{StaticResource RSApp.Styles.DataGridStyle}" TargetType="{x:Type rs:RSDataGrid}">
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="0" />
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style BasedOn="{StaticResource RSApp.Styles.DataGridRowStyle}" TargetType="{x:Type DataGridRow}">
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu>
+                                <MenuItem Command="{x:Static rs:RSDataGrid.AddCommand}" Header="新增数据" />
+                                <MenuItem
+                                    x:Name="PART_BtnDelete"
+                                    Command="{x:Static rs:RSDataGrid.DeleteCommand}"
+                                    Header="删除数据" />
+                                <MenuItem
+                                    x:Name="PART_BtnUpdate"
+                                    Command="{x:Static rs:RSDataGrid.UpdateCommand}"
+                                    Header="修改数据" />
+                                <MenuItem
+                                    x:Name="PART_BtnDetails"
+                                    Command="{x:Static rs:RSDataGrid.DetailsCommand}"
+                                    Header="查看详情" />
+                                <MenuItem
+                                    x:Name="PART_BtnExport"
+                                    Command="{x:Static rs:RSDataGrid.ExportCommand}"
+                                    Header="导出数据" />
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSDataGrid}">
                     <Border
+                        x:Name="border"
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <rs:RSUserControl x:Name="PART_RSUserControl">
-                            <DataGrid
-                                x:Name="PART_DataGrid"
-                                ItemsSource="{TemplateBinding ItemsSource}"
-                                MinRowHeight="{TemplateBinding MinRowHeight}"
-                                VirtualizingPanel.IsVirtualizing="{TemplateBinding VirtualizingPanel.IsVirtualizing}" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <ScrollViewer
+                                    x:Name="DG_ScrollViewer"
+                                    Grid.Row="0"
+                                    Focusable="false">
+                                    <ScrollViewer.Template>
+                                        <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Button
+                                                    Width="{Binding CellsPanelHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                                    Command="{x:Static DataGrid.SelectAllCommand}"
+                                                    Focusable="false"
+                                                    Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle,
+                                                                                                  TypeInTargetAssembly={x:Type DataGrid}}}"
+                                                    Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+
+
+                                                <DataGridColumnHeadersPresenter
+                                                    x:Name="PART_ColumnHeadersPresenter"
+                                                    Grid.Column="1"
+                                                    Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+
+
+                                                <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                                                    <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" />
+
+                                                    <ContentControl
+                                                        x:Name="PART_EmptyData"
+                                                        rs:ControlsHelper.EmptyDataDes="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.EmptyDataDes)}"
+                                                        rs:ControlsHelper.IconData="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.IconData)}"
+                                                        rs:ControlsHelper.IconHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.IconHeight)}"
+                                                        rs:ControlsHelper.IconWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=(rs:ControlsHelper.IconWidth)}"
+                                                        Template="{StaticResource RSApp.ControlTemplate.EmptyDataTemplate}"
+                                                        Visibility="Collapsed" />
+                                                </Grid>
+
+
+                                                <ScrollBar
+                                                    x:Name="PART_VerticalScrollBar"
+                                                    Grid.Row="1"
+                                                    Grid.Column="2"
+                                                    Maximum="{TemplateBinding ScrollableHeight}"
+                                                    Orientation="Vertical"
+                                                    ViewportSize="{TemplateBinding ViewportHeight}"
+                                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                                <Grid Grid.Row="2" Grid.Column="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="{Binding NonFrozenColumnsViewportHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <ScrollBar
+                                                        x:Name="PART_HorizontalScrollBar"
+                                                        Grid.Column="1"
+                                                        Maximum="{TemplateBinding ScrollableWidth}"
+                                                        Orientation="Horizontal"
+                                                        ViewportSize="{TemplateBinding ViewportWidth}"
+                                                        Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                                        Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                </Grid>
+                                            </Grid>
+
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=HasItems}" Value="False">
+                                                    <Setter TargetName="PART_EmptyData" Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ScrollViewer.Template>
+                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </ScrollViewer>
+
+                                <Border
+                                    Grid.Row="1"
+                                    Padding="5,3,5,3"
+                                    BorderBrush="#eee"
+                                    BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <Button
+                                                x:Name="PART_BtnFirstPage"
+                                                Margin="5,0,5,0"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.FirstPage}"
+                                                rs:ControlsHelper.IconHeight="10"
+                                                rs:ControlsHelper.IconWidth="10"
+                                                Foreground="#949494"
+                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                ToolTip="首页" />
+                                            <Button
+                                                x:Name="PART_BtnPrevious"
+                                                Margin="5,0,5,0"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowLeft}"
+                                                rs:ControlsHelper.IconHeight="10"
+                                                rs:ControlsHelper.IconWidth="7"
+                                                Foreground="#555"
+                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                ToolTip="上一页" />
+                                            <TextBox
+                                                MinWidth="40"
+                                                Padding="3,2,3,2"
+                                                HorizontalContentAlignment="Center"
+                                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Page}" />
+                                            <Button
+                                                x:Name="PART_BtnNext"
+                                                Margin="5,0,5,0"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowRight}"
+                                                rs:ControlsHelper.IconHeight="10"
+                                                rs:ControlsHelper.IconWidth="7"
+                                                Foreground="#555"
+                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                ToolTip="下一页" />
+                                            <Button
+                                                x:Name="PART_BtnEndPage"
+                                                Margin="5,0,5,0"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.EndPage}"
+                                                rs:ControlsHelper.IconHeight="10"
+                                                rs:ControlsHelper.IconWidth="10"
+                                                Foreground="#949494"
+                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                ToolTip="尾页" />
+                                            <ComboBox
+                                                Margin="5,0,5,0"
+                                                ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Rowlist}"
+                                                SelectedValue="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Rows}" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <TextBlock VerticalAlignment="Center">
+                                                <Run Text="显示第" />
+                                                <Run>
+                                                    <Run.Text>
+                                                        <MultiBinding Converter="{StaticResource CurrentRowConverter}">
+                                                            <Binding Path="Pagination.Page" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                                            <Binding Path="Pagination.Rows" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                                            <Binding Path="Pagination.Records" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                                        </MultiBinding>
+                                                    </Run.Text>
+                                                </Run>
+                                                <Run Text="条到第" />
+                                                <Run>
+                                                    <Run.Text>
+                                                        <MultiBinding Converter="{StaticResource HowManyRowsConverter}">
+                                                            <Binding Path="Pagination.Page" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                                            <Binding Path="Pagination.Rows" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                                            <Binding Path="Pagination.Records" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                                        </MultiBinding>
+                                                    </Run.Text>
+                                                </Run>
+                                                <Run Text="条 一共" />
+                                                <Run Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Records}" />
+                                                <Run Text="条 共" />
+                                                <Run Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Total, Mode=OneWay}" />
+                                                <Run Text="页" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </rs:RSUserControl>
                     </Border>
                     <ControlTemplate.Triggers />

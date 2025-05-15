@@ -6,22 +6,33 @@
     xmlns:local="clr-namespace:RS.HMI.Client.Views.Areas"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
+    d:DataContext="{d:DesignInstance Type=local:UserViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <rs:RSUserControl.DataContext>
-        <local:UserViewModel />
-    </rs:RSUserControl.DataContext>
     <GroupBox>
         <GroupBox.Header>
             <Grid>
                 <TextBlock Text="用户管理" />
             </Grid>
         </GroupBox.Header>
+
         <Grid>
-
-
-            <rs:RSDataGrid LoadMoreDataAsync="RSDataGrid_LoadMoreDataAsync" ItemsSource="{Binding UserModelList}" VirtualizingPanel.IsVirtualizing="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <rs:RSDataGrid
+                x:Name="UserDataGrid"
+                Grid.Column="0"
+                ItemsSource="{Binding UserModelList, UpdateSourceTrigger=PropertyChanged}"
+                LoadDataCommand="{Binding LoadUserDataCommand}"
+                OnAddCommand="{Binding AddCommand}"
+                OnDeleteCommand="{Binding DeleteCommand}"
+                OnDetailsCommand="{Binding DetailsCommand}"
+                OnExportCommand="{Binding ex}"
+                OnUpdateCommand="{Binding UpdateCommand}"
+                VirtualizingPanel.IsVirtualizing="True">
                 <rs:RSDataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Email}" Header="用户" />
                     <DataGridTextColumn Binding="{Binding NickName}" Header="昵称" />
@@ -32,8 +43,87 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTextColumn Width="*" />
                 </rs:RSDataGrid.Columns>
             </rs:RSDataGrid>
+            <Border
+                Grid.Column="1"
+                BorderBrush="#eee"
+                BorderThickness="1,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <Button
+                            Command="{Binding AddCommand}"
+                            CommandParameter="{Binding UserModelList}"
+                            Content="新增数据(A)"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}">
+                            <Button.InputBindings>
+                                <KeyBinding
+                                    Key="A"
+                                    Command="{Binding AddCommand}"
+                                    Modifiers="Ctrl" />
+                            </Button.InputBindings>
+                        </Button>
+                        <Button
+                            Command="{Binding DeleteCommand}"
+                            CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
+                            Content="删除数据(D)"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}">
+                            <Button.InputBindings>
+                                <KeyBinding
+                                    Key="D"
+                                    Command="{Binding DeleteCommand}"
+                                    Modifiers="Ctrl" />
+                            </Button.InputBindings>
+                        </Button>
+                        <Button
+                            Command="{Binding UpdateCommand}"
+                            CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
+                            Content="修改数据(M)"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}">
+                            <Button.InputBindings>
+                                <KeyBinding
+                                    Key="M"
+                                    Command="{Binding UpdateCommand}"
+                                    Modifiers="Ctrl" />
+                            </Button.InputBindings>
+                        </Button>
+                        <Button
+                            Command="{Binding DetailsCommand}"
+                            CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
+                            Content="查看数据(V)"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}">
+                            <Button.InputBindings>
+                                <KeyBinding
+                                    Key="V"
+                                    Command="{Binding DetailsCommand}"
+                                    Modifiers="Ctrl" />
+                            </Button.InputBindings>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2">
+                        <Button
+                            Command="{Binding CloseCommand}"
+                            Content="关闭(C)"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}">
+                            <Button.InputBindings>
+                                <KeyBinding
+                                    Key="C"
+                                    Command="{Binding CloseCommand}"
+                                    Modifiers="Ctrl" />
+                            </Button.InputBindings>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
+
+
     </GroupBox>
 </rs:RSUserControl>

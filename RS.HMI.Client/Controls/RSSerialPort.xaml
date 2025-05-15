@@ -350,7 +350,7 @@
                                                     <ContextMenu>
                                                         <MenuItem
                                                             x:Name="PART_BtnAddData"
-                                                            Command="{TemplateBinding AddDataCommand}"
+                                                            Command="{TemplateBinding AddCommand}"
                                                             Header="新增数据" />
                                                         <MenuItem
                                                             x:Name="PART_BtnDelete"
@@ -368,7 +368,7 @@
                                                             Header="导入配置" />
                                                         <MenuItem
                                                             x:Name="PART_BtnExportConfig"
-                                                            Command="{TemplateBinding ExportConfigCommand}"
+                                                            Command="{TemplateBinding ExportCommand}"
                                                             Header="导出配置" />
                                                         <Separator />
                                                         <MenuItem

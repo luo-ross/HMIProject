@@ -26,7 +26,10 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
 
-            <DataTemplate DataType="{x:Type areas:UserViewModel}" />
+            <DataTemplate DataType="{x:Type areas:UserViewModel}">
+                <areas:UserView />
+            </DataTemplate>
+
 
         </ResourceDictionary>
     </rs:RSWindow.Resources>
@@ -46,9 +49,6 @@
                     VerticalAlignment="Center"
                     Text="上位机客户端" />
             </StackPanel>
-
-
-
             <Grid Grid.Column="1">
                 <!--<TextBlock
                     HorizontalAlignment="Center"
@@ -166,8 +166,8 @@
                 Margin="10,10,10,0"
                 Background="#fff">
                 <Grid>
-                    <areas:UserView />
-                    <!--<ContentPresenter />-->
+                    <!--<hmi:RSSerialPort />-->
+                    <ContentControl Content="{Binding ViewModelSelect}" />
                 </Grid>
             </Border>
             <Border Grid.Row="1" Padding="10">

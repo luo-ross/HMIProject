@@ -31,50 +31,50 @@ namespace RS.HMI.Client.Controls
     /// </summary>
     public partial class RSSerialPort : UserControl
     {
+        private static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
         private int generatorId = 1;
-        private IdGenerator idGenerator;
-        /// <summary>
-        /// 唯一主键
-        /// </summary>
-        public long Id { get; set; }
-        public RSSerialPort()
-        {
-            InitializeComponent();
-
-            // 创建生成器实例
-            idGenerator = new IdGenerator(generatorId, IdGeneratorOptions.Default);
-
-            // 添加数据命令
-            AddDataCommand = new RelayCommand(AddData);
-
-            //删除配置命令
-            DeleteCommand = new RelayCommand<string>(DeleteModbusCommuConfigModel);
-
-            //导入配置命令
-            ImportConfigCommand = new RelayCommand(ImportConfig);
-
-            //导入配置命令
-            ExportConfigCommand = new RelayCommand(ExportConfig);
-
-            //模版下载命令
-            TemplateDownloadCommand = new RelayCommand(TemplateDownload);
-
-            //DataId更改事件
-            CellValueEditChangedCommand = new RelayCommand<string>(CellValueEditChanged);
-
-            this.Loaded += RSSerialPort_Loaded;
-            this.ModbusCommuConfigModelList = new ObservableCollection<ModbusConfigModel>();
-        }
-
-        public static readonly string CellValueEditErrorKey = "8E5424EEEDDB4BCE8AA634C684811672";
-
-        private SerialPort serialPort;
+        private IdGenerator IdGenerator;
+        private SerialPort SerialPort;
         private RSUserControl PART_RSUserControl;
         private DataGrid? PART_DataGrid;
         private Button PART_BtnConnect;
         private Button PART_BtnDisConnect;
         private Button PART_BtnSaveConfig;
         private RSWindow ParentWin;
+
+        /// <summary>
+        /// 唯一主键
+        /// </summary>
+        private long Id { get; set; }
+        public RSSerialPort()
+        {
+            InitializeComponent();
+
+            // 创建生成器实例
+            this.IdGenerator = new IdGenerator(generatorId, IdGeneratorOptions.Default);
+
+            // 添加数据命令
+            this.SetValue(AddCommandPropertyKey, new RelayCommand(AddData));
+
+            //删除配置命令
+            this.SetValue(DeleteCommandPropertyKey, new RelayCommand<string>(DeleteModbusCommuConfigModel));
+
+            //导入配置命令
+            this.SetValue(ImportConfigCommandPropertyKey, new RelayCommand(ImportConfig));
+
+            //导入配置命令
+            this.SetValue(ExportCommandPropertyKey, new RelayCommand(ExportConfig));
+
+            //模版下载命令
+            this.SetValue(TemplateDownloadCommandPropertyKey, new RelayCommand(TemplateDownload));
+
+            //DataId更改事件
+            this.SetValue(CellValueEditChangedCommandPropertyKey, new RelayCommand<string>(CellValueEditChanged));
+
+            this.Loaded += RSSerialPort_Loaded;
+            this.ModbusCommuConfigModelList = new ObservableCollection<ModbusConfigModel>();
+        }
+
 
 
         private void RSSerialPort_Loaded(object sender, RoutedEventArgs e)
@@ -83,67 +83,61 @@ namespace RS.HMI.Client.Controls
         }
 
         #region Command事件
-
-        //DataId更改事件
-        public static readonly DependencyProperty CellValueEditChangedCommandProperty =
-            DependencyProperty.Register(nameof(CellValueEditChangedCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
-
+       
+        private static readonly DependencyPropertyKey CellValueEditChangedCommandPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(CellValueEditChangedCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty CellValueEditChangedCommandProperty = CellValueEditChangedCommandPropertyKey.DependencyProperty;
         public ICommand CellValueEditChangedCommand
         {
             get { return (ICommand)GetValue(CellValueEditChangedCommandProperty); }
-            set { SetValue(CellValueEditChangedCommandProperty, value); }
         }
 
 
         // 新增数据命令依赖属性
-        public static readonly DependencyProperty AddDataCommandProperty =
-            DependencyProperty.Register(nameof(AddDataCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
-
-        public ICommand AddDataCommand
+        private static readonly DependencyPropertyKey AddCommandPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(AddCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty AddCommandProperty = AddCommandPropertyKey.DependencyProperty;
+        public ICommand AddCommand
         {
-            get { return (ICommand)GetValue(AddDataCommandProperty); }
-            set { SetValue(AddDataCommandProperty, value); }
+            get { return (ICommand)GetValue(AddCommandProperty); }
         }
 
         // 删除选中命令依赖属性
-        public static readonly DependencyProperty DeleteCommandProperty =
-            DependencyProperty.Register(nameof(DeleteCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        private static readonly DependencyPropertyKey DeleteCommandPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(DeleteCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty DeleteCommandProperty = DeleteCommandPropertyKey.DependencyProperty;
         public ICommand DeleteCommand
         {
             get { return (ICommand)GetValue(DeleteCommandProperty); }
-            set { SetValue(DeleteCommandProperty, value); }
         }
 
         // 导入配置命令依赖属性
-        public static readonly DependencyProperty ImportConfigCommandProperty =
-            DependencyProperty.Register(nameof(ImportConfigCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
-
+        private static readonly DependencyPropertyKey ImportConfigCommandPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(ImportConfigCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty ImportConfigCommandProperty = ImportConfigCommandPropertyKey.DependencyProperty;
         public ICommand ImportConfigCommand
         {
             get { return (ICommand)GetValue(ImportConfigCommandProperty); }
-            set { SetValue(ImportConfigCommandProperty, value); }
         }
 
 
         // 导出配置命令依赖属性
-        public static readonly DependencyProperty ExportConfigCommandProperty =
-            DependencyProperty.Register(nameof(ExportConfigCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
-
-        public ICommand ExportConfigCommand
+        private static readonly DependencyPropertyKey ExportCommandPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(ExportCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty ExportCommandProperty = ExportCommandPropertyKey.DependencyProperty;
+        public ICommand ExportCommand
         {
-            get { return (ICommand)GetValue(ExportConfigCommandProperty); }
-            set { SetValue(ExportConfigCommandProperty, value); }
+            get { return (ICommand)GetValue(ExportCommandProperty); }
         }
 
         // 模版下载命令依赖属性
-        public static readonly DependencyProperty TemplateDownloadCommandProperty =
-            DependencyProperty.Register(nameof(TemplateDownloadCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
-
+        private static readonly DependencyPropertyKey TemplateDownloadCommandPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(TemplateDownloadCommand), typeof(ICommand), typeof(RSSerialPort), new PropertyMetadata(null));
+        public static readonly DependencyProperty TemplateDownloadCommandProperty = TemplateDownloadCommandPropertyKey.DependencyProperty;
         public ICommand TemplateDownloadCommand
         {
             get { return (ICommand)GetValue(TemplateDownloadCommandProperty); }
-            set { SetValue(TemplateDownloadCommandProperty, value); }
         }
         #endregion
 
@@ -1668,7 +1662,7 @@ namespace RS.HMI.Client.Controls
                 {
                     return true;
                 }
-                serialPort = new SerialPort
+                this.SerialPort = new SerialPort
                 {
                     PortName = this.PortName,
                     BaudRate = this.BaudRate,
@@ -1677,12 +1671,12 @@ namespace RS.HMI.Client.Controls
                     StopBits = this.StopBits
                 };
                 // 设置数据接收事件处理
-                serialPort.DataReceived += SerialPort_DataReceived;
+                this.SerialPort.DataReceived += SerialPort_DataReceived;
                 // 设置错误事件处理
-                serialPort.ErrorReceived += SerialPort_ErrorReceived;
+                this.SerialPort.ErrorReceived += SerialPort_ErrorReceived;
                 // 设置引脚变化事件处理
-                serialPort.PinChanged += SerialPort_PinChanged;
-                serialPort.Open();
+                this.SerialPort.PinChanged += SerialPort_PinChanged;
+                this.SerialPort.Open();
                 IsConnected = true;
                 // 连接成功，重置重连计数
                 currentReconnectAttempts = 0;
@@ -1709,14 +1703,14 @@ namespace RS.HMI.Client.Controls
             {
                 StopReconnectTimer();
 
-                if (serialPort != null && serialPort.IsOpen)
+                if (this.SerialPort != null && this.SerialPort.IsOpen)
                 {
-                    serialPort.DataReceived -= SerialPort_DataReceived;
-                    serialPort.ErrorReceived -= SerialPort_ErrorReceived;
-                    serialPort.PinChanged -= SerialPort_PinChanged;
-                    serialPort.Close();
-                    serialPort.Dispose();
-                    serialPort = null;
+                    this.SerialPort.DataReceived -= SerialPort_DataReceived;
+                    this.SerialPort.ErrorReceived -= SerialPort_ErrorReceived;
+                    this.SerialPort.PinChanged -= SerialPort_PinChanged;
+                    this.SerialPort.Close();
+                    this.SerialPort.Dispose();
+                    this.SerialPort = null;
                 }
                 IsConnected = false;
             }
@@ -1910,7 +1904,7 @@ namespace RS.HMI.Client.Controls
             {
                 try
                 {
-                 
+
                     busRtuClient?.Close();
                     busRtuClient = new ModbusRtu();
                     busRtuClient.AddressStartWithZero = true;
@@ -1991,7 +1985,7 @@ namespace RS.HMI.Client.Controls
 
                 if (isAdd)
                 {
-                    serialPortConfig.Id = idGenerator.CreateId();
+                    serialPortConfig.Id = this.IdGenerator.CreateId();
                     this.Id = serialPortConfig.Id;
                 }
                 else
@@ -2040,7 +2034,7 @@ namespace RS.HMI.Client.Controls
 
                     if (item.Id <= 0)
                     {
-                        item.Id = idGenerator.CreateId();
+                        item.Id = this.IdGenerator.CreateId();
                         modbusCommuConfigAddList.Add(deviceDataConfig);
                     }
                     else

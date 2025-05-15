@@ -4,6 +4,7 @@ using RS.Commons.Attributs;
 using RS.Commons.Extensions;
 using RS.HMI.Client.Models;
 using RS.Widgets.Controls;
+using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
@@ -22,35 +23,11 @@ using System.Windows.Shapes;
 
 namespace RS.HMI.Client.Views.Areas
 {
-    public partial class UserView : RSUserControl
+    public partial class UserView : RSUserControl, IRSLoading
     {
-        private readonly UserViewModel ViewModel;
         public UserView()
         {
             InitializeComponent();
-            this.ViewModel = this.DataContext as UserViewModel;
         }
-
-        private async Task RSDataGrid_LoadMoreDataAsync(LoadMoreDataArgs loadMoreDataArgs)
-        {
-            var IdGenerator = ServiceProviderExtensions.GetService<IIdGenerator<long>>();
-            for (int i = 0; i < 50; i++)
-            {
-                this.Dispatcher.Invoke(() => {
-                    this.ViewModel.UserModelList.Add(new UserModel()
-                    {
-                        Id = IdGenerator.CreateId(),
-                        Email = $"184596029{i}@qq.com",
-                        NickName = "Ross",
-                        Phone = "111111111",
-                        UserPic = "sfsdfsdf",
-                    });
-                });
-                
-            }
-
-        }
-
-
     }
 }

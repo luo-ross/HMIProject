@@ -1,5 +1,10 @@
-﻿using System;
+﻿using Microsoft.Windows.Input;
+using Microsoft.Xaml.Behaviors.Core;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +37,40 @@ namespace RS.Widgets.Models
         public void Execute(object parameter)
         {
             _execute((T)parameter);
+        }
+    }
+
+
+    public class AsyncRelayCommand<T, TResult> : ICommand
+    {
+        private readonly Func<T, Task<TResult>> _executeAsync;
+        private readonly Func<T, bool> _canExecute;
+
+        public AsyncRelayCommand(Func<T, Task<TResult>> executeAsync, Func<T, bool> canExecute = null)
+        {
+            _executeAsync = executeAsync ?? throw new ArgumentNullException(nameof(executeAsync));
+            _canExecute = canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
+
+        public bool CanExecute(object? parameter)
+        {
+            return _canExecute?.Invoke((T)parameter) ?? true;
+        }
+
+        public void Execute(object? parameter)
+        {
+            ExecuteAsync(parameter).ConfigureAwait(false);
+        }
+
+        public async Task<TResult> ExecuteAsync(object? parameter)
+        {
+            return await _executeAsync((T)parameter);
         }
     }
 

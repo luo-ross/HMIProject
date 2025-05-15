@@ -188,7 +188,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type DataGridRow}">
+    <Style x:Key="RSApp.Styles.DataGridRowStyle" TargetType="{x:Type DataGridRow}">
         <Setter Property="Background" Value="#fff" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="BorderBrush" Value="#E5E6EB" />

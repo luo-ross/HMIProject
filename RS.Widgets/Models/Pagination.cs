@@ -10,6 +10,8 @@ namespace RS.Widgets.Models
     public class Pagination : NotifyBase
     {
 
+        public event Action<Pagination> OnRowsChanged;
+
         private int _Rows;
         /// <summary>
         /// 每页行数  
@@ -29,6 +31,7 @@ namespace RS.Widgets.Models
                 if (OnPropertyChanged(ref _Rows, value))
                 {
                     Page = 1;
+                    this.OnRowsChanged?.Invoke(this);
                 }
                 OnPropertyChanged(nameof(Total));
             }

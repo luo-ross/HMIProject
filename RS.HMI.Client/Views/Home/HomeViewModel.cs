@@ -1,4 +1,6 @@
-﻿using RS.Widgets.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RS.HMI.Client.Views.Areas;
+using RS.Widgets.Models;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
@@ -12,7 +14,9 @@ namespace RS.HMI.Client.Views
         public HomeViewModel()
         {
             this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
+            this.ViewModelSelect = App.AppHost.Services.GetRequiredService<UserViewModel>();
         }
+
 
         private NotifyBase viewModelSelect;
 
