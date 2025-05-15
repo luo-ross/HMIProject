@@ -29,5 +29,6 @@ namespace RS.HMI.Client.Views.Areas
         {
             InitializeComponent();
         }
+
     }
 }

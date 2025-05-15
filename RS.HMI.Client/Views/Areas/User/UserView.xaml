@@ -58,66 +58,76 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0">
                         <Button
+                            HorizontalAlignment="Stretch"
                             Command="{Binding AddCommand}"
                             CommandParameter="{Binding UserModelList}"
-                            Content="新增数据(A)"
-                            Style="{StaticResource RSApp.Styles.DefaultButton}">
-                            <Button.InputBindings>
-                                <KeyBinding
-                                    Key="A"
-                                    Command="{Binding AddCommand}"
-                                    Modifiers="Ctrl" />
-                            </Button.InputBindings>
+                            Style="{StaticResource RSApp.Styles.DefaultButton}"
+                            ToolTip="快捷键Alt+A">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="新增数据(" />
+                                    <Run Text="A" TextDecorations="Underline" />
+                                    <Run Text=")" />
+                                </TextBlock>
+                            </Button.Content>
                         </Button>
                         <Button
+                            HorizontalAlignment="Stretch"
                             Command="{Binding DeleteCommand}"
                             CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
-                            Content="删除数据(D)"
-                            Style="{StaticResource RSApp.Styles.DefaultButton}">
-                            <Button.InputBindings>
-                                <KeyBinding
-                                    Key="D"
-                                    Command="{Binding DeleteCommand}"
-                                    Modifiers="Ctrl" />
-                            </Button.InputBindings>
+                            Style="{StaticResource RSApp.Styles.DefaultButton}"
+                            ToolTip="快捷键Alt+D">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="删除数据(" />
+                                    <Run Text="D" TextDecorations="Underline" />
+                                    <Run Text=")" />
+                                </TextBlock>
+                            </Button.Content>
                         </Button>
                         <Button
+                            HorizontalAlignment="Stretch"
                             Command="{Binding UpdateCommand}"
                             CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
-                            Content="修改数据(M)"
-                            Style="{StaticResource RSApp.Styles.DefaultButton}">
-                            <Button.InputBindings>
-                                <KeyBinding
-                                    Key="M"
-                                    Command="{Binding UpdateCommand}"
-                                    Modifiers="Ctrl" />
-                            </Button.InputBindings>
+                            Style="{StaticResource RSApp.Styles.DefaultButton}"
+                            ToolTip="快捷键Alt+U">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="修改数据(" />
+                                    <Run Text="U" TextDecorations="Underline" />
+                                    <Run Text=")" />
+                                </TextBlock>
+                            </Button.Content>
                         </Button>
                         <Button
+                            HorizontalAlignment="Stretch"
                             Command="{Binding DetailsCommand}"
                             CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
-                            Content="查看数据(V)"
-                            Style="{StaticResource RSApp.Styles.DefaultButton}">
-                            <Button.InputBindings>
-                                <KeyBinding
-                                    Key="V"
-                                    Command="{Binding DetailsCommand}"
-                                    Modifiers="Ctrl" />
-                            </Button.InputBindings>
+                            Style="{StaticResource RSApp.Styles.DefaultButton}"
+                            ToolTip="快捷键Alt+V">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="查看数据(" />
+                                    <Run Text="V" TextDecorations="Underline" />
+                                    <Run Text=")" />
+                                </TextBlock>
+                            </Button.Content>
                         </Button>
                     </StackPanel>
 
                     <StackPanel Grid.Row="2">
                         <Button
+                            HorizontalAlignment="Stretch"
                             Command="{Binding CloseCommand}"
-                            Content="关闭(C)"
-                            Style="{StaticResource RSApp.Styles.DefaultButton}">
-                            <Button.InputBindings>
-                                <KeyBinding
-                                    Key="C"
-                                    Command="{Binding CloseCommand}"
-                                    Modifiers="Ctrl" />
-                            </Button.InputBindings>
+                            Style="{StaticResource RSApp.Styles.DefaultButton}"
+                            ToolTip="快捷键Alt+C">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="关闭(" />
+                                    <Run Text="C" TextDecorations="Underline" />
+                                    <Run Text=")" />
+                                </TextBlock>
+                            </Button.Content>
                         </Button>
                     </StackPanel>
                 </Grid>

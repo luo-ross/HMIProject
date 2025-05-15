@@ -67,7 +67,10 @@ namespace RS.HMI.Client.Views.Areas
 
         private void Delete(object obj)
         {
-           
+            if (obj is UserModel userModel)
+            {
+                this.UserModelList.Remove(userModel);
+            }
         }
 
         private void Add(object obj)

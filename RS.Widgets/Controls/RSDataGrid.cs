@@ -75,11 +75,26 @@ namespace RS.Widgets.Controls
 
         #region 静态命令
 
-        public static readonly ICommand AddCommand = new RoutedCommand(nameof(AddCommand), typeof(RSDataGrid));
-        public static readonly ICommand DeleteCommand = new RoutedCommand(nameof(DeleteCommand), typeof(RSDataGrid));
-        public static readonly ICommand UpdateCommand = new RoutedCommand(nameof(UpdateCommand), typeof(RSDataGrid));
-        public static readonly ICommand DetailsCommand = new RoutedCommand(nameof(DetailsCommand), typeof(RSDataGrid));
-        public static readonly ICommand ExportCommand = new RoutedCommand(nameof(ExportCommand), typeof(RSDataGrid));
+        public static readonly ICommand AddCommand = new RoutedCommand(nameof(AddCommand), typeof(RSDataGrid), new InputGestureCollection
+        {
+            new KeyGesture(Key.A, ModifierKeys.Alt)
+        });
+        public static readonly ICommand DeleteCommand = new RoutedCommand(nameof(DeleteCommand), typeof(RSDataGrid), new InputGestureCollection
+        {
+            new KeyGesture(Key.D, ModifierKeys.Alt)
+        });
+        public static readonly ICommand UpdateCommand = new RoutedCommand(nameof(UpdateCommand), typeof(RSDataGrid), new InputGestureCollection
+        {
+            new KeyGesture(Key.U, ModifierKeys.Alt)
+        });
+        public static readonly ICommand DetailsCommand = new RoutedCommand(nameof(DetailsCommand), typeof(RSDataGrid), new InputGestureCollection
+        {
+            new KeyGesture(Key.V, ModifierKeys.Alt)
+        });
+        public static readonly ICommand ExportCommand = new RoutedCommand(nameof(ExportCommand), typeof(RSDataGrid), new InputGestureCollection
+        {
+            new KeyGesture(Key.E, ModifierKeys.Alt)
+        });
 
 
         static RSDataGrid()
@@ -181,9 +196,14 @@ namespace RS.Widgets.Controls
             this.Loaded += RSDataGrid_Loaded;
             this.Pagination = new Pagination();
             this.Pagination.OnRowsChanged += Pagination_OnRowsChanged;
+            this.MouseEnter += RSDataGrid_MouseEnter;
         }
 
-        
+        private void RSDataGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Focus();
+        }
+
         private async void RSDataGrid_Loaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = this.PART_DataGrid.FindChild<ScrollViewer>();
