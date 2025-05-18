@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Abstractions;
+using RS.Commons;
 using RS.Widgets.Messages;
 using RS.Widgets.Models;
 using System;
@@ -26,8 +27,8 @@ namespace RS.Widgets.Controls
         public RSForm(UserControl userControl, FormMessageBase message)
         {
             InitializeComponent();
-            this.FormContent=userControl;
-            this.FormMessage=message;
+            this.FormContent = userControl;
+            this.FormMessage = message;
         }
 
         [Description("表单内容")]
@@ -60,20 +61,29 @@ namespace RS.Widgets.Controls
         {
             this.Close();
         }
-       
+
 
         private void BtnSubmit_Click(object sender, RoutedEventArgs e)
         {
-            switch (this.FormMessage.CRUD)
+            var formMessage = this.FormMessage;
+            this.InvokeLoadingActionAsync(async (cancellationToken) =>
             {
-                case RS.Commons.Enums.CRUD.Add:
-                    this.FormMessage.ViewModel.SubmitCommand.Execute(this.FormMessage.FormData);
-                    break;
-                case RS.Commons.Enums.CRUD.Update:
-                    this.FormMessage.ViewModel.UpdateCommand.Execute(this.FormMessage.FormData);
-                    break;
-            }
-           
+
+                switch (formMessage.CRUD)
+                {
+                    case RS.Commons.Enums.CRUD.Add:
+                        await formMessage.ViewModel.SubmitCommand.ExecuteAsync(formMessage.FormData);
+                        break;
+                    case RS.Commons.Enums.CRUD.Update:
+                        await formMessage.ViewModel.UpdateCommand.ExecuteAsync(formMessage.FormData);
+                        break;
+                }
+
+
+                return OperateResult.CreateSuccessResult();
+            });
+
+
         }
     }
 }

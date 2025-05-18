@@ -19,13 +19,13 @@ namespace RS.Widgets.Models
      
 
         [RelayCommand]
-        public virtual void Submit(object obj)
+        public virtual async Task Submit(object obj)
         {
          
         }
 
         [RelayCommand]
-        public virtual void Update(object obj)
+        public virtual async Task Update(object obj)
         {
 
         }

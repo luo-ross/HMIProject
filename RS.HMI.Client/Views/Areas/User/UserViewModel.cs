@@ -51,15 +51,18 @@ namespace RS.HMI.Client.Views.Areas
 
 
 
-        public override void Submit(object obj)
+        public override async Task Submit(object obj)
         {
             var sdf = 1;
+            await Task.Delay(3000);
         }
 
 
-        public override void Update(object obj)
+        public override async Task Update(object obj)
         {
             var sdf = 1;
+            await Task.Delay(3000);
+
         }
 
 
@@ -199,7 +202,7 @@ namespace RS.HMI.Client.Views.Areas
         [ObservableProperty]
         private UserModel userModelEdit;
 
-       
+
 
         private UserModel userModelSelect;
 
@@ -211,9 +214,9 @@ namespace RS.HMI.Client.Views.Areas
             get { return userModelSelect; }
             set
             {
-                this.SetProperty(ref userModelSelect,value);
+                this.SetProperty(ref userModelSelect, value);
             }
         }
-      
+
     }
 }
