@@ -8,9 +8,9 @@
     xmlns:local="clr-namespace:RS.HMI.Client.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
-    Title="HomeView"
     MinWidth="1024"
     MinHeight="600"
+    d:DataContext="{d:DesignInstance Type=local:UserViewModel}"
     Background="#eee"
     BorderCornerRadius="5"
     CaptionHeight="36"
@@ -19,9 +19,9 @@
     ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <rs:RSWindow.DataContext>
+    <!--<rs:RSWindow.DataContext>
         <local:HomeViewModel />
-    </rs:RSWindow.DataContext>
+    </rs:RSWindow.DataContext>-->
     <rs:RSWindow.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>

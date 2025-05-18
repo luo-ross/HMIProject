@@ -46,32 +46,44 @@
                                         <Border x:Name="PART_Caption" Grid.Row="0">
                                             <Grid Height="{TemplateBinding CaptionHeight}">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="auto" />
                                                     <ColumnDefinition />
                                                     <ColumnDefinition Width="auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <Button
-                                                    x:Name="PART_Icon"
-                                                    Width="20"
-                                                    Height="20"
-                                                    Margin="5,0,5,0"
-                                                    Command="{x:Static SystemCommands.ShowSystemMenuCommand}">
-                                                    <Button.Style>
-                                                        <Style TargetType="{x:Type Button}">
-                                                            <Setter Property="Template">
-                                                                <Setter.Value>
-                                                                    <ControlTemplate TargetType="{x:Type Button}">
-                                                                        <Grid>
-                                                                            <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Icon}" />
-                                                                        </Grid>
-                                                                    </ControlTemplate>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Style>
-                                                    </Button.Style>
-                                                </Button>
+                                                <Grid x:Name="PART_CaptionHost">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button
+                                                            x:Name="PART_Icon"
+                                                            Width="20"
+                                                            Height="20"
+                                                            Margin="5,0,5,0"
+                                                            Command="{x:Static SystemCommands.ShowSystemMenuCommand}">
+                                                            <Button.Style>
+                                                                <Style TargetType="{x:Type Button}">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                                                <Grid>
+                                                                                    <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Icon}" />
+                                                                                </Grid>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Button.Style>
+                                                        </Button>
+                                                        <TextBlock Text="{TemplateBinding Title}" />
+                                                    </StackPanel>
 
-                                                <ContentControl Grid.Column="1" Content="{TemplateBinding CaptionContent}" />
+                                                    <ContentControl
+                                                        x:Name="PART_CaptionContent"
+                                                        Grid.Column="1"
+                                                        Content="{TemplateBinding CaptionContent}" />
+
+                                                </Grid>
 
                                                 <Border
                                                     x:Name="PART_InfoBorder"
@@ -151,6 +163,8 @@
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
                             <Setter TargetName="PART_Client" Property="Panel.ZIndex" Value="-1" />
+                            <Setter TargetName="PART_CaptionHost" Property="Visibility" Value="Collapsed" />
+
                         </Trigger>
                         <Trigger Property="IsFitSystem" Value="False">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="1" />

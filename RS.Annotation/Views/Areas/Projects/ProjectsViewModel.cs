@@ -24,7 +24,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref projectModelAdd, value);
+                this.SetProperty(ref projectModelAdd, value);
             }
         }
 
@@ -45,7 +45,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref projectModelList, value);
+                this.SetProperty(ref projectModelList, value);
             }
         }
 
@@ -62,7 +62,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref projectModelSelect, value);
+                this.SetProperty(ref projectModelSelect, value);
             }
         }
 

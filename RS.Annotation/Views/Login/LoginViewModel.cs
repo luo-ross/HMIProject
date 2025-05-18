@@ -27,7 +27,7 @@ namespace RS.Annotation.Views
             }
             set
             {
-                OnPropertyChanged(ref passwordLoginModel, value);
+                this.SetProperty(ref passwordLoginModel, value);
             }
         }
 
@@ -48,7 +48,7 @@ namespace RS.Annotation.Views
             }
             set
             {
-                OnPropertyChanged(ref smsRegisterModel, value);
+                this.SetProperty(ref smsRegisterModel, value);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 图像资源
     /// </summary>
-    public class ImgModel : ModelBase
+    public partial class ImgModel : ModelBase
     {
         public ImgModel(long id, long projectId)
         {
@@ -21,75 +22,33 @@ namespace RS.Widgets.Models
             this.ProjectId = projectId;
         }
 
-
-        private long id;
         /// <summary>
         /// 图像资源主键 编号
         /// </summary>
-        public long Id
-        {
-            get
-            {
-                return id;
-            }
-            private set
-            {
-                OnPropertyChanged(ref id, value);
-            }
-        }
+        [ObservableProperty]
+        private long id;
 
-
-        private long projectId;
         /// <summary>
         /// 所属项目
         /// </summary>
-        public long ProjectId
-        {
-            get
-            {
-                return projectId;
-            }
-            private set
-            {
-                OnPropertyChanged(ref projectId, value);
-            }
-        }
+        [ObservableProperty]
+        private long projectId;
 
 
-
-
-        private string imgName;
         /// <summary>
         /// 图像名称
         /// </summary>
-        public string ImgName
-        {
-            get
-            {
-                return imgName;
-            }
-            set
-            {
-                OnPropertyChanged(ref imgName, value);
-            }
-        }
+        [ObservableProperty]
+        private string imgName;
 
 
-        private string imgPath;
         /// <summary>
         /// 图像路径
         /// </summary>
-        public string ImgPath
-        {
-            get
-            {
-                return imgPath;
-            }
-            set
-            {
-                OnPropertyChanged(ref imgPath, value);
-            }
-        }
+        [ObservableProperty]
+        private string imgPath;
+     
+       
 
         private BitmapSource thubnailImg;
         /// <summary>
@@ -103,7 +62,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref thubnailImg, value);
+                this.SetProperty(ref thubnailImg, value);
             }
         }
 
@@ -121,7 +80,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isCanRead, value);
+                this.SetProperty(ref isCanRead, value);
             }
         }
 
@@ -138,7 +97,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref width, value);
+                this.SetProperty(ref width, value);
             }
         }
 
@@ -154,7 +113,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref height, value);
+                this.SetProperty(ref height, value);
             }
         }
 
@@ -170,7 +129,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isSelect, value);
+                this.SetProperty(ref isSelect, value);
             }
         }
 
@@ -186,7 +145,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isWorking, value);
+                this.SetProperty(ref isWorking, value);
             }
         }
 
@@ -206,7 +165,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref rectModelList, value);
+                this.SetProperty(ref rectModelList, value);
             }
         }
 
@@ -227,7 +186,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref tagSumModelList, value);
+                this.SetProperty(ref tagSumModelList, value);
             }
         }
 

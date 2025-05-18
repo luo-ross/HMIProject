@@ -38,7 +38,7 @@ namespace RS.Widgets.Models
             }
             private set
             {
-                OnPropertyChanged(ref id, value);
+                this.SetProperty(ref id, value);
             }
         }
 
@@ -55,7 +55,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref tasks, value);
+                this.SetProperty(ref tasks, value);
             }
         }
 
@@ -75,7 +75,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref projectName, value);
+                this.SetProperty(ref projectName, value);
             }
         }
 
@@ -93,7 +93,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref projectPath, value);
+                this.SetProperty(ref projectPath, value);
             }
         }
 
@@ -110,7 +110,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref description, value);
+                this.SetProperty(ref description, value);
             }
         }
 
@@ -127,7 +127,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref thubnailImg, value);
+                this.SetProperty(ref thubnailImg, value);
             }
         }
 
@@ -144,7 +144,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isSelect, value);
+                this.SetProperty(ref isSelect, value);
             }
         }
 
@@ -161,7 +161,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isInit, value);
+                this.SetProperty(ref isInit, value);
             }
         }
 
@@ -198,7 +198,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref tagModelList, value);
+                this.SetProperty(ref tagModelList, value);
             }
         }
 
@@ -221,7 +221,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref imgModelList, value);
+                this.SetProperty(ref imgModelList, value);
             }
         }
 
@@ -238,7 +238,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref createTime, value);
+                this.SetProperty(ref createTime, value);
             }
         }
 
@@ -255,7 +255,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref updateTime, value);
+                this.SetProperty(ref updateTime, value);
             }
         }
 

@@ -26,7 +26,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref imgWidth, value);
+                this.SetProperty(ref imgWidth, value);
             }
         }
 
@@ -43,7 +43,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref imgHeight, value);
+                this.SetProperty(ref imgHeight, value);
             }
         }
 
@@ -60,7 +60,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref zoomLevel, value);
+                this.SetProperty(ref zoomLevel, value);
             }
         }
 
@@ -77,7 +77,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref imgModelSelect, value);
+                this.SetProperty(ref imgModelSelect, value);
             }
         }
 
@@ -97,7 +97,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref imgModelSelectList, value);
+                this.SetProperty(ref imgModelSelectList, value);
             }
         }
 
@@ -111,7 +111,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref log, value);
+                this.SetProperty(ref log, value);
             }
         }
 
@@ -128,7 +128,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref brightness, value);
+                this.SetProperty(ref brightness, value);
             }
         }
 
@@ -148,7 +148,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref contrast, value);
+                this.SetProperty(ref contrast, value);
             }
         }
 

@@ -12,7 +12,7 @@ using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class RSWindow : RSWindowBase, IInfoBar
+    public class RSWindow : RSWindowBase, IInfoBar, ILoadingService
     {
         private Button PART_Minimize;
         private Button PART_BtnMaxRestore;
@@ -40,6 +40,8 @@ namespace RS.Widgets.Controls
                 };
             }
         }
+
+      
 
         public IInfoBar RSWinInfoBar
         {
@@ -146,15 +148,18 @@ namespace RS.Widgets.Controls
             });
         }
 
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null)
+
+
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig);
+            return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
         }
 
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null)
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig);
+            return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
         }
+
 
         private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
         {
@@ -294,6 +299,9 @@ namespace RS.Widgets.Controls
             get { return (bool)GetValue(IsFitSystemProperty); }
             set { SetValue(IsFitSystemProperty, value); }
         }
+
+     
+
         public static readonly DependencyProperty IsFitSystemProperty =
             DependencyProperty.Register("IsFitSystem", typeof(bool), typeof(RSWindow), new PropertyMetadata(false));
 
@@ -313,5 +321,7 @@ namespace RS.Widgets.Controls
             }
 
         }
+
+
     }
 }

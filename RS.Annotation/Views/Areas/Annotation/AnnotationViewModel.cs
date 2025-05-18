@@ -31,7 +31,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref imgSource, value);
+                this.SetProperty(ref imgSource, value);
             }
         }
 
@@ -47,7 +47,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref annotationCanvasHostMouseMovePosition, value);
+                this.SetProperty(ref annotationCanvasHostMouseMovePosition, value);
             }
         }
 
@@ -64,7 +64,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref annotationCanvasMouseMovePosition, value);
+                this.SetProperty(ref annotationCanvasMouseMovePosition, value);
             }
         }
 
@@ -81,7 +81,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref canvasMouseDownTranslateTransformPosition, value);
+                this.SetProperty(ref canvasMouseDownTranslateTransformPosition, value);
             }
         }
 
@@ -103,7 +103,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref centerX, value);
+                this.SetProperty(ref centerX, value);
             }
         }
 
@@ -119,7 +119,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref centerY, value);
+                this.SetProperty(ref centerY, value);
             }
         }
 
@@ -135,7 +135,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref scale, value);
+                this.SetProperty(ref scale, value);
                 this.UpdateScaleDes();
             }
         }
@@ -165,7 +165,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref scaleDes, value);
+                this.SetProperty(ref scaleDes, value);
             }
         }
 
@@ -182,7 +182,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref scaleX, value);
+                this.SetProperty(ref scaleX, value);
             }
         }
 
@@ -199,7 +199,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref scaleY, value);
+                this.SetProperty(ref scaleY, value);
             }
         }
 
@@ -216,7 +216,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref minScale, value);
+                this.SetProperty(ref minScale, value);
             }
         }
 
@@ -233,7 +233,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref maxScale, value);
+                this.SetProperty(ref maxScale, value);
             }
         }
         #endregion
@@ -251,7 +251,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref transformX, value);
+                this.SetProperty(ref transformX, value);
             }
         }
 
@@ -268,7 +268,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref transformY, value);
+                this.SetProperty(ref transformY, value);
             }
         }
         #endregion
@@ -285,7 +285,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref tagModelSelect, value);
+                this.SetProperty(ref tagModelSelect, value);
             }
         }
 
@@ -301,7 +301,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref opacity, value);
+                this.SetProperty(ref opacity, value);
                 this.UpdateOpacityDes();
             }
         }
@@ -318,7 +318,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref opacityDes, value);
+                this.SetProperty(ref opacityDes, value);
             }
         }
 
@@ -341,7 +341,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref rectModelSelect, value);
+                this.SetProperty(ref rectModelSelect, value);
             }
         }
 
@@ -367,7 +367,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref navRectModel, value);
+                this.SetProperty(ref navRectModel, value);
             }
         }
         #endregion
@@ -384,7 +384,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref crud, value);
+                this.SetProperty(ref crud, value);
             }
         }
 
@@ -401,7 +401,7 @@ namespace RS.Annotation.Views.Areas
             }
             set
             {
-                OnPropertyChanged(ref tagModelEdit, value);
+                this.SetProperty(ref tagModelEdit, value);
             }
         }
     }

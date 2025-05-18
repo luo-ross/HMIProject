@@ -1,5 +1,7 @@
-﻿using NPOI.POIFS.Crypt.Dsig.Services;
+﻿using CommunityToolkit.Mvvm.Input;
+using NPOI.POIFS.Crypt.Dsig.Services;
 using RS.Commons;
+using RS.Widgets.Enums;
 using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
@@ -17,11 +19,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RS.Widgets.Controls
 {
-    public class RSDataGrid : DataGrid
+    public class RSDataGrid : DataGrid, ILoadingService
     {
         private DataGrid PART_DataGrid;
         private RSUserControl PART_RSUserControl;
@@ -29,164 +30,162 @@ namespace RS.Widgets.Controls
         private Button PART_BtnPrevious;
         private Button PART_BtnNext;
         private Button PART_BtnEndPage;
-        private CancellationTokenSource LoadDataCTS;
 
+        public event Func<Pagination, Task> PaginationAsync;
 
         #region 路由事件
 
-        public static readonly RoutedEvent AddEvent = EventManager.RegisterRoutedEvent(
-            "Add", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
-        public static readonly RoutedEvent DeleteEvent = EventManager.RegisterRoutedEvent(
-            "Delete", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
-        public static readonly RoutedEvent UpdateEvent = EventManager.RegisterRoutedEvent(
-            "Update", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
-        public static readonly RoutedEvent DetailsEvent = EventManager.RegisterRoutedEvent(
-            "Details", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
-        public static readonly RoutedEvent ExportEvent = EventManager.RegisterRoutedEvent(
-            "Export", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
+        public static readonly RoutedEvent AddClickEvent = EventManager.RegisterRoutedEvent(
+            nameof(AddClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
+        public static readonly RoutedEvent DeleteClickEvent = EventManager.RegisterRoutedEvent(
+             nameof(DeleteClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
+        public static readonly RoutedEvent UpdateClickEvent = EventManager.RegisterRoutedEvent(
+            nameof(UpdateClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
+        public static readonly RoutedEvent DetailsClickEvent = EventManager.RegisterRoutedEvent(
+             nameof(DetailsClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
+        public static readonly RoutedEvent ExportClickEvent = EventManager.RegisterRoutedEvent(
+             nameof(ExportClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSDataGrid));
 
-
-        public event RoutedEventHandler Add
+        public event RoutedEventHandler AddClick
         {
-            add { AddHandler(AddEvent, value); }
-            remove { RemoveHandler(AddEvent, value); }
+            add { AddHandler(AddClickEvent, value); }
+            remove { RemoveHandler(AddClickEvent, value); }
         }
-        public event RoutedEventHandler Delete
+        public event RoutedEventHandler DeleteClick
         {
-            add { AddHandler(DeleteEvent, value); }
-            remove { RemoveHandler(DeleteEvent, value); }
+            add { AddHandler(DeleteClickEvent, value); }
+            remove { RemoveHandler(DeleteClickEvent, value); }
         }
-        public event RoutedEventHandler Update
+        public event RoutedEventHandler UpdateClick
         {
-            add { AddHandler(UpdateEvent, value); }
-            remove { RemoveHandler(UpdateEvent, value); }
+            add { AddHandler(UpdateClickEvent, value); }
+            remove { RemoveHandler(UpdateClickEvent, value); }
         }
-        public event RoutedEventHandler Details
+        public event RoutedEventHandler DetailsClick
         {
-            add { AddHandler(DetailsEvent, value); }
-            remove { RemoveHandler(DetailsEvent, value); }
+            add { AddHandler(DetailsClickEvent, value); }
+            remove { RemoveHandler(DetailsClickEvent, value); }
         }
-        public event RoutedEventHandler Export
+        public event RoutedEventHandler ExportClick
         {
-            add { AddHandler(ExportEvent, value); }
-            remove { RemoveHandler(ExportEvent, value); }
+            add { AddHandler(ExportClickEvent, value); }
+            remove { RemoveHandler(ExportClickEvent, value); }
         }
         #endregion
 
         #region 静态命令
 
-        public static readonly ICommand AddCommand = new RoutedCommand(nameof(AddCommand), typeof(RSDataGrid), new InputGestureCollection
+        public static readonly ICommand InternalAddCommand = new RoutedCommand(nameof(InternalAddCommand), typeof(RSDataGrid), new InputGestureCollection
         {
             new KeyGesture(Key.A, ModifierKeys.Alt)
         });
-        public static readonly ICommand DeleteCommand = new RoutedCommand(nameof(DeleteCommand), typeof(RSDataGrid), new InputGestureCollection
+        public static readonly ICommand InternalDeleteCommand = new RoutedCommand(nameof(InternalDeleteCommand), typeof(RSDataGrid), new InputGestureCollection
         {
             new KeyGesture(Key.D, ModifierKeys.Alt)
         });
-        public static readonly ICommand UpdateCommand = new RoutedCommand(nameof(UpdateCommand), typeof(RSDataGrid), new InputGestureCollection
+        public static readonly ICommand InternalUpdateCommand = new RoutedCommand(nameof(InternalUpdateCommand), typeof(RSDataGrid), new InputGestureCollection
         {
             new KeyGesture(Key.U, ModifierKeys.Alt)
         });
-        public static readonly ICommand DetailsCommand = new RoutedCommand(nameof(DetailsCommand), typeof(RSDataGrid), new InputGestureCollection
+        public static readonly ICommand InternalDetailsCommand = new RoutedCommand(nameof(InternalDetailsCommand), typeof(RSDataGrid), new InputGestureCollection
         {
             new KeyGesture(Key.V, ModifierKeys.Alt)
         });
-        public static readonly ICommand ExportCommand = new RoutedCommand(nameof(ExportCommand), typeof(RSDataGrid), new InputGestureCollection
+        public static readonly ICommand InternalExportCommand = new RoutedCommand(nameof(InternalExportCommand), typeof(RSDataGrid), new InputGestureCollection
         {
             new KeyGesture(Key.E, ModifierKeys.Alt)
         });
-
 
         static RSDataGrid()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDataGrid), new FrameworkPropertyMetadata(typeof(RSDataGrid)));
 
             CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(AddCommand, AddCommandExecuted, CanAddCommandExecute));
+                new CommandBinding(InternalAddCommand, InternalAddCommandExecuted, CanInternalAddCommandExecute));
             CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(DeleteCommand, DeleteCommandExecuted, CanDeleteCommandExecute));
+                new CommandBinding(InternalDeleteCommand, InternalDeleteCommandExecuted, CanInternalDeleteCommandExecute));
             CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(UpdateCommand, UpdateCommandExecuted, CanUpdateCommandExecute));
+                new CommandBinding(InternalUpdateCommand, InternalUpdateCommandExecuted, CanInternalUpdateCommandExecute));
             CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(DetailsCommand, DetailsCommandExecuted, CanDetailsCommandExecute));
+                new CommandBinding(InternalDetailsCommand, InternalDetailsCommandExecuted, CanInternalDetailsCommandExecute));
             CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(ExportCommand, ExportCommandExecuted, CanExportCommandExecute));
+                new CommandBinding(InternalExportCommand, InternalExportCommandExecuted, CanInternalExportCommandExecute));
         }
         #endregion
 
 
-        private static void CanExportCommandExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void CanInternalExportCommandExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private static void ExportCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        private static void InternalExportCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var dataGrid = sender as RSDataGrid;
             if (dataGrid != null)
             {
-                dataGrid.RaiseEvent(new RoutedEventArgs(ExportEvent, dataGrid.ItemsSource));
-                dataGrid.OnExportCommand?.Execute(dataGrid.ItemsSource);
+                dataGrid.RaiseEvent(new RoutedEventArgs(ExportClickEvent, dataGrid.ItemsSource));
+                dataGrid.ExportClickCommand?.Execute(dataGrid.ItemsSource);
             }
         }
 
-        private static void CanDetailsCommandExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void CanInternalDetailsCommandExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private static void DetailsCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        private static void InternalDetailsCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var dataGrid = sender as RSDataGrid;
             if (dataGrid != null)
             {
-                dataGrid.RaiseEvent(new RoutedEventArgs(DetailsEvent, dataGrid.SelectedItem));
-                dataGrid.OnDetailsCommand?.Execute(dataGrid.SelectedItem);
+                dataGrid.RaiseEvent(new RoutedEventArgs(DetailsClickEvent, dataGrid.SelectedItem));
+                dataGrid.DetailsClickCommand?.Execute(dataGrid.SelectedItem);
             }
         }
 
-        private static void CanUpdateCommandExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void CanInternalUpdateCommandExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private static void UpdateCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        private static void InternalUpdateCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var dataGrid = sender as RSDataGrid;
             if (dataGrid != null)
             {
-                dataGrid.RaiseEvent(new RoutedEventArgs(UpdateEvent, dataGrid.SelectedItem));
-                dataGrid.OnUpdateCommand?.Execute(dataGrid.SelectedItem);
+                dataGrid.RaiseEvent(new RoutedEventArgs(UpdateClickEvent, dataGrid.SelectedItem));
+                dataGrid.UpdateClickCommand?.Execute(dataGrid.SelectedItem);
             }
         }
 
-        private static void CanDeleteCommandExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void CanInternalDeleteCommandExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private static void DeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        private static void InternalDeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var dataGrid = sender as RSDataGrid;
             if (dataGrid != null)
             {
-                dataGrid.RaiseEvent(new RoutedEventArgs(DeleteEvent, dataGrid.SelectedItem));
-                dataGrid.OnDeleteCommand?.Execute(dataGrid.SelectedItem);
+                dataGrid.RaiseEvent(new RoutedEventArgs(DeleteClickEvent, dataGrid.SelectedItem));
+                dataGrid.DeleteClickCommand?.Execute(dataGrid.SelectedItem);
             }
         }
 
         // 命令执行方法
-        private static void AddCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        private static void InternalAddCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var dataGrid = sender as RSDataGrid;
             if (dataGrid != null)
             {
-                dataGrid.RaiseEvent(new RoutedEventArgs(AddEvent, dataGrid.ItemsSource));
-                dataGrid.OnAddCommand?.Execute(dataGrid.ItemsSource);
+                dataGrid.RaiseEvent(new RoutedEventArgs(AddClickEvent, dataGrid.ItemsSource));
+                dataGrid.AddClickCommand?.Execute(dataGrid.ItemsSource);
             }
         }
 
-        private static void CanAddCommandExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void CanInternalAddCommandExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
@@ -206,22 +205,22 @@ namespace RS.Widgets.Controls
 
         private async void RSDataGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            var scrollViewer = this.PART_DataGrid.FindChild<ScrollViewer>();
-            if (scrollViewer != null)
-            {
-                scrollViewer.ScrollChanged -= OnScrollChanged;
-                scrollViewer.ScrollChanged += OnScrollChanged;
-            }
-            await LoadData();
+            //var scrollViewer = this.PART_DataGrid.FindChild<ScrollViewer>();
+            //if (scrollViewer != null)
+            //{
+            //    scrollViewer.ScrollChanged -= OnScrollChanged;
+            //    scrollViewer.ScrollChanged += OnScrollChanged;
+            //}
+            await InternalPaginationAsync();
         }
 
         #region 自定义Command
         public static readonly DependencyProperty LoadDataCommandProperty =
-        DependencyProperty.Register(nameof(LoadDataCommand), typeof(AsyncRelayCommand<LoadDataArgs, int>), typeof(RSDataGrid), new PropertyMetadata(OnCommandChanged));
+        DependencyProperty.Register(nameof(PaginationCommand), typeof(AsyncRelayCommand<Pagination>), typeof(RSDataGrid), new PropertyMetadata(null));
 
-        public AsyncRelayCommand<LoadDataArgs, int> LoadDataCommand
+        public AsyncRelayCommand<Pagination> PaginationCommand
         {
-            get { return (AsyncRelayCommand<LoadDataArgs, int>)GetValue(LoadDataCommandProperty); }
+            get { return (AsyncRelayCommand<Pagination>)GetValue(LoadDataCommandProperty); }
             set { SetValue(LoadDataCommandProperty, value); }
         }
 
@@ -263,9 +262,9 @@ namespace RS.Widgets.Controls
 
         private bool UpdateCanExecute()
         {
-            if (LoadDataCommand != null)
+            if (PaginationCommand != null)
             {
-                return this.LoadDataCommand.CanExecute(null);
+                return this.PaginationCommand.CanExecute(null);
             }
             else
             {
@@ -279,66 +278,66 @@ namespace RS.Widgets.Controls
         #region 只读Command事件
 
         // 新增数据命令依赖属性
-        public ICommand OnAddCommand
+        public ICommand AddClickCommand
         {
-            get { return (ICommand)GetValue(OnAddCommandProperty); }
-            set { SetValue(OnAddCommandProperty, value); }
+            get { return (ICommand)GetValue(AddCommandProperty); }
+            set { SetValue(AddCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnAddCommandProperty =
-            DependencyProperty.Register("OnAddCommand", typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
+        public static readonly DependencyProperty AddCommandProperty =
+            DependencyProperty.Register(nameof(AddClickCommand), typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
 
 
 
         // 删除选中命令依赖属性
 
-        public ICommand OnDeleteCommand
+        public ICommand DeleteClickCommand
         {
-            get { return (ICommand)GetValue(OnDeleteCommandProperty); }
-            set { SetValue(OnDeleteCommandProperty, value); }
+            get { return (ICommand)GetValue(DeleteClickCommandProperty); }
+            set { SetValue(DeleteClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnDeleteCommandProperty =
-            DependencyProperty.Register("OnDeleteCommand", typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
+        public static readonly DependencyProperty DeleteClickCommandProperty =
+            DependencyProperty.Register(nameof(DeleteClickCommand), typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
 
 
 
 
         // 修改数据命令依赖属性
-        public ICommand OnUpdateCommand
+        public ICommand UpdateClickCommand
         {
-            get { return (ICommand)GetValue(OnUpdateCommandProperty); }
-            set { SetValue(OnUpdateCommandProperty, value); }
+            get { return (ICommand)GetValue(UpdateClickCommandProperty); }
+            set { SetValue(UpdateClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnUpdateCommandProperty =
-            DependencyProperty.Register("OnUpdateCommand", typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
+        public static readonly DependencyProperty UpdateClickCommandProperty =
+            DependencyProperty.Register(nameof(UpdateClickCommand), typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
 
 
 
 
         // 查看数据命令依赖属性
-        public ICommand OnDetailsCommand
+        public ICommand DetailsClickCommand
         {
-            get { return (ICommand)GetValue(OnDetailsCommandProperty); }
-            set { SetValue(OnDetailsCommandProperty, value); }
+            get { return (ICommand)GetValue(DetailsClickCommandProperty); }
+            set { SetValue(DetailsClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnDetailsCommandProperty =
-            DependencyProperty.Register("OnDetailsCommand", typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
+        public static readonly DependencyProperty DetailsClickCommandProperty =
+            DependencyProperty.Register(nameof(DetailsClickCommand), typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
 
 
 
 
         // 导出配置命令依赖属性
-        public ICommand OnExportCommand
+        public ICommand ExportClickCommand
         {
-            get { return (ICommand)GetValue(OnExportCommandProperty); }
-            set { SetValue(OnExportCommandProperty, value); }
+            get { return (ICommand)GetValue(ExportClickCommandProperty); }
+            set { SetValue(ExportClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnExportCommandProperty =
-            DependencyProperty.Register("OnExportCommand", typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
+        public static readonly DependencyProperty ExportClickCommandProperty =
+            DependencyProperty.Register(nameof(ExportClickCommand), typeof(ICommand), typeof(RSDataGrid), new PropertyMetadata(null));
 
         #endregion
 
@@ -354,10 +353,8 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty PaginationProperty =
             DependencyProperty.Register("Pagination", typeof(Pagination), typeof(RSDataGrid), new PropertyMetadata(null));
-
+    
         #endregion
-
-
 
 
         public override void OnApplyTemplate()
@@ -407,7 +404,7 @@ namespace RS.Widgets.Controls
                 return;
             }
             this.Pagination.Page = this.Pagination.Total;
-            await LoadData();
+            await InternalPaginationAsync();
         }
 
         private async void PART_BtnNext_Click(object sender, RoutedEventArgs e)
@@ -417,7 +414,7 @@ namespace RS.Widgets.Controls
                 return;
             }
             this.Pagination.Page = Math.Min(this.Pagination.Total, this.Pagination.Page + 1);
-            await LoadData();
+            await InternalPaginationAsync();
         }
 
         private async void PART_BtnPrevious_Click(object sender, RoutedEventArgs e)
@@ -427,7 +424,7 @@ namespace RS.Widgets.Controls
                 return;
             }
             this.Pagination.Page = Math.Max(1, this.Pagination.Page - 1);
-            await LoadData();
+            await InternalPaginationAsync();
         }
 
         private async void PART_BtnFirstPage_Click(object sender, RoutedEventArgs e)
@@ -437,54 +434,48 @@ namespace RS.Widgets.Controls
                 return;
             }
             this.Pagination.Page = 1;
-            await LoadData();
+            await InternalPaginationAsync();
         }
 
 
         private async void Pagination_OnRowsChanged(Pagination pagination)
         {
-            await LoadData();
+            await InternalPaginationAsync();
         }
 
-        //public event Func<LoadDataArgs, Task<int>> OnLoadDataAsync;
 
-        private async void OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        //private async void OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        //{
+        //    if (e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight)
+        //    {
+        //        await InternalPaginationAsync();
+        //    }
+        //}
+
+        private async Task InternalPaginationAsync()
         {
-            if (e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight)
-            {
-                await LoadData();
-            }
-        }
-
-        private async Task LoadData()
-        {
-
-            if (this.LoadDataCTS != null)
-            {
-                await this.LoadDataCTS.CancelAsync();
-            }
-
-            this.LoadDataCTS = new CancellationTokenSource();
-            LoadDataArgs loadMoreDataArgs = new LoadDataArgs();
-            loadMoreDataArgs.Rows = this.Pagination.Rows;
-            loadMoreDataArgs.Sord = this.Pagination.Sord;
-            loadMoreDataArgs.Page = this.Pagination.Page;
-            loadMoreDataArgs.Sidx = this.Pagination.Sidx;
-            loadMoreDataArgs.CancellationToken = LoadDataCTS.Token;
-            var loadDataCommand = this.LoadDataCommand;
+            var paginationCommand = this.PaginationCommand;
             var pagination = this.Pagination;
-
-            //可取消
-            await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+          
+            if (paginationCommand != null)
             {
-                if (loadDataCommand != null)
-                {
-                    var records = await loadDataCommand?.ExecuteAsync(loadMoreDataArgs);
-                    pagination.Records = records;
-                }
-                return OperateResult.CreateSuccessResult();
-            }, cancellationToken: LoadDataCTS.Token);
+                await paginationCommand.ExecuteAsync(pagination);
+            }
+            else if (this.PaginationAsync != null)
+            {
+                await this.PaginationAsync.Invoke(pagination);
+            }
+            
+        }
 
+        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
+        {
+            return await this.PART_RSUserControl.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
+        }
+
+        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
+        {
+            return await this.PART_RSUserControl.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
         }
     }
 }

@@ -155,7 +155,7 @@ namespace RS.Annotation.Views.Areas
             InitializeComponent();
 
             //初始化雪花算法Id自动生成器
-            this.IdGenerator = App.AppHost.Services.GetRequiredService<IdGenerator>();
+            this.IdGenerator = App.ServiceProvider.GetRequiredService<IdGenerator>();
 
             //加载绘制画笔鼠标样式
             StreamResourceInfo drawCur = Application.GetResourceStream(new Uri("pack://application:,,,/RS.Annotation;component/Assets/BlueDraw.cur", UriKind.RelativeOrAbsolute));

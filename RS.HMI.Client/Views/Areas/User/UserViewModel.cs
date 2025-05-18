@@ -1,9 +1,17 @@
-﻿using IdGen;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using IdGen;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using NPOI.Util;
+using RS.Commons;
 using RS.Commons.Attributs;
+using RS.Commons.Enums;
 using RS.Commons.Extensions;
+using RS.HMI.Client.Messages;
 using RS.HMI.Client.Models;
+using RS.Widgets.Controls;
 using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
@@ -19,14 +27,15 @@ using System.Windows.Input;
 namespace RS.HMI.Client.Views.Areas
 {
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
-    public class UserViewModel : NotifyBase
+    public partial class UserViewModel : ModelBase
     {
         private readonly IIdGenerator<long> IdGenerator;
-        private readonly IRSLoading rsLoading;
+        private readonly ILoadingService rsLoading;
         public List<UserModel> TestData = new List<UserModel>();
         public UserViewModel(IIdGenerator<long> idGenerator)
         {
             this.IdGenerator = idGenerator;
+
             for (int i = 0; i < 100; i++)
             {
                 this.TestData.Add(new UserModel()
@@ -38,34 +47,51 @@ namespace RS.HMI.Client.Views.Areas
                     UserPic = "sfsdfsdf",
                 });
             }
-
-            this.LoadUserDataCommand = new AsyncRelayCommand<LoadDataArgs, int>(LoadUserDataExecuteAsync, CanLoadUserDataExecuteAsync);
-            this.AddCommand = new RelayCommand(Add);
-            this.DeleteCommand = new RelayCommand(Delete);
-            this.UpdateCommand = new RelayCommand(Update);
-            this.DetailsCommand = new RelayCommand(Details);
-            this.ExportCommand = new RelayCommand(Export);
-            this.CloseCommand = new RelayCommand(Close);
         }
 
-        private void Close(object obj)
+
+
+        public override void Submit(object obj)
         {
-          
+            var sdf = 1;
         }
 
 
-        #region CRUD实现
-        private void Update(object obj)
+        public override void Update(object obj)
         {
-            
+            var sdf = 1;
         }
 
-        private void Details(object obj)
+
+        /// <summary>
+        /// 关闭命令
+        /// </summary>
+        [RelayCommand]
+        public void CloseClick(object obj)
         {
-            
+
         }
 
-        private void Delete(object obj)
+        /// <summary>
+        /// 新增数据
+        /// </summary>
+        [RelayCommand]
+        public void AddClick(object obj)
+        {
+            this.UserModelEdit = new UserModel();
+            WeakReferenceMessenger.Default.Send(new UserFormMessage()
+            {
+                CRUD = CRUD.Add,
+                ViewModel = this,
+                FormData = this.UserModelEdit
+            });
+        }
+
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        [RelayCommand]
+        public void DeleteClick(object obj)
         {
             if (obj is UserModel userModel)
             {
@@ -73,32 +99,78 @@ namespace RS.HMI.Client.Views.Areas
             }
         }
 
-        private void Add(object obj)
+        public UserModel MyProperty { get; set; }
+
+        /// <summary>
+        /// 修改数据
+        /// </summary>
+        [RelayCommand]
+        public void UpdateClick(object obj)
         {
-            
+            if (this.UserModelSelect == null)
+            {
+                return;
+            }
+
+            this.UserModelEdit = this.UserModelSelect.Copy();
+            WeakReferenceMessenger.Default.Send(new UserFormMessage()
+            {
+                CRUD = CRUD.Update,
+                ViewModel = this,
+                FormData = this.UserModelEdit
+            });
         }
 
-        private void Export(object obj)
+        /// <summary>
+        /// 查看数据
+        /// </summary>
+        [RelayCommand]
+        public void DetailsClick(object obj)
         {
-           
+
         }
-        #endregion
-        private bool CanLoadUserDataExecuteAsync(LoadDataArgs args)
+
+
+        /// <summary>
+        /// 导出数据
+        /// </summary>
+        [RelayCommand]
+        public void ExportClick(object obj)
+        {
+
+        }
+
+        private bool CanPaginationAsync(Pagination pagination)
         {
             return true;
         }
 
-        private async Task<int> LoadUserDataExecuteAsync(LoadDataArgs args)
+        [RelayCommand(CanExecute = nameof(CanPaginationAsync))]
+        public async Task PaginationAsync(Pagination pagination)
         {
-            var pageList = this.TestData.Skip((args.Page - 1) * (args.Rows)).Take(args.Rows).ToList();
-            //var dataList = this.UserModelList.ToList();
-            //dataList = dataList.Concat(pageList).ToList();
-            // 回到UI线程更新集合
-            Application.Current.Dispatcher.Invoke(() =>
+            // 发送开始加载消息
+            WeakReferenceMessenger.Default.Send(new UserLoadingMessage
             {
-                this.UserModelList = new ObservableCollection<UserModel>(pageList);
+                LoadingFuncAsync = async (config) =>
+                {
+                    //config.LoadingTextStringFormat = "当前加载进度 {0}%";
+                    //config.IsShowLoadingText = true;
+                    //for (var i = 0; i < 100; i++)
+                    //{
+                    //    config.Value = Math.Round(i / 100D * 100, 2);
+                    //    config.LoadingText = $"当前加载进度 {config.Value}%";
+                    //    await Task.Delay(2);
+                    //}
+                    pagination.Records = this.TestData.Count();
+                    var pageList = this.TestData.Skip((pagination.Page - 1) * (pagination.Rows)).Take(pagination.Rows).ToList();
+                    // 回到UI线程更新集合
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.UserModelList = new ObservableCollection<UserModel>(pageList);
+                    });
+                    return OperateResult.CreateSuccessResult();
+                }
             });
-            return this.TestData.Count;
         }
 
         private ObservableCollection<UserModel> userModelList;
@@ -117,107 +189,31 @@ namespace RS.HMI.Client.Views.Areas
             }
             set
             {
-                this.OnPropertyChanged(ref userModelList, value);
+                this.SetProperty(ref userModelList, value);
             }
         }
 
-
-        private ICommand loadUserDataCommand;
         /// <summary>
-        /// 加载用户数据
+        /// 编辑实体
         /// </summary>
-        public ICommand LoadUserDataCommand
+        [ObservableProperty]
+        private UserModel userModelEdit;
+
+       
+
+        private UserModel userModelSelect;
+
+        /// <summary>
+        /// 选中实体
+        /// </summary>
+        public UserModel UserModelSelect
         {
-            get { return loadUserDataCommand; }
+            get { return userModelSelect; }
             set
             {
-                this.OnPropertyChanged(ref loadUserDataCommand, value);
+                this.SetProperty(ref userModelSelect,value);
             }
         }
-
-        #region CRUD命令
-
-        private ICommand adCommand;
-        /// <summary>
-        /// 新增数据
-        /// </summary>
-        public ICommand AddCommand
-        {
-            get { return adCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref adCommand, value);
-            }
-        }
-
-        private ICommand deleteCommand;
-        /// <summary>
-        /// 删除数据
-        /// </summary>
-        public ICommand DeleteCommand
-        {
-            get { return deleteCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref deleteCommand, value);
-            }
-        }
-
-        private ICommand updateCommand;
-        /// <summary>
-        /// 修改数据
-        /// </summary>
-        public ICommand UpdateCommand
-        {
-            get { return updateCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref updateCommand, value);
-            }
-        }
-
-        private ICommand detailsCommand;
-        /// <summary>
-        /// 查看数据
-        /// </summary>
-        public ICommand DetailsCommand
-        {
-            get { return detailsCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref detailsCommand, value);
-            }
-        }
-
-
-        private ICommand exportCommand;
-        /// <summary>
-        /// 导出数据
-        /// </summary>
-        public ICommand ExportCommand
-        {
-            get { return exportCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref exportCommand, value);
-            }
-        }
-
-
-        private ICommand closeCommand;
-        /// <summary>
-        /// 关闭命令
-        /// </summary>
-        public ICommand CloseCommand
-        {
-            get { return closeCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref closeCommand, value);
-            }
-        }
-
-        #endregion
-
+      
     }
 }

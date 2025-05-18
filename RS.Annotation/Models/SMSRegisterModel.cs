@@ -19,7 +19,7 @@ namespace RS.Annotation.Models
             get { return phone; }
             set
             {
-                OnPropertyChanged(ref phone, value);
+                this.SetProperty(ref phone, value);
                 ValidProperty(value);
             }
         }
@@ -34,7 +34,7 @@ namespace RS.Annotation.Models
             get { return countryCode; }
             set
             {
-                OnPropertyChanged(ref countryCode, value);
+                this.SetProperty(ref countryCode, value);
                 ValidProperty(value);
             }
         }
@@ -51,7 +51,7 @@ namespace RS.Annotation.Models
             get { return verify; }
             set
             {
-                OnPropertyChanged(ref verify, value);
+                this.SetProperty(ref verify, value);
                 ValidProperty(value);
             }
         }

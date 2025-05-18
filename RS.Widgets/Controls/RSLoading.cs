@@ -1,11 +1,12 @@
 ﻿using RS.Commons;
+using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace RS.Widgets.Controls
 {
-    public class RSLoading : ContentControl
+    public class RSLoading : ContentControl, ILoadingService
     {
         private ProgressBar PART_Loading;
         static RSLoading()
@@ -31,6 +32,7 @@ namespace RS.Widgets.Controls
 
             var loadingConfig = e.NewValue as LoadingConfig;
         }
+
 
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
         {
@@ -86,6 +88,7 @@ namespace RS.Widgets.Controls
                 }
             }, cancellationToken);
         }
+
 
         public override void OnApplyTemplate()
         {

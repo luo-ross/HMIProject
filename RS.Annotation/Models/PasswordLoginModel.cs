@@ -19,7 +19,7 @@ namespace RS.Annotation.Models
             get { return userName; }
             set
             {
-                OnPropertyChanged(ref userName, value);
+                this.SetProperty(ref userName, value);
                 ValidProperty(value);
             }
         }
@@ -35,7 +35,7 @@ namespace RS.Annotation.Models
             get { return password; }
             set
             {
-                var isChanged = OnPropertyChanged(ref password, value);
+                var isChanged = this.SetProperty(ref password, value);
                 if (isChanged)
                 {
                     ValidProperty(value);

@@ -28,17 +28,15 @@ namespace RS.HMI.Client
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            //var loginView = AppHost.Services.GetRequiredService<LoginView>();
+            //var loginView = App.ServiceProvider?.GetRequiredService<LoginView>();
             //loginView.Show();
-            var homeView = AppHost.Services.GetRequiredService<HomeView>();
-            homeView.Show();
+            var homeView = ServiceProvider?.GetRequiredService<HomeView>();
+            homeView?.Show();
         }
 
 
         private void App_OnConfigIocServices(HostApplicationBuilder builder)
         {
-            //注册当前程序集服务
-            builder.Services.RegisterBLLService();
 
             builder.Services.AddSingleton<IIdGenerator<long>>(service =>
             {
@@ -46,7 +44,11 @@ namespace RS.HMI.Client
                 return new IdGenerator(generatorId, IdGeneratorOptions.Default);
             });
 
+            //注册当前程序集服务
             builder.Services.RegisterService(Assembly.GetExecutingAssembly());
+         
+            builder.Services.RegisterBLLService();
+
         }
 
     }

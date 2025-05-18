@@ -17,10 +17,11 @@ using MathNet.Numerics;
 using System.Windows.Media.Media3D;
 using System.Windows;
 using RS.HMI.Client.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RS.HMI.Client.Views
 {
-    public class LoginViewModel : NotifyBase
+    public partial class LoginViewModel : NotifyBase
     {
         public LoginViewModel()
         {
@@ -49,10 +50,10 @@ namespace RS.HMI.Client.Views
             this.OnPropertyChanged(nameof(RSCarouselSliderList));
         }
 
-        private ObservableCollection<FrameworkElement> rsCarouselSliderList;
         /// <summary>
         /// 测试数据集
         /// </summary>
+        private ObservableCollection<FrameworkElement> rsCarouselSliderList;
         public ObservableCollection<FrameworkElement> RSCarouselSliderList
         {
             get
@@ -65,7 +66,7 @@ namespace RS.HMI.Client.Views
             }
             set
             {
-                this.OnPropertyChanged(ref rsCarouselSliderList, value);
+                this.SetProperty(ref rsCarouselSliderList, value);
             }
         }
 
@@ -87,7 +88,7 @@ namespace RS.HMI.Client.Views
             }
             set
             {
-                this.OnPropertyChanged(ref loginModel, value);
+                this.SetProperty(ref loginModel, value);
             }
         }
 
@@ -109,25 +110,14 @@ namespace RS.HMI.Client.Views
             }
             set
             {
-                this.OnPropertyChanged(ref signUpModel, value);
+                this.SetProperty(ref signUpModel, value);
             }
         }
 
 
-
+        [ObservableProperty]
         private double offsetX;
-        public double OffsetX
-        {
-            get
-            {
-
-                return offsetX;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref offsetX, value);
-            }
-        }
+     
 
 
 
@@ -147,7 +137,7 @@ namespace RS.HMI.Client.Views
             }
             set
             {
-                this.OnPropertyChanged(ref advertisementLink, value);
+                this.SetProperty(ref advertisementLink, value);
             }
         }
 

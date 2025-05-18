@@ -39,7 +39,7 @@ namespace RS.Widgets.Models
             }
             private set
             {
-                OnPropertyChanged(ref id, value);
+                this.SetProperty(ref id, value);
             }
         }
 
@@ -56,7 +56,7 @@ namespace RS.Widgets.Models
             }
             private set
             {
-                OnPropertyChanged(ref pictureId, value);
+                this.SetProperty(ref pictureId, value);
             }
         }
 
@@ -72,7 +72,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref projectId, value);
+                this.SetProperty(ref projectId, value);
             }
         }
 
@@ -89,7 +89,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref tagModel, value);
+                this.SetProperty(ref tagModel, value);
             }
         }
 
@@ -106,7 +106,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref canvasLeft, value);
+                this.SetProperty(ref canvasLeft, value);
             }
         }
 
@@ -123,7 +123,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref canvasTop, value);
+                this.SetProperty(ref canvasTop, value);
             }
         }
 
@@ -141,7 +141,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref width, value);
+                this.SetProperty(ref width, value);
             }
         }
 
@@ -157,7 +157,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref height, value);
+                this.SetProperty(ref height, value);
             }
         }
 
@@ -174,7 +174,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref angle, value);
+                this.SetProperty(ref angle, value);
             }
         }
 
@@ -190,7 +190,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isSelect, value);
+                this.SetProperty(ref isSelect, value);
             }
         }
 
@@ -203,6 +203,8 @@ namespace RS.Widgets.Models
         /// 记录画在Canvas上的矩形
         /// </summary>
         public Rectangle Rectangle { get; set; }
+
+
 
 
         //public RectModel Clone()

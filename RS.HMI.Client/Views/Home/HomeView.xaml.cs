@@ -8,15 +8,16 @@ using System.Windows.Data;
 namespace RS.HMI.Client.Views
 {
 
-    [ServiceInjectConfig(ServiceLifetime.Singleton)]
+    [ServiceInjectConfig(ServiceLifetime.Transient)]
     public partial class HomeView : RSWindow
     {
         private readonly HomeViewModel ViewModel;
 
-        public HomeView()
+        public HomeView(HomeViewModel homeViewModel)
         {
             InitializeComponent();
-            this.ViewModel = this.DataContext as HomeViewModel;
+            this.DataContext = homeViewModel;
+            this.ViewModel = homeViewModel;
             this.SizeChanged += HomeView_SizeChanged;
         }
 

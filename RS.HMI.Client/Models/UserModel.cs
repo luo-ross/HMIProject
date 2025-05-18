@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.Client.Models
 {
-    public class UserModel : NotifyBase
+    public partial class UserModel : NotifyBase
     {
 
         /// <summary>
@@ -30,70 +31,41 @@ namespace RS.HMI.Client.Models
             get { return email; }
             set
             {
-                this.OnPropertyChanged(ref email, value);
+                this.SetProperty(ref email, value);
                 this.ValidProperty(value);
             }
         }
 
-
-
-        private string? nickName;
         /// <summary>
         /// 用户昵称
         /// </summary>
-        public string? NickName
-        {
-            get { return nickName; }
-            set
-            {
-                this.OnPropertyChanged(ref nickName, value);
-            }
-        }
+        [ObservableProperty]
+        private string? nickName;
 
-        private string userPic;
+
         /// <summary>
         /// 用户头像
         /// </summary>
-        public string UserPic
-        {
-            get { return userPic; }
-            set
-            {
-                this.OnPropertyChanged(ref userPic, value);
-            }
-        }
+        [ObservableProperty]
+        private string userPic;
 
 
-        private string? phone;
         /// <summary>
         /// 电话 每个账户只能绑定一个手机号
         /// </summary>
-        public string? Phone
-        {
-            get { return phone; }
-            set
-            {
-                this.OnPropertyChanged(ref phone, value);
-            }
-        }
-
+        [ObservableProperty]
+        private string? phone;
+       
         /// <summary>
         /// 关联实名认证
         /// </summary>
         public long? RealNameId { get; set; }
 
-
-        private bool? isDisabled;
         /// <summary>
         /// 是否禁用
         /// </summary>
-        public bool? IsDisabled
-        {
-            get { return isDisabled; }
-            set
-            {
-                this.OnPropertyChanged(ref isDisabled, value);
-            }
-        }
+        [ObservableProperty]
+        private bool? isDisabled;
+       
     }
 }

@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:RS.HMI.Client.Views.Areas"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
+    x:Name="this"
     d:DataContext="{d:DesignInstance Type=local:UserViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -25,13 +26,14 @@
             <rs:RSDataGrid
                 x:Name="UserDataGrid"
                 Grid.Column="0"
+                AddClickCommand="{Binding AddClickCommand}"
+                DeleteClickCommand="{Binding DeleteClickCommand}"
+                DetailsClickCommand="{Binding DetailsClickCommand}"
+                ExportClickCommand="{Binding ExportClickCommand}"
                 ItemsSource="{Binding UserModelList, UpdateSourceTrigger=PropertyChanged}"
-                LoadDataCommand="{Binding LoadUserDataCommand}"
-                OnAddCommand="{Binding AddCommand}"
-                OnDeleteCommand="{Binding DeleteCommand}"
-                OnDetailsCommand="{Binding DetailsCommand}"
-                OnExportCommand="{Binding ex}"
-                OnUpdateCommand="{Binding UpdateCommand}"
+                PaginationCommand="{Binding PaginationCommand}"
+                SelectedItem="{Binding UserModelSelect}"
+                UpdateClickCommand="{Binding UpdateClickCommand}"
                 VirtualizingPanel.IsVirtualizing="True">
                 <rs:RSDataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Email}" Header="用户" />
@@ -39,7 +41,7 @@
                     <DataGridTemplateColumn Header="是否禁用">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsDisabled}" />
+                                <CheckBox IsChecked="{Binding IsDisabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -59,7 +61,7 @@
                     <StackPanel Grid.Row="0">
                         <Button
                             HorizontalAlignment="Stretch"
-                            Command="{Binding AddCommand}"
+                            Command="{Binding AddClickCommand}"
                             CommandParameter="{Binding UserModelList}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+A">
@@ -73,7 +75,7 @@
                         </Button>
                         <Button
                             HorizontalAlignment="Stretch"
-                            Command="{Binding DeleteCommand}"
+                            Command="{Binding DeleteClickCommand}"
                             CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+D">
@@ -87,7 +89,7 @@
                         </Button>
                         <Button
                             HorizontalAlignment="Stretch"
-                            Command="{Binding UpdateCommand}"
+                            Command="{Binding UpdateClickCommand}"
                             CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+U">
@@ -101,7 +103,7 @@
                         </Button>
                         <Button
                             HorizontalAlignment="Stretch"
-                            Command="{Binding DetailsCommand}"
+                            Command="{Binding DetailsClickCommand}"
                             CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+V">
@@ -118,7 +120,7 @@
                     <StackPanel Grid.Row="2">
                         <Button
                             HorizontalAlignment="Stretch"
-                            Command="{Binding CloseCommand}"
+                            Command="{Binding CloseClickCommand}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+C">
                             <Button.Content>

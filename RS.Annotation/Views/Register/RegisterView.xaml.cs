@@ -25,8 +25,8 @@ namespace RS.Annotation.Views
         {
             InitializeComponent();
             this.ViewModel = this.DataContext as RegisterViewModel;
-            this.RegisterBLL = App.AppHost?.Services.GetService<IGeneralBLL>();
-            this.CryptographyBLL = App.AppHost?.Services.GetService<ICryptographyBLL>();
+            this.RegisterBLL = App.ServiceProvider?.GetService<IGeneralBLL>();
+            this.CryptographyBLL = App.ServiceProvider?.GetService<ICryptographyBLL>();
         }
 
 

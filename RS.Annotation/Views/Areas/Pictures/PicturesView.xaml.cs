@@ -37,7 +37,7 @@ namespace RS.Annotation.Views.Areas
         public PicturesView()
         {
             InitializeComponent();
-            this.IdGenerator = App.AppHost.Services.GetRequiredService<IdGenerator>();
+            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IdGenerator>();
             this.ViewModel = this.DataContext as PicturesViewModel;
             this.Loaded += PicturesView_Loaded;
         }

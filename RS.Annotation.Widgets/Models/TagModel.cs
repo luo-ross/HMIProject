@@ -34,7 +34,7 @@ namespace RS.Widgets.Models
             }
             private set
             {
-                OnPropertyChanged(ref id, value);
+                this.SetProperty(ref id, value);
             }
         }
 
@@ -50,7 +50,7 @@ namespace RS.Widgets.Models
             }
             private set
             {
-                OnPropertyChanged(ref projectId, value);
+                this.SetProperty(ref projectId, value);
             }
         }
 
@@ -70,7 +70,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref className, value);
+                this.SetProperty(ref className, value);
             }
         }
 
@@ -88,7 +88,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref tagColor, value);
+                this.SetProperty(ref tagColor, value);
             }
         }
 
@@ -105,7 +105,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref shortCut, value);
+                this.SetProperty(ref shortCut, value);
             }
         }
 
@@ -122,7 +122,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isShortCutAuto, value);
+                this.SetProperty(ref isShortCutAuto, value);
             }
         }
 
@@ -139,7 +139,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref isSelect, value);
+                this.SetProperty(ref isSelect, value);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using RS.Commons.Enums;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Commons.Enums;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Windows.Media.Animation;
 
 namespace RS.HMI.Client.Models
 {
-    public class ModbusConfigModel : NotifyBase
+    public partial class ModbusConfigModel : NotifyBase
     {
         /// <summary>
         /// 数据唯一主键
@@ -33,7 +34,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref dataId, value))
+                if (this.SetProperty(ref dataId, value))
                 {
                     this.IsSaved = false;
                 }
@@ -54,7 +55,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref stationNumber, value))
+                if (this.SetProperty(ref stationNumber, value))
                 {
                     this.IsSaved = false;
                 }
@@ -73,7 +74,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref functionCode, value))
+                if (this.SetProperty(ref functionCode, value))
                 {
                     this.IsSaved = false;
                 }
@@ -93,7 +94,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref address, value))
+                if (this.SetProperty(ref address, value))
                 {
                     this.IsSaved = false;
                 }
@@ -113,7 +114,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref dataType, value))
+                if (this.SetProperty(ref dataType, value))
                 {
                     this.IsSaved = false;
                     //判断数据类型是否是String类型
@@ -147,7 +148,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref characterLength, value))
+                if (this.SetProperty(ref characterLength, value))
                 {
                     this.IsSaved = false;
                 }
@@ -168,7 +169,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref isStringInverse, value))
+                if (this.SetProperty(ref isStringInverse, value))
                 {
                     this.IsSaved = false;
                 }
@@ -191,7 +192,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref readWritePermission, value))
+                if (this.SetProperty(ref readWritePermission, value))
                 {
                     this.IsSaved = false;
                 }
@@ -211,7 +212,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref dataGroup, value))
+                if (this.SetProperty(ref dataGroup, value))
                 {
                     this.IsSaved = false;
                 }
@@ -232,7 +233,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                if (OnPropertyChanged(ref dataDescription, value))
+                if (this.SetProperty(ref dataDescription, value))
                 {
                     this.IsSaved = false;
                 }
@@ -252,7 +253,7 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                this.OnPropertyChanged(ref byteOrder, value);
+                this.SetProperty(ref byteOrder, value);
                 this.ValidProperty(value);
             }
         }
@@ -270,7 +271,7 @@ namespace RS.HMI.Client.Models
             }
             private set
             {
-                this.OnPropertyChanged(ref dataValue, value);
+                this.SetProperty(ref dataValue, value);
                 this.ValidProperty(value);
             }
         }
@@ -287,7 +288,7 @@ namespace RS.HMI.Client.Models
             }
              set
             {
-                if (OnPropertyChanged(ref minValue, value))
+                if (SetProperty(ref minValue, value))
                 {
                     this.IsSaved = false;
                 }
@@ -308,7 +309,7 @@ namespace RS.HMI.Client.Models
             }
              set
             {
-                if (OnPropertyChanged(ref maxValue, value))
+                if (this.SetProperty(ref maxValue, value))
                 {
                     this.IsSaved = false;
                 }
@@ -328,28 +329,17 @@ namespace RS.HMI.Client.Models
             }
             set
             {
-                this.OnPropertyChanged(ref digitalNumber, value);
+                this.SetProperty(ref digitalNumber, value);
                 this.ValidProperty(value);
             }
         }
 
 
-
-        private bool isValid;
         /// <summary>
         /// 是否验证通过
         /// </summary>
-        public bool IsValid
-        {
-            get
-            {
-                return isValid;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref isValid, value);
-            }
-        }
+        [ObservableProperty]
+        private bool isValid;
 
 
         /// <summary>

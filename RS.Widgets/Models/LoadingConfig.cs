@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Enums;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Widgets.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Models
 {
-    public class LoadingConfig : NotifyBase
+    public partial class LoadingConfig : NotifyBase
     {
         //示例
         //new LoadingConfig()
@@ -36,31 +37,49 @@ namespace RS.Widgets.Models
             this.GradientStopColor = (Color)ColorConverter.ConvertFromString("#1296db");
         }
 
+        public static LoadingConfig Default
+        {
+            get
+            {
+                return new LoadingConfig();
+            }
+        }
+
         #region 公用属性设置
 
-        public LoadingType LoadingType { get; set; }
+        [ObservableProperty]
+        private LoadingType loadingType;
 
         /// <summary>
         /// 加载图标颜色
         /// </summary>
-        public SolidColorBrush LoadingColor { get; set; }
-      
+        [ObservableProperty]
+        private SolidColorBrush loadingColor;
+
         /// <summary>
         /// 加载背景色
         /// </summary>
-        public SolidColorBrush LoadingBackground { get; set; }
+        [ObservableProperty]
+        private SolidColorBrush loadingBackground;
         #endregion
 
-        public Color GradientStopColor { get; set; }
+        [ObservableProperty]
+        private Color gradientStopColor;
 
 
         #region 这是默认Progessbar的配置 这里仅仅对Progressbar设置有效
         /// <summary>
         /// 是否自动加载
         /// </summary>
-        public bool IsIndeterminate { get; set; }
-        public double Maximum { get; set; }
-        public double Minimum { get; set; }
+        [ObservableProperty]
+        private bool isIndeterminate;
+
+        [ObservableProperty]
+        private double maximum;
+
+        [ObservableProperty]
+        private double minimum;
+
 
 
         private double _value;
@@ -75,7 +94,73 @@ namespace RS.Widgets.Models
             }
             set
             {
-                this.OnPropertyChanged(ref _value, value);
+                if (this.SetProperty(ref _value, value))
+                {
+                    UpdateLoadingText();
+                }
+            }
+        }
+
+        public string LoadingTextStringFormat { get; set; } = "{0}%";
+
+
+        private string loadingText;
+        /// <summary>
+        /// 加载文字
+        /// </summary>
+        public string LoadingText
+        {
+            get { return loadingText; }
+            set
+            {
+                this.SetProperty(ref loadingText, value);
+            }
+        }
+
+
+        /// <summary>
+        /// 是否显示LoadingText
+        /// </summary>
+        private bool isShowLoadingText;
+
+        public bool IsShowLoadingText
+        {
+            get { return isShowLoadingText; }
+            set
+            {
+                if (this.SetProperty(ref isShowLoadingText, value))
+                {
+                    UpdateLoadingText();
+                }
+            }
+        }
+
+        private void UpdateLoadingText()
+        {
+            if (this.IsShowLoadingText)
+            {
+                if (string.IsNullOrEmpty(this.LoadingText) && string.IsNullOrEmpty(this.LoadingTextStringFormat))
+                {
+                    switch (this.LoadingType)
+                    {
+                        case LoadingType.ProgressBar:
+                            this.LoadingText = $"{this.Value}%";
+                            break;
+                        case LoadingType.RotatingAnimation:
+                            this.LoadingText = "正在加载中,请稍后...";
+                            break;
+                        case LoadingType.BorderSurroundingAnimation:
+                            break;
+                    }
+                }
+                else if (!string.IsNullOrWhiteSpace(this.LoadingTextStringFormat))
+                {
+                    this.LoadingText = string.Format(this.LoadingTextStringFormat, this.Value);
+                }
+            }
+            else
+            {
+                this.LoadingText = null;
             }
         }
         #endregion
@@ -97,18 +182,23 @@ namespace RS.Widgets.Models
                 }
                 return iconData;
             }
-            set { iconData = value; }
+            set
+            {
+                this.SetProperty(ref iconData, value);
+            }
         }
 
         /// <summary>
         /// 图标宽度
         /// </summary>
-        public double IconWidth { get; set; }
+        [ObservableProperty]
+        private double iconWidth;
 
         /// <summary>
         /// 图标高度
         /// </summary>
-        public double IconHeight { get; set; }
+        [ObservableProperty]
+        private double iconHeight;
 
         #endregion
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,32 +12,12 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public class NotifyBase : INotifyPropertyChanged, INotifyDataErrorInfo
+    public partial class NotifyBase : ObservableObject, INotifyDataErrorInfo
     {
         public NotifyBase()
         {
             ErrorsDic = new Dictionary<string, IEnumerable<ValidErrorModel>>();
         }
-
-
-        #region INotifyPropertyChanged实现
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); ;
-        }
-
-        public bool OnPropertyChanged<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)
-        {
-            if (!Equals(field, newValue))
-            {
-                field = newValue;
-                OnPropertyChanged(propertyName);
-                return true;
-            }
-            return false;
-        }
-        #endregion
 
 
         #region INotifyDataErrorInfo实现

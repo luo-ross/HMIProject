@@ -23,7 +23,7 @@ namespace RS.Annotation.Views.Home
             }
             set
             {
-                OnPropertyChanged(ref version, value);
+                this.SetProperty(ref version, value);
             }
         }
     }

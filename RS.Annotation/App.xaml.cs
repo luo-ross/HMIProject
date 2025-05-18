@@ -28,7 +28,7 @@ namespace RS.Annotation
             base.OnStartup(e);
             //var loginView = AppHost.Services.GetRequiredService<LoginView>();
             //loginView.Show();
-            var homeView = AppHost.Services.GetRequiredService<HomeView>();
+            var homeView = App.ServiceProvider?.GetRequiredService<HomeView>();
             homeView.Show();
             //var singnalChartView = AppHost.Services.GetRequiredService<SingnalChartView>();
             //singnalChartView.Show();

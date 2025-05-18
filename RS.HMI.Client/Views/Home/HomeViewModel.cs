@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
+using RS.Commons.Attributs;
 using RS.HMI.Client.Views.Areas;
 using RS.Widgets.Models;
 using System.Collections.ObjectModel;
@@ -8,85 +11,50 @@ using System.Windows.Input;
 
 namespace RS.HMI.Client.Views
 {
-    public class HomeViewModel : NotifyBase
+    [ServiceInjectConfig(ServiceLifetime.Transient)]
+    public partial class HomeViewModel : NotifyBase
     {
 
-        public HomeViewModel()
+        public HomeViewModel(UserViewModel userViewModel)
         {
-            this.BtnClickCommand = new RelayCommand(BtnClick, CanBtnClick);
-            this.ViewModelSelect = App.AppHost.Services.GetRequiredService<UserViewModel>();
+            this.ViewModelSelect = userViewModel;
+            //this.viewModelSelect = App.ServiceProvider?.GetRequiredService<UserViewModel>();
         }
 
-
+        [ObservableProperty]
         private NotifyBase viewModelSelect;
 
-        public NotifyBase ViewModelSelect
-        {
-            get { return viewModelSelect; }
-            set
-            {
-                this.OnPropertyChanged(ref viewModelSelect, value);
-            }
-        }
 
 
+        [ObservableProperty]
         private bool isEnglish;
-
-        public bool IsEnglish
-        {
-            get { return isEnglish; }
-            set
-            {
-                this.OnPropertyChanged(ref isEnglish, value);
-            }
-        }
+      
+      
 
         private bool CanBtnClick(object arg)
         {
             return true;
         }
 
+        [RelayCommand]
         private void BtnClick(object obj)
         {
             MessageBox.Show("这是MVVM命令事件");
         }
 
-
-        private string searchContent;
         /// <summary>
         /// 搜索内容
         /// </summary>
-        public string SearchContent
-        {
-            get { return searchContent; }
-            set
-            {
-                this.OnPropertyChanged(ref searchContent, value);
-            }
-        }
+        [ObservableProperty]
+        private string searchContent;
 
 
+
+        [ObservableProperty]
         private bool isFullScreen;
 
-        public bool IsFullScreen
-        {
-            get { return isFullScreen; }
-            set
-            {
-                this.OnPropertyChanged(ref isFullScreen, value);
-            }
-        }
-
-        private ICommand btnClickCommand;
-
-        public ICommand BtnClickCommand
-        {
-            get { return btnClickCommand; }
-            set
-            {
-                this.OnPropertyChanged(ref btnClickCommand, value);
-            }
-        }
+     
+       
 
         private ObservableCollection<TreeModel> treeModelList;
 

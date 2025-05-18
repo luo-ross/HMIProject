@@ -17,34 +17,25 @@ using MathNet.Numerics;
 using System.Windows.Media.Media3D;
 using System.Windows;
 using RS.HMI.Client.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RS.HMI.Client.Views
 {
-    public class RegisterViewModel : NotifyBase
+    public partial class RegisterViewModel : NotifyBase
     {
         public RegisterViewModel()
         {
            
         }
-
-
-        private double remainingTime;
         /// <summary>
         /// 剩余时间
         /// </summary>
-        public double RemainingTime
-        {
-            get
-            {
-                return remainingTime;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref remainingTime, value);
-            }
-        }
+        [ObservableProperty]
+        private double remainingTime;
 
 
+
+    
         private SignUpModel signUpModel;
         /// <summary>
         /// 注册
@@ -61,7 +52,7 @@ namespace RS.HMI.Client.Views
             }
             set
             {
-                this.OnPropertyChanged(ref signUpModel, value);
+                this.SetProperty(ref signUpModel, value);
             }
         }
 

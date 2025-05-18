@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using RS.Models;
 using RS.Widgets.Enums;
 using System;
@@ -10,45 +11,26 @@ using System.Windows;
 
 namespace RS.Widgets.Models
 {
-    public class InfoBarModel:NotifyBase
+    public partial class InfoBarModel:NotifyBase
     {
-
-        private string message;
         /// <summary>
         /// 消息
         /// </summary>
-        public string Message
-        {
-            get
-            {
-                return message;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref message, value);
-            }
-        }
+        [ObservableProperty]
+        private string message;
+   
 
         /// <summary>
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
 
+        /// <summary>
+        /// 消息类型
+        /// </summary>
+        [ObservableProperty]
 
         private InfoType infoType;
-        /// <summary>
-        /// 消息类型>
-        public InfoType InfoType
-        {
-            get
-            {
-                return infoType;
-            }
-            set
-            {
-                this.OnPropertyChanged(ref infoType, value);
-            }
-        }
 
     }
 }

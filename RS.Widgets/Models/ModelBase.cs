@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +8,26 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public class ModelBase : NotifyBase
+    public partial class ModelBase : NotifyBase
     {
         /// <summary>
-        /// 是否正在加载中
+        /// 正在加载中
         /// </summary>
-        public bool IsLoading { get; set; }
+        [ObservableProperty]
+        private bool isLoading;
+    
+     
+
+        [RelayCommand]
+        public virtual void Submit(object obj)
+        {
+         
+        }
+
+        [RelayCommand]
+        public virtual void Update(object obj)
+        {
+
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref tagModel, value);
+                this.SetProperty(ref tagModel, value);
             }
         }
 
@@ -42,7 +42,7 @@ namespace RS.Widgets.Models
             }
             set
             {
-                OnPropertyChanged(ref count, value);
+                this.SetProperty(ref count, value);
             }
         }
 

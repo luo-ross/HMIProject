@@ -1,6 +1,4 @@
-﻿using IdGen;
-using IdGen.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +28,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 服务宿主
         /// </summary>
-        public static IHost AppHost { get; set; }
+        public static IServiceProvider ServiceProvider { get; set; }
 
         public virtual string AppHostAddress { get; set; } = "http://www.hmiproject.com/";
 
@@ -86,7 +84,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 心跳检测间隔（毫秒）
         /// </summary>
-        private  int HeartbeatInterval = 1000;
+        private int HeartbeatInterval = 1000;
 
         /// <summary>
         /// 心跳检测线程
@@ -354,11 +352,12 @@ namespace RS.Widgets.Controls
             // 这里是用户自己添加需要的服务
             OnConfigIocServices?.Invoke(builder);
             //必须调用Build方法
-            AppHost = builder.Build();
+            var appHost = builder.Build();
+            ServiceProvider = appHost.Services;
             //开始异步执行
-            AppHost.RunAsync();
+            appHost.RunAsync();
             //配置全局服务这样在任何程序集都可以调用服务
-            ServiceProviderExtensions.ConfigServices(AppHost);
+            ServiceProviderExtensions.ConfigServices(appHost);
         }
 
         /// <summary>
@@ -366,8 +365,8 @@ namespace RS.Widgets.Controls
         /// </summary>
         private void InitRSASecurityKeyData()
         {
-            var cryptographyBLL = AppHost.Services.GetRequiredService<ICryptographyBLL>();
-            var memoryCache = AppHost.Services.GetRequiredService<IMemoryCache>();
+            var cryptographyBLL = ServiceProvider.GetRequiredService<ICryptographyBLL>();
+            var memoryCache = ServiceProvider.GetRequiredService<IMemoryCache>();
             //如果是第一就会创建公钥和私钥
             (byte[] rsaSigningPrivateKey, byte[] rsaSigningPublicKey) = cryptographyBLL.GenerateRSAKey();
             (byte[] rsaEncryptionPrivateKey, byte[] rsaEncryptionPublicKey) = cryptographyBLL.GenerateRSAKey();
@@ -422,16 +421,16 @@ namespace RS.Widgets.Controls
             this.ConfigIocServices();
 
             // 初始化InfoBar消息窗体
-            RSWinInfoBar = AppHost.Services.GetRequiredService<RSWinInfoBar>();
+            RSWinInfoBar = ServiceProvider.GetRequiredService<RSWinInfoBar>();
 
             // 获取日志服务
-            LogBLL = AppHost.Services.GetRequiredService<ILogBLL>();
+            LogBLL = ServiceProvider.GetRequiredService<ILogBLL>();
 
             //获取缓存服务
-            MemoryCache = AppHost.Services.GetRequiredService<IMemoryCache>();
+            MemoryCache = ServiceProvider.GetRequiredService<IMemoryCache>();
 
             //获取加密服务
-            CryptographyBLL = AppHost.Services.GetRequiredService<ICryptographyBLL>();
+            CryptographyBLL = ServiceProvider.GetRequiredService<ICryptographyBLL>();
 
             //初始化RSA 秘钥
             this.InitRSASecurityKeyData();

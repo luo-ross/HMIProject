@@ -40,7 +40,7 @@ namespace RS.Annotation.Views.Areas
         {
             InitializeComponent();
 
-            this.IdGenerator = App.AppHost.Services.GetRequiredService<IdGenerator>();
+            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IdGenerator>();
             this.DataContext = projectsView.ViewModel;
             this.ViewModel = projectsView.ViewModel;
             this.Loaded += AddProjectView_Loaded;

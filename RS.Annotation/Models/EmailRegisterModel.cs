@@ -21,7 +21,7 @@ namespace RS.Annotation.Models
             get { return emailAddress; }
             set
             {
-                OnPropertyChanged(ref emailAddress, value);
+                this.SetProperty(ref emailAddress, value);
                 ValidProperty(value);
             }
         }
@@ -38,7 +38,7 @@ namespace RS.Annotation.Models
             get { return password; }
             set
             {
-                var isChanged = OnPropertyChanged(ref password, value);
+                var isChanged = this.SetProperty(ref password, value);
                 if (isChanged)
                 {
                     ValidProperty(value);
@@ -59,7 +59,7 @@ namespace RS.Annotation.Models
             get { return passwordConfirm; }
             set
             {
-                var isChanged = OnPropertyChanged(ref passwordConfirm, value);
+                var isChanged = this.SetProperty(ref passwordConfirm, value);
                 if (isChanged)
                 {
                     ValidProperty(value);
@@ -78,7 +78,7 @@ namespace RS.Annotation.Models
             get { return verify; }
             set
             {
-                OnPropertyChanged(ref verify, value);
+                this.SetProperty(ref verify, value);
                 ValidProperty(value);
             }
         }

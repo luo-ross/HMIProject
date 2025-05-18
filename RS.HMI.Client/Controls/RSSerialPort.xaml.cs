@@ -23,6 +23,7 @@ using RS.HMI.ClientData.DbContexts;
 using RS.HMI.ClientData.Entities;
 using RS.Commons.Helper;
 using HslCommunication.ModBus;
+using CommunityToolkit.Mvvm.Input;
 
 namespace RS.HMI.Client.Controls
 {
@@ -54,19 +55,19 @@ namespace RS.HMI.Client.Controls
             this.IdGenerator = new IdGenerator(generatorId, IdGeneratorOptions.Default);
 
             // 添加数据命令
-            this.SetValue(AddCommandPropertyKey, new RelayCommand(AddData));
+            this.SetValue(AddCommandPropertyKey, new RelayCommand<object>(AddData));
 
             //删除配置命令
             this.SetValue(DeleteCommandPropertyKey, new RelayCommand<string>(DeleteModbusCommuConfigModel));
 
             //导入配置命令
-            this.SetValue(ImportConfigCommandPropertyKey, new RelayCommand(ImportConfig));
+            this.SetValue(ImportConfigCommandPropertyKey, new RelayCommand<object>(ImportConfig));
 
             //导入配置命令
-            this.SetValue(ExportCommandPropertyKey, new RelayCommand(ExportConfig));
+            this.SetValue(ExportCommandPropertyKey, new RelayCommand<object>(ExportConfig));
 
             //模版下载命令
-            this.SetValue(TemplateDownloadCommandPropertyKey, new RelayCommand(TemplateDownload));
+            this.SetValue(TemplateDownloadCommandPropertyKey, new RelayCommand<object>(TemplateDownload));
 
             //DataId更改事件
             this.SetValue(CellValueEditChangedCommandPropertyKey, new RelayCommand<string>(CellValueEditChanged));

@@ -33,6 +33,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="14.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="System.IO.Ports" Version="9.0.2" />
 
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
@@ -108,6 +110,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Views\Areas\FormHost\" />
 	  <Folder Include="Views\Areas\Role\" />
 	  <Folder Include="Views\Areas\Department\" />
 	  <Folder Include="Views\Areas\Navigation\" />

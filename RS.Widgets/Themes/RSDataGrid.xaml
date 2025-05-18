@@ -19,22 +19,25 @@
                     <Setter Property="ContextMenu">
                         <Setter.Value>
                             <ContextMenu>
-                                <MenuItem Command="{x:Static rs:RSDataGrid.AddCommand}" Header="新增数据" />
+                                <MenuItem
+                                    x:Name="PART_BtnAdd"
+                                    Command="{x:Static rs:RSDataGrid.InternalAddCommand}"
+                                    Header="新增数据" />
                                 <MenuItem
                                     x:Name="PART_BtnDelete"
-                                    Command="{x:Static rs:RSDataGrid.DeleteCommand}"
+                                    Command="{x:Static rs:RSDataGrid.InternalDeleteCommand}"
                                     Header="删除数据" />
                                 <MenuItem
                                     x:Name="PART_BtnUpdate"
-                                    Command="{x:Static rs:RSDataGrid.UpdateCommand}"
+                                    Command="{x:Static rs:RSDataGrid.InternalUpdateCommand}"
                                     Header="修改数据" />
                                 <MenuItem
                                     x:Name="PART_BtnDetails"
-                                    Command="{x:Static rs:RSDataGrid.DetailsCommand}"
+                                    Command="{x:Static rs:RSDataGrid.InternalDetailsCommand}"
                                     Header="查看详情" />
                                 <MenuItem
                                     x:Name="PART_BtnExport"
-                                    Command="{x:Static rs:RSDataGrid.ExportCommand}"
+                                    Command="{x:Static rs:RSDataGrid.InternalExportCommand}"
                                     Header="导出数据" />
                             </ContextMenu>
                         </Setter.Value>
@@ -60,6 +63,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
+
                                 <ScrollViewer
                                     x:Name="DG_ScrollViewer"
                                     Grid.Row="0"
@@ -143,6 +147,10 @@
                                     <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </ScrollViewer>
 
+
+
+
+
                                 <Border
                                     Grid.Row="1"
                                     Padding="5,3,5,3"
@@ -169,7 +177,7 @@
                                                 Margin="5,0,5,0"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowLeft}"
                                                 rs:ControlsHelper.IconHeight="10"
-                                                rs:ControlsHelper.IconWidth="7"
+                                                rs:ControlsHelper.IconWidth="6"
                                                 Foreground="#555"
                                                 Style="{StaticResource RSApp.Styles.IconButton}"
                                                 ToolTip="上一页" />
@@ -183,7 +191,7 @@
                                                 Margin="5,0,5,0"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowRight}"
                                                 rs:ControlsHelper.IconHeight="10"
-                                                rs:ControlsHelper.IconWidth="7"
+                                                rs:ControlsHelper.IconWidth="6"
                                                 Foreground="#555"
                                                 Style="{StaticResource RSApp.Styles.IconButton}"
                                                 ToolTip="下一页" />

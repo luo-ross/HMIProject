@@ -129,7 +129,7 @@ namespace RS.HMI.Client.Views
                 return;
             }
 
-            var homeView = App.AppHost?.Services.GetService<HomeView>();
+            var homeView = App.ServiceProvider?.GetService<HomeView>();
             homeView?.Show();
             this.Close();
         }
@@ -220,7 +220,7 @@ namespace RS.HMI.Client.Views
         private void BtnForgetPassword_Click(object sender, RoutedEventArgs e)
         {
             //这里每次都需要重新获取服务
-            this.SecurityView = App.AppHost.Services.GetService<SecurityView>();
+            this.SecurityView = App.ServiceProvider?.GetService<SecurityView>();
             this.SecurityView.OnBtnReturnClick += SecurityView_OnBtnReturnClick;
             this.PART_ContentHost.Children.Add(this.SecurityView);
         }
@@ -237,7 +237,7 @@ namespace RS.HMI.Client.Views
         private void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
             //这里每次都需要重新获取服务
-            this.RegisterView = App.AppHost.Services.GetService<RegisterView>();
+            this.RegisterView = App.ServiceProvider?.GetService<RegisterView>();
             this.RegisterView.OnBtnReturnClick += RegisterView_OnBtnReturnClick;
             this.PART_ContentHost.Children.Add(this.RegisterView);
         }

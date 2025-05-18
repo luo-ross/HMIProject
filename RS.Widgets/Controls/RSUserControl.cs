@@ -1,4 +1,5 @@
-﻿using RS.Commons;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using RS.Commons;
 using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
@@ -14,11 +15,11 @@ using System.Windows.Input;
 
 namespace RS.Widgets.Controls
 {
-    public class RSUserControl : ContentControl, IRSLoading
+    public class RSUserControl : ContentControl, ILoadingService
     {
         public RSLoading PART_Loading { get; set; }
         private RSMessageBox PART_MessageBox;
-        private RSWindow ParentWin;
+        public RSWindow ParentWin;
         public RSModal PART_Modal;
 
         public IMessageBox MessageBox
@@ -48,8 +49,16 @@ namespace RS.Widgets.Controls
         }
         public RSUserControl()
         {
-            this.ParentWin = this.TryFindParent<RSWindow>();
+            this.Loaded += RSUserControl_Loaded;
         }
+
+        private void RSUserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.ParentWin = this.TryFindParent<RSWindow>();
+            this.ParentWinLoadingService = this.ParentWin;
+        }
+
+
 
         public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
@@ -91,6 +100,18 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty IsAllowWindowMaxRestoreCommandProperty =
             DependencyProperty.Register("IsAllowWindowMaxRestoreCommand", typeof(bool), typeof(RSUserControl), new PropertyMetadata(false));
+
+        [Description("父窗口加载服务")]
+        public ILoadingService ParentWinLoadingService
+        {
+            get { return (ILoadingService)GetValue(ParentWinLoadingServiceProperty); }
+            set { SetValue(ParentWinLoadingServiceProperty, value); }
+        }
+        public static readonly DependencyProperty ParentWinLoadingServiceProperty =
+            DependencyProperty.Register("ParentWinLoadingService", typeof(ILoadingService), typeof(RSUserControl), new PropertyMetadata(null));
+
+
+
 
 
         #region 模态窗口控制

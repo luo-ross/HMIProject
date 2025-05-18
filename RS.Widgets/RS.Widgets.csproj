@@ -13,28 +13,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-		<PackageReference Include="NPOI" Version="2.7.2" />
 		<PackageReference Include="ScottPlot" Version="5.0.54" />
 		<PackageReference Include="ScottPlot.WPF" Version="5.0.54" />
 		<PackageReference Include="System.Drawing.Common" Version="9.0.2" />
 		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="ZXing.Net" Version="0.16.10" />
-		<PackageReference Include="IdGen" Version="3.0.7" />
-		<PackageReference Include="IdGen.DependencyInjection" Version="3.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

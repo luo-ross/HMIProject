@@ -174,7 +174,7 @@ namespace RS.Annotation.Views
             //如果验证成功
             if (validLoginResult.IsSuccess)
             {
-                var homeView = App.AppHost?.Services.GetService<HomeView>();
+                var homeView = App.ServiceProvider?.GetService<HomeView>();
                 homeView?.Show();
                 this.Close();
             }

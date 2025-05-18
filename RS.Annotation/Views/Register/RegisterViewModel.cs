@@ -30,7 +30,7 @@ namespace RS.Annotation.Views
             }
             set
             {
-                OnPropertyChanged(ref emailRegisterModel, value);
+                this.SetProperty(ref emailRegisterModel, value);
             }
         }
 
@@ -51,7 +51,7 @@ namespace RS.Annotation.Views
             }
             set
             {
-                OnPropertyChanged(ref smsRegisterModel, value);
+                this.SetProperty(ref smsRegisterModel, value);
             }
         }
 
@@ -65,7 +65,7 @@ namespace RS.Annotation.Views
             get { return taskStatus; }
             set
             {
-                OnPropertyChanged(ref taskStatus, value);
+                this.SetProperty(ref taskStatus, value);
             }
         }
 
@@ -79,7 +79,7 @@ namespace RS.Annotation.Views
             get { return registerVerifyModel; }
             set
             {
-                OnPropertyChanged(ref registerVerifyModel, value);
+                this.SetProperty(ref registerVerifyModel, value);
             }
         }
 

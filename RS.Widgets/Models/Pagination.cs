@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Windows.Documents;
 
@@ -7,7 +8,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 分页信息 分页核心  
     /// </summary>
-    public class Pagination : NotifyBase
+    public partial class Pagination : NotifyBase
     {
 
         public event Action<Pagination> OnRowsChanged;
@@ -28,12 +29,12 @@ namespace RS.Widgets.Models
             }
             set
             {
-                if (OnPropertyChanged(ref _Rows, value))
+                if (this. SetProperty(ref _Rows, value))
                 {
                     Page = 1;
                     this.OnRowsChanged?.Invoke(this);
                 }
-                OnPropertyChanged(nameof(Total));
+                this.OnPropertyChanged(nameof(Total));
             }
         }
 
@@ -57,24 +58,21 @@ namespace RS.Widgets.Models
                 {
                     value = Total;
                 }
-                OnPropertyChanged(ref _Page, value);
+                this.SetProperty(ref _Page, value);
             }
         }
 
 
-
-        private string _Sidx = "Id";
         /// <summary>
         /// 排序列  
         /// </summary>
-        public string Sidx
-        {
-            get { return _Sidx; }
-            set { OnPropertyChanged(ref _Sidx, value); }
-        }
+        [ObservableProperty]
+        private string sidx = "Id";
+      
+        
 
 
-        private List<int> _Rowlist;
+        private List<int> rowlist;
         /// <summary>
         /// 行数 
         /// </summary>
@@ -82,27 +80,23 @@ namespace RS.Widgets.Models
         {
             get
             {
-                if (_Rowlist == null)
+                if (rowlist == null)
                 {
-                    _Rowlist = new List<int>() { 30, 50, 70, 100 };
+                    rowlist = new List<int>() { 30, 50, 70, 100 };
                 }
-                return _Rowlist;
+                return rowlist;
             }
-            set { OnPropertyChanged(ref _Rowlist, value); }
+            set { this.SetProperty(ref rowlist, value); }
         }
 
 
-
-        private string _Sord = "desc";
         /// <summary>
         /// 排序类型  
         /// </summary>
-        public string Sord
-        {
-            get { return _Sord; }
-            set { OnPropertyChanged(ref _Sord, value); }
-        }
-
+        [ObservableProperty]
+        private string sord = "desc";
+       
+      
 
         private int _Records;
         /// <summary>
@@ -113,8 +107,8 @@ namespace RS.Widgets.Models
             get { return _Records; }
             set
             {
-                OnPropertyChanged(ref _Records, value);
-                OnPropertyChanged(nameof(Total));
+                this.SetProperty(ref _Records, value);
+                this.OnPropertyChanged(nameof(Total));
             }
         }
 
