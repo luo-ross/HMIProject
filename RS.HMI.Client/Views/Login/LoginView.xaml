@@ -164,7 +164,7 @@
                     <ImageBrush ImageSource="https://img.tukuppt.com/bg_grid/00/45/55/G2iLF9SGJO.jpg!/fh/350" />
                 </Border.Background>
             </Border>
-            <rs:RSUserControl
+            <rs:RSDialog
                 x:Name="LoginForm"
                 Grid.Column="1"
                 Background="#fff">
@@ -293,7 +293,7 @@
                         </ToggleButton.Foreground>
                     </ToggleButton>
                 </Grid>
-            </rs:RSUserControl>
+            </rs:RSDialog>
         </Grid>
     </Grid>
 </rs:RSWindow>

@@ -9,6 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="EvetentArgs\**" />
+	  <EmbeddedResource Remove="EvetentArgs\**" />
+	  <None Remove="EvetentArgs\**" />
+	  <Page Remove="EvetentArgs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 
@@ -33,6 +40,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Controls\RSWinModal.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Page Update="Styles\Controls.GroupBox.xaml">
 			<SubType>Designer</SubType>
 		</Page>
@@ -42,10 +55,6 @@
 		<Page Update="Styles\Controls.Border.xaml">
 			<SubType>Designer</SubType>
 		</Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="EvetentArgs\" />
 	</ItemGroup>
 
 </Project>

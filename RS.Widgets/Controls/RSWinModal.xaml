@@ -1,0 +1,16 @@
+﻿<local:RSWindow
+    x:Class="RS.Widgets.Controls.RSWinModal"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.Widgets.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="this"
+    Width="500"
+    Height="450"
+    BorderCornerRadius="5"
+    Focusable="True"
+    IsFitSystem="True"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d" />

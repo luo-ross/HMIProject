@@ -6,9 +6,8 @@ using System.Windows.Controls;
 
 namespace RS.Widgets.Controls
 {
-    public class RSLoading : ContentControl, ILoadingService
+    public class RSLoading : ContentControl, ILoading
     {
-        private ProgressBar PART_Loading;
         static RSLoading()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSLoading), new FrameworkPropertyMetadata(typeof(RSLoading)));
@@ -90,10 +89,27 @@ namespace RS.Widgets.Controls
         }
 
 
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as ProgressBar;
+        }
+
+        public void HideLoading()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Visibility=Visibility.Collapsed;
+            });
+        }
+
+        public void ShowLoading(LoadingConfig loadingConfig)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.LoadingConfig = loadingConfig;
+                this.Visibility = Visibility.Visible;
+            });
         }
     }
 }

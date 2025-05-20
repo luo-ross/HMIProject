@@ -19,7 +19,7 @@ namespace RS.SetupApp.Views
     /// <summary>
     /// UserAgreementConfirmView.xaml 的交互逻辑
     /// </summary>
-    public partial class UserAgreementConfirmView : RSUserControl
+    public partial class UserAgreementConfirmView : RSDialog
     {
         public UserAgreementConfirmView()
         {

@@ -10,6 +10,7 @@
     Width="500"
     Height="450"
     BorderCornerRadius="5"
+    Focusable="True"
     IsFitSystem="True"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
@@ -51,14 +52,16 @@
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button
                         x:Name="BtnSubmit"
-                        Click="BtnSubmit_Click"
-                        Content="确认"
-                        Style="{StaticResource RSApp.Styles.PrimaryButton}" />
+                        Command="{x:Static local:RSForm.SubmitCommand}"
+                        Style="{StaticResource RSApp.Styles.PrimaryButton}">
+                        <AccessText Text="确认(_Y)" />
+                    </Button>
                     <Button
                         x:Name="BtnReturn"
-                        Click="BtnReturn_Click"
-                        Content="返回"
-                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                        Command="{x:Static local:RSForm.ReturnCommand}"
+                        Style="{StaticResource RSApp.Styles.DefaultButton}">
+                        <AccessText Text="返回(_C)" />
+                    </Button>
                 </StackPanel>
             </Border>
         </Grid>

@@ -36,7 +36,7 @@ namespace RS.Widgets.Models
         /// <summary>
         /// 消息提示框
         /// </summary>
-        public RSMessageBox RSMessageBox { get; set; }
+        public RSMessage RSMessage { get; set; }
     }
 
 

@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace RS.HMI.Client.Views
 {
-    [ServiceInjectConfig(ServiceLifetime.Transient)]
+    [ServiceInjectConfig(ServiceLifetime.Scoped)]
     public partial class HomeViewModel : NotifyBase
     {
 

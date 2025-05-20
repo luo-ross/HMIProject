@@ -10,12 +10,12 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWinMessageBox}">
+    <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWinMessage}">
         <Setter Property="MaxHeight" Value="450" />
         <Setter Property="MaxWidth" Value="600" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type rs:RSWinMessageBox}">
+                <ControlTemplate TargetType="{x:Type rs:RSWinMessage}">
                     <Border Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
                         <Border
                             x:Name="PART_Border"
@@ -38,7 +38,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         FontSize="14"
-                                        Text="{TemplateBinding rs:MessageBoxAttached.Caption}" />
+                                        Text="{TemplateBinding Caption}" />
                                 </Border>
                                 <Grid Grid.Row="1" Background="#fff">
                                     <Grid.ColumnDefinitions>
@@ -64,7 +64,7 @@
                                         rs:ControlsHelper.CornerRadius="0"
                                         BorderThickness="0"
                                         IsReadOnly="True"
-                                        Text="{TemplateBinding rs:MessageBoxAttached.MessageBoxText}"
+                                        Text="{TemplateBinding MessageBoxText}"
                                         TextWrapping="WrapWithOverflow" />
                                 </Grid>
                                 <Border
@@ -106,62 +106,62 @@
                     </Border>
 
                     <ControlTemplate.Triggers>
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxButton" Value="OK">
+                        <Trigger Property="MessageBoxButton" Value="OK">
                             <Setter TargetName="PART_BtnOK" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxButton" Value="OKCancel">
+                        <Trigger Property="MessageBoxButton" Value="OKCancel">
                             <Setter TargetName="PART_BtnOK" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnCancel" Property="Visibility" Value="Visible" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxButton" Value="YesNo">
+                        <Trigger Property="MessageBoxButton" Value="YesNo">
                             <Setter TargetName="PART_BtnYes" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnNo" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxButton" Value="YesNoCancel">
+                        <Trigger Property="MessageBoxButton" Value="YesNoCancel">
                             <Setter TargetName="PART_BtnYes" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnNo" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnCancel" Property="Visibility" Value="Visible" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="None">
+                        <Trigger Property="MessageBoxImage" Value="None">
                             <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Error">
+                        <Trigger Property="MessageBoxImage" Value="Error">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#D63939" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Hand">
+                        <Trigger Property="MessageBoxImage" Value="Hand">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#D63939" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Stop">
+                        <Trigger Property="MessageBoxImage" Value="Stop">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#D63939" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Error}" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Exclamation">
+                        <Trigger Property="MessageBoxImage" Value="Exclamation">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#F76707" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Warning}" />
                         </Trigger>
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Warning">
+                        <Trigger Property="MessageBoxImage" Value="Warning">
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Warning}" />
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#F76707" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Information">
+                        <Trigger Property="MessageBoxImage" Value="Information">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Information}" />
                         </Trigger>
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Asterisk">
+                        <Trigger Property="MessageBoxImage" Value="Asterisk">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Information}" />
                         </Trigger>
 
-                        <Trigger Property="rs:MessageBoxAttached.MessageBoxImage" Value="Question">
+                        <Trigger Property="MessageBoxImage" Value="Question">
                             <Setter TargetName="PART_Icon" Property="Fill" Value="#4299e1" />
                             <Setter TargetName="PART_Icon" Property="Data" Value="{StaticResource RSApp.Icons.Question}" />
                         </Trigger>

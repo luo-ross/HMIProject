@@ -36,7 +36,7 @@ namespace RS.HMI.Client.Controls
         private int generatorId = 1;
         private IdGenerator IdGenerator;
         private SerialPort SerialPort;
-        private RSUserControl PART_RSUserControl;
+        private RSDialog PART_RSDialog;
         private DataGrid? PART_DataGrid;
         private Button PART_BtnConnect;
         private Button PART_BtnDisConnect;
@@ -772,7 +772,7 @@ namespace RS.HMI.Client.Controls
             }
             var seviceDataModelSelected = this.ModbusCommuConfigModelSelected;
             var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 //首先进行数据验证
                 var modbusCommuConfigModelValidResult = ModbusCommuConfigModelValid(modbusCommuConfigModelList);
@@ -820,7 +820,7 @@ namespace RS.HMI.Client.Controls
 
             if (!operateResult.IsSuccess)
             {
-                await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
+                await this.PART_RSDialog.GetMessageBox().ShowMessageAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
             }
         }
 
@@ -873,13 +873,13 @@ namespace RS.HMI.Client.Controls
         {
             //这里防老年痴呆，得问一问是否删除
             string msg = parameter.Equals("0") ? "你确定要删除该行数据吗" : "你确定要删除所有数据吗?";
-            var result = await this.PART_RSUserControl.MessageBox.ShowAsync(msg, null, MessageBoxButton.OKCancel);
+            var result = await this.PART_RSDialog.GetMessageBox().ShowMessageAsync(msg, null, MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.Cancel)
             {
                 return;
             }
 
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
               {
                   //这是删除一行
                   if (parameter.Equals("0"))
@@ -932,7 +932,7 @@ namespace RS.HMI.Client.Controls
             {
                 this.Dispatcher.Invoke(async () =>
                 {
-                    await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message);
+                    await this.PART_RSDialog.GetMessageBox().ShowMessageAsync(operateResult.Message);
                 });
             }
         }
@@ -984,7 +984,7 @@ namespace RS.HMI.Client.Controls
 
                 //获取数据副本
                 var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
-                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+                var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     //获取Excel工作簿
                     IWorkbook workbook = ExcelHelper.GetWorkbook(filePath);
@@ -1039,7 +1039,7 @@ namespace RS.HMI.Client.Controls
 
                 if (!operateResult.IsSuccess)
                 {
-                    await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
+                    await this.PART_RSDialog.GetMessageBox().ShowMessageAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
                 }
             }
         }
@@ -1064,7 +1064,7 @@ namespace RS.HMI.Client.Controls
 
                 //获取数据副本
                 var modbusCommuConfigModelList = this.ModbusCommuConfigModelList.ToList();
-                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+                var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     //获取Excel工作簿
                     IWorkbook workbook = ExcelHelper.CreateWorkbook(filePath);
@@ -1368,7 +1368,7 @@ namespace RS.HMI.Client.Controls
 
                 if (!operateResult.IsSuccess)
                 {
-                    await this.PART_RSUserControl.MessageBox.ShowAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
+                    await this.PART_RSDialog.GetMessageBox().ShowMessageAsync(operateResult.Message, null, MessageBoxButton.OK, icon: MessageBoxImage.Warning);
                 }
             }
         }
@@ -1603,7 +1603,7 @@ namespace RS.HMI.Client.Controls
             if (saveFileDialog.ShowDialog() == true)
             {
                 string filePathSelect = saveFileDialog.FileName;
-                var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+                var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     var templateFilePath = PathHelper.MapPath("Temlates/ModbusRTU数据导入模版.xlsx");
 
@@ -1856,7 +1856,7 @@ namespace RS.HMI.Client.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.PART_RSUserControl = this.GetTemplateChild(nameof(this.PART_RSUserControl)) as RSUserControl;
+            this.PART_RSDialog = this.GetTemplateChild(nameof(this.PART_RSDialog)) as RSDialog;
             this.PART_DataGrid = this.GetTemplateChild(nameof(this.PART_DataGrid)) as DataGrid;
             this.PART_BtnConnect = this.GetTemplateChild(nameof(this.PART_BtnConnect)) as Button;
             this.PART_BtnDisConnect = this.GetTemplateChild(nameof(this.PART_BtnDisConnect)) as Button;
@@ -1901,7 +1901,7 @@ namespace RS.HMI.Client.Controls
             var dataBits = (int)this.DataBits;
             var stopBits = this.StopBits;
             var parity = this.Parity;
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 try
                 {
@@ -1967,7 +1967,7 @@ namespace RS.HMI.Client.Controls
         private async void BtnSaveConfig_Click(object sender, RoutedEventArgs e)
         {
             //把数据保存到Sqlite本地数据库,假如后面我们上了WebAPI,我们可以把数据保存到WebAPI
-            var operateResult = await this.PART_RSUserControl.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.PART_RSDialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 //保存数据之前我们需要验证数据是否通过
                 bool isAdd = this.Id <= 0;

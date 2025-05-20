@@ -1,4 +1,4 @@
-﻿<rs:RSUserControl
+﻿<rs:RSDialog
     x:Class="RS.HMI.Client.Views.Areas.UserView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,7 +10,14 @@
     d:DataContext="{d:DesignInstance Type=local:UserViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    DialogKey="{Binding DialogKey}"
     mc:Ignorable="d">
+    <rs:RSDialog.Resources>
+        <ResourceDictionary>
+            <rs:EmailMaskConverter x:Key="EmailMaskConverter" />
+            <rs:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
+        </ResourceDictionary>
+    </rs:RSDialog.Resources>
     <GroupBox>
         <GroupBox.Header>
             <Grid>
@@ -22,26 +29,73 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <rs:RSDataGrid
                 x:Name="UserDataGrid"
                 Grid.Column="0"
-                AddClickCommand="{Binding AddClickCommand}"
-                DeleteClickCommand="{Binding DeleteClickCommand}"
-                DetailsClickCommand="{Binding DetailsClickCommand}"
-                ExportClickCommand="{Binding ExportClickCommand}"
                 ItemsSource="{Binding UserModelList, UpdateSourceTrigger=PropertyChanged}"
                 PaginationCommand="{Binding PaginationCommand}"
                 SelectedItem="{Binding UserModelSelect}"
                 UpdateClickCommand="{Binding UpdateClickCommand}"
                 VirtualizingPanel.IsVirtualizing="True">
+                <rs:RSDataGrid.RowStyle>
+                    <Style BasedOn="{StaticResource RSApp.Styles.DataGridRowStyle}" TargetType="{x:Type DataGridRow}">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu DataContext="{Binding Data, Source={StaticResource BindingProxy}}">
+                                    <MenuItem
+                                        x:Name="PART_BtnAdd"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.AddClickCommand}"
+                                        Header="新增数据"
+                                        InputGestureText="Alt+A" />
+                                    <MenuItem
+                                        x:Name="PART_BtnDelete"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.DeleteClickCommand}"
+                                        Header="删除数据"
+                                        InputGestureText="Alt+D" />
+                                    <MenuItem
+                                        x:Name="PART_BtnUpdate"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UpdateClickCommand}"
+                                        Header="修改数据"
+                                        InputGestureText="Alt+U" />
+                                    <MenuItem
+                                        x:Name="PART_BtnDetails"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.DetailsClickCommand}"
+                                        Header="查看详情"
+                                        InputGestureText="Alt+V" />
+
+                                    <MenuItem
+                                        x:Name="PART_BtnEnable"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UserEnableCommand}"
+                                        Header="启用用户" />
+
+                                    <MenuItem
+                                        x:Name="PART_BtnDisable"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UserDisableCommand}"
+                                        Header="禁用用户" />
+
+                                    <MenuItem
+                                        x:Name="PART_BtnExport"
+                                        Command="{Binding Source={StaticResource BindingProxy}, Path=Data.ExportClickCommand}"
+                                        Header="导出数据"
+                                        InputGestureText="Alt+E" />
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </rs:RSDataGrid.RowStyle>
+
                 <rs:RSDataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Email}" Header="用户" />
+                    <DataGridTextColumn Binding="{Binding Email, Converter={StaticResource EmailMaskConverter}}" Header="邮箱" />
                     <DataGridTextColumn Binding="{Binding NickName}" Header="昵称" />
                     <DataGridTemplateColumn Header="是否禁用">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsDisabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <ToggleButton
+                                    IsChecked="{Binding IsDisabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=False}"
+                                    IsEnabled="False"
+                                    Style="{StaticResource RSApp.Styles.ToggleSwitchStyle}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -65,56 +119,51 @@
                             CommandParameter="{Binding UserModelList}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+A">
-                            <Button.Content>
-                                <TextBlock>
-                                    <Run Text="新增数据(" />
-                                    <Run Text="A" TextDecorations="Underline" />
-                                    <Run Text=")" />
-                                </TextBlock>
-                            </Button.Content>
+                            <AccessText Text="新增数据(_A)" />
                         </Button>
                         <Button
                             HorizontalAlignment="Stretch"
                             Command="{Binding DeleteClickCommand}"
-                            CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+D">
-                            <Button.Content>
-                                <TextBlock>
-                                    <Run Text="删除数据(" />
-                                    <Run Text="D" TextDecorations="Underline" />
-                                    <Run Text=")" />
-                                </TextBlock>
-                            </Button.Content>
+                            <AccessText Text="删除数据(_D)" />
                         </Button>
                         <Button
                             HorizontalAlignment="Stretch"
                             Command="{Binding UpdateClickCommand}"
-                            CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+U">
-                            <Button.Content>
-                                <TextBlock>
-                                    <Run Text="修改数据(" />
-                                    <Run Text="U" TextDecorations="Underline" />
-                                    <Run Text=")" />
-                                </TextBlock>
-                            </Button.Content>
+                            <AccessText Text="修改数据(_U)" />
                         </Button>
+
+
                         <Button
                             HorizontalAlignment="Stretch"
                             Command="{Binding DetailsClickCommand}"
-                            CommandParameter="{Binding ElementName=UserDataGrid, Path=SelectedItem}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+V">
-                            <Button.Content>
-                                <TextBlock>
-                                    <Run Text="查看数据(" />
-                                    <Run Text="V" TextDecorations="Underline" />
-                                    <Run Text=")" />
-                                </TextBlock>
-                            </Button.Content>
+                            <AccessText Text="查看数据(_V)" />
                         </Button>
+
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding UserEnableClickCommand}"
+                            Content="用户启用"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}" />
+
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding UserDisableClickCommand}"
+                            Content="用户禁用"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}" />
+
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding ExportClickCommand}"
+                            Content="数据导出"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}" />
+
+
                     </StackPanel>
 
                     <StackPanel Grid.Row="2">
@@ -123,19 +172,11 @@
                             Command="{Binding CloseClickCommand}"
                             Style="{StaticResource RSApp.Styles.DefaultButton}"
                             ToolTip="快捷键Alt+C">
-                            <Button.Content>
-                                <TextBlock>
-                                    <Run Text="关闭(" />
-                                    <Run Text="C" TextDecorations="Underline" />
-                                    <Run Text=")" />
-                                </TextBlock>
-                            </Button.Content>
+                            <AccessText Text="关闭(_C)" />
                         </Button>
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
-
-
     </GroupBox>
-</rs:RSUserControl>
+</rs:RSDialog>

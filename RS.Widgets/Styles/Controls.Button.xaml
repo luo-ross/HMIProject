@@ -27,6 +27,7 @@
         <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
         <Setter Property="rs:ControlsHelper.IconData" Value="{x:Null}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     </Style>
 
     <Style

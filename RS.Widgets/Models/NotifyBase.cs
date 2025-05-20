@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public partial class NotifyBase : ObservableObject, INotifyDataErrorInfo
+    public partial  class NotifyBase : ObservableObject, INotifyDataErrorInfo
     {
         public NotifyBase()
         {
@@ -21,6 +21,8 @@ namespace RS.Widgets.Models
 
 
         #region INotifyDataErrorInfo实现
+        public  static readonly string DefaultErrorKey = "708819A8240246268C14CF142FF5B4A6";
+
         /// <summary>
         /// 错误字典Key 就是PropertyName 键值就是错误信息列表
         /// </summary>
@@ -142,8 +144,6 @@ namespace RS.Widgets.Models
             }
             return validErrorKey;
         }
-
-        public static readonly string DefaultErrorKey = "708819A8240246268C14CF142FF5B4A6";
 
         public void RemoveErrors(string? propertyName, string validErrorKey = null)
         {

@@ -33,7 +33,7 @@ namespace RS.HMI.Client.Views
     /// 采用依赖注入使用的时候获取服务
     /// </summary>
     [ServiceInjectConfig(ServiceLifetime.Transient)]
-    public partial class SecurityView : RSUserControl
+    public partial class SecurityView : RSDialog
     {
         private readonly IGeneralBLL GeneralBLL;
         private readonly ICryptographyBLL CryptographyBLL;
@@ -76,7 +76,7 @@ namespace RS.HMI.Client.Views
                 IsIndeterminate = true,
             };
 
-            var operateResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 var emailModel = new EmailModel();
                 emailModel.Email = this.ViewModel.UserName;

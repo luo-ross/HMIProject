@@ -25,7 +25,7 @@ namespace RS.Annotation.Views.Areas
     /// <summary>
     /// 目标检测标注视图
     /// </summary>
-    public partial class AnnotationView : RSUserControl
+    public partial class AnnotationView : RSDialog
     {
         /// <summary>
         /// 当前视图MVVM 绑定的ViewModel
@@ -3003,7 +3003,7 @@ namespace RS.Annotation.Views.Areas
         {
             var button = sender as Button;
             var tagModelSelect = this.ViewModel.TagModelSelect;
-            var messageBoxResult = await this.MessageBox.ShowAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            var messageBoxResult = await this.MessageBox.ShowMessageAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 var validLoginResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
@@ -3083,7 +3083,7 @@ namespace RS.Annotation.Views.Areas
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="valueInput"></param>
-        private void RectModel_OnValueInputChanged(RSNumbericUpDown sender, double valueInput)
+        private void RectModel_OnValueInputChanged(RSNumberic sender, double valueInput)
         {
             var rectModelSelectList = this.GetRectModelSelectList();
             switch (sender.Name)

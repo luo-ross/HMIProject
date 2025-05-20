@@ -1,4 +1,4 @@
-﻿<rs:RSUserControl
+﻿<rs:RSDialog
     x:Class="RS.Annotation.Views.Areas.Pictures.RemoveImgView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -70,4 +70,4 @@
             </Grid>
         </GroupBox>
     </Grid>
-</rs:RSUserControl>
+</rs:RSDialog>

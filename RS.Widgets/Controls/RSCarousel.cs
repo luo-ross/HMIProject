@@ -13,7 +13,7 @@ namespace RS.Widgets.Controls
     /// <summary>
     ///  Fov算法，计算FieldOfView公式= 2 * arctan(尺寸 / (2 * 距离)) * (180 / π) 
     /// </summary>
-    public class RSCarousel : RSUserControl
+    public class RSCarousel : RSDialog
     {
         private Viewport3D PART_Viewport3D;
         private ModelVisual3D PART_ModelVisual3D;

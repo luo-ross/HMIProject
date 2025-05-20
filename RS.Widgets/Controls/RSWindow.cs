@@ -12,44 +12,33 @@ using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class RSWindow : RSWindowBase, IInfoBar, ILoadingService
+    public class RSWindow : RSWindowBase, IInfoBar, IWindow
     {
         private Button PART_Minimize;
         private Button PART_BtnMaxRestore;
         private Button PART_BtnClose;
-        private RSUserControl PART_WinContentHost;
+        private RSDialog PART_WinContentHost;
 
+        //public IMessage MessageBox
+        //{
+        //    get
+        //    {
+        //        return this.PART_WinContentHost.MessageBox;
+        //    }
+        //}
 
-        public IMessageBox MessageBox
-        {
-            get
-            {
-                return this.PART_WinContentHost.MessageBox;
-            }
-        }
-
-        public IMessageBox WinMessageBox
-        {
-            get
-            {
-                return new RSWinMessageBox()
-                {
-                    Owner = this,
-                    Width = 350,
-                    Height = 230
-                };
-            }
-        }
-
-      
-
-        public IInfoBar RSWinInfoBar
-        {
-            get
-            {
-                return ApplicationBase.RSWinInfoBar;
-            }
-        }
+        //public IMessage WinMessageBox
+        //{
+        //    get
+        //    {
+        //        return new RSWinMessage()
+        //        {
+        //            Owner = this,
+        //            Width = 350,
+        //            Height = 230
+        //        };
+        //    }
+        //}
 
 
         private DispatcherTimer InfoBarTimer;
@@ -68,14 +57,10 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
-
-            this.Closing += RSWindow_Closing;
+         
         }
 
-        private void RSWindow_Closing(object? sender, CancelEventArgs e)
-        {
-            ((RSWinInfoBar)this.RSWinInfoBar)?.Close();
-        }
+      
 
 
         [Description("消息")]
@@ -148,18 +133,15 @@ namespace RS.Widgets.Controls
             });
         }
 
+        //public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
+        //{
+        //    return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
+        //}
 
-
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        {
-            return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
-        }
-
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        {
-            return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
-        }
-
+        //public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
+        //{
+        //    return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
+        //}
 
         private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
         {
@@ -236,34 +218,6 @@ namespace RS.Widgets.Controls
         }
 
 
-        /// <summary>
-        /// 显示模态
-        /// </summary>
-        public void ShowModal(object modalContent)
-        {
-            this.PART_WinContentHost.ShowModal(modalContent);
-        }
-
-        /// <summary>
-        /// 关闭模态
-        /// </summary>
-        public void HideModal()
-        {
-            this.PART_WinContentHost.HideModal();
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            this.PART_Minimize = this.GetTemplateChild(nameof(this.PART_Minimize)) as Button;
-            this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(this.PART_BtnMaxRestore)) as Button;
-            this.PART_BtnClose = this.GetTemplateChild(nameof(this.PART_BtnClose)) as Button;
-            this.PART_WinContentHost = this.GetTemplateChild(nameof(this.PART_WinContentHost)) as RSUserControl;
-        }
-
-
-
-
         [Description("自定义标题栏内容")]
         [Browsable(false)]
         public object CaptionContent
@@ -300,7 +254,7 @@ namespace RS.Widgets.Controls
             set { SetValue(IsFitSystemProperty, value); }
         }
 
-     
+
 
         public static readonly DependencyProperty IsFitSystemProperty =
             DependencyProperty.Register("IsFitSystem", typeof(bool), typeof(RSWindow), new PropertyMetadata(false));
@@ -319,9 +273,67 @@ namespace RS.Widgets.Controls
                     SystemCommands.RestoreWindow(this);
                 }
             }
-
         }
 
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.PART_Minimize = this.GetTemplateChild(nameof(this.PART_Minimize)) as Button;
+            this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(this.PART_BtnMaxRestore)) as Button;
+            this.PART_BtnClose = this.GetTemplateChild(nameof(this.PART_BtnClose)) as Button;
+            this.PART_WinContentHost = this.GetTemplateChild(nameof(this.PART_WinContentHost)) as RSDialog;
+        }
+
+
+        /// <summary>
+        /// 显示模态
+        /// </summary>
+        public void ShowModal(object modalContent)
+        {
+            this.PART_WinContentHost.ShowModal(modalContent);
+        }
+
+        /// <summary>
+        /// 关闭模态
+        /// </summary>
+        public void HideModal()
+        {
+            this.PART_WinContentHost.HideModal();
+        }
+
+        public IDialog GetDialog()
+        {
+            return this.PART_WinContentHost;
+        }
+
+        public IMessage GetMessageBox()
+        {
+            return this.PART_WinContentHost.GetMessageBox();
+        }
+
+
+        public IMessage GetWinMessageBox()
+        {
+            return new RSWinMessage()
+            {
+                Owner = this,
+                Width = 350,
+                Height = 250
+            };
+        }
+
+        public IModal GetModal()
+        {
+            return new RSModal()
+            {
+
+            };
+        }
+
+        public ILoading GetLoading()
+        {
+            return this.PART_WinContentHost.GetLoading();
+        }
     }
 }

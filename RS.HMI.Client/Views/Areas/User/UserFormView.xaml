@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:RS.HMI.Client.Views.Areas"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
@@ -14,17 +15,24 @@
         <TextBlock
             Margin="2,0,0,0"
             Foreground="#949494"
-            Text="用户" />
-        <TextBox Text="{Binding UserModelEdit.Email}" />
+            Text="邮箱" />
+        <TextBox
+            x:Name="TxtEmail"
+            rs:TextBoxHelper.IsShowClearButton="True"
+            Text="{Binding UserModelEdit.Email}">
+            <i:Interaction.Behaviors>
+                <rs:FocusOnLoadBehavior />
+            </i:Interaction.Behaviors>
+        </TextBox>
         <TextBlock
             Margin="2,0,0,0"
             Foreground="#949494"
             Text="昵称" />
-        <TextBox Text="{Binding UserModelEdit.NickName}" />
+        <TextBox rs:TextBoxHelper.IsShowClearButton="True" Text="{Binding UserModelEdit.NickName}" />
         <TextBlock
             Margin="2,0,0,0"
             Foreground="#949494"
             Text="是否禁用" />
-        <CheckBox IsChecked="{Binding UserModelEdit.IsDisabled}" />
+        <CheckBox IsChecked="{Binding UserModelEdit.IsDisabled, TargetNullValue=False}" />
     </StackPanel>
 </UserControl>

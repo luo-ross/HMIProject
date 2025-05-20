@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Interface
 {
-    public interface ILoadingService
+    public interface ILoading
     {
         Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default);
         Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default);

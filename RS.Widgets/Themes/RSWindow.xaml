@@ -37,7 +37,10 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Clip="{TemplateBinding BorderClipRect}">
                             <Grid>
-                                <rs:RSUserControl x:Name="PART_WinContentHost" Grid.Row="1">
+                                <rs:RSDialog
+                                    x:Name="PART_WinContentHost"
+                                    Grid.Row="1"
+                                    DialogKey="Default">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="auto" />
@@ -140,7 +143,7 @@
                                             </AdornerDecorator>
                                         </Grid>
                                     </Grid>
-                                </rs:RSUserControl>
+                                </rs:RSDialog>
 
                             </Grid>
                         </Border>

@@ -20,7 +20,7 @@
         Margin="25"
         Background="#fff"
         CornerRadius="5">
-        <rs:RSUserControl x:Name="HostView">
+        <rs:RSDialog x:Name="HostView">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -140,7 +140,7 @@
                     Fill="#fff"
                     Stretch="Fill" />-->
             </Grid>
-        </rs:RSUserControl>
+        </rs:RSDialog>
         <Border.Effect>
             <DropShadowEffect
                 BlurRadius="18"

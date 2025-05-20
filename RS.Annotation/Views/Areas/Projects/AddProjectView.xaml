@@ -1,4 +1,4 @@
-﻿<rs:RSUserControl
+﻿<rs:RSDialog
     x:Class="RS.Annotation.Views.Areas.AddProjectView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,9 +13,9 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <rs:RSUserControl.DataContext>
+    <rs:RSDialog.DataContext>
         <local:ProjectsViewModel />
-    </rs:RSUserControl.DataContext>
+    </rs:RSDialog.DataContext>
     <Border Background="#FFF">
         <GroupBox Margin="0">
             <GroupBox.Header>
@@ -173,4 +173,4 @@
         </GroupBox>
     </Border>
 
-</rs:RSUserControl>
+</rs:RSDialog>

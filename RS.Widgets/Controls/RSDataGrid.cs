@@ -22,10 +22,10 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
-    public class RSDataGrid : DataGrid, ILoadingService
+    public class RSDataGrid : DataGrid
     {
         private DataGrid PART_DataGrid;
-        private RSUserControl PART_RSUserControl;
+        private RSDialog PART_RSDialog;
         private Button PART_BtnFirstPage;
         private Button PART_BtnPrevious;
         private Button PART_BtnNext;
@@ -75,42 +75,42 @@ namespace RS.Widgets.Controls
 
         #region 静态命令
 
-        public static readonly ICommand InternalAddCommand = new RoutedCommand(nameof(InternalAddCommand), typeof(RSDataGrid), new InputGestureCollection
-        {
-            new KeyGesture(Key.A, ModifierKeys.Alt)
-        });
-        public static readonly ICommand InternalDeleteCommand = new RoutedCommand(nameof(InternalDeleteCommand), typeof(RSDataGrid), new InputGestureCollection
-        {
-            new KeyGesture(Key.D, ModifierKeys.Alt)
-        });
-        public static readonly ICommand InternalUpdateCommand = new RoutedCommand(nameof(InternalUpdateCommand), typeof(RSDataGrid), new InputGestureCollection
-        {
-            new KeyGesture(Key.U, ModifierKeys.Alt)
-        });
-        public static readonly ICommand InternalDetailsCommand = new RoutedCommand(nameof(InternalDetailsCommand), typeof(RSDataGrid), new InputGestureCollection
-        {
-            new KeyGesture(Key.V, ModifierKeys.Alt)
-        });
-        public static readonly ICommand InternalExportCommand = new RoutedCommand(nameof(InternalExportCommand), typeof(RSDataGrid), new InputGestureCollection
-        {
-            new KeyGesture(Key.E, ModifierKeys.Alt)
-        });
+        //public static readonly ICommand InternalAddCommand = new RoutedCommand(nameof(InternalAddCommand), typeof(RSDataGrid), new InputGestureCollection
+        //{
+        //    new KeyGesture(Key.A, ModifierKeys.Alt)
+        //});
+        //public static readonly ICommand InternalDeleteCommand = new RoutedCommand(nameof(InternalDeleteCommand), typeof(RSDataGrid), new InputGestureCollection
+        //{
+        //    new KeyGesture(Key.D, ModifierKeys.Alt)
+        //});
+        //public static readonly ICommand InternalUpdateCommand = new RoutedCommand(nameof(InternalUpdateCommand), typeof(RSDataGrid), new InputGestureCollection
+        //{
+        //    new KeyGesture(Key.U, ModifierKeys.Alt)
+        //});
+        //public static readonly ICommand InternalDetailsCommand = new RoutedCommand(nameof(InternalDetailsCommand), typeof(RSDataGrid), new InputGestureCollection
+        //{
+        //    new KeyGesture(Key.V, ModifierKeys.Alt)
+        //});
+        //public static readonly ICommand InternalExportCommand = new RoutedCommand(nameof(InternalExportCommand), typeof(RSDataGrid), new InputGestureCollection
+        //{
+        //    new KeyGesture(Key.E, ModifierKeys.Alt)
+        //});
 
         static RSDataGrid()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDataGrid), new FrameworkPropertyMetadata(typeof(RSDataGrid)));
 
-            CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(InternalAddCommand, InternalAddCommandExecuted, CanInternalAddCommandExecute));
-            CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(InternalDeleteCommand, InternalDeleteCommandExecuted, CanInternalDeleteCommandExecute));
-            CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(InternalUpdateCommand, InternalUpdateCommandExecuted, CanInternalUpdateCommandExecute));
-            CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(InternalDetailsCommand, InternalDetailsCommandExecuted, CanInternalDetailsCommandExecute));
-            CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-                new CommandBinding(InternalExportCommand, InternalExportCommandExecuted, CanInternalExportCommandExecute));
-        }
+        //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
+        //        new CommandBinding(InternalAddCommand, InternalAddCommandExecuted, CanInternalAddCommandExecute));
+        //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
+        //        new CommandBinding(InternalDeleteCommand, InternalDeleteCommandExecuted, CanInternalDeleteCommandExecute));
+        //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
+        //        new CommandBinding(InternalUpdateCommand, InternalUpdateCommandExecuted, CanInternalUpdateCommandExecute));
+        //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
+        //        new CommandBinding(InternalDetailsCommand, InternalDetailsCommandExecuted, CanInternalDetailsCommandExecute));
+        //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
+        //        new CommandBinding(InternalExportCommand, InternalExportCommandExecuted, CanInternalExportCommandExecute));
+      }
         #endregion
 
 
@@ -361,7 +361,7 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_DataGrid = this.GetTemplateChild(nameof(this.PART_DataGrid)) as DataGrid;
-            this.PART_RSUserControl = this.GetTemplateChild(nameof(this.PART_RSUserControl)) as RSUserControl;
+            this.PART_RSDialog = this.GetTemplateChild(nameof(this.PART_RSDialog)) as RSDialog;
             this.PART_BtnFirstPage = this.GetTemplateChild(nameof(this.PART_BtnFirstPage)) as Button;
             this.PART_BtnPrevious = this.GetTemplateChild(nameof(this.PART_BtnPrevious)) as Button;
             this.PART_BtnNext = this.GetTemplateChild(nameof(this.PART_BtnNext)) as Button;
@@ -465,17 +465,6 @@ namespace RS.Widgets.Controls
             {
                 await this.PaginationAsync.Invoke(pagination);
             }
-            
-        }
-
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        {
-            return await this.PART_RSUserControl.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
-        }
-
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        {
-            return await this.PART_RSUserControl.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
         }
     }
 }

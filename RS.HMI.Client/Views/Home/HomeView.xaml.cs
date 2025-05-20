@@ -35,7 +35,7 @@ namespace RS.HMI.Client.Views
 
         private async void BtnSearch_OnBtnSearchCallBack(string obj)
         {
-            //await this.MessageBox.ShowAsync($@"搜索事件触发, 查询条件{this.ViewModel.Test}");
+            //await this.MessageBox.ShowMessageAsync($@"搜索事件触发, 查询条件{this.ViewModel.Test}");
         }
     
     

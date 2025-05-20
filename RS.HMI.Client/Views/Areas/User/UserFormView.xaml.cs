@@ -18,7 +18,7 @@ using System.Windows.Shapes;
 
 namespace RS.HMI.Client.Views.Areas
 {
-    [ServiceInjectConfig(ServiceLifetime.Scoped)]
+    [ServiceInjectConfig(ServiceLifetime.Transient)]
     public partial class UserFormView : UserControl
     {
         private readonly UserViewModel ViewModel;
@@ -28,5 +28,6 @@ namespace RS.HMI.Client.Views.Areas
             this.DataContext = userViewModel;
             this.ViewModel = userViewModel;
         }
+      
     }
 }

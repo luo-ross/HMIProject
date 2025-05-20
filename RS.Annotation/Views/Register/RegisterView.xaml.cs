@@ -16,7 +16,7 @@ namespace RS.Annotation.Views
     /// <summary>
     /// RegisterView.xaml 的交互逻辑
     /// </summary>
-    public partial class RegisterView : RSUserControl
+    public partial class RegisterView : RSDialog
     {
         public RegisterViewModel ViewModel { get; set; }
         private readonly IGeneralBLL RegisterBLL;
@@ -67,7 +67,7 @@ namespace RS.Annotation.Views
                 //注册成功提示
                 await this.Dispatcher.Invoke(async () =>
                 {
-                    await this.MessageBox.ShowAsync("注册成功");
+                    await this.MessageBox.ShowMessageAsync("注册成功");
                 });
             }
 

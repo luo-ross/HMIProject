@@ -1,4 +1,4 @@
-﻿<rs:RSUserControl
+﻿<rs:RSDialog
     x:Class="RS.HMI.Client.Views.SecurityView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,12 +10,12 @@
     d:DesignHeight="450"
     d:DesignWidth="500"
     mc:Ignorable="d">
-    <rs:RSUserControl.DataContext>
+    <rs:RSDialog.DataContext>
         <local:SecurityViewModel />
-    </rs:RSUserControl.DataContext>
-    <rs:RSUserControl.Resources>
+    </rs:RSDialog.DataContext>
+    <rs:RSDialog.Resources>
         <ResourceDictionary />
-    </rs:RSUserControl.Resources>
+    </rs:RSDialog.Resources>
     <Grid Background="#fff">
         <Grid>
             <StackPanel Margin="28,80,28,50">
@@ -98,4 +98,4 @@
     </Grid>
 
 
-</rs:RSUserControl>
+</rs:RSDialog>

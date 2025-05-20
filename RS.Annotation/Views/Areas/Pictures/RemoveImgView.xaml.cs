@@ -20,7 +20,7 @@ namespace RS.Annotation.Views.Areas.Pictures
     /// <summary>
     /// RemoveImgView.xaml 的交互逻辑
     /// </summary>
-    public partial class RemoveImgView : RSUserControl
+    public partial class RemoveImgView : RSDialog
     {
 
         public HomeView HomeView { get; set; }

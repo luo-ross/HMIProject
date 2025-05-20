@@ -1,4 +1,4 @@
-﻿<rs:RSUserControl
+﻿<rs:RSDialog
     x:Class="RS.SetupApp.Views.UserAgreementConfirmView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -60,4 +60,4 @@
             </Border>
         </Grid>
     </Grid>
-</rs:RSUserControl>
+</rs:RSDialog>

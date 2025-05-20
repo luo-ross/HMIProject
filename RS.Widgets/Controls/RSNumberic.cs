@@ -20,7 +20,7 @@ namespace RS.Widgets.Controls
     [TemplatePart(Name = nameof(PART_BtnDown), Type = typeof(Button))]
     [TemplatePart(Name = nameof(PART_BtnUp), Type = typeof(Button))]
     [TemplatePart(Name = nameof(PART_TxtInput), Type = typeof(TextBox))]
-    public class RSNumbericUpDown : ContentControl
+    public class RSNumberic : ContentControl
     {
         private Button? PART_BtnDown;
         private Button? PART_BtnUp;
@@ -29,11 +29,11 @@ namespace RS.Widgets.Controls
         private bool IsLongPress = false;
 
         private bool IsSelfValueChanged = false;
-        static RSNumbericUpDown()
+        static RSNumberic()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSNumbericUpDown), new FrameworkPropertyMetadata(typeof(RSNumbericUpDown)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSNumberic), new FrameworkPropertyMetadata(typeof(RSNumberic)));
         }
-        public RSNumbericUpDown()
+        public RSNumberic()
         {
 
         }
@@ -41,7 +41,7 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 当值产生变化是触发
         /// </summary>
-        public event Action<RSNumbericUpDown, double> OnValueInputChanged;
+        public event Action<RSNumberic, double> OnValueInputChanged;
 
         /// <summary>
         /// 值变化率
@@ -53,7 +53,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty ValueChageRateProperty =
-            DependencyProperty.Register("ValueChageRate", typeof(double), typeof(RSNumbericUpDown), new PropertyMetadata(1D));
+            DependencyProperty.Register("ValueChageRate", typeof(double), typeof(RSNumberic), new PropertyMetadata(1D));
 
 
 
@@ -67,15 +67,15 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty ValueInputProperty =
-            DependencyProperty.Register("ValueInput", typeof(double), typeof(RSNumbericUpDown), new FrameworkPropertyMetadata(0D, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueInputPropertyChanged));
+            DependencyProperty.Register("ValueInput", typeof(double), typeof(RSNumberic), new FrameworkPropertyMetadata(0D, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueInputPropertyChanged));
 
         private static void OnValueInputPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsNumbericUpDown = d as RSNumbericUpDown;
-            if (rsNumbericUpDown != null && rsNumbericUpDown.IsSelfValueChanged)
+            var RSNumberic = d as RSNumberic;
+            if (RSNumberic != null && RSNumberic.IsSelfValueChanged)
             {
-                rsNumbericUpDown.IsSelfValueChanged = false;
-                rsNumbericUpDown.OnValueInputChanged?.Invoke(rsNumbericUpDown, rsNumbericUpDown.ValueInput);
+                RSNumberic.IsSelfValueChanged = false;
+                RSNumberic.OnValueInputChanged?.Invoke(RSNumberic, RSNumberic.ValueInput);
             }
         }
 
@@ -90,7 +90,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MaxValueInputProperty =
-            DependencyProperty.Register("MaxValueInput", typeof(double), typeof(RSNumbericUpDown), new PropertyMetadata(double.MaxValue));
+            DependencyProperty.Register("MaxValueInput", typeof(double), typeof(RSNumberic), new PropertyMetadata(double.MaxValue));
 
 
 
@@ -104,7 +104,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MinValueInputProperty =
-            DependencyProperty.Register("MinValueInput", typeof(double), typeof(RSNumbericUpDown), new PropertyMetadata(double.MinValue));
+            DependencyProperty.Register("MinValueInput", typeof(double), typeof(RSNumberic), new PropertyMetadata(double.MinValue));
 
 
 

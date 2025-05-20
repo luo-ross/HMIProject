@@ -8,16 +8,16 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSColorPicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDataGrid.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSLoading.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMessageBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMessage.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSModal.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSNumbericUpDown.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSNumberic.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSPhoneTextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSQRCodeLogin.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSSearch.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSUserControl.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDialog.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSVerifyTextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWindow.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWinInfoBar.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWinMessageBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSWinMessage.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

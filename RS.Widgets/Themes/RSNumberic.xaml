@@ -12,14 +12,14 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <converters:MathRoundConverter x:Key="MathRoundConverter" />
-    <Style TargetType="{x:Type rs:RSNumbericUpDown}">
+    <Style TargetType="{x:Type rs:RSNumberic}">
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Background" Value="#fff" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type rs:RSNumbericUpDown}">
+                <ControlTemplate TargetType="{x:Type rs:RSNumberic}">
                     <Border
                         x:Name="PART_Border"
                         Margin="0,5,0,5"

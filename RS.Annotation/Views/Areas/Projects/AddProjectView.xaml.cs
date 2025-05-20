@@ -31,7 +31,7 @@ namespace RS.Annotation.Views.Areas
     /// <summary>
     /// AddProjectView.xaml 的交互逻辑
     /// </summary>
-    public partial class AddProjectView : RSUserControl
+    public partial class AddProjectView : RSDialog
     {
         public HomeView HomeView { get; set; }
         public ProjectsViewModel ViewModel { get; set; }

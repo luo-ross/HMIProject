@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.Client.Models
 {
-    public partial class LoginModel : NotifyBase
+    public  class LoginModel : NotifyBase
     {
 
         private string userName;
@@ -28,13 +28,21 @@ namespace RS.HMI.Client.Models
                 this.ValidProperty(value);
             }
         }
+   
+
+        private bool isRememberPassword;
         /// <summary>
         /// 是否记住密码
         /// </summary>
-        [ObservableProperty]
-
-        private bool isRememberPassword;
-     
+        public bool IsRememberPassword
+        {
+            get { return isRememberPassword; }
+            set
+            {
+                this.SetProperty(ref isRememberPassword,value);
+                isRememberPassword = value;
+            }
+        }
 
 
         private string password = string.Empty;

@@ -90,6 +90,57 @@
         </Setter>
     </Style>
 
+    <Style x:Key="RSApp.Styles.ToggleSwitchStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="2,3,2,3" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="MinWidth" Value="35" />
+        <Setter Property="Background" Value="#06B025" />
+        <Setter Property="rs:ControlsHelper.IconWidth" Value="12" />
+        <Setter Property="rs:ControlsHelper.IconHeight" Value="12" />
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="15" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border
+                        x:Name="PART_Border"
+                        VerticalAlignment="Center"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding Background}"
+                        BorderThickness="1"
+                        CornerRadius="9">
+                        <Ellipse
+                            x:Name="PART_Ellipse"
+                            Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                            Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                            Margin="2,2,2,2" />
+                    </Border>
 
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="PART_Ellipse" Property="Fill" Value="#FFF" />
+                            <Setter TargetName="PART_Ellipse" Property="HorizontalAlignment" Value="Right" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="PART_Border" Property="Background" Value="#FFF" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="#E6E8E9" />
+                            <Setter TargetName="PART_Ellipse" Property="Fill" Value="#E6E8E9" />
+                            <Setter Property="Foreground" Value="#949494" />
+                            <Setter TargetName="PART_Ellipse" Property="HorizontalAlignment" Value="Left" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.9" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

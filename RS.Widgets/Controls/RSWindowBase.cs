@@ -24,9 +24,13 @@ namespace RS.Widgets.Controls
             this.StateChanged += RSWindow_StateChanged;
             this.Activated += RSWindowBase_Activated;
             this.Loaded += RSWindowBase_Loaded;
+            this.Closing += RSWindow_Closing;
         }
 
-        
+        private void RSWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            ApplicationBase.RSWinInfoBar?.Close();
+        }
 
         private void RSWindowBase_Loaded(object sender, RoutedEventArgs e)
         {

@@ -24,11 +24,61 @@ namespace RS.Widgets.Controls
     /// </summary>
     public partial class RSForm : RSWindow
     {
+        public static readonly RoutedCommand SubmitCommand = new RoutedCommand();
+        public static readonly RoutedCommand ReturnCommand = new RoutedCommand();
+
+        public event Action ReturnClick;
         public RSForm(UserControl userControl, FormMessageBase message)
         {
             InitializeComponent();
             this.FormContent = userControl;
             this.FormMessage = message;
+            //this.InputBindings.Add(new KeyBinding(SubmitCommand, Key.Y, ModifierKeys.Alt));
+            this.CommandBindings.Add(new CommandBinding(SubmitCommand, SubmitExecuted, CanSubmitExecuted));
+            this.CommandBindings.Add(new CommandBinding(ReturnCommand, ReturnExecuted, CanReturnExecuted));
+
+            this.MouseEnter += RSForm_MouseEnter;
+        }
+
+        private void RSForm_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Focus();
+        }
+
+        private void CanReturnExecuted(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ReturnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void CanSubmitExecuted(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void SubmitExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            var formMessage = this.FormMessage;
+            this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            {
+                switch (formMessage.CRUD)
+                {
+                    case RS.Commons.Enums.CRUD.Add:
+                        await formMessage.ViewModel.SubmitCommand.ExecuteAsync(formMessage.FormData);
+                        break;
+                    case RS.Commons.Enums.CRUD.Update:
+                        await formMessage.ViewModel.UpdateCommand.ExecuteAsync(formMessage.FormData);
+                        break;
+                }
+
+
+                return OperateResult.CreateSuccessResult();
+            });
+
         }
 
         [Description("表单内容")]
@@ -56,34 +106,8 @@ namespace RS.Widgets.Controls
 
 
 
-        public event Action ReturnClick;
-        private void BtnReturn_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
 
 
-        private void BtnSubmit_Click(object sender, RoutedEventArgs e)
-        {
-            var formMessage = this.FormMessage;
-            this.InvokeLoadingActionAsync(async (cancellationToken) =>
-            {
 
-                switch (formMessage.CRUD)
-                {
-                    case RS.Commons.Enums.CRUD.Add:
-                        await formMessage.ViewModel.SubmitCommand.ExecuteAsync(formMessage.FormData);
-                        break;
-                    case RS.Commons.Enums.CRUD.Update:
-                        await formMessage.ViewModel.UpdateCommand.ExecuteAsync(formMessage.FormData);
-                        break;
-                }
-
-
-                return OperateResult.CreateSuccessResult();
-            });
-
-
-        }
     }
 }

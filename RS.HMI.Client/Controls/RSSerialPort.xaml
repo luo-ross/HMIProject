@@ -44,7 +44,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type local:RSSerialPort}">
-                            <rs:RSUserControl x:Name="PART_RSUserControl">
+                            <rs:RSDialog x:Name="PART_RSDialog">
                                 <GroupBox
                                     rs:ControlsHelper.CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
                                     Background="{TemplateBinding Background}"
@@ -1007,7 +1007,7 @@
                                             IsReadOnly="True" />
                                     </Grid>
                                 </GroupBox>
-                            </rs:RSUserControl>
+                            </rs:RSDialog>
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="ModbusCommuConfigModelSelected" Value="{x:Null}">

@@ -1,4 +1,4 @@
-﻿<rs:RSUserControl
+﻿<rs:RSDialog
     x:Class="RS.Annotation.Views.Areas.AnnotationView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,10 +12,10 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <rs:RSUserControl.DataContext>
+    <rs:RSDialog.DataContext>
         <local:AnnotationViewModel />
-    </rs:RSUserControl.DataContext>
-    <rs:RSUserControl.Resources>
+    </rs:RSDialog.DataContext>
+    <rs:RSDialog.Resources>
         <ResourceDictionary>
             <rs:IndexGetConverter x:Key="IndexGetConverter" />
             <rs:ForegroundColorConverter x:Key="ForegroundColorConverter" />
@@ -46,7 +46,7 @@
                 </Grid>
             </DataTemplate>
         </ResourceDictionary>
-    </rs:RSUserControl.Resources>
+    </rs:RSDialog.Resources>
     <Grid x:Name="RootHost" Background="#F0F1F7">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
@@ -726,7 +726,7 @@
                             Style="{StaticResource RSApp.Styles.TextBlockStyle}"
                             Text="X" />
 
-                        <rs:RSNumbericUpDown
+                        <rs:RSNumberic
                             x:Name="TxtCanvasLeft"
                             Grid.Row="1"
                             Grid.Column="1"
@@ -739,7 +739,7 @@
                             Style="{StaticResource RSApp.Styles.TextBlockStyle}"
                             Text="Y" />
 
-                        <rs:RSNumbericUpDown
+                        <rs:RSNumberic
                             x:Name="TxtCanvasTop"
                             Grid.Row="2"
                             Grid.Column="1"
@@ -753,7 +753,7 @@
                             Text="宽度" />
 
 
-                        <rs:RSNumbericUpDown
+                        <rs:RSNumberic
                             x:Name="TxtWidth"
                             Grid.Row="3"
                             Grid.Column="1"
@@ -766,7 +766,7 @@
                             Style="{StaticResource RSApp.Styles.TextBlockStyle}"
                             Text="高度" />
 
-                        <rs:RSNumbericUpDown
+                        <rs:RSNumberic
                             x:Name="TxtHeight"
                             Grid.Row="4"
                             Grid.Column="1"
@@ -779,4 +779,4 @@
             </GroupBox>
         </Grid>
     </Grid>
-</rs:RSUserControl>
+</rs:RSDialog>

@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 namespace RS.Widgets.Interface
 {
-    public interface  IInfoBar
+    public interface IInfoBar
     {
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace RS.Widgets.Interface
         /// 添加通知消息
         /// </summary>
         /// <param name="message"></param>
-         void ShowInformationAsync(string message)
+        void ShowInformationAsync(string message)
         {
             this.ShowInfoAsync(message, InfoType.Information);
         }
@@ -41,7 +41,7 @@ namespace RS.Widgets.Interface
         /// 添加错误消息
         /// </summary>
         /// <param name="message"></param>
-         void ShowErrorInfoAsync(string message)
+        void ShowErrorInfoAsync(string message)
         {
             this.ShowInfoAsync(message, InfoType.Error);
         }

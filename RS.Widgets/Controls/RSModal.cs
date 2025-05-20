@@ -1,5 +1,6 @@
 ﻿using RS.Commons;
 using RS.Widgets.Commons;
+using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
-    public class RSModal : ContentControl
+    public class RSModal : ContentControl, IModal
     {
         static RSModal()
         {
@@ -24,5 +25,25 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
         }
+
+        public void ShowModal(object content)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Content = content;
+                this.Visibility = Visibility.Visible;
+            });
+        }
+
+
+        public void HideModal()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Content = null;
+                this.Visibility = Visibility.Collapsed;
+            });
+        }
+
     }
 }

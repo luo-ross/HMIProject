@@ -13,7 +13,7 @@
 
     <Style BasedOn="{StaticResource RSApp.Styles.DataGridStyle}" TargetType="{x:Type rs:RSDataGrid}">
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="0" />
-        <Setter Property="RowStyle">
+        <!--<Setter Property="RowStyle">
             <Setter.Value>
                 <Style BasedOn="{StaticResource RSApp.Styles.DataGridRowStyle}" TargetType="{x:Type DataGridRow}">
                     <Setter Property="ContextMenu">
@@ -43,9 +43,8 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-
             </Setter.Value>
-        </Setter>
+        </Setter>-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSDataGrid}">
@@ -57,7 +56,7 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <rs:RSUserControl x:Name="PART_RSUserControl">
+                        <rs:RSDialog x:Name="PART_RSDialog">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -242,7 +241,7 @@
                                     </Grid>
                                 </Border>
                             </Grid>
-                        </rs:RSUserControl>
+                        </rs:RSDialog>
                     </Border>
                     <ControlTemplate.Triggers />
                 </ControlTemplate>

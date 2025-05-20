@@ -28,6 +28,9 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tooltip.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tree.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    <Style TargetType="{x:Type Control}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    </Style>
     <Style BasedOn="{StaticResource RSApp.Styles.FormTextBlockStyle}" TargetType="{x:Type TextBlock}" />
     <Style BasedOn="{StaticResource RSApp.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.ComboBoxStyle}" TargetType="{x:Type ComboBox}" />

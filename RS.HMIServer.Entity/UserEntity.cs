@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 
 namespace RS.HMIServer.Entity
 {
@@ -38,5 +39,10 @@ namespace RS.HMIServer.Entity
         /// 是否禁用
         /// </summary>
         public bool? IsDisabled { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime? CreateTime { get; set; }
     }
 }

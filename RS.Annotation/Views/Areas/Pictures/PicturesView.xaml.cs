@@ -24,7 +24,7 @@ using System.Windows.Threading;
 namespace RS.Annotation.Views.Areas
 {
    
-    public partial class PicturesView : RSUserControl
+    public partial class PicturesView : RSDialog
     {
         public IdGenerator IdGenerator { get; set; }
         public PicturesViewModel ViewModel { get; set; }

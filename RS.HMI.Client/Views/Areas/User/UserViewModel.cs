@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using IdGen;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using NPOI.Util;
 using RS.Commons;
 using RS.Commons.Attributs;
@@ -11,18 +10,12 @@ using RS.Commons.Enums;
 using RS.Commons.Extensions;
 using RS.HMI.Client.Messages;
 using RS.HMI.Client.Models;
+using RS.RESTfulApi;
 using RS.Widgets.Controls;
 using RS.Widgets.Interface;
 using RS.Widgets.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 
 namespace RS.HMI.Client.Views.Areas
 {
@@ -30,8 +23,13 @@ namespace RS.HMI.Client.Views.Areas
     public partial class UserViewModel : ModelBase
     {
         private readonly IIdGenerator<long> IdGenerator;
-        private readonly ILoadingService rsLoading;
         public List<UserModel> TestData = new List<UserModel>();
+
+
+        /// <summary>
+        /// 默认构造方法
+        /// </summary>
+        /// <param name="idGenerator"></param>
         public UserViewModel(IIdGenerator<long> idGenerator)
         {
             this.IdGenerator = idGenerator;
@@ -50,22 +48,49 @@ namespace RS.HMI.Client.Views.Areas
         }
 
 
+        #region 依赖属性
 
-        public override async Task Submit(object obj)
+        /// <summary>
+        /// 需要使用的Dialog主键
+        /// </summary>
+        [ObservableProperty]
+        private string dialogKey = Guid.NewGuid().ToString();
+
+        private ObservableCollection<UserModel> userModelList;
+        /// <summary>
+        /// 用户数据
+        /// </summary>
+        public ObservableCollection<UserModel> UserModelList
         {
-            var sdf = 1;
-            await Task.Delay(3000);
+            get
+            {
+                if (userModelList == null)
+                {
+                    userModelList = new ObservableCollection<UserModel>();
+                }
+                return userModelList;
+            }
+            set
+            {
+                this.SetProperty(ref userModelList, value);
+            }
         }
 
-
-        public override async Task Update(object obj)
-        {
-            var sdf = 1;
-            await Task.Delay(3000);
-
-        }
+        /// <summary>
+        /// 编辑实体
+        /// </summary>
+        [ObservableProperty]
+        private UserModel userModelEdit;
 
 
+        /// <summary>
+        /// 选中实体
+        /// </summary>
+        [ObservableProperty]
+        private UserModel userModelSelect;
+        #endregion
+
+        #region 命令
         /// <summary>
         /// 关闭命令
         /// </summary>
@@ -79,7 +104,7 @@ namespace RS.HMI.Client.Views.Areas
         /// 新增数据
         /// </summary>
         [RelayCommand]
-        public void AddClick(object obj)
+        public async Task AddClick(object obj)
         {
             this.UserModelEdit = new UserModel();
             WeakReferenceMessenger.Default.Send(new UserFormMessage()
@@ -90,19 +115,19 @@ namespace RS.HMI.Client.Views.Areas
             });
         }
 
+
         /// <summary>
         /// 删除数据
         /// </summary>
         [RelayCommand]
         public void DeleteClick(object obj)
         {
-            if (obj is UserModel userModel)
+            if (this.UserModelSelect != null)
             {
-                this.UserModelList.Remove(userModel);
+                this.UserModelList.Remove(this.UserModelSelect);
             }
-        }
 
-        public UserModel MyProperty { get; set; }
+        }
 
         /// <summary>
         /// 修改数据
@@ -151,72 +176,81 @@ namespace RS.HMI.Client.Views.Areas
         [RelayCommand(CanExecute = nameof(CanPaginationAsync))]
         public async Task PaginationAsync(Pagination pagination)
         {
-            // 发送开始加载消息
-            WeakReferenceMessenger.Default.Send(new UserLoadingMessage
+            var dialog = DialogManager.GetDialog(this.DialogKey, true);
+
+            LoadingConfig loadingConfig = new LoadingConfig();
+            await dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
-                LoadingFuncAsync = async (config) =>
+                loadingConfig.IsShowLoadingText = true;
+                loadingConfig.LoadingTextStringFormat = "Hello World {0}%";
+                for (int i = 0; i < 100; i++)
                 {
-                    //config.LoadingTextStringFormat = "当前加载进度 {0}%";
-                    //config.IsShowLoadingText = true;
-                    //for (var i = 0; i < 100; i++)
-                    //{
-                    //    config.Value = Math.Round(i / 100D * 100, 2);
-                    //    config.LoadingText = $"当前加载进度 {config.Value}%";
-                    //    await Task.Delay(2);
-                    //}
-                    pagination.Records = this.TestData.Count();
-                    var pageList = this.TestData.Skip((pagination.Page - 1) * (pagination.Rows)).Take(pagination.Rows).ToList();
-                    // 回到UI线程更新集合
-                    Application.Current.Dispatcher.Invoke(() =>
+                    await Task.Delay(20);
+                    loadingConfig.Value = i;
+                }
+                pagination.Records = this.TestData.Count();
+                var pageList = this.TestData.Skip((pagination.Page - 1) * (pagination.Rows)).Take(pagination.Rows).ToList();
+                // 回到UI线程更新集合
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    this.UserModelList = new ObservableCollection<UserModel>(pageList);
+                });
+                return OperateResult.CreateSuccessResult();
+            }, loadingConfig: loadingConfig);
+
+            await dialog.GetWinMessageBox().ShowMessageAsync("数据加载成功");
+        }
+
+
+        /// <summary>
+        /// 继承基类新增
+        /// </summary>
+        public override async Task Submit(object obj)
+        {
+            if (obj is UserModel userModel)
+            {
+                WeakReferenceMessenger.Default.Send(new UserLoadingMessage
+                {
+                    LoadingFuncAsync = async (config) =>
                     {
-                        this.UserModelList = new ObservableCollection<UserModel>(pageList);
-                    });
-                    return OperateResult.CreateSuccessResult();
-                }
-            });
+                        //在这里向WebAPI发起请求提交数据
+                        var sumitResult = await RSAppAPI.User.GetUser.AESHttpPostAsync(userModel, nameof(RSAppAPI));
+                        if (!sumitResult.IsSuccess)
+                        {
+                            return sumitResult;
+                        }
+
+                        return OperateResult.CreateSuccessResult();
+                    }
+                });
+            }
         }
 
-        private ObservableCollection<UserModel> userModelList;
         /// <summary>
-        /// 用户数据
+        /// 继承基类更新
         /// </summary>
-        public ObservableCollection<UserModel> UserModelList
+        public override async Task Update(object userModel)
         {
-            get
-            {
-                if (userModelList == null)
-                {
-                    userModelList = new ObservableCollection<UserModel>();
-                }
-                return userModelList;
-            }
-            set
-            {
-                this.SetProperty(ref userModelList, value);
-            }
+            var sdf = 1;
+            await Task.Delay(3000);
         }
 
-        /// <summary>
-        /// 编辑实体
-        /// </summary>
-        [ObservableProperty]
-        private UserModel userModelEdit;
-
-
-
-        private UserModel userModelSelect;
-
-        /// <summary>
-        /// 选中实体
-        /// </summary>
-        public UserModel UserModelSelect
+        [RelayCommand]
+        public async Task UserEnableClick(object obj)
         {
-            get { return userModelSelect; }
-            set
-            {
-                this.SetProperty(ref userModelSelect, value);
-            }
+            var sdf = 1;
+            await Task.Delay(3000);
         }
+
+
+        [RelayCommand]
+        public async Task UserDisableClick(object obj)
+        {
+            var sdf = 1;
+            await Task.Delay(3000);
+        }
+
+        #endregion
 
     }
 }

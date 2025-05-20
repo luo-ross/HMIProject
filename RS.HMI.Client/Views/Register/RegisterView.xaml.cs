@@ -33,7 +33,7 @@ namespace RS.HMI.Client.Views
     /// 采用依赖注入使用的时候获取服务
     /// </summary>
     [ServiceInjectConfig(ServiceLifetime.Transient)]
-    public partial class RegisterView : RSUserControl
+    public partial class RegisterView : RSDialog
     {
         private readonly IGeneralBLL GeneralBLL;
         private readonly ICryptographyBLL CryptographyBLL;
@@ -88,7 +88,7 @@ namespace RS.HMI.Client.Views
             };
 
 
-            var operateResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 var emailRegisterPostModel = new EmailRegisterPostModel();
                 emailRegisterPostModel.Email = this.ViewModel.SignUpModel.UserName;
@@ -183,7 +183,7 @@ namespace RS.HMI.Client.Views
                 IsIndeterminate = true,
             };
 
-            var operateResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
 
                 var registerVerifyValidModel = new RegisterVerifyValidModel();
