@@ -28,6 +28,6 @@ namespace RS.HMI.Client.Views.Areas
             this.DataContext = userViewModel;
             this.ViewModel = userViewModel;
         }
-      
+
     }
 }

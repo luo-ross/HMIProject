@@ -182,6 +182,7 @@ namespace RS.HMI.Client.Views.Areas
             await dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 loadingConfig.IsShowLoadingText = true;
+                loadingConfig.LoadingType = Widgets.Enums.LoadingType.RotatingAnimation;
                 loadingConfig.LoadingTextStringFormat = "Hello World {0}%";
                 for (int i = 0; i < 100; i++)
                 {
@@ -197,6 +198,13 @@ namespace RS.HMI.Client.Views.Areas
                 });
                 return OperateResult.CreateSuccessResult();
             }, loadingConfig: loadingConfig);
+
+            var userFormView = App.ServiceProvider.GetRequiredService<UserFormView>();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                dialog.GetWinModal().ShowModal(userFormView);
+            });
 
             await dialog.GetWinMessageBox().ShowMessageAsync("数据加载成功");
         }

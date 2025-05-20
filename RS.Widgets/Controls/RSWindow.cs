@@ -19,27 +19,6 @@ namespace RS.Widgets.Controls
         private Button PART_BtnClose;
         private RSDialog PART_WinContentHost;
 
-        //public IMessage MessageBox
-        //{
-        //    get
-        //    {
-        //        return this.PART_WinContentHost.MessageBox;
-        //    }
-        //}
-
-        //public IMessage WinMessageBox
-        //{
-        //    get
-        //    {
-        //        return new RSWinMessage()
-        //        {
-        //            Owner = this,
-        //            Width = 350,
-        //            Height = 230
-        //        };
-        //    }
-        //}
-
 
         private DispatcherTimer InfoBarTimer;
 
@@ -291,7 +270,8 @@ namespace RS.Widgets.Controls
         /// </summary>
         public void ShowModal(object modalContent)
         {
-            this.PART_WinContentHost.ShowModal(modalContent);
+            this.Content = modalContent;
+            this.Show();
         }
 
         /// <summary>
@@ -299,7 +279,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         public void HideModal()
         {
-            this.PART_WinContentHost.HideModal();
+            
         }
 
         public IDialog GetDialog()
@@ -325,15 +305,14 @@ namespace RS.Widgets.Controls
 
         public IModal GetModal()
         {
-            return new RSModal()
-            {
-
-            };
+           return this.PART_WinContentHost.GetModal();
         }
 
         public ILoading GetLoading()
         {
             return this.PART_WinContentHost.GetLoading();
         }
+
+        
     }
 }

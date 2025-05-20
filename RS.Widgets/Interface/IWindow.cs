@@ -10,6 +10,7 @@ namespace RS.Widgets.Interface
     public interface IWindow : IInfoBar
     {
         IModal GetModal();
+
         ILoading GetLoading();
 
         IDialog GetDialog();
