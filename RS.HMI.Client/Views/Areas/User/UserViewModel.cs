@@ -201,12 +201,7 @@ namespace RS.HMI.Client.Views.Areas
 
             var userFormView = App.ServiceProvider.GetRequiredService<UserFormView>();
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                dialog.GetWinModal().ShowModal(userFormView);
-            });
-
-            await dialog.GetWinMessageBox().ShowMessageAsync("数据加载成功");
+            await dialog.GetMessageBox().ShowMessageAsync("数据加载成功");
         }
 
 
