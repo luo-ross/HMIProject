@@ -24,10 +24,11 @@ namespace RS.Widgets.Controls
 
         public static void UnregisterDialog(string dialogKey)
         {
-            if (DialogList.ContainsKey(dialogKey))
+            if (!string.IsNullOrEmpty(dialogKey)&& DialogList.ContainsKey(dialogKey))
             {
                 DialogList.Remove(dialogKey);
             }
+                
         }
 
         public static IDialog? GetDialog(string dialogKey, bool isUseWindow = false)

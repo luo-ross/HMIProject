@@ -99,6 +99,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTextColumn Binding="{Binding Cre}" Header="创建时间" />
                     <DataGridTextColumn Width="*" />
                 </rs:RSDataGrid.Columns>
             </rs:RSDataGrid>

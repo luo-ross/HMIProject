@@ -20,13 +20,14 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using System.Reflection.Emit;
 
 namespace RS.Annotation.Views.Areas
 {
    
     public partial class PicturesView : RSDialog
     {
-        public IdGenerator IdGenerator { get; set; }
+        public IIdGenerator<long> IdGenerator { get; set; }
         public PicturesViewModel ViewModel { get; set; }
 
         private readonly int ImgBorderMarginTop = 3;
@@ -37,7 +38,7 @@ namespace RS.Annotation.Views.Areas
         public PicturesView()
         {
             InitializeComponent();
-            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IdGenerator>();
+            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IIdGenerator<long>>();
             this.ViewModel = this.DataContext as PicturesViewModel;
             this.Loaded += PicturesView_Loaded;
         }
@@ -708,7 +709,7 @@ namespace RS.Annotation.Views.Areas
             if (openFileDialog.ShowDialog() == true)
             {
                 var fileNames = openFileDialog.FileNames;
-                var validLoginResult = await this.HomeView.InvokeLoadingActionAsync(async (cancellationToken) =>
+                var validLoginResult = await this.HomeView.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     LoadImgModelFromDisk(fileNames.ToList());
                     return OperateResult.CreateSuccessResult();
@@ -737,7 +738,7 @@ namespace RS.Annotation.Views.Areas
             if (dialog.ShowDialog(hwnd) == true)
             {
                 string selectFolder = dialog.SelectedPath;
-                var validLoginResult = await this.HomeView.InvokeLoadingActionAsync(async (cancellationToken) =>
+                var validLoginResult = await this.HomeView.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".tif" };
                     var fileNames = imageExtensions.SelectMany(ext => Directory.EnumerateFiles(selectFolder,

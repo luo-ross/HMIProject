@@ -158,7 +158,7 @@ namespace RS.Annotation.Views
                 return;
             }
 
-            var validLoginResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var validLoginResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 //this.SetLoadingText("正在登录中...");
                 //验证用户登录

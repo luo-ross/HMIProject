@@ -30,7 +30,6 @@
                 <areas:UserView />
             </DataTemplate>
 
-
         </ResourceDictionary>
     </rs:RSWindow.Resources>
     <rs:RSWindow.CaptionContent>
@@ -166,8 +165,7 @@
                 Margin="10,10,10,0"
                 Background="#fff">
                 <Grid>
-                    <!--<hmi:RSSerialPort />-->
-                    <ContentControl Content="{Binding ViewModelSelect}" />
+                    <Frame Content="{Binding ViewModelSelect}" />
                 </Grid>
             </Border>
             <Border Grid.Row="1" Padding="10">

@@ -55,7 +55,7 @@ namespace RS.HMI.Client.Models
         /// </summary>
         [ObservableProperty]
         private string? phone;
-       
+
         /// <summary>
         /// 关联实名认证
         /// </summary>
@@ -66,6 +66,11 @@ namespace RS.HMI.Client.Models
         /// </summary>
         [ObservableProperty]
         private bool? isDisabled;
-       
+
+        /// <summary>
+        /// 创建
+        /// </summary>
+        [ObservableProperty]
+        private bool? createTime;
     }
 }

@@ -35,12 +35,12 @@ namespace RS.Annotation.Views.Areas
     {
         public HomeView HomeView { get; set; }
         public ProjectsViewModel ViewModel { get; set; }
-        public IdGenerator IdGenerator { get; set; }
+        public IIdGenerator<long> IdGenerator { get; set; }
         public AddProjectView(ProjectsView projectsView)
         {
             InitializeComponent();
 
-            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IdGenerator>();
+            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IIdGenerator<long>>();
             this.DataContext = projectsView.ViewModel;
             this.ViewModel = projectsView.ViewModel;
             this.Loaded += AddProjectView_Loaded;
@@ -148,7 +148,7 @@ namespace RS.Annotation.Views.Areas
 
             //AddProjectCallBack?.Invoke(true);
 
-            var validLoginResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
+            var validLoginResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
 
                 DateTime dateTime = DateTime.Now;

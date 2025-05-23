@@ -270,8 +270,9 @@ namespace RS.Widgets.Controls
         /// </summary>
         public void ShowModal(object modalContent)
         {
-            this.Content = modalContent;
-            this.Show();
+            this.PART_WinContentHost.ShowModal(modalContent);
+            //this.Content = modalContent;
+            //this.Show();
         }
 
         /// <summary>
@@ -279,7 +280,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         public void HideModal()
         {
-            
+            this.PART_WinContentHost.HideModal();
         }
 
         public IDialog GetDialog()

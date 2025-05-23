@@ -35,7 +35,7 @@ namespace RS.Annotation.Views.Areas
         /// <summary>
         /// 依赖注入雪花算法Id生成器
         /// </summary>
-        public IdGenerator IdGenerator { get; set; }
+        public IIdGenerator<long> IdGenerator { get; set; }
 
         /// <summary>
         /// 自定义画笔
@@ -155,7 +155,7 @@ namespace RS.Annotation.Views.Areas
             InitializeComponent();
 
             //初始化雪花算法Id自动生成器
-            this.IdGenerator = App.ServiceProvider.GetRequiredService<IdGenerator>();
+            this.IdGenerator = App.ServiceProvider.GetRequiredService<IIdGenerator<long>>();
 
             //加载绘制画笔鼠标样式
             StreamResourceInfo drawCur = Application.GetResourceStream(new Uri("pack://application:,,,/RS.Annotation;component/Assets/BlueDraw.cur", UriKind.RelativeOrAbsolute));
@@ -3003,10 +3003,10 @@ namespace RS.Annotation.Views.Areas
         {
             var button = sender as Button;
             var tagModelSelect = this.ViewModel.TagModelSelect;
-            var messageBoxResult = await this.MessageBox.ShowMessageAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            var messageBoxResult = await this.GetMessageBox().ShowMessageAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                var validLoginResult = await this.InvokeLoadingActionAsync(async (cancellationToken) =>
+                var validLoginResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
                     this.DeleteTagModel(tagModelSelect);
                     return OperateResult.CreateSuccessResult();

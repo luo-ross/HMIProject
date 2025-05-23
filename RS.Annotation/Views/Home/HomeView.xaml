@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
     x:Name="this"
-    Title="HomeView"
     MinWidth="1024"
     MinHeight="600"
     Background="#FFF"

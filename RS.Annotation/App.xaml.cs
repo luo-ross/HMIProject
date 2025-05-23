@@ -7,11 +7,17 @@ using RS.Annotation.Views;
 using RS.Annotation.Views.Home;
 using System.Reflection;
 using System.Windows;
+using IdGen;
 
 namespace RS.Annotation
 {
     public partial class App : ApplicationBase
     {
+
+        /// <summary>
+        /// 可以重新赋值主机地址
+        /// </summary>
+        public override string AppHostAddress { get; set; } = "http://localhost:7000/";
 
         /// <summary>
         /// 程序入口
@@ -36,6 +42,11 @@ namespace RS.Annotation
 
         private void App_OnConfigServices(HostApplicationBuilder builder)
         {
+            builder.Services.AddSingleton<IIdGenerator<long>>(service =>
+            {
+                int generatorId = Convert.ToInt32(builder.Configuration["IdGenClientId"]);
+                return new IdGenerator(generatorId, IdGeneratorOptions.Default);
+            });
             //注册业务逻辑服务
             builder.Services.RegisterBLLService();
             //注册当前程序集服务
