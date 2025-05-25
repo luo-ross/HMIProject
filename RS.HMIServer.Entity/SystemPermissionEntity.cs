@@ -28,5 +28,7 @@ namespace RS.HMIServer.Entity
         /// 父级
         /// </summary>
         public long? ParentId { get; set; }
+
+
     }
 }

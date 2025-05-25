@@ -25,5 +25,7 @@ namespace RS.HMIServer.Entity
         /// </summary>
         public long? GuestId { get; set; }
 
+        
+
     }
 }

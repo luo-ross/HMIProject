@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.Views.Home
 {
-   public class HomeViewModel : ModelBase
+   public class HomeViewModel : ViewModelBase
     {
 
         private string? version;

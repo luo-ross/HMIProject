@@ -13,9 +13,9 @@ namespace RS.Models
     public class LoginValidModel
     {
         /// <summary>
-        /// 用户名
+        /// 用户
         /// </summary>
-        public string UserName { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// 密码

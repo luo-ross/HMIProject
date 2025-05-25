@@ -45,6 +45,10 @@ namespace RS.HMIServer.Entity
         /// </summary>
         public string? BackLink { get; set; }
 
+        /// <summary>
+        /// 绑定用户
+        /// </summary>
+        public long? UserId { get; set; }
 
     }
 }

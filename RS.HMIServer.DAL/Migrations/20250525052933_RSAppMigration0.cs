@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,9 +16,16 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ParentId = table.Column<long>(type: "bigint", nullable: true),
-                    Level = table.Column<byte>(type: "tinyint", nullable: false)
+                    Level = table.Column<byte>(type: "tinyint", nullable: false),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,10 +37,16 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: true),
-                    ParentId = table.Column<long>(type: "bigint", nullable: true)
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,10 +58,17 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RealCompanyId = table.Column<long>(type: "bigint", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true)
+                    ParentId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -59,7 +80,7 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
-                    ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LegalPerson = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -69,8 +90,13 @@ namespace RS.HMIServer.DAL.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WebSite = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatorId = table.Column<long>(type: "bigint", nullable: true),
-                    CreateTime = table.Column<long>(type: "bigint", nullable: true)
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,7 +111,14 @@ namespace RS.HMIServer.DAL.Migrations
                     ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Abbr = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PhoneCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,11 +133,41 @@ namespace RS.HMIServer.DAL.Migrations
                     ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Abbr = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CompanyId = table.Column<long>(type: "bigint", nullable: true)
+                    CompanyId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Department", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Duty",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Abbr = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: true),
+                    PartmentId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Duty", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,7 +176,14 @@ namespace RS.HMIServer.DAL.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GuestId = table.Column<long>(type: "bigint", nullable: true)
+                    GuestId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -128,7 +198,14 @@ namespace RS.HMIServer.DAL.Migrations
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsEnable = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: true)
+                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -142,7 +219,14 @@ namespace RS.HMIServer.DAL.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     CountryCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GuestId = table.Column<long>(type: "bigint", nullable: true)
+                    GuestId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -164,7 +248,14 @@ namespace RS.HMIServer.DAL.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WebSite = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LicenseLink = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    LicenseLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,7 +273,15 @@ namespace RS.HMIServer.DAL.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IDNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FrontLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BackLink = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    BackLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -194,13 +293,16 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParentId = table.Column<long>(type: "bigint", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Level = table.Column<int>(type: "int", nullable: false),
-                    Sort = table.Column<int>(type: "int", nullable: false),
                     CompanyId = table.Column<long>(type: "bigint", nullable: true),
-                    DepartmentId = table.Column<long>(type: "bigint", nullable: true)
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -233,7 +335,14 @@ namespace RS.HMIServer.DAL.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: false),
-                    ParentId = table.Column<long>(type: "bigint", nullable: true)
+                    ParentId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -248,7 +357,14 @@ namespace RS.HMIServer.DAL.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: false),
-                    ParentId = table.Column<long>(type: "bigint", nullable: true)
+                    ParentId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -265,7 +381,14 @@ namespace RS.HMIServer.DAL.Migrations
                     NickName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Pic = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsEnable = table.Column<bool>(type: "bit", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true)
+                    UserId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -281,7 +404,14 @@ namespace RS.HMIServer.DAL.Migrations
                     UserPic = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RealNameId = table.Column<long>(type: "bigint", nullable: true)
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: true),
+                    CreateId = table.Column<long>(type: "bigint", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateId = table.Column<long>(type: "bigint", nullable: true),
+                    UpdateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeleteId = table.Column<long>(type: "bigint", nullable: true),
+                    DeleteTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -309,6 +439,9 @@ namespace RS.HMIServer.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Department");
+
+            migrationBuilder.DropTable(
+                name: "Duty");
 
             migrationBuilder.DropTable(
                 name: "EmailInfo");

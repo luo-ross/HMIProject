@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Widgets.Controls;
+using RS.Widgets.Interface;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -12,16 +14,17 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public partial  class NotifyBase : ObservableObject, INotifyDataErrorInfo
+    public partial class NotifyBase : ObservableObject, INotifyDataErrorInfo
     {
         public NotifyBase()
         {
-            ErrorsDic = new Dictionary<string, IEnumerable<ValidErrorModel>>();
+            this.DefaultErrorKey = Guid.NewGuid().ToString();
+            this.ErrorsDic = new Dictionary<string, IEnumerable<ValidErrorModel>>();
         }
 
 
         #region INotifyDataErrorInfo实现
-        public  static readonly string DefaultErrorKey = "708819A8240246268C14CF142FF5B4A6";
+        private string DefaultErrorKey;
 
         /// <summary>
         /// 错误字典Key 就是PropertyName 键值就是错误信息列表

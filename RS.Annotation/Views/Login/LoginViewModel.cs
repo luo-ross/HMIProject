@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.Views
 {
-    public class LoginViewModel : ModelBase
+    public class LoginViewModel : ViewModelBase
     {
         private PasswordLoginModel passwordLoginModel;
         /// <summary>

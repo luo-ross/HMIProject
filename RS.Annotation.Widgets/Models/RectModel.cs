@@ -12,7 +12,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 标注矩形类
     /// </summary>
-    public class RectModel : ModelBase
+    public class RectModel : ViewModelBase
     {
 
         public RectModel()

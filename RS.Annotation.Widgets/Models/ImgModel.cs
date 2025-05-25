@@ -14,7 +14,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 图像资源
     /// </summary>
-    public partial class ImgModel : ModelBase
+    public partial class ImgModel : ViewModelBase
     {
         public ImgModel(long id, long projectId)
         {

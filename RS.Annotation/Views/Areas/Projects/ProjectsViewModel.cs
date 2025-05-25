@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.Views.Areas
 {
-    public class ProjectsViewModel : ModelBase
+    public class ProjectsViewModel : ViewModelBase
     {
        
         private ProjectModel projectModelAdd;

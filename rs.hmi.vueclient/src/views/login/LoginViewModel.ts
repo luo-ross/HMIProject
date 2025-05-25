@@ -68,7 +68,7 @@ export class LoginViewModel extends ViewModelBase {
     const loginResult = await this.LoadingEvents.value?.SimpleLoadingActionAsync(async () => {
 
       const loginValidModel = new LoginValidModel();
-      loginValidModel.UserName = this.LoginModel.value.Email;
+      loginValidModel.Email = this.LoginModel.value.Email;
 
       const getSHA256HashCodeResult = await this.Cryptography.GetSHA256HashCode(this.LoginModel.value.Password);
       if (!getSHA256HashCodeResult.IsSuccess) {

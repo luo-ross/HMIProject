@@ -91,7 +91,7 @@ namespace RS.HMI.Client.Views
             var operateResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 var emailRegisterPostModel = new EmailRegisterPostModel();
-                emailRegisterPostModel.Email = this.ViewModel.SignUpModel.UserName;
+                emailRegisterPostModel.Email = this.ViewModel.SignUpModel.Email;
                 emailRegisterPostModel.Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.SignUpModel.PasswordConfirm);
 
                 //获取邮箱验证码结果

@@ -33,7 +33,7 @@
                     rs:TextBoxHelper.Watermark="请输入邮箱"
                     MaxLength="30"
                     Style="{StaticResource RSApp.Styles.IconTextBox}"
-                    Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                    Text="{Binding Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
 
                 <Button
                     x:Name="BtnSendEmailPasswordReset"

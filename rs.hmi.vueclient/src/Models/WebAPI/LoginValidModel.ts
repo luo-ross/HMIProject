@@ -7,7 +7,7 @@ export class LoginValidModel {
   /**
    * 用户名
    */
-  public UserName: string | null = null;
+  public Email: string | null = null;
 
   /**
    * 密码

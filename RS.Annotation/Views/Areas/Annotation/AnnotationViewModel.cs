@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 
 namespace RS.Annotation.Views.Areas
 {
-    public class AnnotationViewModel : ModelBase
+    public class AnnotationViewModel : ViewModelBase
     {
        
         public AnnotationViewModel()

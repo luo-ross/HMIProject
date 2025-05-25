@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.Views
 {
-    public class RegisterViewModel : ModelBase
+    public class RegisterViewModel : ViewModelBase
     {
 
         private EmailRegisterModel emailRegisterModel;

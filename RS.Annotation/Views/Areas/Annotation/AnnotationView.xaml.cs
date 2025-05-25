@@ -2055,7 +2055,6 @@ namespace RS.Annotation.Views.Areas
                 TagModel = rectModel.TagModel,
                 ProjectId = rectModel.ProjectId,
                 IsSelect = true,
-                IsLoading = false,
                 IsSaved = false,
             };
 

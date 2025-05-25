@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.Views.Areas
 {
-    public class PicturesViewModel : ModelBase
+    public class PicturesViewModel : ViewModelBase
     {
 
 

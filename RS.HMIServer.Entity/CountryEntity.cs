@@ -29,5 +29,6 @@ namespace RS.HMIServer.Entity
         /// 电话代码
         /// </summary>
         public string? PhoneCode { get; set; }
+
     }
 }

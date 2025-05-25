@@ -31,18 +31,9 @@ namespace RS.HMIServer.Entity
         public string? Phone { get; set; }
 
         /// <summary>
-        /// 关联实名认证
-        /// </summary>
-        public long? RealNameId { get; set; }
-
-        /// <summary>
         /// 是否禁用
         /// </summary>
         public bool? IsDisabled { get; set; }
 
-        /// <summary>
-        /// 创建时间
-        /// </summary>
-        public DateTime? CreateTime { get; set; }
     }
 }

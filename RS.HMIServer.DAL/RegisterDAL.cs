@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.Algorithm;
 using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Extensions;
@@ -9,7 +10,7 @@ using RS.HMIServer.Entity;
 using RS.HMIServer.IDAL;
 using RS.HMIServer.Models;
 using StackExchange.Redis;
-
+using System.Reflection;
 namespace RS.HMIServer.DAL
 {
     /// <summary>
@@ -18,6 +19,8 @@ namespace RS.HMIServer.DAL
     [ServiceInjectConfig(typeof(IRegisterDAL), ServiceLifetime.Transient)]
     internal class RegisterDAL : Repository, IRegisterDAL
     {
+        private static readonly string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private static readonly string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         /// <summary>
         /// Redis注册缓存接口
         /// </summary>
@@ -174,10 +177,14 @@ namespace RS.HMIServer.DAL
             //重新生成密码
             var password = this.CryptographyBLL.GetSHA256HashCode($"{registerSessionModel.Password}-{salt}");
 
+            //动态获取一个昵称
+
+
             //创建用户数据
             var userEntity = new UserEntity()
             {
                 Email = registerSessionModel.Email,
+                NickName = RandomNickName(11),
             }.Create();
 
             //创建用户登录数据
@@ -258,6 +265,24 @@ namespace RS.HMIServer.DAL
             return OperateResult.CreateFailResult();
         }
 
-       
+
+        /// <summary>
+        /// 随机生成昵称
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public string RandomNickName(int length)
+        {
+            if (length <= 0)
+            {
+                return string.Empty;
+            }
+            var first = Upper[Random.Shared.Next(Upper.Length)];
+            var rest = new string(Enumerable.Range(1, length - 1)
+                .Select(_ => Letters[Random.Shared.Next(Letters.Length)])
+                .ToArray());
+            return first + rest;
+        }
+
     }
 }

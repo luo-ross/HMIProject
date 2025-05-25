@@ -42,6 +42,15 @@ namespace RS.HMIServer.DAL.SqlServer
         /// </summary>
         public virtual DbSet<CompanyEntity> Company { get; set; }
 
+        /// <summary>
+        /// 部门信息
+        /// </summary>
+        public virtual DbSet<DepartmentEntity> Department { get; set; }
+
+        /// <summary>
+        /// 职位信息
+        /// </summary>
+        public virtual DbSet<DutyEntity> Duty { get; set; }
 
         /// <summary>
         /// 公司资料
@@ -54,28 +63,19 @@ namespace RS.HMIServer.DAL.SqlServer
         public virtual DbSet<CountryEntity> Country { get; set; }
 
         /// <summary>
-        /// 部门信息
-        /// </summary>
-        public virtual DbSet<DepartmentEntity> Department { get; set; }
-
-        /// <summary>
         /// 邮箱信息
         /// </summary>
         public virtual DbSet<EmailInfoEntity> EmailInfo { get; set; }
-
 
         /// <summary>
         /// 登录信息
         /// </summary>
         public virtual DbSet<LogOnEntity> LogOn { get; set; }
 
-
-
         /// <summary>
         /// 电话信息
         /// </summary>
         public virtual DbSet<PhoneInfoEntity> PhoneInfo { get; set; }
-
 
         /// <summary>
         /// 公司实名认证

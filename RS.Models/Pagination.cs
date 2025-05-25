@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RS.Commons.Paginations
+namespace RS.Models
 {
     /// <summary>
     /// 分页信息 分页核心  

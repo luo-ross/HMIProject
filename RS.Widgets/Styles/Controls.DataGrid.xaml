@@ -314,7 +314,7 @@
 
     <Style TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Padding" Value="5,8,5,8" />
+        <Setter Property="Padding" Value="5,5,5,5" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Background" Value="#F2F3F5" />

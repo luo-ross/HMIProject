@@ -13,7 +13,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 公司名称
         /// </summary>
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 所在地区
@@ -26,9 +26,9 @@ namespace RS.HMIServer.Entity
         public long? RealCompanyId { get; set; }
 
         /// <summary>
-        /// 绑定用户
+        /// 父级公司 用于集团继承
         /// </summary>
-        public long?  UserId { get; set; }
+        public long? ParentId { get; set; }
 
     }
 }

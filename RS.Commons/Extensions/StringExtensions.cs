@@ -67,17 +67,7 @@ namespace RS.Commons.Extensions
                 return default;
             }
         }
-
-        /// <summary>
-        /// 移除字符串中的HTML标签
-        /// </summary>
-        /// <param name="str">包含HTML标签的字符串</param>
-        /// <returns>移除HTML标签后的字符串</returns>
-        public static string StripHtml(this string str)
-        {
-            if (string.IsNullOrWhiteSpace(str)) return str;
-            return Regex.Replace(str, "<.*?>", string.Empty);
-        }
+  
 
         /// <summary>
         /// 截取指定长度的字符串，超出部分用省略号表示

@@ -52,7 +52,7 @@
                         rs:TextBoxHelper.Watermark="请输入用户名"
                         MaxLength="30"
                         Style="{StaticResource RSApp.Styles.IconTextBox}"
-                        Text="{Binding SignUpModel.UserName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                        Text="{Binding SignUpModel.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
                     <PasswordBox
                         Margin="0,5,0,5"
                         Padding="3,5,3,5"
@@ -100,7 +100,7 @@
                             HorizontalAlignment="Center"
                             FontSize="14"
                             Foreground="#949494"
-                            Text="{Binding SignUpModel.UserName}" />
+                            Text="{Binding SignUpModel.Email}" />
 
                         <StackPanel
                             x:Name="PART_VerifyCodeHost"

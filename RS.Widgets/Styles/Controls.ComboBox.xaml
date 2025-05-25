@@ -121,6 +121,7 @@
                                     x:Name="PART_BtnClear"
                                     Grid.Column="2"
                                     Margin="3,0,3,0"
+                                    Padding="5,3,5,3"
                                     HorizontalAlignment="Right"
                                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                     rs:ControlsHelper.IconHeight="12"

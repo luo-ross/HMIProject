@@ -105,7 +105,7 @@ namespace RS.HMI.Client.Views
                   //验证用户登录
                   var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(new LoginValidModel()
                   {
-                      UserName = this.ViewModel.LoginModel.UserName,
+                      Email = this.ViewModel.LoginModel.Email,
                       Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.LoginModel.Password),
                       Verify = imgVerifyResultModel.Verify,
                       VerifySessionId = imgVerifyResultModel.VerifySessionId,

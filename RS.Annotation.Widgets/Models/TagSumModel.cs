@@ -12,7 +12,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 标注矩形统计类
     /// </summary>
-    public class TagSumModel : ModelBase
+    public class TagSumModel : ViewModelBase
     {
         private TagModel tagModel;
         /// <summary>

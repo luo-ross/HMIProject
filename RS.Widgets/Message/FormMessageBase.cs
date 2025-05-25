@@ -12,7 +12,7 @@ namespace RS.Widgets.Messages
     {
         public CRUD CRUD { get; set; }
 
-        public ModelBase ViewModel { get; set; }
+        public ViewModelBase ViewModel { get; set; }
 
         /// <summary>
         /// 表单数据

@@ -79,7 +79,7 @@ namespace RS.HMI.Client.Views
             var operateResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
                 var emailModel = new EmailModel();
-                emailModel.Email = this.ViewModel.UserName;
+                emailModel.Email = this.ViewModel.Email;
                 //获取邮箱验证码结果
                 var passwordResetEmailSendResult = await RSAppAPI.Security.PasswordResetEmailSend.AESHttpPostAsync<EmailModel>(emailModel, nameof(RSAppAPI));
                 if (!passwordResetEmailSendResult.IsSuccess)

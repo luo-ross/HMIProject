@@ -111,7 +111,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Views\Areas\FormHost\" />
-	  <Folder Include="Views\Areas\Role\" />
 	  <Folder Include="Views\Areas\Department\" />
 	  <Folder Include="Views\Areas\Navigation\" />
 	  <Folder Include="Views\Areas\Company\" />
@@ -123,6 +122,9 @@
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Controls\RSSerialPort.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\Areas\Role\RoleView.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Views\Security\SecurityView.xaml.cs">

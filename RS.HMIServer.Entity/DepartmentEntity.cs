@@ -31,7 +31,7 @@ namespace RS.HMIServer.Entity
         public long? CompanyId { get; set; }
 
 
-
+        
 
     }
 }

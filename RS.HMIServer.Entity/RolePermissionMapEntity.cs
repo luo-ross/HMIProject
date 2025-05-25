@@ -48,5 +48,8 @@ namespace RS.HMIServer.Entity
         /// 是否可以删除
         /// </summary>
         public bool? D { get; set; }
+
+
+
     }
 }

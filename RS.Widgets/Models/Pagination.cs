@@ -12,6 +12,7 @@ namespace RS.Widgets.Models
     {
 
         public event Action<Pagination> OnRowsChanged;
+        public event Action<Pagination> OnPageChanged;
 
         private int _Rows;
         /// <summary>
@@ -58,7 +59,11 @@ namespace RS.Widgets.Models
                 {
                     value = Total;
                 }
-                this.SetProperty(ref _Page, value);
+
+                if (this.SetProperty(ref _Page, value))
+                {
+                    this.OnPageChanged?.Invoke(this);
+                }
             }
         }
 

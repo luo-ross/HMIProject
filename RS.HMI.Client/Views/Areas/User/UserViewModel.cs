@@ -20,11 +20,9 @@ using System.Windows;
 namespace RS.HMI.Client.Views.Areas
 {
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
-    public partial class UserViewModel : ModelBase
+    public partial class UserViewModel : ViewModelBase
     {
         private readonly IIdGenerator<long> IdGenerator;
-        public List<UserModel> TestData = new List<UserModel>();
-
 
         /// <summary>
         /// 默认构造方法
@@ -33,28 +31,10 @@ namespace RS.HMI.Client.Views.Areas
         public UserViewModel(IIdGenerator<long> idGenerator)
         {
             this.IdGenerator = idGenerator;
-
-            for (int i = 0; i < 100; i++)
-            {
-                this.TestData.Add(new UserModel()
-                {
-                    Id = this.IdGenerator.CreateId(),
-                    Email = $"184596029{i}@qq.com",
-                    NickName = "Ross",
-                    Phone = "111111111",
-                    UserPic = "sfsdfsdf",
-                });
-            }
         }
 
 
         #region 依赖属性
-
-        /// <summary>
-        /// 需要使用的Dialog主键
-        /// </summary>
-        [ObservableProperty]
-        private string dialogKey = Guid.NewGuid().ToString();
 
         private ObservableCollection<UserModel> userModelList;
         /// <summary>
@@ -91,6 +71,26 @@ namespace RS.HMI.Client.Views.Areas
         #endregion
 
         #region 命令
+
+        /// <summary>
+        /// 查询命令
+        /// </summary>
+        [RelayCommand]
+        public async Task SearchClick(object obj)
+        {
+            LoadingConfig loadingConfig = new LoadingConfig();
+            var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            {
+               await Task.Delay(2000);
+                return OperateResult.CreateSuccessResult();
+            }, loadingConfig: loadingConfig);
+
+            if (!operateResult.IsSuccess)
+            {
+                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message, "错误提示");
+            }
+        }
+
         /// <summary>
         /// 关闭命令
         /// </summary>
@@ -176,32 +176,31 @@ namespace RS.HMI.Client.Views.Areas
         [RelayCommand(CanExecute = nameof(CanPaginationAsync))]
         public async Task PaginationAsync(Pagination pagination)
         {
-            var dialog = DialogManager.GetDialog(this.DialogKey, true);
-
             LoadingConfig loadingConfig = new LoadingConfig();
-            await dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+               {
+                   var dataResult = await RSAppAPI.User.GetUser.AESHttpPostAsync<Pagination, RS.Models.PageDataModel<UserModel>>(pagination, nameof(RSAppAPI));
+                   if (!dataResult.IsSuccess)
+                   {
+                       return dataResult;
+                   }
+                   var pageDataModel = dataResult.Data;
+                   pagination.Records = pageDataModel.Pagination.records;
+
+                   var pageList = pageDataModel.DataList;
+
+                   //回到UI线程更新集合
+                   Application.Current.Dispatcher.Invoke(() =>
+                   {
+                       this.UserModelList = new ObservableCollection<UserModel>(pageList);
+                   });
+                   return OperateResult.CreateSuccessResult();
+               }, loadingConfig: loadingConfig);
+
+            if (!operateResult.IsSuccess)
             {
-                loadingConfig.IsShowLoadingText = true;
-                loadingConfig.LoadingType = Widgets.Enums.LoadingType.RotatingAnimation;
-                loadingConfig.LoadingTextStringFormat = "Hello World {0}%";
-                for (int i = 0; i < 100; i++)
-                {
-                    await Task.Delay(20);
-                    loadingConfig.Value = i;
-                }
-                pagination.Records = this.TestData.Count();
-                var pageList = this.TestData.Skip((pagination.Page - 1) * (pagination.Rows)).Take(pagination.Rows).ToList();
-                // 回到UI线程更新集合
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    this.UserModelList = new ObservableCollection<UserModel>(pageList);
-                });
-                return OperateResult.CreateSuccessResult();
-            }, loadingConfig: loadingConfig);
-
-            var userFormView = App.ServiceProvider.GetRequiredService<UserFormView>();
-
-            await dialog.GetMessageBox().ShowMessageAsync("数据加载成功");
+                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message,"错误提示");
+            }
         }
 
 
@@ -212,19 +211,16 @@ namespace RS.HMI.Client.Views.Areas
         {
             if (obj is UserModel userModel)
             {
-                WeakReferenceMessenger.Default.Send(new UserLoadingMessage
+                await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
                 {
-                    LoadingFuncAsync = async (config) =>
+                    //在这里向WebAPI发起请求提交数据
+                    var sumitResult = await RSAppAPI.User.GetUser.AESHttpPostAsync(userModel, nameof(RSAppAPI));
+                    if (!sumitResult.IsSuccess)
                     {
-                        //在这里向WebAPI发起请求提交数据
-                        var sumitResult = await RSAppAPI.User.GetUser.AESHttpPostAsync(userModel, nameof(RSAppAPI));
-                        if (!sumitResult.IsSuccess)
-                        {
-                            return sumitResult;
-                        }
-
-                        return OperateResult.CreateSuccessResult();
+                        return sumitResult;
                     }
+
+                    return OperateResult.CreateSuccessResult();
                 });
             }
         }

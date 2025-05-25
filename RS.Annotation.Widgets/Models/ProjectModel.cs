@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 
 namespace RS.Widgets.Models
 {
-    public class ProjectModel : ModelBase
+    public class ProjectModel : ViewModelBase
     {
         /// <summary>
         /// 默认构造函数

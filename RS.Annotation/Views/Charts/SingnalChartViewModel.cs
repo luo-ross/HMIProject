@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RS.Annotation.Views.Charts
 {
-    public class SingnalChartViewModel : ModelBase
+    public class SingnalChartViewModel : ViewModelBase
     {
 
     }

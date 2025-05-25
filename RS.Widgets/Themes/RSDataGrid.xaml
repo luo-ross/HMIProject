@@ -13,38 +13,6 @@
 
     <Style BasedOn="{StaticResource RSApp.Styles.DataGridStyle}" TargetType="{x:Type rs:RSDataGrid}">
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="0" />
-        <!--<Setter Property="RowStyle">
-            <Setter.Value>
-                <Style BasedOn="{StaticResource RSApp.Styles.DataGridRowStyle}" TargetType="{x:Type DataGridRow}">
-                    <Setter Property="ContextMenu">
-                        <Setter.Value>
-                            <ContextMenu>
-                                <MenuItem
-                                    x:Name="PART_BtnAdd"
-                                    Command="{x:Static rs:RSDataGrid.InternalAddCommand}"
-                                    Header="新增数据" />
-                                <MenuItem
-                                    x:Name="PART_BtnDelete"
-                                    Command="{x:Static rs:RSDataGrid.InternalDeleteCommand}"
-                                    Header="删除数据" />
-                                <MenuItem
-                                    x:Name="PART_BtnUpdate"
-                                    Command="{x:Static rs:RSDataGrid.InternalUpdateCommand}"
-                                    Header="修改数据" />
-                                <MenuItem
-                                    x:Name="PART_BtnDetails"
-                                    Command="{x:Static rs:RSDataGrid.InternalDetailsCommand}"
-                                    Header="查看详情" />
-                                <MenuItem
-                                    x:Name="PART_BtnExport"
-                                    Command="{x:Static rs:RSDataGrid.InternalExportCommand}"
-                                    Header="导出数据" />
-                            </ContextMenu>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Setter.Value>
-        </Setter>-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSDataGrid}">
@@ -181,10 +149,13 @@
                                                 Style="{StaticResource RSApp.Styles.IconButton}"
                                                 ToolTip="上一页" />
                                             <TextBox
+                                                x:Name="PART_TxtPage"
                                                 MinWidth="40"
                                                 Padding="3,2,3,2"
                                                 HorizontalContentAlignment="Center"
-                                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Page}" />
+                                                rs:TextBoxHelper.Watermark="页数"
+                                                MaxLength="8"
+                                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Page, UpdateSourceTrigger=LostFocus}" />
                                             <Button
                                                 x:Name="PART_BtnNext"
                                                 Margin="5,0,5,0"

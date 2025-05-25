@@ -99,10 +99,10 @@
         <Setter Property="Padding" Value="2,3,2,3" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="Arrow" />
-        <Setter Property="MinWidth" Value="35" />
+        <Setter Property="MinWidth" Value="32" />
         <Setter Property="Background" Value="#06B025" />
-        <Setter Property="rs:ControlsHelper.IconWidth" Value="12" />
-        <Setter Property="rs:ControlsHelper.IconHeight" Value="12" />
+        <Setter Property="rs:ControlsHelper.IconWidth" Value="11" />
+        <Setter Property="rs:ControlsHelper.IconHeight" Value="11" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="15" />
         <Setter Property="Template">

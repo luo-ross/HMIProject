@@ -10,32 +10,9 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.Client.Models
 {
-    public partial class UserModel : NotifyBase
+    public partial class UserModel : UserBaseModel
     {
-
-        /// <summary>
-        /// 数据主键
-        /// </summary>
-        public long Id { get; set; }
-
-
-        private string email;
-        /// <summary>
-        /// 用户昵称
-        /// </summary>
-        [MaxLength(30, ErrorMessage = "邮箱长度不能超过30")]
-        [Required(ErrorMessage = "邮箱不能为空")]
-        [RegularExpression("^(?(\")(\".+?\"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#\\$%&'\\*\\+/=\\?\\^`\\{\\}\\|~\\w])*)(?<=[0-9a-zA-Z])@))(?(\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}\\])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,6}))$", ErrorMessage = "用户名格式不正确")]
-        public string Email
-        {
-            get { return email; }
-            set
-            {
-                this.SetProperty(ref email, value);
-                this.ValidProperty(value);
-            }
-        }
-
+       
         /// <summary>
         /// 用户昵称
         /// </summary>
@@ -47,7 +24,7 @@ namespace RS.HMI.Client.Models
         /// 用户头像
         /// </summary>
         [ObservableProperty]
-        private string userPic;
+        private string? userPic;
 
 
         /// <summary>
@@ -68,9 +45,9 @@ namespace RS.HMI.Client.Models
         private bool? isDisabled;
 
         /// <summary>
-        /// 创建
+        /// 创建时间
         /// </summary>
         [ObservableProperty]
-        private bool? createTime;
+        private DateTime? createTime;
     }
 }

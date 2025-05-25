@@ -10,6 +10,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <TypeScriptCompile Remove="node_modules\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Remove="Configs\log4net.config" />
 		<Content Remove="HtmlTemplates\PasswordReset.cshtml" />
 		<Content Remove="wwwroot\ServerError.html" />

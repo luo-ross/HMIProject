@@ -1,4 +1,5 @@
 ﻿using RS.Commons;
+using RS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,5 +79,41 @@ namespace RS.HMIServer.IDAL
         /// <returns></returns>
         Task<OperateResult> Any<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class;
 
+
+        /// <summary>
+        /// 获取创建人 更新人 和删除人信息
+        /// </summary>
+        /// <param name="dataList"></param>
+        /// <returns></returns>
+        Task<OperateResult<List<T>>> GetCreateUpdateDeleteByAsync<T>(List<ModelBase> modelBaseList)
+                 where T : ModelBase;
+
+
+        /// <summary>
+        /// 分页查询数据并且返回创建人 修改人 和删除人
+        /// </summary>
+        /// <typeparam name="TEntity">数据实体</typeparam>
+        /// <typeparam name="TResult">返回实体</typeparam>
+        /// <param name="pagination">分页实体</param>
+        /// <param name="paginationCallBack">分页回调</param>
+        /// <returns></returns>
+        Task<OperateResult<PageDataModel<TResult>>> GetPaginationListWithCreateUpateDeleteByAsync<TEntity, TResult>(Pagination pagination,
+           Func<List<TResult>, Task<List<TResult>>> paginationCallBack = null)
+           where TEntity : class
+           where TResult : ModelBase, new();
+
+
+        /// <summary>
+        /// 分页查询数据
+        /// </summary>
+        /// <typeparam name="TEntity">数据实体</typeparam>
+        /// <typeparam name="TResult">返回实体</typeparam>
+        /// <param name="pagination">分页实体</param>
+        /// <param name="paginationCallBack">分页回调</param>
+        /// <returns></returns>
+        Task<OperateResult<PageDataModel<TResult>>> GetPaginationListAsync<TEntity, TResult>(Pagination pagination,
+           Func<List<TResult>, Task<List<TResult>>> paginationCallBack = null)
+           where TEntity : class
+           where TResult : ModelBase, new();
     }
 }

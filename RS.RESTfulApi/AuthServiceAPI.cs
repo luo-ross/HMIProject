@@ -58,7 +58,6 @@ namespace RS.RESTfulApi
             /// 获取用户接口
             /// </summary>
             public static readonly string GetUser = $"/Api/{ApiVersion}/User/GetUser";
-
         }
 
 
@@ -72,6 +71,29 @@ namespace RS.RESTfulApi
             public static readonly string ValidLogin = $"/Api/{ApiVersion}/Security/ValidLogin";
 
             public static readonly string GetImgVerifyModel = $"/Api/{ApiVersion}/Security/GetImgVerifyModel";
+        }
+
+        /// <summary>
+        /// 角色相关API
+        /// </summary>
+        public static class Role
+        {
+            /// <summary>
+            /// 获取角色接口
+            /// </summary>
+            public static readonly string GetRole = $"/Api/{ApiVersion}/Role/GetRole";
+            /// <summary>
+            /// 获取角色接口
+            /// </summary>
+            public static readonly string AddRole = $"/Api/{ApiVersion}/Role/AddRole";
+            /// <summary>
+            /// 更新角色接口
+            /// </summary>
+            public static readonly string UpdateRole = $"/Api/{ApiVersion}/Role/UpdateRole";
+            /// <summary>
+            /// 删除角色接口
+            /// </summary>
+            public static readonly string DeleteRole = $"/Api/{ApiVersion}/Role/DeleteRole";
         }
     }
 }

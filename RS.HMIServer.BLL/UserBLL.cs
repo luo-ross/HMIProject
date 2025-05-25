@@ -42,14 +42,57 @@ namespace RS.HMIServer.BLL
         }
 
         /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <returns></returns>
+        public async Task<OperateResult<AESEncryptModel>> DeleteUserAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        {
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<UserModel>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var userModel = getAESDecryptResult.Data;
+
+
+            //将数据更新写入到数据库
+            OperateResult<UserModel> operateResult = await this.UserDAL.DeleteUserAsync(userModel);
+            if (!operateResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
+            }
+
+            //获取加密数据
+            var getAESEncryptResult = await this.GeneralBLL.GetAESEncryptAsync(operateResult.Data, sessionId);
+            if (!getAESEncryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESEncryptResult);
+            }
+
+            return getAESEncryptResult;
+        }
+
+        /// <summary>
         /// 获取用户列表
         /// </summary>
         /// <param name="sessionId">会话Id</param>
         /// <returns></returns>
-        public async Task<OperateResult<AESEncryptModel>> GetUsersAsync(string sessionId)
+        public async Task<OperateResult<AESEncryptModel>> GetUsersAsync(AESEncryptModel aesEncryptModel, string sessionId)
         {
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<Pagination>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var pagination = getAESDecryptResult.Data;
+
+
             //这是获取用户数据
-            var getUsersResult = await UserDAL.GetUsersAsync();
+            var getUsersResult = await UserDAL.GetUsersAsync(pagination);
             if (!getUsersResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>(getUsersResult);
@@ -65,6 +108,85 @@ namespace RS.HMIServer.BLL
             return getAESEncryptResult;
         }
 
-      
+        /// <summary>
+        /// 更新邮箱
+        /// </summary>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <returns></returns>
+        public async Task<OperateResult> UpdateEmailAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        {
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<UserModel>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var userModel = getAESDecryptResult.Data;
+
+
+            //将数据更新写入到数据库
+            OperateResult operateResult = await this.UserDAL.UpdateEmailAsync(userModel);
+            if (!operateResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
+            }
+
+            return OperateResult.CreateSuccessResult();
+        }
+
+        /// <summary>
+        /// 更新用户是否禁用
+        /// </summary>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <returns></returns>
+        public async Task<OperateResult> UpdateIsDisableAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        {
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<UserModel>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var userModel = getAESDecryptResult.Data;
+
+
+            //将数据更新写入到数据库
+            OperateResult operateResult = await this.UserDAL.UpdateIsDisableAsync(userModel);
+            if (!operateResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
+            }
+
+            return OperateResult.CreateSuccessResult();
+        }
+
+        /// <summary>
+        /// 更新昵称
+        /// </summary>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <returns></returns>
+        public async Task<OperateResult> UpdateNickNameAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        {
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<UserModel>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var userModel = getAESDecryptResult.Data;
+
+
+            //将数据更新写入到数据库
+            OperateResult operateResult = await this.UserDAL.UpdateNickNameAsync(userModel);
+            if (!operateResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
+            }
+
+            return OperateResult.CreateSuccessResult();
+        }
     }
 }

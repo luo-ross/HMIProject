@@ -35,6 +35,13 @@ namespace RS.HMIServer.Entity
     /// </summary>
     public class BaseEntity
     {
+        private readonly IIdGenerator<long> IdGenerator;
+        public BaseEntity()
+        {
+            //获取分布式主键生成服务
+            this.IdGenerator = ServiceProviderExtensions.GetService<IIdGenerator<long>>();
+        }
+
         /// <summary>
         /// 主键 
         /// </summary>
@@ -42,15 +49,71 @@ namespace RS.HMIServer.Entity
         public long Id { get; set; }
 
         /// <summary>
-        /// 动态创建分布式Id
+        /// 新增
         /// </summary>
         public BaseEntity Create()
         {
-            //获取分布式主键生成服务
-            var idGenerator = ServiceProviderExtensions.GetService<IIdGenerator<long>>();
-            this.Id = idGenerator.CreateId();
+            this.Id = this.IdGenerator.CreateId();
+            this.CreateTime = DateTime.Now;
             return this;
         }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <returns></returns>
+        public BaseEntity Update()
+        {
+            this.UpdateTime = DateTime.Now;
+            return this;
+        }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <returns></returns>
+        public BaseEntity Delete()
+        {
+            this.DeleteTime = DateTime.Now;
+            return this;
+        }
+
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+        public bool? IsDelete { get; set; }
+
+
+        /// <summary>
+        /// 创建人
+        /// </summary>
+        public long? CreateId { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime? CreateTime { get; set; }
+
+        /// <summary>
+        /// 最后一次更新人
+        /// </summary>
+        public long? UpdateId { get; set; }
+
+        /// <summary>
+        /// 最后一次更新时间
+        /// </summary>
+        public DateTime? UpdateTime { get; set; }
+
+        /// <summary>
+        /// 删除人
+        /// </summary>
+        public long? DeleteId { get; set; }
+
+        /// <summary>
+        /// 删除时间
+        /// </summary>
+        public DateTime? DeleteTime { get; set; }
+
     }
 
 }

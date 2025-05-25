@@ -164,7 +164,7 @@ namespace RS.Annotation.Views
                 //验证用户登录
                 var validLoginResult = await RSAppAPI.Security.ValidLogin.AESHttpPostAsync(new LoginValidModel()
                 {
-                    UserName = this.ViewModel.PasswordLoginModel.UserName,
+                    Email = this.ViewModel.PasswordLoginModel.UserName,
                     Password = this.CryptographyBLL.GetSHA256HashCode(this.ViewModel.PasswordLoginModel.Password),
                 }, nameof(RSAppAPI));
 

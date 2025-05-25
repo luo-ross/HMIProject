@@ -30,6 +30,8 @@ namespace RS.Widgets.Controls
         private Button PART_BtnPrevious;
         private Button PART_BtnNext;
         private Button PART_BtnEndPage;
+        private TextBox PART_TxtPage;
+        
 
         public event Func<Pagination, Task> PaginationAsync;
 
@@ -195,8 +197,11 @@ namespace RS.Widgets.Controls
             this.Loaded += RSDataGrid_Loaded;
             this.Pagination = new Pagination();
             this.Pagination.OnRowsChanged += Pagination_OnRowsChanged;
+            this.Pagination.OnPageChanged += Pagination_OnPageChanged;
             this.MouseEnter += RSDataGrid_MouseEnter;
         }
+
+       
 
         private void RSDataGrid_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -366,7 +371,7 @@ namespace RS.Widgets.Controls
             this.PART_BtnPrevious = this.GetTemplateChild(nameof(this.PART_BtnPrevious)) as Button;
             this.PART_BtnNext = this.GetTemplateChild(nameof(this.PART_BtnNext)) as Button;
             this.PART_BtnEndPage = this.GetTemplateChild(nameof(this.PART_BtnEndPage)) as Button;
-
+            this.PART_TxtPage = this.GetTemplateChild(nameof(this.PART_TxtPage)) as TextBox;
             if (this.PART_DataGrid != null)
             {
                 this.PART_DataGrid.Columns.Clear();
@@ -394,6 +399,19 @@ namespace RS.Widgets.Controls
             if (this.PART_BtnEndPage != null)
             {
                 this.PART_BtnEndPage.Click += PART_BtnEndPage_Click;
+            }
+
+            if (this.PART_TxtPage != null)
+            {
+                this.PART_TxtPage.KeyDown += PART_TxtPage_KeyDown;
+            }
+        }
+
+        private async void PART_TxtPage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await InternalPaginationAsync();
             }
         }
 
@@ -439,6 +457,11 @@ namespace RS.Widgets.Controls
 
 
         private async void Pagination_OnRowsChanged(Pagination pagination)
+        {
+            await InternalPaginationAsync();
+        }
+
+        private async void Pagination_OnPageChanged(Pagination obj)
         {
             await InternalPaginationAsync();
         }

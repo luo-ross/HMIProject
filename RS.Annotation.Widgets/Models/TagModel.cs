@@ -13,7 +13,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 标签类别
     /// </summary>
-    public class TagModel : ModelBase
+    public class TagModel : ViewModelBase
     {
         public TagModel(long id, long projectId)
         {

@@ -261,7 +261,7 @@ namespace RS.HMIServer.BLL
             }
 
             //查询用户信息
-            var userEntityResult = await this.SecurityDAL.FirstOrDefaultAsync<UserEntity>(t => t.Email == loginValidModel.UserName);
+            var userEntityResult = await this.SecurityDAL.FirstOrDefaultAsync<UserEntity>(t => t.Email == loginValidModel.Email);
             if (!userEntityResult.IsSuccess)
             {
                 return OperateResult.CreateFailResult<AESEncryptModel>("用户名或者密码错误！");
