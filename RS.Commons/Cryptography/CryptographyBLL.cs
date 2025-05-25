@@ -51,7 +51,7 @@ namespace RS.Commons
 
             if (sessionModel == null)
             {
-                return OperateResult.CreateFailResult<SessionModel>("你暂时无法使用该软件！");
+                return OperateResult.CreateFailResult<SessionModel>("你没有权限访问！");
             }
 
             if (string.IsNullOrEmpty(sessionModel.AesKey) || string.IsNullOrWhiteSpace(sessionModel.AesKey) || sessionModel.AesKey.Length != 43)
