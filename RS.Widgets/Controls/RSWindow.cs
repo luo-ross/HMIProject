@@ -220,7 +220,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty CaptionHeightProperty =
-            DependencyProperty.Register("CaptionHeight", typeof(double), typeof(RSWindow), new PropertyMetadata(30D));
+            DependencyProperty.Register("CaptionHeight", typeof(double), typeof(RSWindow), new PropertyMetadata(32D));
 
 
 
@@ -232,8 +232,6 @@ namespace RS.Widgets.Controls
             get { return (bool)GetValue(IsFitSystemProperty); }
             set { SetValue(IsFitSystemProperty, value); }
         }
-
-
 
         public static readonly DependencyProperty IsFitSystemProperty =
             DependencyProperty.Register("IsFitSystem", typeof(bool), typeof(RSWindow), new PropertyMetadata(false));
@@ -253,6 +251,19 @@ namespace RS.Widgets.Controls
                 }
             }
         }
+
+
+        [Description("是否显示标题")]
+        public bool IsShowTitle
+        {
+            get { return (bool)GetValue(IsShowTitleProperty); }
+            set { SetValue(IsShowTitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowTitleProperty =
+            DependencyProperty.Register("IsShowTitle", typeof(bool), typeof(RSWindow), new PropertyMetadata(true));
+
+
 
 
         public override void OnApplyTemplate()

@@ -1,28 +1,36 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Input;
 using IdGen;
 using Microsoft.Extensions.DependencyInjection;
-using NPOI.Util;
 using RS.Commons;
 using RS.Commons.Attributs;
-using RS.Commons.Enums;
 using RS.Commons.Extensions;
-using RS.HMI.Client.Messages;
 using RS.HMI.Client.Models;
 using RS.RESTfulApi;
-using RS.Widgets.Controls;
-using RS.Widgets.Interface;
 using RS.Widgets.Models;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace RS.HMI.Client.Views.Areas
 {
+
+    /// <summary>
+    /// 用户管理视图模型
+    /// </summary>
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
-    public partial class UserViewModel : ViewModelBase
+    public class UserViewModel : CRUDViewModel<UserModel>
     {
         private readonly IIdGenerator<long> IdGenerator;
+
+        /// <summary>
+        /// 用户启用
+        /// </summary>
+        public ICommand UserEnableClickCommand { get; set; }
+
+        /// <summary>
+        /// 用户禁用
+        /// </summary>
+        public ICommand UserDisableClickCommand { get; set; }
 
         /// <summary>
         /// 默认构造方法
@@ -31,43 +39,41 @@ namespace RS.HMI.Client.Views.Areas
         public UserViewModel(IIdGenerator<long> idGenerator)
         {
             this.IdGenerator = idGenerator;
+            this.UserEnableClickCommand = new RelayCommand<UserModel>(UserEnableClick, CanUserEnableClick);
+            this.UserDisableClickCommand = new RelayCommand<UserModel>(UserDisableClick, CanUserDisableClick);
         }
+
 
 
         #region 依赖属性
 
-        private ObservableCollection<UserModel> userModelList;
+        private ObservableCollection<ComboBoxItem<bool>> isDisableSelectList;
         /// <summary>
-        /// 用户数据
+        /// 用户是否禁用选择
         /// </summary>
-        public ObservableCollection<UserModel> UserModelList
+        public ObservableCollection<ComboBoxItem<bool>> IsDisableSelectList
         {
             get
             {
-                if (userModelList == null)
+                if (isDisableSelectList == null)
                 {
-                    userModelList = new ObservableCollection<UserModel>();
+                    isDisableSelectList = new ObservableCollection<ComboBoxItem<bool>>();
+                    isDisableSelectList.Add(new ComboBoxItem<bool>()
+                    {
+                        SelectedValue = true,
+                        DisplayMember = "已禁用",
+                    });
+
+                    isDisableSelectList.Add(new ComboBoxItem<bool>()
+                    {
+                        SelectedValue = false,
+                        DisplayMember = "未禁用",
+                    });
                 }
-                return userModelList;
-            }
-            set
-            {
-                this.SetProperty(ref userModelList, value);
+                return isDisableSelectList;
             }
         }
 
-        /// <summary>
-        /// 编辑实体
-        /// </summary>
-        [ObservableProperty]
-        private UserModel userModelEdit;
-
-
-        /// <summary>
-        /// 选中实体
-        /// </summary>
-        [ObservableProperty]
-        private UserModel userModelSelect;
         #endregion
 
         #region 命令
@@ -75,13 +81,12 @@ namespace RS.HMI.Client.Views.Areas
         /// <summary>
         /// 查询命令
         /// </summary>
-        [RelayCommand]
         public async Task SearchClick(object obj)
         {
             LoadingConfig loadingConfig = new LoadingConfig();
             var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
-               await Task.Delay(2000);
+                await Task.Delay(2000);
                 return OperateResult.CreateSuccessResult();
             }, loadingConfig: loadingConfig);
 
@@ -92,89 +97,51 @@ namespace RS.HMI.Client.Views.Areas
         }
 
         /// <summary>
+        /// 查询条件清除命令
+        /// </summary>
+        public async Task SearchClearClick(object obj)
+        {
+            this.ModelSearch = new UserModel();
+        }
+
+        /// <summary>
         /// 关闭命令
         /// </summary>
-        [RelayCommand]
         public void CloseClick(object obj)
         {
 
         }
 
         /// <summary>
-        /// 新增数据
-        /// </summary>
-        [RelayCommand]
-        public async Task AddClick(object obj)
-        {
-            this.UserModelEdit = new UserModel();
-            WeakReferenceMessenger.Default.Send(new UserFormMessage()
-            {
-                CRUD = CRUD.Add,
-                ViewModel = this,
-                FormData = this.UserModelEdit
-            });
-        }
-
-
-        /// <summary>
         /// 删除数据
         /// </summary>
-        [RelayCommand]
-        public void DeleteClick(object obj)
+        public override void DeleteClick(UserModel userModel)
         {
-            if (this.UserModelSelect != null)
-            {
-                this.UserModelList.Remove(this.UserModelSelect);
-            }
-
+            //if (this.ModelSelect != null)
+            //{
+            //    this.ModelList.Remove(this.ModelSelect);
+            //}
         }
 
-        /// <summary>
-        /// 修改数据
-        /// </summary>
-        [RelayCommand]
-        public void UpdateClick(object obj)
-        {
-            if (this.UserModelSelect == null)
-            {
-                return;
-            }
 
-            this.UserModelEdit = this.UserModelSelect.Copy();
-            WeakReferenceMessenger.Default.Send(new UserFormMessage()
-            {
-                CRUD = CRUD.Update,
-                ViewModel = this,
-                FormData = this.UserModelEdit
-            });
-        }
 
         /// <summary>
         /// 查看数据
         /// </summary>
-        [RelayCommand]
-        public void DetailsClick(object obj)
+        public override void DetailsClick(UserModel userModel)
         {
 
         }
-
 
         /// <summary>
         /// 导出数据
         /// </summary>
-        [RelayCommand]
-        public void ExportClick(object obj)
+        public override void ExportClick(ObservableCollection<UserModel>? collection)
         {
 
         }
 
-        private bool CanPaginationAsync(Pagination pagination)
-        {
-            return true;
-        }
-
-        [RelayCommand(CanExecute = nameof(CanPaginationAsync))]
-        public async Task PaginationAsync(Pagination pagination)
+        public override async Task PaginationAsync(Pagination pagination)
         {
             LoadingConfig loadingConfig = new LoadingConfig();
             var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
@@ -192,14 +159,14 @@ namespace RS.HMI.Client.Views.Areas
                    //回到UI线程更新集合
                    Application.Current.Dispatcher.Invoke(() =>
                    {
-                       this.UserModelList = new ObservableCollection<UserModel>(pageList);
+                       this.ModelList = new ObservableCollection<UserModel>(pageList);
                    });
                    return OperateResult.CreateSuccessResult();
                }, loadingConfig: loadingConfig);
 
             if (!operateResult.IsSuccess)
             {
-                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message,"错误提示");
+                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message, "错误提示");
             }
         }
 
@@ -207,43 +174,46 @@ namespace RS.HMI.Client.Views.Areas
         /// <summary>
         /// 继承基类新增
         /// </summary>
-        public override async Task Submit(object obj)
+        public override async void FormSubmitClick()
         {
-            if (obj is UserModel userModel)
-            {
-                await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
-                {
-                    //在这里向WebAPI发起请求提交数据
-                    var sumitResult = await RSAppAPI.User.GetUser.AESHttpPostAsync(userModel, nameof(RSAppAPI));
-                    if (!sumitResult.IsSuccess)
-                    {
-                        return sumitResult;
-                    }
+            //if (obj is UserModel userModel)
+            //{
+            //    await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            //    {
+            //        //在这里向WebAPI发起请求提交数据
+            //        var sumitResult = await RSAppAPI.User.GetUser.AESHttpPostAsync(userModel, nameof(RSAppAPI));
+            //        if (!sumitResult.IsSuccess)
+            //        {
+            //            return sumitResult;
+            //        }
 
-                    return OperateResult.CreateSuccessResult();
-                });
-            }
+            //        return OperateResult.CreateSuccessResult();
+            //    });
+            //}
         }
 
-        /// <summary>
-        /// 继承基类更新
-        /// </summary>
-        public override async Task Update(object userModel)
+
+
+
+        private bool CanUserEnableClick(UserModel? userModel)
         {
-            var sdf = 1;
-            await Task.Delay(3000);
+            return userModel == null ? false : true;
         }
 
-        [RelayCommand]
-        public async Task UserEnableClick(object obj)
+        public async void UserEnableClick(UserModel userModel)
         {
             var sdf = 1;
             await Task.Delay(3000);
         }
 
 
-        [RelayCommand]
-        public async Task UserDisableClick(object obj)
+        private bool CanUserDisableClick(UserModel? userModel)
+        {
+            return userModel == null ? false : true;
+        }
+
+
+        public async void UserDisableClick(UserModel userModel)
         {
             var sdf = 1;
             await Task.Delay(3000);

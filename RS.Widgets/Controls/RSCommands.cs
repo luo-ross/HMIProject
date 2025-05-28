@@ -21,8 +21,6 @@ namespace RS.Widgets.Controls
         {
             CleanTextCommand = new RoutedCommand("CleanText", typeof(RSCommands));
             CommandManager.RegisterClassCommandBinding(typeof(Window), new CommandBinding(ClearControlCommand, ClearControl, CanClearControl));
-
-
         }
 
        

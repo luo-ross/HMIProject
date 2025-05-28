@@ -50,24 +50,39 @@
                             HorizontalAlignment="Right"
                             Foreground="#949494"
                             Text="邮箱" />
-                        <TextBox Grid.Column="1" />
+                        <TextBox
+                            Grid.Column="1"
+                            rs:TextBoxHelper.IsShowClearButton="True"
+                            rs:TextBoxHelper.Watermark="请输入邮箱"
+                            Text="{Binding ModelSearch.Email}" />
                         <TextBlock
                             Grid.Column="2"
                             HorizontalAlignment="Right"
                             Foreground="#949494"
                             Text="昵称" />
-                        <TextBox Grid.Column="3" />
+                        <TextBox
+                            Grid.Column="3"
+                            rs:TextBoxHelper.IsShowClearButton="True"
+                            rs:TextBoxHelper.Watermark="请输入昵称"
+                            Text="{Binding ModelSearch.NickName}" />
                         <TextBlock
                             Grid.Column="4"
                             HorizontalAlignment="Right"
                             Foreground="#949494"
                             Text="是否禁用" />
-                        <TextBox Grid.Column="5" />
+                        <ComboBox
+                            Grid.Column="5"
+                            rs:TextBoxHelper.IsShowClearButton="True"
+                            rs:TextBoxHelper.Watermark="是否禁用"
+                            DisplayMemberPath="DisplayMember"
+                            ItemsSource="{Binding IsDisableSelectList}"
+                            SelectedValue="{Binding ModelSearch.IsDisabled}"
+                            SelectedValuePath="SelectedValue" />
                     </Grid>
                 </Border>
             </GroupBox>
 
-            <GroupBox Grid.Row="1">
+            <GroupBox Grid.Row="1" BorderThickness="1,0,1,1">
                 <GroupBox.Header>
                     <Grid>
                         <TextBlock Text="用户列表" />
@@ -75,9 +90,9 @@
                 </GroupBox.Header>
                 <rs:RSDataGrid
                     x:Name="UserDataGrid"
-                    ItemsSource="{Binding UserModelList, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding ModelList, UpdateSourceTrigger=PropertyChanged}"
                     PaginationCommand="{Binding PaginationCommand}"
-                    SelectedItem="{Binding UserModelSelect}"
+                    SelectedItem="{Binding ModelSelect}"
                     UpdateClickCommand="{Binding UpdateClickCommand}"
                     VirtualizingPanel.IsVirtualizing="True">
                     <rs:RSDataGrid.RowStyle>
@@ -93,32 +108,38 @@
                                         <MenuItem
                                             x:Name="PART_BtnDelete"
                                             Command="{Binding Source={StaticResource BindingProxy}, Path=Data.DeleteClickCommand}"
+                                            CommandParameter="{Binding Source={StaticResource BindingProxy}, Path=Data.ModelSelect}"
                                             Header="删除数据"
                                             InputGestureText="Alt+D" />
                                         <MenuItem
                                             x:Name="PART_BtnUpdate"
                                             Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UpdateClickCommand}"
+                                            CommandParameter="{Binding Source={StaticResource BindingProxy}, Path=Data.ModelSelect}"
                                             Header="修改数据"
                                             InputGestureText="Alt+U" />
                                         <MenuItem
                                             x:Name="PART_BtnDetails"
                                             Command="{Binding Source={StaticResource BindingProxy}, Path=Data.DetailsClickCommand}"
+                                            CommandParameter="{Binding Source={StaticResource BindingProxy}, Path=Data.ModelSelect}"
                                             Header="查看详情"
                                             InputGestureText="Alt+V" />
 
                                         <MenuItem
                                             x:Name="PART_BtnEnable"
-                                            Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UserEnableCommand}"
+                                            Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UserEnableClickCommand}"
+                                            CommandParameter="{Binding Source={StaticResource BindingProxy}, Path=Data.ModelSelect}"
                                             Header="启用用户" />
 
                                         <MenuItem
                                             x:Name="PART_BtnDisable"
-                                            Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UserDisableCommand}"
+                                            Command="{Binding Source={StaticResource BindingProxy}, Path=Data.UserDisableClickCommand}"
+                                            CommandParameter="{Binding Source={StaticResource BindingProxy}, Path=Data.ModelSelect}"
                                             Header="禁用用户" />
 
                                         <MenuItem
                                             x:Name="PART_BtnExport"
                                             Command="{Binding Source={StaticResource BindingProxy}, Path=Data.ExportClickCommand}"
+                                            CommandParameter="{Binding Source={StaticResource BindingProxy}, Path=Data.ModelList}"
                                             Header="导出数据"
                                             InputGestureText="Alt+E" />
                                     </ContextMenu>
@@ -162,18 +183,37 @@
                         Command="{Binding SearchClickCommand}"
                         Style="{StaticResource RSApp.Styles.DefaultButton}"
                         ToolTip="查询">
-                        <AccessText Text="查询" />
+                        <AccessText Text="查询(_H)" />
                     </Button>
                     <Button
                         HorizontalAlignment="Stretch"
-                        Command="{Binding AddClickCommand}"
+                        Command="{Binding SearchClearClickCommand}"
                         Style="{StaticResource RSApp.Styles.DefaultButton}"
-                        ToolTip="快捷键Alt+A">
-                        <AccessText Text="新增数据(_A)" />
+                        ToolTip="高级查询">
+                        <AccessText Text="高级查询(_A)" />
                     </Button>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding SearchClearClickCommand}"
+                        Style="{StaticResource RSApp.Styles.DefaultButton}"
+                        ToolTip="清除条件">
+                        <AccessText Text="清除条件(_R)" />
+                    </Button>
+
+                    <Grid Margin="0,90,0,0">
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding AddClickCommand}"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}"
+                            ToolTip="快捷键Alt+N">
+                            <AccessText Text="新增数据(_N)" />
+                        </Button>
+                    </Grid>
+
                     <Button
                         HorizontalAlignment="Stretch"
                         Command="{Binding DeleteClickCommand}"
+                        CommandParameter="{Binding ModelSelect}"
                         Style="{StaticResource RSApp.Styles.DefaultButton}"
                         ToolTip="快捷键Alt+D">
                         <AccessText Text="删除数据(_D)" />
@@ -181,6 +221,7 @@
                     <Button
                         HorizontalAlignment="Stretch"
                         Command="{Binding UpdateClickCommand}"
+                        CommandParameter="{Binding ModelSelect}"
                         Style="{StaticResource RSApp.Styles.DefaultButton}"
                         ToolTip="快捷键Alt+U">
                         <AccessText Text="修改数据(_U)" />
@@ -190,6 +231,7 @@
                     <Button
                         HorizontalAlignment="Stretch"
                         Command="{Binding DetailsClickCommand}"
+                        CommandParameter="{Binding ModelSelect}"
                         Style="{StaticResource RSApp.Styles.DefaultButton}"
                         ToolTip="快捷键Alt+V">
                         <AccessText Text="查看数据(_V)" />
@@ -198,21 +240,23 @@
                     <Button
                         HorizontalAlignment="Stretch"
                         Command="{Binding UserEnableClickCommand}"
+                        CommandParameter="{Binding ModelSelect}"
                         Content="用户启用"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
 
                     <Button
                         HorizontalAlignment="Stretch"
                         Command="{Binding UserDisableClickCommand}"
+                        CommandParameter="{Binding ModelSelect}"
                         Content="用户禁用"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
 
                     <Button
                         HorizontalAlignment="Stretch"
                         Command="{Binding ExportClickCommand}"
+                        CommandParameter="{Binding ModelList}"
                         Content="数据导出"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
-
 
                 </StackPanel>
 

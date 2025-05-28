@@ -28,10 +28,16 @@
         <Setter Property="rs:ControlsHelper.IconData" Value="{x:Null}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#949494" />
+                <Setter Property="Background" Value="#eeeeee" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style
-        x:Key="RSApp.Styles.IconButton"
+        x:Key="RSApp.Styles.IconButtonStyle"
         BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
         TargetType="{x:Type Button}">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -592,47 +598,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-    <Style x:Key="RSApp.Styles.IconButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Padding" Value="5" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="#949494" />
-        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="rs:ControlsHelper.CornerRadius" Value="0" />
-        <Setter Property="rs:ControlsHelper.IconWidth" Value="15" />
-        <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                        <Path
-                            x:Name="PART_Icon"
-                            Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
-                            Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
-                            Data="{TemplateBinding rs:ControlsHelper.IconData}"
-                            Fill="{TemplateBinding Foreground}"
-                            Stretch="Fill" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="#06B025" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PART_Icon" Property="Opacity" Value="0.8" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
-
 
 </ResourceDictionary>

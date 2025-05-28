@@ -10,38 +10,35 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public partial class ViewModelBase : NotifyBase
+    public  class ViewModelBase : NotifyBase
     {
         public ViewModelBase()
         {
             this.DialogKey = Guid.NewGuid().ToString();
         }
-
+     
+        private string dialogKey;
         /// <summary>
         /// 需要使用的Dialog主键
         /// </summary>
-        [ObservableProperty]
-        private string dialogKey;
+        public string DialogKey
+        {
+            get { return dialogKey; }
+            set
+            {
+                dialogKey = value;
+                this.SetProperty(ref dialogKey, value);
+            }
+        }
 
         public IDialog? Dialog
         {
             get
             {
-                return DialogManager.GetDialog(this.DialogKey, false); 
+                return DialogManager.GetDialog(this.DialogKey, false);
             }
         }
 
-        [RelayCommand]
-        public virtual async Task Submit(object obj)
-        {
-
-        }
-
-        [RelayCommand]
-        public virtual async Task Update(object obj)
-        {
-
-        }
     }
 
 }

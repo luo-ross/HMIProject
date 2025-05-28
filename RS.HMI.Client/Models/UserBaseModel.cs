@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.Client.Models
 {
-    public partial class UserBaseModel : ModelBase
+    public  class UserBaseModel : ModelBase
     {
        
         private string? email;

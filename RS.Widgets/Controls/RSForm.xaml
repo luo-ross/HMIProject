@@ -6,13 +6,13 @@
     xmlns:local="clr-namespace:RS.Widgets.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="this"
-    Title="RSForm"
     Width="500"
     Height="450"
     BorderCornerRadius="5"
     Focusable="True"
     IsFitSystem="True"
     ResizeMode="NoResize"
+    ShowInTaskbar="False"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <GroupBox>
@@ -25,10 +25,10 @@
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=this, Path=FormMessage.CRUD}" Value="Add">
+                                <DataTrigger Binding="{Binding ElementName=this, Path=FormService.CRUD}" Value="Add">
                                     <Setter Property="Text" Value="新增数据" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=this, Path=FormMessage.CRUD}" Value="Update">
+                                <DataTrigger Binding="{Binding ElementName=this, Path=FormService.CRUD}" Value="Update">
                                     <Setter Property="Text" Value="更新数据" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -54,13 +54,13 @@
                         x:Name="BtnSubmit"
                         Command="{x:Static local:RSForm.SubmitCommand}"
                         Style="{StaticResource RSApp.Styles.PrimaryButton}">
-                        <AccessText Text="确认(_Y)" />
+                        <AccessText Text="保存(_S)" />
                     </Button>
                     <Button
                         x:Name="BtnReturn"
                         Command="{x:Static local:RSForm.ReturnCommand}"
                         Style="{StaticResource RSApp.Styles.DefaultButton}">
-                        <AccessText Text="返回(_C)" />
+                        <AccessText Text="取消(_C)" />
                     </Button>
                 </StackPanel>
             </Border>

@@ -389,7 +389,7 @@
                         <Button
                             Margin="0,0,3,0"
                             Padding="10,0,10,0"
-                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowLeft}"
+                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.LeftArrow}"
                             rs:ControlsHelper.IconHeight="15"
                             rs:ControlsHelper.IconWidth="10"
                             Click="BtnPreImgModel_Click"
@@ -411,7 +411,7 @@
                         <Button
                             Margin="0,0,3,0"
                             Padding="10,0,10,0"
-                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowRight}"
+                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.RightArrow}"
                             rs:ControlsHelper.IconHeight="15"
                             rs:ControlsHelper.IconWidth="10"
                             Click="BtnNextImgModel_Click"

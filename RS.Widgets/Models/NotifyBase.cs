@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public partial class NotifyBase : ObservableObject, INotifyDataErrorInfo
+    public  class NotifyBase : ObservableObject, INotifyDataErrorInfo
     {
         public NotifyBase()
         {

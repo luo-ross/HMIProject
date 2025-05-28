@@ -9,6 +9,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 
@@ -43,12 +44,12 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+    <!--<ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
         <Border
             x:Name="PART_ContentHost"
             Background="{TemplateBinding Background}"
             Focusable="False" />
-    </ControlTemplate>
+    </ControlTemplate>-->
 
     <Style x:Key="RSApp.Styles.ComboBoxStyle" TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -57,13 +58,14 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
         <Setter Property="Background" Value="#fff" />
-        <Setter Property="BorderBrush" Value="#CCCCCC" />
+        <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Margin" Value="3,3,3,3" />
-        <Setter Property="Padding" Value="2" />
+        <Setter Property="MinWidth" Value="80" />
+        <Setter Property="Padding" Value="2,3,2,3" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="40" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="50" />
@@ -81,69 +83,58 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition x:Name="PART_ClearButtnColumn" Width="auto" />
+                                <ColumnDefinition x:Name="PART_DropdownIconColumn" Width="20" />
                             </Grid.ColumnDefinitions>
                             <ToggleButton
                                 x:Name="ToggleButton"
+                                Grid.ColumnSpan="3"
                                 ClickMode="Press"
                                 Focusable="false"
                                 IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 Style="{StaticResource ComboBoxToggleButton}" />
-
-                            <Grid Margin="0,0,20,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <ScrollViewer x:Name="PART_ContentScrollViewer">
-                                    <ContentPresenter
-                                        x:Name="ContentSite"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Stretch"
-                                        Content="{TemplateBinding SelectionBoxItem}"
-                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                        ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                        IsHitTestVisible="False" />
-                                </ScrollViewer>
-                                <TextBlock
-                                    x:Name="PART_Watermark"
-                                    Grid.Column="0"
-                                    Padding="{TemplateBinding Padding}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    Foreground="#949494"
-                                    Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
-                                    Visibility="Hidden" />
-
-                                <Button
-                                    x:Name="PART_BtnClear"
-                                    Grid.Column="2"
-                                    Margin="3,0,3,0"
-                                    Padding="5,3,5,3"
-                                    HorizontalAlignment="Right"
-                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
-                                    rs:ControlsHelper.IconHeight="12"
-                                    rs:ControlsHelper.IconWidth="12"
-                                    Command="{x:Static rs:RSCommands.CleanTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                    Style="{StaticResource RSApp.Styles.IconButton}"
-                                    ToolTip="清除输入框内容"
-                                    Visibility="Visible" />
+                            <Grid>
+                                <ContentPresenter
+                                    x:Name="ContentSite"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding SelectionBoxItem}"
+                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                    IsHitTestVisible="False" />
                             </Grid>
-
+                            <Button
+                                x:Name="PART_BtnClear"
+                                Grid.Column="1"
+                                Margin="0"
+                                Padding="5,3,5,3"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
+                                rs:ControlsHelper.IconHeight="12"
+                                rs:ControlsHelper.IconWidth="12"
+                                Command="{x:Static rs:RSCommands.CleanTextCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                ToolTip="清除输入框内容"
+                                Visibility="Visible" />
                             <TextBox
                                 x:Name="PART_EditableTextBox"
-                                Margin="0,0,20,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Bottom"
+                                Margin="0"
+                                Padding="0"
+                                rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                 Background="Transparent"
+                                BorderThickness="0"
                                 Focusable="True"
                                 IsReadOnly="{TemplateBinding IsReadOnly}"
-                                Style="{x:Null}"
-                                Template="{StaticResource ComboBoxTextBox}"
-                                Visibility="Hidden" />
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                x:Name="PART_Watermark"
+                                Grid.Column="0"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="#949494"
+                                Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                Visibility="Collapsed" />
 
                             <Popup
                                 x:Name="Popup"
@@ -182,21 +173,20 @@
                     </Border>
 
                     <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsEditable}" Value="False" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=SelectedItem}" Value="{x:Null}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="True">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
+
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:TextBoxHelper.IsShowClearButton)}" Value="False">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
-
-                        <Trigger Property="IsGrouping" Value="true">
-                            <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
-                        </Trigger>
-
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#f6f6f6" />
-                            <Setter Property="Cursor" Value="Hand" />
-                        </Trigger>
 
                         <Trigger Property="HasItems" Value="False">
                             <Setter TargetName="PART_EmptyData" Property="Visibility" Value="Visible" />
@@ -212,6 +202,25 @@
                         <Trigger Property="IsMouseOver" Value="False">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+                        <Trigger Property="IsEditable" Value="True">
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_BtnClear" Property="CommandParameter" Value="{Binding ElementName=PART_EditableTextBox}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEditable" Value="False">
+                            <Setter TargetName="PART_BtnClear" Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition SourceName="PART_EditableTextBox" Property="rs:TextBoxHelper.HasText" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsEditable" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

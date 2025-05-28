@@ -8,14 +8,16 @@
     xmlns:local="clr-namespace:RS.HMI.Client.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
+    Title="上位机客户端"
     MinWidth="1024"
     MinHeight="600"
-    d:DataContext="{d:DesignInstance Type=local:UserViewModel}"
+    d:DataContext="{d:DesignInstance Type=local:HomeViewModel}"
     Background="#eee"
     BorderCornerRadius="5"
     CaptionHeight="36"
     IsFitSystem="False"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
+    IsShowTitle="False"
     ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -31,20 +33,31 @@
         </ResourceDictionary>
     </rs:RSWindow.Resources>
     <rs:RSWindow.CaptionContent>
-        <Grid>
+        <Grid Margin="5,0,5,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Margin="5,0,0,0" Orientation="Horizontal">
-                <Button rs:ControlsHelper.IconData="M924.1 471.3H175.5l295.7-295.7c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L77.8 478.4c-12.5 12.5-12.5 32.8 0 45.3l361.4 361.4c6.2 6.2 14.4 9.4 22.6 9.4s16.4-3.1 22.6-9.4c12.5-12.5 12.5-32.8 0-45.3L180 535.3h744.1c17.7 0 32-14.3 32-32s-14.4-32-32-32z" Style="{StaticResource RSApp.Styles.IconButton}" />
+            <StackPanel Orientation="Horizontal">
                 <TextBlock
-                    Margin="5,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Text="上位机客户端" />
+                <Button
+                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
+                    Command="{x:Static NavigationCommands.BrowseBack}"
+                    CommandTarget="{Binding ElementName=PART_Frame}"
+                    Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                    ToolTip="点击可后退，按住可查看历史记录" />
+                <Button
+                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
+                    Command="{x:Static NavigationCommands.BrowseForward}"
+                    CommandTarget="{Binding ElementName=PART_Frame}"
+                    Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                    ToolTip="点击可前进，按住可查看历史记录" />
+
             </StackPanel>
             <Grid Grid.Column="1">
                 <!--<TextBlock
@@ -53,10 +66,7 @@
                     Text="这是中间的内容，想咋搞咋搞" />-->
             </Grid>
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <Button
-                    Padding="0"
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
-                    Style="{StaticResource RSApp.Styles.IconButton}" />
+                <Button rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}" Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
             </StackPanel>
         </Grid>
     </rs:RSWindow.CaptionContent>
@@ -163,7 +173,7 @@
                 Margin="10,10,10,0"
                 Background="#fff">
                 <Grid>
-                    <Frame Content="{Binding ViewModelSelect}" />
+                    <Frame x:Name="PART_Frame" Content="{Binding ViewModelSelect}" />
                 </Grid>
             </Border>
             <Border Grid.Row="1" Padding="10">

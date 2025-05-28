@@ -114,10 +114,6 @@
                                     <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </ScrollViewer>
 
-
-
-
-
                                 <Border
                                     Grid.Row="1"
                                     Padding="5,3,5,3"
@@ -132,21 +128,21 @@
                                         <StackPanel Grid.Column="0" Orientation="Horizontal">
                                             <Button
                                                 x:Name="PART_BtnFirstPage"
-                                                Margin="5,0,5,0"
+                                                Width="20"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.FirstPage}"
                                                 rs:ControlsHelper.IconHeight="10"
                                                 rs:ControlsHelper.IconWidth="10"
                                                 Foreground="#949494"
-                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                                 ToolTip="首页" />
                                             <Button
                                                 x:Name="PART_BtnPrevious"
-                                                Margin="5,0,5,0"
-                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowLeft}"
+                                                Width="20"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.LeftArrow}"
                                                 rs:ControlsHelper.IconHeight="10"
                                                 rs:ControlsHelper.IconWidth="6"
                                                 Foreground="#555"
-                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                                 ToolTip="上一页" />
                                             <TextBox
                                                 x:Name="PART_TxtPage"
@@ -158,21 +154,21 @@
                                                 Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Pagination.Page, UpdateSourceTrigger=LostFocus}" />
                                             <Button
                                                 x:Name="PART_BtnNext"
-                                                Margin="5,0,5,0"
-                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ArrowRight}"
+                                                Width="20"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.RightArrow}"
                                                 rs:ControlsHelper.IconHeight="10"
                                                 rs:ControlsHelper.IconWidth="6"
                                                 Foreground="#555"
-                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                                 ToolTip="下一页" />
                                             <Button
                                                 x:Name="PART_BtnEndPage"
-                                                Margin="5,0,5,0"
+                                                Width="20"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.EndPage}"
                                                 rs:ControlsHelper.IconHeight="10"
                                                 rs:ControlsHelper.IconWidth="10"
                                                 Foreground="#949494"
-                                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                                 ToolTip="尾页" />
                                             <ComboBox
                                                 Margin="5,0,5,0"

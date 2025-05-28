@@ -92,7 +92,7 @@
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
                         </Grid>
@@ -204,7 +204,7 @@
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                Style="{StaticResource RSApp.Styles.IconButton}"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
                         </Grid>

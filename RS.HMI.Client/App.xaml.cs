@@ -19,7 +19,8 @@ namespace RS.HMI.Client
         /// </summary>
         /// 
 #if DEBUG
-        public override string AppHostAddress { get; set; } = "http://localhost:7109/";
+        public override string AppHostAddress { get; set; } = "http://localhost:7000/";
+        //public override string AppHostAddress { get; set; } = "http://localhost:7109/";
 #else
         public override string AppHostAddress { get; set; } = "http://localhost:7000/";
 #endif

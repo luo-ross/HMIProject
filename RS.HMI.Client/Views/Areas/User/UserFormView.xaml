@@ -20,7 +20,7 @@
         <TextBox
             x:Name="TxtEmail"
             rs:TextBoxHelper.IsShowClearButton="True"
-            Text="{Binding UserModelEdit.Email}">
+            Text="{Binding ModelEdit.Email}">
             <i:Interaction.Behaviors>
                 <rs:FocusOnLoadBehavior />
             </i:Interaction.Behaviors>
@@ -29,11 +29,11 @@
             Margin="2,0,0,0"
             Foreground="#949494"
             Text="昵称" />
-        <TextBox rs:TextBoxHelper.IsShowClearButton="True" Text="{Binding UserModelEdit.NickName}" />
+        <TextBox rs:TextBoxHelper.IsShowClearButton="True" Text="{Binding ModelEdit.NickName}" />
         <TextBlock
             Margin="2,0,0,0"
             Foreground="#949494"
             Text="是否禁用" />
-        <CheckBox Margin="5,3,3,3" IsChecked="{Binding UserModelEdit.IsDisabled, TargetNullValue=False}" />
+        <CheckBox Margin="5,3,3,3" IsChecked="{Binding ModelEdit.IsDisabled, TargetNullValue=False}" />
     </StackPanel>
 </UserControl>

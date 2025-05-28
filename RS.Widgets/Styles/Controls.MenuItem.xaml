@@ -527,6 +527,7 @@
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="#949494" />
+                <Setter Property="Background" Value="#eee" />
             </Trigger>
         </Style.Triggers>
     </Style>

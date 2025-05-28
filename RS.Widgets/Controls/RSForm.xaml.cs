@@ -1,21 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Abstractions;
-using RS.Commons;
-using RS.Widgets.Messages;
+﻿using RS.Commons;
+using RS.Widgets.Interface;
 using RS.Widgets.Models;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace RS.Widgets.Controls
 {
@@ -28,15 +17,26 @@ namespace RS.Widgets.Controls
         public static readonly RoutedCommand ReturnCommand = new RoutedCommand();
 
         public event Action ReturnClick;
-        public RSForm(UserControl userControl, FormMessageBase message)
+
+
+        /// <summary>
+        /// 构造方法
+        /// </summary>
+        /// <param name="formControl">自定义表单</param>
+        /// <param name="message"></param>
+        private RSForm()
         {
             InitializeComponent();
-            this.FormContent = userControl;
-            this.FormMessage = message;
+        }
+
+        public RSForm(UserControl formControl, IFormService formService)
+        {
+            InitializeComponent();
+            this.FormContent = formControl;
+            this.FormService = formService;
             //this.InputBindings.Add(new KeyBinding(SubmitCommand, Key.Y, ModifierKeys.Alt));
             this.CommandBindings.Add(new CommandBinding(SubmitCommand, SubmitExecuted, CanSubmitExecuted));
             this.CommandBindings.Add(new CommandBinding(ReturnCommand, ReturnExecuted, CanReturnExecuted));
-
             this.MouseEnter += RSForm_MouseEnter;
         }
 
@@ -62,20 +62,10 @@ namespace RS.Widgets.Controls
 
         private void SubmitExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var formMessage = this.FormMessage;
+            var formService = this.FormService;
             this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
-                switch (formMessage.CRUD)
-                {
-                    case RS.Commons.Enums.CRUD.Add:
-                        await formMessage.ViewModel.SubmitCommand.ExecuteAsync(formMessage.FormData);
-                        break;
-                    case RS.Commons.Enums.CRUD.Update:
-                        await formMessage.ViewModel.UpdateCommand.ExecuteAsync(formMessage.FormData);
-                        break;
-                }
-
-
+                formService.FormSubmitClickCommand.Execute(null);
                 return OperateResult.CreateSuccessResult();
             });
 
@@ -92,22 +82,15 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("FormContent", typeof(object), typeof(RSForm), new PropertyMetadata(null));
 
 
-
-        [Description("表单消息")]
+        [Description("表单接口")]
         [Browsable(false)]
-        public FormMessageBase FormMessage
+        public IFormService FormService
         {
-            get { return (FormMessageBase)GetValue(FormMessageProperty); }
+            get { return (IFormService)GetValue(FormMessageProperty); }
             set { SetValue(FormMessageProperty, value); }
         }
 
         public static readonly DependencyProperty FormMessageProperty =
-            DependencyProperty.Register(nameof(FormMessage), typeof(FormMessageBase), typeof(RSForm), new PropertyMetadata(null));
-
-
-
-
-
-
+            DependencyProperty.Register(nameof(FormService), typeof(IFormService), typeof(RSForm), new PropertyMetadata(null));
     }
 }
