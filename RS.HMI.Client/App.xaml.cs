@@ -27,8 +27,14 @@ namespace RS.HMI.Client
 
         public App()
         {
+           
+
+
+
+
             //配置依赖注入服务
             this.OnConfigIocServices += App_OnConfigIocServices;
+          
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -38,6 +44,9 @@ namespace RS.HMI.Client
             //loginView.Show();
             var homeView = ServiceProvider?.GetRequiredService<HomeView>();
             homeView?.Show();
+
+
+
         }
 
 

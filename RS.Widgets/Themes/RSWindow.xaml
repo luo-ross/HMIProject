@@ -14,7 +14,6 @@
         <Setter Property="ResizeMode" Value="CanResize" />
         <Setter Property="Background" Value="#F1F2F3" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
                 <WindowChrome
@@ -145,6 +144,74 @@
                                             </Grid>
                                         </AdornerDecorator>
                                     </Grid>
+
+
+                                    <Grid
+                                        x:Name="PART_ResizeHost"
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        WindowChrome.IsHitTestVisibleInChrome="True">
+                                        <Rectangle
+                                            x:Name="PART_Top"
+                                            Height="5"
+                                            Margin="5,0,5,0"
+                                            VerticalAlignment="Top"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_Bottom"
+                                            Height="5"
+                                            Margin="5,0,5,0"
+                                            VerticalAlignment="Bottom"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_Left"
+                                            Width="5"
+                                            Margin="0,5,0,5"
+                                            HorizontalAlignment="Left"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_Right"
+                                            Width="5"
+                                            Margin="0,5,0,5"
+                                            HorizontalAlignment="Right"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_LeftBottom"
+                                            Width="5"
+                                            Height="5"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Bottom"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_RightBottom"
+                                            Width="5"
+                                            Height="5"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_RightTop"
+                                            Width="5"
+                                            Height="5"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                        <Rectangle
+                                            x:Name="PART_LeftTop"
+                                            Width="6"
+                                            Height="5"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Fill="Transparent"
+                                            Stroke="{x:Null}" />
+                                    </Grid>
                                 </Grid>
                             </rs:RSDialog>
                         </Border>
@@ -176,6 +243,7 @@
                         <Trigger Property="ResizeMode" Value="NoResize">
                             <Setter TargetName="PART_Minimize" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_ResizeHost" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="ResizeMode" Value="CanResizeWithGrip">
                             <Setter TargetName="PART_BtnResize" Property="Visibility" Value="Visible" />
@@ -221,6 +289,33 @@
                         </Trigger>
                         <Trigger Property="IsShowTitle" Value="False">
                             <Setter TargetName="PART_Title" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger SourceName="PART_Left" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeWE" />
+                        </Trigger>
+                        <Trigger SourceName="PART_Right" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeWE" />
+                        </Trigger>
+
+                        <Trigger SourceName="PART_Top" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeNS" />
+                        </Trigger>
+                        <Trigger SourceName="PART_Bottom" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeNS" />
+                        </Trigger>
+
+                        <Trigger SourceName="PART_LeftTop" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeNWSE" />
+                        </Trigger>
+                        <Trigger SourceName="PART_RightBottom" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeNWSE" />
+                        </Trigger>
+                        <Trigger SourceName="PART_RightTop" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeNESW" />
+                        </Trigger>
+                        <Trigger SourceName="PART_LeftBottom" Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="SizeNESW" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

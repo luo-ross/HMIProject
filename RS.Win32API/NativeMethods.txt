@@ -7,3 +7,5 @@ SC_*
 S_*
 CW_*
 MSGFLTINFO_*
+GetProcessDpiAwareness
+GetDpiForMonitor

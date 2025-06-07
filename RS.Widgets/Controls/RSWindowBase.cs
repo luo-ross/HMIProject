@@ -1,8 +1,11 @@
-﻿using System.ComponentModel;
+﻿using RS.Widgets.Enums;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
@@ -13,6 +16,7 @@ namespace RS.Widgets.Controls
     public class RSWindowBase : Window
     {
         internal Border PART_Border;
+        public HwndSource HwndSource;
 
         public RSWindowBase()
         {
@@ -26,6 +30,63 @@ namespace RS.Widgets.Controls
             this.Loaded += RSWindowBase_Loaded;
             this.Closing += RSWindow_Closing;
         }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            this.HwndSource = (HwndSource)PresentationSource.FromVisual(this);
+        }
+
+
+        [Description("窗口最大化时是否全屏")]
+        [Browsable(false)]
+        public bool IsMaxsizedFullScreen
+        {
+            get { return (bool)GetValue(IsMaxsizedFullScreenProperty); }
+            set { SetValue(IsMaxsizedFullScreenProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsMaxsizedFullScreenProperty =
+            DependencyProperty.Register("IsMaxsizedFullScreen", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
+
+
+
+        [Description("圆角边框大小")]
+        [Browsable(true)]
+        [Category("自定义窗口样式")]
+        public CornerRadius BorderCornerRadius
+        {
+            get { return (CornerRadius)GetValue(BorderCornerRadiusProperty); }
+            set { SetValue(BorderCornerRadiusProperty, value); }
+        }
+
+        public static readonly DependencyProperty BorderCornerRadiusProperty =
+            DependencyProperty.Register("BorderCornerRadius", typeof(CornerRadius), typeof(RSWindowBase), new PropertyMetadata(new CornerRadius(0)));
+
+
+        [Description("宽边裁剪")]
+        [Browsable(false)]
+        public Geometry BorderClipRect
+        {
+            get { return (Geometry)GetValue(BorderClipRectProperty); }
+            set { SetValue(BorderClipRectProperty, value); }
+        }
+
+        public static readonly DependencyProperty BorderClipRectProperty =
+            DependencyProperty.Register("BorderClipRect", typeof(Geometry), typeof(RSWindowBase), new PropertyMetadata(null));
+
+
+        [Description("是否显示窗体关闭放大缩小按钮")]
+        [Browsable(true)]
+        public bool IsHidenWinCommandBtn
+        {
+            get { return (bool)GetValue(IsHidenWinCommandBtnProperty); }
+            set { SetValue(IsHidenWinCommandBtnProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsHidenWinCommandBtnProperty =
+            DependencyProperty.Register("IsHidenWinCommandBtn", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
+
 
         private void RSWindow_Closing(object? sender, CancelEventArgs e)
         {
@@ -87,57 +148,27 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_Border = this.GetTemplateChild(nameof(this.PART_Border)) as Border;
+            var resizeHost = this.GetTemplateChild("PART_ResizeHost") as Grid;
+            if (resizeHost != null)
+            {
+                foreach (Rectangle resizeRectangle in resizeHost.Children)
+                {
+                    resizeRectangle.PreviewMouseDown += ResizeRectangle_PreviewMouseDown;
+                    resizeRectangle.MouseMove += ResizeRectangle_MouseMove;
+                }
+            }
+
             this.UpdateBorderClipRect();
         }
 
-        [Description("窗口最大化时是否全屏")]
-        [Browsable(false)]
-        public bool IsMaxsizedFullScreen
+        private void ResizeRectangle_MouseMove(object sender, MouseEventArgs e)
         {
-            get { return (bool)GetValue(IsMaxsizedFullScreenProperty); }
-            set { SetValue(IsMaxsizedFullScreenProperty, value); }
+
         }
-
-        public static readonly DependencyProperty IsMaxsizedFullScreenProperty =
-            DependencyProperty.Register("IsMaxsizedFullScreen", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
-
-
-
-        [Description("圆角边框大小")]
-        [Browsable(true)]
-        [Category("自定义窗口样式")]
-        public CornerRadius BorderCornerRadius
+        private void ResizeWindow(ResizeDirection direction)
         {
-            get { return (CornerRadius)GetValue(BorderCornerRadiusProperty); }
-            set { SetValue(BorderCornerRadiusProperty, value); }
+            Ross.SendMessage(new HWND(this.HwndSource.Handle), Ross.WM_SYSCOMMAND, new WPARAM(Ross.SC_SIZE + (uint)direction), new LPARAM(IntPtr.Zero));
         }
-
-        public static readonly DependencyProperty BorderCornerRadiusProperty =
-            DependencyProperty.Register("BorderCornerRadius", typeof(CornerRadius), typeof(RSWindowBase), new PropertyMetadata(new CornerRadius(0)));
-
-
-        [Description("宽边裁剪")]
-        [Browsable(false)]
-        public Geometry BorderClipRect
-        {
-            get { return (Geometry)GetValue(BorderClipRectProperty); }
-            set { SetValue(BorderClipRectProperty, value); }
-        }
-
-        public static readonly DependencyProperty BorderClipRectProperty =
-            DependencyProperty.Register("BorderClipRect", typeof(Geometry), typeof(RSWindowBase), new PropertyMetadata(null));
-
-
-        [Description("是否显示窗体关闭放大缩小按钮")]
-        [Browsable(true)]
-        public bool IsHidenWinCommandBtn
-        {
-            get { return (bool)GetValue(IsHidenWinCommandBtnProperty); }
-            set { SetValue(IsHidenWinCommandBtnProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsHidenWinCommandBtnProperty =
-            DependencyProperty.Register("IsHidenWinCommandBtn", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
 
 
 
@@ -212,5 +243,46 @@ namespace RS.Widgets.Controls
 
             return pathGeometry;
         }
+
+        private void ResizeRectangle_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Rectangle rectangle = sender as Rectangle;
+            if (rectangle != null)
+            {
+                switch (rectangle.Name)
+                {
+                    case nameof(ResizeDirection.PART_Top):
+                        ResizeWindow(ResizeDirection.PART_Top);
+                        break;
+                    case nameof(ResizeDirection.PART_Bottom):
+                        ResizeWindow(ResizeDirection.PART_Bottom);
+                        break;
+                    case nameof(ResizeDirection.PART_Left):
+                        ResizeWindow(ResizeDirection.PART_Left);
+                        break;
+                    case nameof(ResizeDirection.PART_Right):
+                        ResizeWindow(ResizeDirection.PART_Right);
+                        break;
+                    case nameof(ResizeDirection.PART_LeftTop):
+                        ResizeWindow(ResizeDirection.PART_LeftTop);
+                        break;
+                    case nameof(ResizeDirection.PART_RightTop):
+                        ResizeWindow(ResizeDirection.PART_RightTop);
+                        break;
+                    case nameof(ResizeDirection.PART_LeftBottom):
+                        ResizeWindow(ResizeDirection.PART_LeftBottom);
+                        break;
+                    case nameof(ResizeDirection.PART_RightBottom):
+                        ResizeWindow(ResizeDirection.PART_RightBottom);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+
+
     }
 }

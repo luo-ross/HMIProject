@@ -9,6 +9,7 @@ using static Windows.Win32.Ross;
 using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
+using System.Windows;
 
 namespace Windows.Win32API
 {
@@ -28,5 +29,6 @@ namespace Windows.Win32API
             }
             return true;
         }
+
     }
 }
