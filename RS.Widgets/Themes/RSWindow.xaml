@@ -12,8 +12,9 @@
     <converters:ForegroundColorConverter x:Key="ForegroundColorConverter" />
     <Style x:Key="RSApp.Styles.RSWindowBaseStyle" TargetType="{x:Type rs:RSWindowBase}">
         <Setter Property="ResizeMode" Value="CanResize" />
-        <Setter Property="Background" Value="#eee" />
+        <Setter Property="Background" Value="#F1F2F3" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
                 <WindowChrome

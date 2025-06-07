@@ -21,6 +21,7 @@
                 <Setter Property="MinWidth" Value="20" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#eee" />
                 <Setter Property="Foreground" Value="#949494" />
             </Trigger>
         </Style.Triggers>
@@ -41,6 +42,7 @@
         BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}"
         TargetType="{x:Type TextBlock}">
         <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Foreground" Value="#333" />
     </Style>
 
 </ResourceDictionary>

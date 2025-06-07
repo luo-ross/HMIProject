@@ -12,13 +12,12 @@
     MinWidth="1024"
     MinHeight="600"
     d:DataContext="{d:DesignInstance Type=local:HomeViewModel}"
-    Background="#eee"
     BorderCornerRadius="5"
     CaptionHeight="36"
     IsFitSystem="False"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
     IsShowTitle="False"
-    ResizeMode="CanResize"
+    ResizeMode="CanResizeWithGrip"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <!--<rs:RSWindow.DataContext>
@@ -29,6 +28,9 @@
             <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
             <DataTemplate DataType="{x:Type areas:UserViewModel}">
                 <areas:UserView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type areas:RoleViewModel}">
+                <areas:RoleView />
             </DataTemplate>
         </ResourceDictionary>
     </rs:RSWindow.Resources>
@@ -90,7 +92,7 @@
                         OnBtnSearchCallBack="BtnSearch_OnBtnSearchCallBack"
                         SearchContent="{Binding SearchContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
-                <Border Grid.Row="1" Padding="10,0,10,10">
+                <Border Grid.Row="1">
                     <ScrollViewer>
                         <StackPanel>
                             <RadioButton

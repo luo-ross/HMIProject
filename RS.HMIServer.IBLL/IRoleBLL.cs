@@ -58,5 +58,13 @@ namespace RS.HMIServer.IBLL
         /// <param name="sessionId">会话主键</param>
         /// <returns></returns>
         Task<OperateResult> UpdateNameAsync(AESEncryptModel aesEncryptModel, string sessionId);
+        
+        /// <summary>
+        /// 更新角色
+        /// </summary>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <returns></returns>
+        Task<OperateResult> UpdateRoleAsync(AESEncryptModel aesEncryptModel, string sessionId);
     }
 }

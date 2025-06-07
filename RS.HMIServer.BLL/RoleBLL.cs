@@ -212,5 +212,33 @@ namespace RS.HMIServer.BLL
 
             return getAESEncryptResult;
         }
+
+
+        /// <summary>
+        /// 更新角色
+        /// </summary>
+        /// <param name="aesEncryptModel">加密数据</param>
+        /// <param name="sessionId">会话Id</param>
+        /// <returns></returns>
+        public async Task<OperateResult> UpdateRoleAsync(AESEncryptModel aesEncryptModel, string sessionId)
+        {
+            //进行数据解密
+            var getAESDecryptResult = await this.GeneralBLL.GetAESDecryptAsync<RoleModel>(aesEncryptModel, sessionId);
+            if (!getAESDecryptResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(getAESDecryptResult);
+            }
+            var roleModel = getAESDecryptResult.Data;
+
+
+            //将数据更新写入到数据库
+            OperateResult operateResult = await this.RoleDAL.UpdateRoleAsync(roleModel);
+            if (!operateResult.IsSuccess)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>(operateResult);
+            }
+
+            return OperateResult.CreateSuccessResult(); 
+        }
     }
 }

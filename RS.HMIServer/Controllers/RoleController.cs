@@ -30,7 +30,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> GetRole(AESEncryptModel aesEncryptModel)
         {
             return await this.RoleBLL.GetRolesAsync(aesEncryptModel, SessionId);
@@ -41,10 +40,19 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> AddRole(AESEncryptModel aesEncryptModel)
         {
             return await this.RoleBLL.AddRoleAsync(aesEncryptModel, SessionId);
+        }
+
+        /// <summary>
+        /// 新增角色接口
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<OperateResult> UpdateRole(AESEncryptModel aesEncryptModel)
+        {
+            return await this.RoleBLL.UpdateRoleAsync(aesEncryptModel, SessionId);
         }
 
 
@@ -53,7 +61,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult> UpdateName(AESEncryptModel aesEncryptModel)
         {
             return await this.RoleBLL.UpdateNameAsync(aesEncryptModel, SessionId);
@@ -65,7 +72,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult> UpdateDescription(AESEncryptModel aesEncryptModel)
         {
             return await this.RoleBLL.UpdateDescriptionAsync(aesEncryptModel, SessionId);
@@ -77,7 +83,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult> UpdateCompanyId(AESEncryptModel aesEncryptModel)
         {
             return await this.RoleBLL.UpdateCompanyIdAsync(aesEncryptModel, SessionId);
@@ -89,7 +94,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> DeleteRole(AESEncryptModel aesEncryptModel)
         {
             return await this.RoleBLL.DeleteRoleAsync(aesEncryptModel, SessionId);

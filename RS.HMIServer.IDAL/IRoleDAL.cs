@@ -17,7 +17,15 @@ namespace RS.HMIServer.IDAL
         /// <param name="roleModel">角色数据</param>
         /// <returns></returns>
         Task<OperateResult<RoleModel>> AddRoleAsync(RoleModel roleModel);
-       
+
+        /// <summary>
+        /// 更新角色
+        /// </summary>
+        /// <param name="roleModel">更新角色</param>
+        /// <returns></returns>
+        Task<OperateResult> UpdateRoleAsync(RoleModel roleModel);
+
+
         /// <summary>
         /// 删除角色
         /// </summary>
@@ -51,5 +59,7 @@ namespace RS.HMIServer.IDAL
         /// <param name="roleModel">更新角色</param>
         /// <returns></returns>
         Task<OperateResult> UpdateNameAsync(RoleModel roleModel);
+
+     
     }
 }

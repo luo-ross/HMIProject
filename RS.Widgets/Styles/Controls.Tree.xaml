@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
-    <converters:IndentConverter x:Key="IndentConverter" />
+
     <Style x:Key="{x:Type TreeView}" TargetType="TreeView">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -25,31 +25,32 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
+    <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
-                    <Grid>
-                        <Border
-                            Width="15"
-                            Height="15"
-                            Background="Transparent">
-                            <Path
-                                x:Name="PART_Icon"
-                                Width="6"
-                                Height="10"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="M761.056 532.128c0.512-0.993 1.343-1.823 1.792-2.849 8.8-18.304 5.92-40.703-9.664-55.424L399.936 139.744c-19.265-18.209-49.631-17.345-67.872 1.889-18.209 19.264-17.376 49.63 1.889 67.872l316.96 299.839L335.2 813.632c-19.072 18.399-19.648 48.767-1.247 67.872 9.407 9.791 21.984 14.689 34.56 14.689 12 0 24-4.48 33.312-13.44l350.048-337.376c0.673-0.673 0.927-1.6 1.6-2.303 0.513-0.48 1.056-0.833 1.567-1.344 2.72-2.85 4.16-6.339 6.016-9.602z"
-                                Fill="#333"
-                                RenderTransformOrigin="0.5,0.5"
-                                Stretch="Fill">
-                                <Path.RenderTransform>
-                                    <RotateTransform x:Name="PART_RotateTransform" Angle="0" />
-                                </Path.RenderTransform>
-                            </Path>
-                        </Border>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Path
+                            x:Name="PART_Icon"
+                            Width="6"
+                            Height="10"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="M761.056 532.128c0.512-0.993 1.343-1.823 1.792-2.849 8.8-18.304 5.92-40.703-9.664-55.424L399.936 139.744c-19.265-18.209-49.631-17.345-67.872 1.889-18.209 19.264-17.376 49.63 1.889 67.872l316.96 299.839L335.2 813.632c-19.072 18.399-19.648 48.767-1.247 67.872 9.407 9.791 21.984 14.689 34.56 14.689 12 0 24-4.48 33.312-13.44l350.048-337.376c0.673-0.673 0.927-1.6 1.6-2.303 0.513-0.48 1.056-0.833 1.567-1.344 2.72-2.85 4.16-6.339 6.016-9.602z"
+                            Fill="#333"
+                            RenderTransformOrigin="0.5,0.5"
+                            Stretch="Fill">
+                            <Path.RenderTransform>
+                                <RotateTransform x:Name="PART_RotateTransform" Angle="0" />
+                            </Path.RenderTransform>
+                        </Path>
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CheckStates">
@@ -76,7 +77,8 @@
                                 <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                    </Grid>
+                    </Border>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -86,6 +88,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="#000" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="rs:TreeViewItemHelper.IsEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeViewItem}">
@@ -100,16 +103,17 @@
                             Grid.Column="0"
                             Grid.ColumnSpan="3"
                             Margin="0"
-                            Padding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource IndentConverter}}"
+                            Padding="{TemplateBinding rs:TreeViewItemHelper.Indentation}"
                             Background="{TemplateBinding Background}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" MinWidth="19" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <ToggleButton
                                     x:Name="Expander"
+                                    Padding="8,0,0,0"
                                     ClickMode="Press"
                                     IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                     Style="{StaticResource ExpandCollapseToggleStyle}" />
@@ -123,7 +127,7 @@
                         <ItemsPresenter
                             x:Name="ItemsHost"
                             Grid.Row="1"
-                            Visibility="Collapsed" />
+                            Visibility="Visible" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SelectionStates">
                                 <VisualState x:Name="Selected" />
@@ -144,13 +148,16 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PART_Border" Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#E5F3FF" />
+                            <Setter Property="Background" Value="#eaeaea" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="#CDE8FF" />
+                            <Setter Property="Background" Value="#eee" />
                         </Trigger>
                         <Trigger Property="HasItems" Value="false">
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

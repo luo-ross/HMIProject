@@ -138,7 +138,7 @@ namespace RS.Widgets.Controls
 
         public override void OnApplyTemplate()
         {
-
+            base.OnApplyTemplate();
             this.PART_ColorSelectCanvas = GetTemplateChild(nameof(this.PART_ColorSelectCanvas)) as Canvas;
             this.PART_HouColorCanvas = GetTemplateChild(nameof(this.PART_HouColorCanvas)) as Canvas;
             this.PART_ColorSelectThumb = GetTemplateChild(nameof(this.PART_ColorSelectThumb)) as Thumb;
@@ -179,7 +179,7 @@ namespace RS.Widgets.Controls
                 this.PART_HouColorThumb.DragCompleted += PART_HouColorThumb_DragCompleted;
             }
 
-            base.OnApplyTemplate();
+           
         }
 
         private void PART_HouColorThumb_DragCompleted(object sender, DragCompletedEventArgs e)

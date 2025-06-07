@@ -4,6 +4,7 @@ using RS.Widgets.Controls;
 using RS.Widgets.Interface;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,8 @@ namespace RS.Widgets.Models
         {
             this.DialogKey = Guid.NewGuid().ToString();
         }
-     
+   
+
         private string dialogKey;
         /// <summary>
         /// 需要使用的Dialog主键

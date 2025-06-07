@@ -16,8 +16,9 @@ namespace RS.Widgets.Converters
                 return string.Empty;
             }
             return System.Convert.ToInt32(value) + 1;
-
         }
+
+
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();

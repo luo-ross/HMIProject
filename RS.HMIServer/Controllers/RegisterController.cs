@@ -29,7 +29,6 @@ namespace RS.HMIServer.Controllers
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetEmailVerify(AESEncryptModel aesEncryptModel)
         {
             var handleResult = await RegisterBLL.GetEmailVerifyAsync(aesEncryptModel, SessionId, Audiences);
@@ -58,7 +57,6 @@ namespace RS.HMIServer.Controllers
         /// <param name="aesEncryptModel">AES加密数据</param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         public async Task<OperateResult<AESEncryptModel>> GetSMSVerify(AESEncryptModel aesEncryptModel)
         {
             var handleResult = await RegisterBLL.GetSMSVerifyAsync(aesEncryptModel, SessionId, Audiences);
@@ -71,7 +69,6 @@ namespace RS.HMIServer.Controllers
         /// <param name="aesEncryptModel"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         public async Task<OperateResult> SMSVerifyValid(AESEncryptModel aesEncryptModel)
         {
             var handleResult = await RegisterBLL.SMSVerifyValidAsync(aesEncryptModel, SessionId, Audiences);

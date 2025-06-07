@@ -30,18 +30,17 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> GetUser(AESEncryptModel aesEncryptModel)
         {
             return await UserBLL.GetUsersAsync(aesEncryptModel, SessionId);
         }
+
 
         /// <summary>
         /// 更新用户是否禁用
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult> UpdateIsDisable(AESEncryptModel aesEncryptModel)
         {
             return await this.UserBLL.UpdateIsDisableAsync(aesEncryptModel, SessionId);
@@ -52,7 +51,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult> UpdateEmail(AESEncryptModel aesEncryptModel)
         {
             return await this.UserBLL.UpdateEmailAsync(aesEncryptModel, SessionId);
@@ -64,7 +62,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult> UpdateNickName(AESEncryptModel aesEncryptModel)
         {
             return await this.UserBLL.UpdateNickNameAsync(aesEncryptModel, SessionId);
@@ -76,7 +73,6 @@ namespace RS.HMIServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [FilterConfig]
         public async Task<OperateResult<AESEncryptModel>> DeleteUser(AESEncryptModel aesEncryptModel)
         {
             return await this.UserBLL.DeleteUserAsync(aesEncryptModel, SessionId);

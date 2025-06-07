@@ -15,7 +15,7 @@ namespace RS.HMI.Client.Views
     public partial class HomeViewModel : NotifyBase
     {
 
-        public HomeViewModel(UserViewModel userViewModel)
+        public HomeViewModel(RoleViewModel userViewModel)
         {
             this.ViewModelSelect = userViewModel;
             //this.viewModelSelect = App.ServiceProvider?.GetRequiredService<UserViewModel>();
@@ -119,11 +119,5 @@ namespace RS.HMI.Client.Views
             }
             set { treeModelList = value; }
         }
-
-
-
-
-
-
     }
 }

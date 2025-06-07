@@ -47,27 +47,27 @@ namespace RS.HMI.Client.Views.Areas
 
         #region 依赖属性
 
-        private ObservableCollection<ComboBoxItem<bool>> isDisableSelectList;
+        private ObservableCollection<ComboBoxItemModel<bool>> isDisableSelectList;
         /// <summary>
         /// 用户是否禁用选择
         /// </summary>
-        public ObservableCollection<ComboBoxItem<bool>> IsDisableSelectList
+        public ObservableCollection<ComboBoxItemModel<bool>> IsDisableSelectList
         {
             get
             {
                 if (isDisableSelectList == null)
                 {
-                    isDisableSelectList = new ObservableCollection<ComboBoxItem<bool>>();
-                    isDisableSelectList.Add(new ComboBoxItem<bool>()
+                    isDisableSelectList = new ObservableCollection<ComboBoxItemModel<bool>>();
+                    isDisableSelectList.Add(new ComboBoxItemModel<bool>()
                     {
-                        SelectedValue = true,
-                        DisplayMember = "已禁用",
+                        Key = true,
+                        KeyDes = "已禁用",
                     });
 
-                    isDisableSelectList.Add(new ComboBoxItem<bool>()
+                    isDisableSelectList.Add(new ComboBoxItemModel<bool>()
                     {
-                        SelectedValue = false,
-                        DisplayMember = "未禁用",
+                        Key = false,
+                        KeyDes = "未禁用",
                     });
                 }
                 return isDisableSelectList;
@@ -171,29 +171,6 @@ namespace RS.HMI.Client.Views.Areas
         }
 
 
-        /// <summary>
-        /// 继承基类新增
-        /// </summary>
-        public override async void FormSubmitClick()
-        {
-            //if (obj is UserModel userModel)
-            //{
-            //    await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
-            //    {
-            //        //在这里向WebAPI发起请求提交数据
-            //        var sumitResult = await RSAppAPI.User.GetUser.AESHttpPostAsync(userModel, nameof(RSAppAPI));
-            //        if (!sumitResult.IsSuccess)
-            //        {
-            //            return sumitResult;
-            //        }
-
-            //        return OperateResult.CreateSuccessResult();
-            //    });
-            //}
-        }
-
-
-
 
         private bool CanUserEnableClick(UserModel? userModel)
         {
@@ -217,6 +194,11 @@ namespace RS.HMI.Client.Views.Areas
         {
             var sdf = 1;
             await Task.Delay(3000);
+        }
+
+        public  override async Task OnFormSubmitAsync(UserModel modelEidt)
+        {
+           
         }
 
         #endregion

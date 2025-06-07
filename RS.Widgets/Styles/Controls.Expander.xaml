@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <Style x:Key="RSApp.Styles.ValidErrorTipPathStyle" TargetType="{x:Type Path}">
+        <Setter Property="Data" Value="M533.188923 966.340923a472.615385 472.615385 0 1 1 472.615385-472.615385 473.166769 473.166769 0 0 1-472.615385 472.615385z m0-877.410461a404.795077 404.795077 0 1 0 0 809.590153 404.795077 404.795077 0 0 0 0-809.590153zM482.304 273.329231a50.884923 50.884923 0 1 0 101.612308 0 50.884923 50.884923 0 0 0-101.533539 0h-0.078769z m50.884923 491.677538a33.870769 33.870769 0 0 1-33.870769-33.870769V425.905231a33.870769 33.870769 0 1 1 67.820308 0v305.467077a33.870769 33.870769 0 0 1-33.949539 33.634461z" />
+        <Setter Property="Fill" Value="#ff5b5b" />
+        <Setter Property="Stretch" Value="Fill" />
+    </Style>
+</ResourceDictionary>

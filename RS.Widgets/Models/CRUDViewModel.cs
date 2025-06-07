@@ -14,58 +14,60 @@ namespace RS.Widgets.Models
     /// 正删改查Form表单基类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CRUDViewModel<T> : ViewModelBase, IFormService
+    public abstract class CRUDViewModel<T> : ViewModelBase, IFormService
         where T : class, new()
     {
         /// <summary>
         /// 获取或设置搜索按钮点击时执行的命令
         /// </summary>
-        public ICommand SearchClickCommand { get; set; }
+        public ICommand SearchClickCommand { get; }
 
         /// <summary>
         /// 获取或设置清除搜索条件按钮点击时执行的命令
         /// </summary>
-        public ICommand SearchClearClickCommand { get; set; }
+        public ICommand SearchClearClickCommand { get; }
 
         /// <summary>
         /// 获取或设置添加新项按钮点击时执行的命令
         /// </summary>
-        public ICommand AddClickCommand { get; set; }
+        public ICommand AddClickCommand { get; }
 
         /// <summary>
         /// 获取或设置删除选中项按钮点击时执行的命令
         /// </summary>
-        public ICommand DeleteClickCommand { get; set; }
+        public ICommand DeleteClickCommand { get; }
 
         /// <summary>
         /// 获取或设置更新选中项按钮点击时执行的命令
         /// </summary>
-        public ICommand UpdateClickCommand { get; set; }
+        public ICommand UpdateClickCommand { get; }
 
         /// <summary>
         /// 获取或设置查看详情按钮点击时执行的命令
         /// </summary>
-        public ICommand DetailsClickCommand { get; set; }
+        public ICommand DetailsClickCommand { get; }
 
         /// <summary>
         /// 获取或设置导出数据按钮点击时执行的命令
         /// </summary>
-        public ICommand ExportClickCommand { get; set; }
+        public ICommand ExportClickCommand { get; }
 
         /// <summary>
         /// 获取或设置关闭当前视图/窗口按钮点击时执行的命令
         /// </summary>
-        public ICommand CloseClickCommand { get; set; }
+        public ICommand CloseClickCommand { get; }
 
         /// <summary>
         /// 获取或设置分页操作时执行的异步命令
         /// </summary>
-        public ICommand PaginationCommand { get; set; }
+        public ICommand PaginationCommand { get; }
 
         /// <summary>
         /// 获取或设置表单提交按钮点击时执行的命令
         /// </summary>
-        public ICommand FormSubmitClickCommand { get; set; }
+        public IAsyncRelayCommand FormSubmitCommand { get; }
+
+
 
         /// <summary>
         /// 默认构造方法
@@ -81,12 +83,8 @@ namespace RS.Widgets.Models
             this.ExportClickCommand = new RelayCommand<ObservableCollection<T>>(ExportClick, CanExportClick);
             this.CloseClickCommand = new RelayCommand(CloseClick);
             this.PaginationCommand = new AsyncRelayCommand<Pagination>(PaginationAsync, CanPaginationAsync);
-            this.FormSubmitClickCommand = new RelayCommand(FormSubmitClick);
+            this.FormSubmitCommand = new AsyncRelayCommand(FormSubmitAsync);
         }
-
-
-
-
 
 
 
@@ -170,6 +168,7 @@ namespace RS.Widgets.Models
                 this.SetProperty(ref modelList, value);
             }
         }
+
 
         #endregion
 
@@ -306,10 +305,29 @@ namespace RS.Widgets.Models
         /// <summary>
         /// 表单提交点击事件
         /// </summary>
-        public virtual async void FormSubmitClick()
+        private async Task FormSubmitAsync()
         {
-            await this.Dialog.GetMessageBox().ShowMessageAsync("方法未实现");
+            var modelBase = this.ModelEdit as ModelBase;
+            if (modelBase == null)
+            {
+               throw new ArgumentNullException(nameof(modelBase));
+            }
+          
+            switch (this.CRUD)
+            {
+                case CRUD.Add:
+                    break;
+                case CRUD.Update:
+                    if (modelBase.Id == null|| modelBase.Id==0)
+                    {
+                        throw new ArgumentNullException(nameof(modelBase.Id));
+                    }
+                    break;
+            }
+            await this.OnFormSubmitAsync(this.ModelEdit);
         }
+
+        public abstract Task OnFormSubmitAsync(T modelEidt);
         #endregion
 
     }

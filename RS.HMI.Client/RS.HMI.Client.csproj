@@ -9,6 +9,7 @@
 		<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<UserSecretsId>e8104be4-0ec8-48ba-b334-c8a005ff8713</UserSecretsId>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

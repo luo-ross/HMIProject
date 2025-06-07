@@ -2,7 +2,7 @@
 
 
     <Style TargetType="{x:Type ScrollViewer}">
-        <Setter Property="BorderBrush" Value="LightGray" />
+        <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -47,8 +47,7 @@
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" Value="#F5F5F5" />
-                            <Setter Property="Foreground" Value="#A9A9A9" />
+                            <Setter Property="Foreground" Value="#949494" />
                         </Trigger>
                         <EventTrigger RoutedEvent="ScrollChanged">
                             <BeginStoryboard>

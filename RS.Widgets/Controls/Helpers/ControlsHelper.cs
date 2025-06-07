@@ -174,6 +174,25 @@ namespace RS.Widgets.Controls
         }
 
 
-     
+
+        #region 选中颜色
+
+        public static readonly DependencyProperty SelectedBackgroundProperty = DependencyProperty.RegisterAttached(
+   "SelectedBackground",
+   typeof(Brush),
+   typeof(ControlsHelper),
+   new FrameworkPropertyMetadata(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EEE"))));
+
+        public static Brush GetSelectedBackground(UIElement element)
+        {
+            return (Brush)element.GetValue(SelectedBackgroundProperty);
+        }
+
+        public static void SetSelectedBackground(UIElement element, Brush value)
+        {
+            element.SetValue(SelectedBackgroundProperty, value);
+        }
+        #endregion
+
     }
 }

@@ -82,6 +82,7 @@ namespace RS.Widgets.Controls
         /// <param name="e"></param>  
         protected override void OnOpened(EventArgs e)
         {
+            base.OnOpened(e);
             UpdateWindow();
         }
 

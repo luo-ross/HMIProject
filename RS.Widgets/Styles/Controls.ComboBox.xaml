@@ -44,13 +44,6 @@
         </Setter>
     </Style>
 
-    <!--<ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
-        <Border
-            x:Name="PART_ContentHost"
-            Background="{TemplateBinding Background}"
-            Focusable="False" />
-    </ControlTemplate>-->
-
     <Style x:Key="RSApp.Styles.ComboBoxStyle" TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -86,6 +79,18 @@
                                 <ColumnDefinition x:Name="PART_ClearButtnColumn" Width="auto" />
                                 <ColumnDefinition x:Name="PART_DropdownIconColumn" Width="20" />
                             </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                x:Name="PART_Watermark"
+                                Grid.Column="0"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Background="{x:Null}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="#949494"
+                                Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                Visibility="Collapsed" />
+
                             <ToggleButton
                                 x:Name="ToggleButton"
                                 Grid.ColumnSpan="3"
@@ -113,9 +118,13 @@
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                Foreground="#949494"
                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Visible" />
+
+
+
                             <TextBox
                                 x:Name="PART_EditableTextBox"
                                 Margin="0"
@@ -126,15 +135,7 @@
                                 Focusable="True"
                                 IsReadOnly="{TemplateBinding IsReadOnly}"
                                 Visibility="Collapsed" />
-                            <TextBlock
-                                x:Name="PART_Watermark"
-                                Grid.Column="0"
-                                Padding="{TemplateBinding Padding}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                FontSize="{TemplateBinding FontSize}"
-                                Foreground="#949494"
-                                Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
-                                Visibility="Collapsed" />
+
 
                             <Popup
                                 x:Name="Popup"
@@ -143,14 +144,16 @@
                                 HorizontalOffset="-2"
                                 IsOpen="{TemplateBinding IsDropDownOpen}"
                                 Placement="Bottom"
-                                PopupAnimation="Slide"
+                                PopupAnimation="None"
                                 StaysOpen="True"
-                                VerticalOffset="10">
+                                VerticalOffset="4">
                                 <Border
                                     MinWidth="{TemplateBinding ActualWidth}"
                                     MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                     Margin="15"
                                     Background="#FFF"
+                                    BorderBrush="#eee"
+                                    BorderThickness="1,0,1,1"
                                     CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
                                     Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
                                     <Grid x:Name="DropDown" SnapsToDevicePixels="True">

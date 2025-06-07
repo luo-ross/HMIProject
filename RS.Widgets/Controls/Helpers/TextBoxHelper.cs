@@ -18,11 +18,12 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty WatermarkProperty =
   DependencyProperty.RegisterAttached("Watermark", typeof(string), typeof(TextBoxHelper), new PropertyMetadata("请输入内容"));
-
+        
         public static string GetWatermark(DependencyObject obj)
         {
             return (string)obj.GetValue(WatermarkProperty);
         }
+
         public static void SetWatermark(DependencyObject obj, string value)
         {
             obj.SetValue(WatermarkProperty, value);

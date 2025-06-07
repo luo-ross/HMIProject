@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.Statistics.Mcmc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Org.BouncyCastle.Asn1.X509;
 using RS.Commons;
 using RS.HMIServer.DAL.SqlServer;
@@ -8,6 +9,7 @@ using RS.HMIServer.IDAL;
 using RS.Models;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace RS.HMIServer.DAL
@@ -306,7 +308,7 @@ namespace RS.HMIServer.DAL
             //在这里可能会存在问题，比如数据非常多的时候通过这个方法会造成影响
             pagination.records = await tempData.CountAsync();
 
-            List<TEntity> dataList  = await tempData
+            List<TEntity> dataList = await tempData
                                   .Skip<TEntity>(pagination.rows * (pagination.page - 1))
                                   .Take<TEntity>(pagination.rows)
                                   .ToListAsync();
@@ -345,6 +347,126 @@ namespace RS.HMIServer.DAL
             return OperateResult.CreateSuccessResult(pageDataModel);
         }
 
+
+        /// <summary>
+        /// 动态通过DTO生成实体类表达式树
+        /// </summary>
+        /// <typeparam name="TDto">参数类型</typeparam>
+        /// <typeparam name="TEntity">数据库实体类</typeparam>
+        /// <param name="dto">客户端传递过来的参数</param>
+        /// <returns></returns>
+        public  Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>
+        CreateSetPropertiesExpression<TDto, TEntity>(TDto dto)
+        {
+            var settersParam = Expression.Parameter(typeof(SetPropertyCalls<TEntity>), "setters");
+            Expression? body = settersParam;
+
+            var dtoType = typeof(TDto);
+            var entityType = typeof(TEntity);
+
+            var dtoProperties = dtoType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var dtoProp in dtoProperties)
+            {
+                var value = dtoProp.GetValue(dto);
+
+                // 查找实体中同名属性
+                var entityProp = entityType.GetProperty(dtoProp.Name, BindingFlags.Public | BindingFlags.Instance);
+                if (entityProp == null) continue;
+                if (!entityProp.CanWrite) continue;
+                if (!entityProp.PropertyType.IsAssignableFrom(dtoProp.PropertyType)) continue;
+
+                object? setValue = value;
+
+                // string类型，空或空白时，setValue设为null
+                if (dtoProp.PropertyType == typeof(string))
+                {
+                    if (value is string str && string.IsNullOrWhiteSpace(str))
+                    {
+                        setValue = null;
+                    }
+                }
+                else
+                {
+                    // 其它类型，null时跳过
+                    if (value == null) continue;
+                }
+
+                // b => b.Prop
+                var bParam = Expression.Parameter(entityType, "b");
+                var propertyAccess = Expression.Property(bParam, entityProp);
+                var propertyLambda = Expression.Lambda(propertyAccess, bParam);
+
+                // setters.SetProperty(b => b.Prop, setValue)
+                var setPropertyMethod = typeof(SetPropertyCalls<TEntity>)
+                    .GetMethod("SetProperty", new[] {
+                typeof(Expression<>)
+                .MakeGenericType(typeof(Func<,>)
+                .MakeGenericType(entityType, entityProp.PropertyType)),
+                entityProp.PropertyType
+                    });
+
+                var valueConst = Expression.Constant(setValue, entityProp.PropertyType);
+
+                body = Expression.Call(
+                    body!,
+                    setPropertyMethod!,
+                    propertyLambda,
+                    valueConst
+                );
+            }
+
+            return Expression.Lambda<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>(body!, settersParam);
+        }
+
+
+        /// <summary>
+        /// 动态创建表达式树
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="entity">实体参数</param>
+        /// <returns></returns>
+        public Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>
+            CreateSetPropertiesExpression<T>(T entity) where T : class
+        {
+            var settersParam = Expression.Parameter(typeof(SetPropertyCalls<T>), "setters");
+            Expression? body = settersParam;
+
+            var entityType = typeof(T);
+            var properties = entityType
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(entity);
+                if (value == null) continue;
+
+                // b => b.Prop
+                var bParam = Expression.Parameter(entityType, "b");
+                var propertyAccess = Expression.Property(bParam, prop);
+                var propertyLambda = Expression.Lambda(propertyAccess, bParam);
+
+                // setters.SetProperty(b => b.Prop, value)
+                var setPropertyMethod = typeof(SetPropertyCalls<T>)
+                    .GetMethod("SetProperty", new[] {
+                    typeof(Expression<>)
+                    .MakeGenericType(typeof(Func<,>)
+                    .MakeGenericType(entityType, prop.PropertyType)),
+                    prop.PropertyType
+                    });
+
+                var valueConst = Expression.Constant(value, prop.PropertyType);
+
+                body = Expression.Call(
+                    body!,
+                    setPropertyMethod!,
+                    propertyLambda,
+                    valueConst
+                );
+            }
+
+            return Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(body!, settersParam);
+        }
 
     }
 }

@@ -33,7 +33,7 @@
 
 
     <Style x:Key="RSApp.Styles.DataGridStyle" TargetType="{x:Type DataGrid}">
-        <Setter Property="Foreground" Value="#333" />
+        <Setter Property="Foreground" Value="#FF333333" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderThickness" Value="0" />
@@ -318,7 +318,7 @@
         <Setter Property="BorderThickness" Value="0,0,0,1" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Background" Value="#F2F3F5" />
-        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">

@@ -65,10 +65,9 @@ namespace RS.Widgets.Controls
             var formService = this.FormService;
             this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
             {
-                formService.FormSubmitClickCommand.Execute(null);
+                await formService.FormSubmitCommand.ExecuteAsync(null);
                 return OperateResult.CreateSuccessResult();
             });
-
         }
 
         [Description("表单内容")]

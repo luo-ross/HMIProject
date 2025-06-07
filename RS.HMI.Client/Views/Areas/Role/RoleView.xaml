@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:RS.HMI.Client.Views.Areas"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:propertyType="clr-namespace:RS.Widgets.Models.Form;assembly=RS.Widgets"
     xmlns:rs="https://github.com/luo-ross/Widgets"
     x:Name="this"
     d:DataContext="{d:DesignInstance Type=local:RoleViewModel}"
@@ -15,6 +16,65 @@
     <rs:RSDialog.Resources>
         <ResourceDictionary>
             <rs:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
+            <DataTemplate DataType="{x:Type propertyType:PropertyBase}">
+                <Grid Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding DescriptionWidth}" MinWidth="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        HorizontalAlignment="Right"
+                        Foreground="#D8000000"
+                        Text="{Binding Description}" />
+                    <TextBox
+                        Grid.Column="1"
+                        rs:TextBoxHelper.IsShowClearButton="{Binding IsShowClearButton}"
+                        rs:TextBoxHelper.Watermark="{Binding Watermark}"
+                        Text="{Binding Value, UpdateSourceTrigger=LostFocus, Mode=TwoWay}" />
+                </Grid>
+                <DataTemplate.Triggers />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type propertyType:ComboxProperty}">
+                <Grid Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding DescriptionWidth}" MinWidth="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        HorizontalAlignment="Right"
+                        Foreground="#D8000000"
+                        Text="{Binding Description}" />
+                    <ComboBox
+                        x:Name="PART_ComboBox"
+                        Grid.Column="1"
+                        rs:TextBoxHelper.IsShowClearButton="{Binding IsShowClearButton}"
+                        rs:TextBoxHelper.Watermark="{Binding Watermark}"
+                        DisplayMemberPath="{Binding DisplayMemberPath}"
+                        ItemsSource="{Binding DataSource}"
+                        SelectedValue="{Binding Value, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"
+                        SelectedValuePath="{Binding SelectedValuePath}" />
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type propertyType:DateTimeProperty}">
+                <Grid Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding DescriptionWidth}" MinWidth="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        HorizontalAlignment="Right"
+                        Foreground="#D8000000"
+                        Text="{Binding Description}" />
+
+                    <rs:RSDatePicker Grid.Column="1" />
+                </Grid>
+            </DataTemplate>
+
         </ResourceDictionary>
     </rs:RSDialog.Resources>
     <Grid>
@@ -33,39 +93,75 @@
                         <TextBlock Text="查询条件" />
                     </Grid>
                 </GroupBox.Header>
-                <Border Grid.Row="0" Padding="3,8,3,15">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="70" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Grid.Column="0"
-                            HorizontalAlignment="Right"
-                            Foreground="#949494"
-                            Text="角色名称" />
-                        <TextBox
-                            Grid.Column="1"
-                            rs:TextBoxHelper.IsShowClearButton="True"
-                            rs:TextBoxHelper.Watermark="请输入角色名称"
-                            Text="{Binding ModelSearch.Name}" />
-                        <TextBlock
-                            Grid.Column="2"
-                            HorizontalAlignment="Right"
-                            Foreground="#949494"
-                            Text="所属公司" />
-                        <ComboBox
-                            Grid.Column="3"
-                            rs:TextBoxHelper.IsShowClearButton="True"
-                            rs:TextBoxHelper.Watermark="请选择公司"
-                            DisplayMemberPath="DisplayMember"
-                            SelectedValuePath="SelectedValue" />
-                    </Grid>
-                </Border>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Padding="3,8,3,15">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" MinWidth="50" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" MinWidth="50" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" MinWidth="50" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                HorizontalAlignment="Right"
+                                Foreground="#D8000000"
+                                Text="角色名称" />
+                            <TextBox
+                                Grid.Column="1"
+                                rs:TextBoxHelper.IsShowClearButton="True"
+                                rs:TextBoxHelper.Watermark="请输入角色名称"
+                                IsEnabled="False"
+                                IsReadOnly="True"
+                                Text="{Binding ModelSearch.Name}" />
+                            <TextBlock
+                                Grid.Column="2"
+                                HorizontalAlignment="Right"
+                                Foreground="#D8000000"
+                                Text="所属公司" />
+                            <ComboBox
+                                Grid.Column="3"
+                                rs:TextBoxHelper.IsShowClearButton="True"
+                                rs:TextBoxHelper.Watermark="请选择公司"
+                                DisplayMemberPath="DisplayMember"
+                                SelectedValuePath="SelectedValue" />
+
+                            <TextBlock
+                                Grid.Column="4"
+                                HorizontalAlignment="Right"
+                                Foreground="#D8000000"
+                                Text="创建时间" />
+
+                            <rs:RSDatePicker
+                                Grid.Column="5"
+                                DateTimeSelected="{Binding DateTimeSelect, ValidatesOnExceptions=True}"
+                                DisplayParts="Date"
+                                IsReadOnly="False" />
+
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer
+                        Grid.Row="1"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding PropertyList}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <rs:RSWrapPanel IsItemsHost="True" SnapsToDevicePixels="True" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
             </GroupBox>
 
             <GroupBox Grid.Row="1" BorderThickness="1,0,1,1">

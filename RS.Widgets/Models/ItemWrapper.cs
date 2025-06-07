@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public class ComboBoxItem<T>
+    public class ItemWrapper
     {
-        public T SelectedValue { get; set; }
-
-        public string DisplayMember { get; set; }
+        public object Item { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

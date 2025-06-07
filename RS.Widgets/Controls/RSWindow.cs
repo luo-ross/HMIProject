@@ -18,8 +18,6 @@ namespace RS.Widgets.Controls
         private Button PART_BtnMaxRestore;
         private Button PART_BtnClose;
         private RSDialog PART_WinContentHost;
-
-
         private DispatcherTimer InfoBarTimer;
 
         static RSWindow()
@@ -36,7 +34,6 @@ namespace RS.Widgets.Controls
             this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
-         
         }
 
       

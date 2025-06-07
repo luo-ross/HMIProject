@@ -68,8 +68,9 @@
                                 Padding="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Background="Transparent"
                                 FontSize="{TemplateBinding FontSize}"
-                                Foreground="#969091"
+                                Foreground="#949494"
                                 Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                 Visibility="Collapsed" />
                             <ScrollViewer
@@ -92,6 +93,7 @@
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                Foreground="#949494"
                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
@@ -125,10 +127,10 @@
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
 
-                        <Trigger Property="IsReadOnly" Value="True">
-                            <Setter TargetName="PART_Watermark" Property="Visibility" Value="Collapsed" />
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#eee" />
+                            <Setter Property="Foreground" Value="#949494" />
                         </Trigger>
-
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -204,6 +206,7 @@
                                 rs:ControlsHelper.IconWidth="12"
                                 Command="{x:Static rs:RSCommands.CleanTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                Foreground="#949494"
                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                 ToolTip="清除输入框内容"
                                 Visibility="Collapsed" />
@@ -232,6 +235,7 @@
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+
 
 
                     </ControlTemplate.Triggers>

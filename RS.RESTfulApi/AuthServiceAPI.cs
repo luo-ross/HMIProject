@@ -58,6 +58,11 @@ namespace RS.RESTfulApi
             /// 获取用户接口
             /// </summary>
             public static readonly string GetUser = $"/Api/{ApiVersion}/User/GetUser";
+
+            /// <summary>
+            /// 更新用户接口
+            /// </summary>
+            public static readonly string UpdateUser = $"/Api/{ApiVersion}/User/UpdateUser";
         }
 
 

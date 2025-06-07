@@ -10,18 +10,21 @@
 
     <ControlTemplate x:Key="RSApp.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
         <Border
+            x:Name="PART_Border"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
             <Path
+                x:Name="PART_Path"
                 Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
                 Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Data="{TemplateBinding rs:ControlsHelper.IconData}"
                 Fill="{TemplateBinding Foreground}"
+                IsEnabled="{TemplateBinding IsEnabled}"
                 Stretch="Fill" />
         </Border>
         <ControlTemplate.Triggers>
@@ -30,8 +33,11 @@
                 <Setter Property="Background" Value="#22000000" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="#18000000" />
-                <Setter Property="Opacity" Value="0.8" />
+                <Setter TargetName="PART_Border" Property="Background" Value="#eeeeee" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#eee" />
+                <Setter TargetName="PART_Path" Property="Fill" Value="#949494" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

@@ -93,7 +93,10 @@ namespace RS.HMIServer
             //当你需要利用 MVC 框架提供的路由、模型绑定、模型验证、过滤器等功能时。
             builder.Services.AddControllersWithViews(configure =>
             {
-                configure.Filters.Add<GlobalFilter>();
+                configure.Filters.Add<ExceptionFilter>();
+                configure.Filters.Add<AuthorizationFilter>();
+                configure.Filters.Add<ActionFilter>(); 
+                configure.Filters.Add<ResourceFilter>();
             }).AddJsonOptions(configure =>
             {
                 //设置编码形式，防止中文乱码

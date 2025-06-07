@@ -10,8 +10,9 @@ using System.Windows.Media.Media3D;
 
 namespace RS.Widgets.Controls
 {
-    public static class TreeHelper
+    public static class VisualHelper
     {
+
         public static T? TryFindParent<T>(this DependencyObject child) where T : DependencyObject
         {
             var parentObject = child.GetParentObject();
@@ -27,6 +28,7 @@ namespace RS.Widgets.Controls
             return null;
         }
 
+       
 
         public static IEnumerable<DependencyObject> GetAncestors(this DependencyObject child)
         {

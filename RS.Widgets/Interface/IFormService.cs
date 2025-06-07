@@ -1,4 +1,6 @@
-﻿using RS.Commons.Enums;
+﻿using CommunityToolkit.Mvvm.Input;
+using RS.Commons;
+using RS.Commons.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,7 @@ namespace RS.Widgets.Interface
         /// <summary>
         /// 表单提交
         /// </summary>
-        ICommand FormSubmitClickCommand { get; }
+        IAsyncRelayCommand FormSubmitCommand { get; }
 
         /// <summary>
         /// 表单增删改查类型
