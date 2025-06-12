@@ -54,14 +54,14 @@ namespace RS.Widgets.Controls
         {
             var rsPicker = d as RSPicker;
             rsPicker.SourceList = rsPicker.ItemsSource.Cast<object>().ToList();
-            if (rsPicker.SelectedItem == null)
-            {
-                rsPicker.SelectedIndex = 0;
-            }
-            else
-            {
-                rsPicker.SelectedIndex = rsPicker.SourceList.IndexOf(rsPicker.SelectedItem);
-            }
+            //if (rsPicker.SelectedItem == null)
+            //{
+            //    rsPicker.SelectedIndex = 0;
+            //}
+            //else
+            //{
+            //    rsPicker.SelectedIndex = rsPicker.SourceList.IndexOf(rsPicker.SelectedItem);
+            //}
             rsPicker?.RefreshItemsList();
         }
 
@@ -221,7 +221,7 @@ namespace RS.Widgets.Controls
         /// </summary>
         private void RefreshItemsList()
         {
-            if (this.PART_Canvas == null)
+            if (this.PART_Canvas == null || this.SelectedItem == null)
             {
                 return;
             }

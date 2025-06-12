@@ -1,5 +1,8 @@
 ﻿using RS.Widgets.Enums;
+using RS.Win32API;
 using System.ComponentModel;
+using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -64,16 +67,16 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("BorderCornerRadius", typeof(CornerRadius), typeof(RSWindowBase), new PropertyMetadata(new CornerRadius(0)));
 
 
-        [Description("宽边裁剪")]
-        [Browsable(false)]
-        public Geometry BorderClipRect
-        {
-            get { return (Geometry)GetValue(BorderClipRectProperty); }
-            set { SetValue(BorderClipRectProperty, value); }
-        }
+        //[Description("宽边裁剪")]
+        //[Browsable(false)]
+        //public Geometry BorderClipRect
+        //{
+        //    get { return (Geometry)GetValue(BorderClipRectProperty); }
+        //    set { SetValue(BorderClipRectProperty, value); }
+        //}
 
-        public static readonly DependencyProperty BorderClipRectProperty =
-            DependencyProperty.Register("BorderClipRect", typeof(Geometry), typeof(RSWindowBase), new PropertyMetadata(null));
+        //public static readonly DependencyProperty BorderClipRectProperty =
+        //    DependencyProperty.Register("BorderClipRect", typeof(Geometry), typeof(RSWindowBase), new PropertyMetadata(null));
 
 
         [Description("是否显示窗体关闭放大缩小按钮")]
@@ -86,6 +89,54 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty IsHidenWinCommandBtnProperty =
             DependencyProperty.Register("IsHidenWinCommandBtn", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
+
+        #region Icon参数设置
+
+    
+
+        public CornerRadius IconCornerRadius
+        {
+            get { return (CornerRadius)GetValue(IconCornerRadiusProperty); }
+            set { SetValue(IconCornerRadiusProperty, value); }
+        }
+
+        public static readonly DependencyProperty IconCornerRadiusProperty =
+            DependencyProperty.Register("IconCornerRadius", typeof(CornerRadius), typeof(RSWindowBase), new PropertyMetadata(default));
+
+
+
+        public double IconWidth
+        {
+            get { return (double)GetValue(IconWidthProperty); }
+            set { SetValue(IconWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty IconWidthProperty =
+            DependencyProperty.Register("IconWidth", typeof(double), typeof(RSWindowBase), new PropertyMetadata(20D));
+
+
+
+        public double IconHeight
+        {
+            get { return (double)GetValue(IconHeightProperty); }
+            set { SetValue(IconHeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty IconHeightProperty =
+            DependencyProperty.Register("IconHeight", typeof(double), typeof(RSWindowBase), new PropertyMetadata(20D));
+
+
+
+        public Thickness IconMargin
+        {
+            get { return (Thickness)GetValue(IconMarginProperty); }
+            set { SetValue(IconMarginProperty, value); }
+        }
+
+        public static readonly DependencyProperty IconMarginProperty =
+            DependencyProperty.Register("IconMargin", typeof(Thickness), typeof(RSWindowBase), new PropertyMetadata(new Thickness(5,0,0,0)));
+
+        #endregion
 
 
         private void RSWindow_Closing(object? sender, CancelEventArgs e)
@@ -103,7 +154,7 @@ namespace RS.Widgets.Controls
 
         private void RSWindowBase_Activated(object? sender, EventArgs e)
         {
-            this.UpdateBorderClipRect();
+            //this.UpdateBorderClipRect();
         }
 
         private void RSWindow_StateChanged(object? sender, EventArgs e)
@@ -120,28 +171,28 @@ namespace RS.Widgets.Controls
             var hWnd = new WindowInteropHelper(this).Handle;
             int nWidth = IsMaxsizedFullScreen ? (int)SystemParameters.PrimaryScreenWidth : (int)SystemParameters.WorkArea.Width;  // 新的宽度
             int nHeight = IsMaxsizedFullScreen ? (int)SystemParameters.PrimaryScreenHeight : (int)SystemParameters.WorkArea.Height; // 新的高度
-            Ross.SetWindowPos(new HWND(hWnd), HWND.Null, 0, 0, nWidth, nHeight, SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
+            NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null,IntPtr.Zero), 0, 0, nWidth, nHeight, NativeMethods.SWP_NOZORDER | NativeMethods.SWP_NOACTIVATE);
         }
 
 
         private void RSWindowBase_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.UpdateBorderClipRect();
+            //this.UpdateBorderClipRect();
         }
 
 
 
 
-        private void UpdateBorderClipRect()
-        {
-            if (this.PART_Border == null)
-            {
-                return;
-            }
-            var width = this.PART_Border.ActualWidth;
-            var height = this.PART_Border.ActualHeight;
-            this.BorderClipRect = this.GetBorderClipRect(this.BorderCornerRadius, width, height);
-        }
+        //private void UpdateBorderClipRect()
+        //{
+        //    if (this.PART_Border == null)
+        //    {
+        //        return;
+        //    }
+        //    var width = this.PART_Border.ActualWidth;
+        //    var height = this.PART_Border.ActualHeight;
+        //    this.BorderClipRect = this.GetBorderClipRect(this.BorderCornerRadius, width, height);
+        //}
 
 
         public override void OnApplyTemplate()
@@ -158,7 +209,7 @@ namespace RS.Widgets.Controls
                 }
             }
 
-            this.UpdateBorderClipRect();
+            //this.UpdateBorderClipRect();
         }
 
         private void ResizeRectangle_MouseMove(object sender, MouseEventArgs e)
@@ -167,82 +218,82 @@ namespace RS.Widgets.Controls
         }
         private void ResizeWindow(ResizeDirection direction)
         {
-            Ross.SendMessage(new HWND(this.HwndSource.Handle), Ross.WM_SYSCOMMAND, new WPARAM(Ross.SC_SIZE + (uint)direction), new LPARAM(IntPtr.Zero));
+            NativeMethods.SendMessage(this.HwndSource.Handle, NativeMethods.WM_SYSCOMMAND, NativeMethods.SC_SIZE + (int)direction, IntPtr.Zero);
         }
 
 
 
-        /// <summary>
-        /// 获取裁剪边框
-        /// </summary>
-        /// <param name="borderCornerRadius">边框圆角大小</param>
-        /// <param name="width">高度</param>
-        /// <param name="height">宽度</param>
-        /// <returns></returns>
-        public Geometry GetBorderClipRect(CornerRadius borderCornerRadius, double width, double height)
-        {
+        ///// <summary>
+        ///// 获取裁剪边框
+        ///// </summary>
+        ///// <param name="borderCornerRadius">边框圆角大小</param>
+        ///// <param name="width">高度</param>
+        ///// <param name="height">宽度</param>
+        ///// <returns></returns>
+        //public Geometry GetBorderClipRect(CornerRadius borderCornerRadius, double width, double height)
+        //{
 
-            // 创建 PathGeometry
-            PathGeometry pathGeometry = new PathGeometry();
+        //    // 创建 PathGeometry
+        //    PathGeometry pathGeometry = new PathGeometry();
 
-            // 创建 PathFigure
-            PathFigure pathFigure = new PathFigure
-            {
-                StartPoint = new Point(borderCornerRadius.TopLeft, 0) // 起点
-            };
+        //    // 创建 PathFigure
+        //    PathFigure pathFigure = new PathFigure
+        //    {
+        //        StartPoint = new Point(borderCornerRadius.TopLeft, 0) // 起点
+        //    };
 
-            // 添加顶部边缘
-            pathFigure.Segments.Add(new LineSegment(new Point(width - borderCornerRadius.TopRight, 0), true));
+        //    // 添加顶部边缘
+        //    pathFigure.Segments.Add(new LineSegment(new Point(width - borderCornerRadius.TopRight, 0), true));
 
-            // 添加右上角圆角（半径 20）
-            pathFigure.Segments.Add(new ArcSegment(
-                new Point(width, borderCornerRadius.TopRight), // 终点
-                new Size(borderCornerRadius.TopRight, borderCornerRadius.TopRight),   // 半径
-                0,                  // 旋转角度
-                false,              // 是否大弧
-                SweepDirection.Clockwise, // 方向
-                true));
+        //    // 添加右上角圆角（半径 20）
+        //    pathFigure.Segments.Add(new ArcSegment(
+        //        new Point(width, borderCornerRadius.TopRight), // 终点
+        //        new Size(borderCornerRadius.TopRight, borderCornerRadius.TopRight),   // 半径
+        //        0,                  // 旋转角度
+        //        false,              // 是否大弧
+        //        SweepDirection.Clockwise, // 方向
+        //        true));
 
-            // 添加右侧边缘
-            pathFigure.Segments.Add(new LineSegment(new Point(width, height - borderCornerRadius.BottomRight), true));
+        //    // 添加右侧边缘
+        //    pathFigure.Segments.Add(new LineSegment(new Point(width, height - borderCornerRadius.BottomRight), true));
 
-            // 添加右下角圆角（半径 40）
-            pathFigure.Segments.Add(new ArcSegment(
-                new Point(width - borderCornerRadius.BottomRight, height), // 终点
-                new Size(borderCornerRadius.BottomRight, borderCornerRadius.BottomRight),    // 半径
-                0,                   // 旋转角度
-                false,               // 是否大弧
-                SweepDirection.Clockwise, // 方向
-                true));
+        //    // 添加右下角圆角（半径 40）
+        //    pathFigure.Segments.Add(new ArcSegment(
+        //        new Point(width - borderCornerRadius.BottomRight, height), // 终点
+        //        new Size(borderCornerRadius.BottomRight, borderCornerRadius.BottomRight),    // 半径
+        //        0,                   // 旋转角度
+        //        false,               // 是否大弧
+        //        SweepDirection.Clockwise, // 方向
+        //        true));
 
-            // 添加底部边缘
-            pathFigure.Segments.Add(new LineSegment(new Point(borderCornerRadius.BottomLeft, height), true));
+        //    // 添加底部边缘
+        //    pathFigure.Segments.Add(new LineSegment(new Point(borderCornerRadius.BottomLeft, height), true));
 
-            // 添加左下角圆角（半径 30）
-            pathFigure.Segments.Add(new ArcSegment(
-                new Point(0, height - borderCornerRadius.BottomLeft), // 终点
-                new Size(borderCornerRadius.BottomLeft, borderCornerRadius.BottomLeft),   // 半径
-                0,                  // 旋转角度
-                false,              // 是否大弧
-                SweepDirection.Clockwise, // 方向
-                true));
+        //    // 添加左下角圆角（半径 30）
+        //    pathFigure.Segments.Add(new ArcSegment(
+        //        new Point(0, height - borderCornerRadius.BottomLeft), // 终点
+        //        new Size(borderCornerRadius.BottomLeft, borderCornerRadius.BottomLeft),   // 半径
+        //        0,                  // 旋转角度
+        //        false,              // 是否大弧
+        //        SweepDirection.Clockwise, // 方向
+        //        true));
 
-            // 添加左侧边缘
-            pathFigure.Segments.Add(new LineSegment(new Point(0, borderCornerRadius.TopLeft), true));
+        //    // 添加左侧边缘
+        //    pathFigure.Segments.Add(new LineSegment(new Point(0, borderCornerRadius.TopLeft), true));
 
-            // 添加左上角圆角（半径 10）
-            pathFigure.Segments.Add(new ArcSegment(
-                new Point(borderCornerRadius.TopLeft, 0), // 终点
-                new Size(borderCornerRadius.TopLeft, borderCornerRadius.TopLeft), // 半径
-                0,                // 旋转角度
-                false,            // 是否大弧
-                SweepDirection.Clockwise, // 方向
-                true));
-            // 将 PathFigure 添加到 PathGeometry
-            pathGeometry.Figures.Add(pathFigure);
+        //    // 添加左上角圆角（半径 10）
+        //    pathFigure.Segments.Add(new ArcSegment(
+        //        new Point(borderCornerRadius.TopLeft, 0), // 终点
+        //        new Size(borderCornerRadius.TopLeft, borderCornerRadius.TopLeft), // 半径
+        //        0,                // 旋转角度
+        //        false,            // 是否大弧
+        //        SweepDirection.Clockwise, // 方向
+        //        true));
+        //    // 将 PathFigure 添加到 PathGeometry
+        //    pathGeometry.Figures.Add(pathFigure);
 
-            return pathGeometry;
-        }
+        //    return pathGeometry;
+        //}
 
         private void ResizeRectangle_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {

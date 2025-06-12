@@ -12,6 +12,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.GroupBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Menu.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.MenuItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.PasswordBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
@@ -35,6 +36,8 @@
     <Style BasedOn="{StaticResource RSApp.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.ComboBoxStyle}" TargetType="{x:Type ComboBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.GroupBoxStyle}" TargetType="{x:Type GroupBox}" />
+    <Style BasedOn="{StaticResource RSApp.Styles.ContextMenuStyle}" TargetType="{x:Type ContextMenu}" />
+    <Style BasedOn="{StaticResource RSApp.Styles.MenuStyle}" TargetType="{x:Type Menu}" />
     <Style BasedOn="{StaticResource RSApp.Styles.MenuItemStyle}" TargetType="{x:Type MenuItem}" />
     <Style BasedOn="{StaticResource RSApp.Styles.SliderStyle}" TargetType="{x:Type Slider}" />
     <Style BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}" />

@@ -155,7 +155,7 @@
                                     BorderBrush="#eee"
                                     BorderThickness="1,0,1,1"
                                     CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                                    Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
+                                    Effect="{StaticResource RSApp.Styles.DropDownEffect}">
                                     <Grid x:Name="DropDown" SnapsToDevicePixels="True">
                                         <ScrollViewer SnapsToDevicePixels="True">
                                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />

@@ -8,10 +8,7 @@ using System.Windows;
 
 namespace RS.Widgets.Controls
 {
-    /// <summary>
-    /// 该方法来源于项目 iNKORE.UI.WPF.Modern 需要更多参看请参考下面的连接
-    /// https://github.com/iNKORE-NET/UI.WPF.Modern
-    /// </summary>
+   
     public class TreeViewItemHelper
     {
         #region IsEnabled

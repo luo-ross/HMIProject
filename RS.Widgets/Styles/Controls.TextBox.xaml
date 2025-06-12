@@ -12,6 +12,7 @@
 
 
     <Style x:Key="RSApp.Styles.TextBoxStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="Foreground" Value="#333" />
@@ -26,7 +27,6 @@
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="Margin" Value="3,3,3,3" />
         <Setter Property="Padding" Value="2,3,2,3" />
-        <Setter Property="FontSize" Value="12" />
         <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="TextWrapping" Value="NoWrap" />
@@ -60,8 +60,8 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
+
                             <TextBlock
                                 x:Name="PART_Watermark"
                                 Grid.Column="0"
@@ -73,19 +73,19 @@
                                 Foreground="#949494"
                                 Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                 Visibility="Collapsed" />
+
                             <ScrollViewer
                                 x:Name="PART_ContentHost"
                                 Grid.Column="0"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
+                                Margin="0"
                                 Focusable="false"
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Auto" />
 
                             <Button
                                 x:Name="PART_BtnClear"
-                                Grid.Column="2"
-                                Margin="3,0,5,0"
+                                Grid.Column="1"
+                                Margin="0"
                                 Padding="5,3,5,3"
                                 HorizontalAlignment="Right"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
@@ -130,6 +130,10 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Background" Value="#eee" />
                             <Setter Property="Foreground" Value="#949494" />
+                        </Trigger>
+
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

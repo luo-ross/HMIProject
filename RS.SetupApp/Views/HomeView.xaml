@@ -74,7 +74,7 @@
                 <Setter Property="VerticalAlignment" Value="Stretch" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="BorderBrush" Value="Transparent" />
                 <!--<Setter Property="Foreground" Value="#333333" />-->
                 <!--<Setter Property="Background" Value="#3e3f40" />-->
@@ -106,7 +106,7 @@
 
             <Style x:Key="RSApp.Styles.HyplinkStyle" TargetType="{x:Type Hyperlink}">
                 <Setter Property="Foreground" Value="#333333" />
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="TextDecorations" Value="None" />
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
@@ -121,7 +121,7 @@
                 <Setter Property="IsThreeState" Value="False" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Foreground" Value="#333333" />
                 <Setter Property="Template">
@@ -155,7 +155,7 @@
                                     Margin="5,0,0,0"
                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                     Content="{TemplateBinding Content}"
-                                    TextBlock.FontSize="14"
+                                    TextBlock.FontSize="12"
                                     TextBlock.Foreground="{TemplateBinding Foreground}" />
                             </Grid>
 
@@ -180,7 +180,7 @@
                 <Setter Property="IsThreeState" Value="False" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Foreground" Value="#333333" />
                 <Setter Property="Template">
@@ -196,7 +196,7 @@
                                     Margin="5,0,0,0"
                                     VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                     Content="{TemplateBinding Content}"
-                                    TextBlock.FontSize="14"
+                                    TextBlock.FontSize="12"
                                     TextBlock.Foreground="{TemplateBinding Foreground}" />
 
                                 <Path
@@ -237,7 +237,7 @@
 
 
             <Style x:Key="RSApp.Styles.TextBlockStyle" TargetType="{x:Type TextBlock}">
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Margin" Value="5,0,0,0" />
             </Style>
@@ -254,7 +254,7 @@
                     </TextBlock>
                     <TextBlock
                         VerticalAlignment="Center"
-                        FontSize="14"
+                        FontSize="12"
                         Text="及" />
                     <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
                         <Hyperlink
@@ -298,7 +298,7 @@
                         rs:ControlsHelper.CornerRadius="20"
                         Click="BtnOK_Click"
                         Content="同意并安装"
-                        FontSize="14"
+                        FontSize="12"
                         Style="{StaticResource RSApp.Styles.InsallButtonStyle}" />
                     <Button
                         Width="150"
@@ -307,7 +307,7 @@
                         rs:ControlsHelper.CornerRadius="20"
                         Click="BtnCancel_Click"
                         Content="取消"
-                        FontSize="14">
+                        FontSize="12">
                         <Button.Style>
                             <Style BasedOn="{StaticResource RSApp.Styles.InsallButtonStyle}" TargetType="{x:Type Button}">
                                 <Setter Property="Background" Value="#2b2e32" />
@@ -334,7 +334,7 @@
                     VerticalAlignment="Center">
                     <TextBlock
                         Margin="45,0,45,0"
-                        FontSize="14"
+                        FontSize="12"
                         Text="标注软件正在运行中，继续将自动关闭程序，你确定要继续安装吗？"
                         TextWrapping="WrapWithOverflow" />
                 </StackPanel>
@@ -349,7 +349,7 @@
                         rs:ControlsHelper.CornerRadius="20"
                         Click="BtnOK_Click"
                         Content="同意并继续"
-                        FontSize="14"
+                        FontSize="12"
                         Style="{StaticResource RSApp.Styles.InsallButtonStyle}" />
 
                     <Button
@@ -359,7 +359,7 @@
                         rs:ControlsHelper.CornerRadius="20"
                         Click="BtnCancel_Click"
                         Content="取消"
-                        FontSize="14">
+                        FontSize="12">
                         <Button.Style>
                             <Style BasedOn="{StaticResource RSApp.Styles.InsallButtonStyle}" TargetType="{x:Type Button}">
                                 <Setter Property="Background" Value="#2b2e32" />
@@ -529,7 +529,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="Transparent"
                                     BorderThickness="0"
-                                    FontSize="14"
+                                    FontSize="12"
                                     Text="{Binding InstallDir, UpdateSourceTrigger=PropertyChanged}"
                                     TextChanged="TxtInstallDir_TextChanged" />
                             </Grid>
@@ -620,7 +620,7 @@
                     Margin="5,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    FontSize="14"
+                    FontSize="12"
                     FontWeight="Bold"
                     Text="标注软件" />
             </StackPanel>
@@ -640,7 +640,7 @@
                     <TextBlock
                         Grid.Row="0"
                         Margin="0,0,0,10"
-                        FontSize="14"
+                        FontSize="12"
                         Text="{Binding RunningTooltip}" />
                     <ProgressBar
                         Grid.Row="1"
@@ -676,7 +676,7 @@
                     HorizontalContentAlignment="Center"
                     Click="BtnEnterMainProgram_Click"
                     Content="立即进入"
-                    FontSize="16"
+                    FontSize="14"
                     Style="{StaticResource RSApp.Styles.InsallButtonStyle}" />
 
                 <CheckBox

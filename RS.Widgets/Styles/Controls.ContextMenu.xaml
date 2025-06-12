@@ -1,49 +1,13 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
-    <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Grid.IsSharedSizeScope" Value="true" />
-        <Setter Property="Padding" Value="0,3,0,3" />
-        <Setter Property="Background" Value="#fff" />
-        <Setter Property="BorderBrush" Value="#eee" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="HasDropShadow" Value="True" />
-        <Setter Property="VerticalOffset" Value="-15" />
-        <Setter Property="HorizontalOffset" Value="-15" />
-        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <Border
-                        Margin="15"
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                        Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
-                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <!--<Trigger Property="HasDropShadow" Value="true">
-                            <Setter TargetName="Border" Property="Padding" Value="0,3,0,3" />
-                            <Setter TargetName="Border" Property="CornerRadius" Value="4" />
-                        </Trigger>-->
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
+    <converters:ClipConverter x:Key="ClipConverter" />
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
@@ -56,180 +20,60 @@
     </Style>
 
 
-    <Style x:Key="RSApp.Styles.MenuItemStyle" TargetType="{x:Type MenuItem}">
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="MinWidth" Value="200" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="#000" />
-        <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type MenuItem}">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="*" MinWidth="80" />
-                            </Grid.ColumnDefinitions>
-                            <Image
-                                x:Name="ImgIcon"
-                                Width="12"
-                                Height="12"
-                                Source="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}}"
-                                Stretch="Uniform" />
-                            <ContentControl
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                VerticalAlignment="Center"
-                                Content="{Binding Header, RelativeSource={RelativeSource TemplatedParent}}"
-                                TextBlock.Foreground="{TemplateBinding Foreground}" />
-                            <Path
-                                x:Name="RightArrow"
-                                Grid.Column="1"
-                                Width="10"
-                                Height="10"
-                                Margin="0,0,5,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Data="M0,4 4,0 0,-4 z"
-                                Fill="#ccc"
-                                Stretch="Uniform"
-                                Visibility="Collapsed" />
-                            <Popup
-                                x:Name="SubMenuPopup"
-                                AllowsTransparency="True"
-                                HorizontalOffset="2"
-                                IsOpen="{TemplateBinding IsSubmenuOpen}"
-                                Placement="Right">
-                                <Grid Margin="18,0,18,18" SnapsToDevicePixels="True">
-                                    <Border
-                                        x:Name="DropDownBorder"
-                                        BorderBrush="#E4E9F2"
-                                        BorderThickness="1,1,1,1"
-                                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                                        <Border.Background>
-                                            <SolidColorBrush Color="White" />
-                                        </Border.Background>
-                                    </Border>
-                                    <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                        <Border
-                                            Name="SubmenuBorder"
-                                            Background="#fff"
-                                            SnapsToDevicePixels="True">
-                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
-                                        </Border>
-                                    </ScrollViewer>
-                                    <Grid.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="18"
-                                            Opacity="0.1"
-                                            ShadowDepth="0"
-                                            Color="#000000" />
-                                    </Grid.Effect>
-                                </Grid>
-                            </Popup>
-                        </Grid>
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="HasItems" Value="true">
-                            <Setter TargetName="RightArrow" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="Bg" Property="Background" Value="#eee" />
-                            <Setter TargetName="RightArrow" Property="Fill" Value="#fff" />
-                        </Trigger>
-                        <Trigger Property="Icon" Value="{x:Null}">
-                            <Setter TargetName="ImgIcon" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="#949494" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="RSApp.Styles.TextBlockMenuItemStyle" TargetType="{x:Type MenuItem}">
-        <Setter Property="Height" Value="36" />
-        <Setter Property="IsEnabled" Value="False" />
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="MinWidth" Value="150" />
-        <Setter Property="Background" Value="#eee" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="#2c2c2c" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type MenuItem}">
-                    <Border x:Name="bg">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="*" MinWidth="80" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                VerticalAlignment="Center"
-                                Foreground="{TemplateBinding Foreground}"
-                                Text="{Binding Header, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style x:Key="RSApp.Styles.ContextMenuStyle" TargetType="{x:Type ContextMenu}">
-        <Setter Property="FontSize" Value="14" />
         <Setter Property="HasDropShadow" Value="True" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Padding" Value="2" />
+        <Setter Property="Background" Value="#fff" />
         <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect
+                    BlurRadius="5"
+                    Opacity="0.2"
+                    ShadowDepth="-1"
+                    Color="#000" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <Grid Margin="18,0,18,18" SnapsToDevicePixels="True">
-                        <Border
-                            x:Name="DropDownBorder"
-                            BorderBrush="#E4E9F2"
-                            BorderThickness="1,1,1,1"
-                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                            <Border.Background>
-                                <SolidColorBrush Color="White" />
-                            </Border.Background>
-                        </Border>
-                        <ScrollViewer
-                            x:Name="SubMenuScrollViewer"
-                            Margin="1,5"
-                            CanContentScroll="True"
-                            Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                          TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                            <ItemsPresenter
-                                x:Name="ItemsPresenter"
-                                Margin="0"
-                                Grid.IsSharedSizeScope="True"
-                                KeyboardNavigation.DirectionalNavigation="Cycle"
-                                KeyboardNavigation.TabNavigation="Cycle"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </ScrollViewer>
-
-                        <Grid.Effect>
-                            <DropShadowEffect
-                                BlurRadius="18"
-                                Opacity="0.1"
-                                ShadowDepth="0"
-                                Color="#000000" />
-                        </Grid.Effect>
-                    </Grid>
+                    <Border
+                        x:Name="PART_Border"
+                        Margin="{TemplateBinding Margin}"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                        <Border.Clip>
+                            <MultiBinding Converter="{StaticResource ClipConverter}">
+                                <Binding ElementName="PART_Border" Path="CornerRadius" />
+                                <Binding ElementName="PART_Border" Path="ActualWidth" />
+                                <Binding ElementName="PART_Border" Path="ActualHeight" />
+                            </MultiBinding>
+                        </Border.Clip>
+                        <Grid>
+                            <ScrollViewer
+                                x:Name="SubMenuScrollViewer"
+                                CanContentScroll="True"
+                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
+                                                                              TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                <ItemsPresenter
+                                    x:Name="ItemsPresenter"
+                                    Margin="0"
+                                    Grid.IsSharedSizeScope="True"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    KeyboardNavigation.TabNavigation="Cycle"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

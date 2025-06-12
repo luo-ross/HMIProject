@@ -28,7 +28,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                        Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
+                        Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Grid>
                             <ContentControl Content="{TemplateBinding Content}" />
                         </Grid>

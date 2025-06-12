@@ -40,7 +40,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="Arrow" />
         <Setter Property="Opacity" Value="0.7" />
@@ -96,7 +96,7 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="Padding" Value="2,3,2,3" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="Arrow" />

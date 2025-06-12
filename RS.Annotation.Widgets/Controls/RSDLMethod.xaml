@@ -54,13 +54,13 @@
                                             </Grid.RowDefinitions>
                                             <Border Grid.Row="0">
                                                 <TextBlock
-                                                    FontSize="16"
+                                                    FontSize="12"
                                                     Foreground="#000000"
                                                     Text="{TemplateBinding MethodName}" />
                                             </Border>
                                             <Border Grid.Row="1" Padding="0,5,0,0">
                                                 <TextBlock
-                                                    FontSize="14"
+                                                    FontSize="12"
                                                     Foreground="#434343"
                                                     Text="{TemplateBinding Description}"
                                                     TextWrapping="WrapWithOverflow" />

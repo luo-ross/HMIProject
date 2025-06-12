@@ -71,7 +71,7 @@
                         Foreground="#D8000000"
                         Text="{Binding Description}" />
 
-                    <rs:RSDatePicker Grid.Column="1" />
+                    <rs:RSDateTimePicker Grid.Column="1" />
                 </Grid>
             </DataTemplate>
 
@@ -139,7 +139,7 @@
                                 Foreground="#D8000000"
                                 Text="创建时间" />
 
-                            <rs:RSDatePicker
+                            <rs:RSDateTimePicker
                                 Grid.Column="5"
                                 DateTimeSelected="{Binding DateTimeSelect, ValidatesOnExceptions=True}"
                                 DisplayParts="Date"

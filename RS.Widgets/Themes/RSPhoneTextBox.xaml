@@ -157,7 +157,7 @@
                                                                                     <StackPanel>
                                                                                         <Border Padding="10,20,10,5">
                                                                                             <Grid>
-                                                                                                <TextBlock FontSize="14" Text="{Binding Path=Name}" />
+                                                                                                <TextBlock FontSize="12" Text="{Binding Path=Name}" />
                                                                                             </Grid>
                                                                                         </Border>
                                                                                         <ItemsPresenter />

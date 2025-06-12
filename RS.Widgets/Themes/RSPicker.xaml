@@ -81,6 +81,7 @@
                                 x:Name="PART_TxtSearch"
                                 Grid.Row="1"
                                 HorizontalContentAlignment="Center"
+                                rs:TextBoxHelper.IsShowClearButton="{TemplateBinding rs:TextBoxHelper.IsShowClearButton}"
                                 rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
                                 MaxLength="7"
                                 Style="{StaticResource RSApp.Styles.TextBoxStyle}"

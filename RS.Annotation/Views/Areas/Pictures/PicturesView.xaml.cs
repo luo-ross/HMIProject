@@ -292,7 +292,7 @@ namespace RS.Annotation.Views.Areas
                                 textBlock.Text = imgModel.ImgName;
                                 textBlock.VerticalAlignment = VerticalAlignment.Top;
                                 textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                                textBlock.FontSize = 14;
+                                textBlock.FontSize = 12;
                                 textBlock.Focusable = false;
                                 textBlock.Padding = new Thickness(3, 15, 3, 3);
                                 textBlock.TextTrimming = TextTrimming.CharacterEllipsis;

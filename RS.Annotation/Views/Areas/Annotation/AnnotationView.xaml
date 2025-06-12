@@ -615,7 +615,7 @@
                 </GroupBox.Header>
                 <Border>
                     <DataGrid
-                        FontSize="14"
+                        FontSize="12"
                         HorizontalScrollBarVisibility="Hidden"
                         ItemsSource="{Binding Path=PicturesView.ViewModel.ImgModelSelect.RectModelList, ElementName=this}"
                         SelectionMode="Extended"

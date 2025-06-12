@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:RS.HMI.Client.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
+    x:Name="this"
     Title="上位机客户端"
     MinWidth="1024"
     MinHeight="600"
@@ -25,6 +26,7 @@
     </rs:RSWindow.DataContext>-->
     <rs:RSWindow.Resources>
         <ResourceDictionary>
+            <rs:ClipConverter x:Key="ClipConverter" />
             <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
             <DataTemplate DataType="{x:Type areas:UserViewModel}">
                 <areas:UserView />
@@ -49,12 +51,16 @@
                     Text="上位机客户端" />
                 <Button
                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
+                    rs:ControlsHelper.IconHeight="13"
+                    rs:ControlsHelper.IconWidth="13"
                     Command="{x:Static NavigationCommands.BrowseBack}"
                     CommandTarget="{Binding ElementName=PART_Frame}"
                     Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                     ToolTip="点击可后退，按住可查看历史记录" />
                 <Button
                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
+                    rs:ControlsHelper.IconHeight="13"
+                    rs:ControlsHelper.IconWidth="13"
                     Command="{x:Static NavigationCommands.BrowseForward}"
                     CommandTarget="{Binding ElementName=PART_Frame}"
                     Style="{StaticResource RSApp.Styles.IconButtonStyle}"
@@ -62,6 +68,29 @@
 
             </StackPanel>
             <Grid Grid.Column="1">
+                <rs:RSNotifyIcon
+                    x:Name="NotifyIcon"
+                    Icon="/Assets/logo.ico"
+                    MouseDoubleClick="NotifyIcon_MouseDoubleClick"
+                    MouseUp="NotifyIcon_MouseUp">
+                    <rs:RSNotifyIcon.ContextMenu>
+                        <ContextMenu Placement="MousePoint">
+                            <MenuItem Header="test" />
+                            <MenuItem Header="test" />
+
+                            <MenuItem Header="test">
+                                <MenuItem Header="test2" />
+                                <MenuItem Header="test2" />
+                                <MenuItem Header="test2" />
+                                <MenuItem Header="test2">
+                                    <MenuItem Header="test3" />
+                                    <MenuItem Header="test3" />
+                                    <MenuItem Header="test3" />
+                                </MenuItem>
+                            </MenuItem>
+                        </ContextMenu>
+                    </rs:RSNotifyIcon.ContextMenu>
+                </rs:RSNotifyIcon>
                 <!--<TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -98,6 +127,7 @@
                             <RadioButton
                                 Margin="0,5,0,5"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Home}"
+                                Click="RadioButton_Click"
                                 Content="监控中心"
                                 Style="{StaticResource RSApp.Styles.NavButton}" />
 
@@ -173,9 +203,166 @@
             <Border
                 x:Name="PART_ContentHost"
                 Margin="10,10,10,0"
-                Background="#fff">
+                Background="#fff"
+                CornerRadius="10">
+                <Border.Clip>
+                    <MultiBinding Converter="{StaticResource ClipConverter}">
+                        <Binding ElementName="PART_ContentHost" Path="CornerRadius" />
+                        <Binding ElementName="PART_ContentHost" Path="ActualWidth" />
+                        <Binding ElementName="PART_ContentHost" Path="ActualHeight" />
+                    </MultiBinding>
+                </Border.Clip>
+
                 <Grid>
-                    <Frame x:Name="PART_Frame" Content="{Binding ViewModelSelect}" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <Menu Height="200">
+                            <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                            <MenuItem Header="sdfsdfsdfsdf" />
+                            <MenuItem Header="sdfsdfsdfsdf" />
+                            <MenuItem Header="sdfsdfsdfsdf" />
+                            <MenuItem Header="sdfsdfsdfsdf" />
+                            <MenuItem Header="sdfsdfsdfsdf" />
+
+                            <MenuItem Header="sdfsdfsdfsdf" />
+                            <MenuItem Header="sdfsdfsdfsdf">
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" IsChecked="True" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="sdfsdfsdfsdf" />
+                                <MenuItem Header="11232" />
+                                <MenuItem Header="11232" />
+                                <MenuItem Header="11232">
+                                    <MenuItem Header="sdfsdfsdfsdf">
+                                        <MenuItem Header="11232" />
+                                        <MenuItem Header="11232" />
+                                        <MenuItem Header="11232" />
+                                    </MenuItem>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+                    </StackPanel>
+                    <Frame
+                        x:Name="PART_Frame"
+                        Grid.Row="1"
+                        Content="{Binding ViewModelSelect}">
+                        <Frame.ContextMenu>
+                            <ContextMenu Placement="MousePoint">
+                                <MenuItem Header="test" IsChecked="True">
+                                    <MenuItem.Icon>
+                                        <Path
+                                            Width="15"
+                                            Height="15"
+                                            Data="{StaticResource RSApp.Icons.Asterisk}"
+                                            Fill="Red"
+                                            Stretch="Fill" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="test" IsChecked="True" />
+                                <MenuItem Header="test">
+                                    <MenuItem Header="test2" />
+                                    <MenuItem Header="test2" />
+                                    <MenuItem Header="test" IsChecked="True">
+                                        <MenuItem.Icon>
+                                            <Path
+                                                Width="15"
+                                                Height="15"
+                                                Data="{StaticResource RSApp.Icons.Asterisk}"
+                                                Fill="Red"
+                                                Stretch="Fill" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="test2" IsChecked="True">
+                                        <MenuItem Header="test3" />
+                                        <MenuItem Header="test3" />
+                                        <MenuItem Header="test" IsChecked="True">
+                                            <MenuItem.Icon>
+                                                <Path
+                                                    Width="15"
+                                                    Height="15"
+                                                    Data="{StaticResource RSApp.Icons.Asterisk}"
+                                                    Fill="Red"
+                                                    Stretch="Fill" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </MenuItem>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Frame.ContextMenu>
+                    </Frame>
                 </Grid>
             </Border>
             <Border Grid.Row="1" Padding="10">

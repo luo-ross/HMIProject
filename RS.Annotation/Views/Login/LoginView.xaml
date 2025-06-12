@@ -79,7 +79,7 @@
                             Grid.Column="1"
                             Margin="10,0,10,0"
                             HorizontalAlignment="Center"
-                            FontSize="14"
+                            FontSize="12"
                             Foreground="#616367"
                             Text="其他方式登录" />
 
@@ -208,7 +208,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,10,0"
                                 HorizontalAlignment="Center"
-                                FontSize="16"
+                                FontSize="12"
                                 Foreground="#FFF"
                                 Text="新朋友享专属特惠" />
 

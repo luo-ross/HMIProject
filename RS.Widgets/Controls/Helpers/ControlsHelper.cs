@@ -61,7 +61,7 @@ namespace RS.Widgets.Controls
               "IconWidth",
               typeof(double),
               typeof(ControlsHelper),
-              new PropertyMetadata(15D));
+              new PropertyMetadata(12D));
 
         public static double GetIconWidth(DependencyObject obj)
         {
@@ -82,7 +82,7 @@ namespace RS.Widgets.Controls
               "IconHeight",
               typeof(double),
               typeof(ControlsHelper),
-              new PropertyMetadata(15D));
+              new PropertyMetadata(12D));
 
         public static double GetIconHeight(DependencyObject obj)
         {

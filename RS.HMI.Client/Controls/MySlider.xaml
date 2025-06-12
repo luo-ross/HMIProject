@@ -50,7 +50,7 @@
                                                 Background="{TemplateBinding Background}"
                                                 CornerRadius="0,20,20,0">
                                                 <TextBlock
-                                                    FontSize="13"
+                                                    FontSize="12"
                                                     Foreground="{TemplateBinding Foreground}"
                                                     Text="{TemplateBinding Caption}" />
                                             </Border>
@@ -73,7 +73,7 @@
                                                             Fill="{TemplateBinding Foreground}" />
 
                                                         <TextBlock
-                                                            FontSize="16"
+                                                            FontSize="12"
                                                             Foreground="#fff"
                                                             Text="{TemplateBinding Location}" />
                                                     </StackPanel>
@@ -82,7 +82,7 @@
                                         </StackPanel>
                                     </Border>
                                 </Border>
-                                <Border x:Name="PART_BlurBorder" Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}" />
+                                <Border x:Name="PART_BlurBorder" Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>

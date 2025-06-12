@@ -78,12 +78,12 @@
 
                 <TextBlock
                     HorizontalAlignment="Center"
-                    FontSize="14"
+                    FontSize="12"
                     Foreground="#949494"
                     Text="请查看邮箱收件箱或者垃圾邮件" />
                 <TextBlock
                     HorizontalAlignment="Center"
-                    FontSize="14"
+                    FontSize="12"
                     Foreground="#949494"
                     Text="然后点击右键里的密码重置连接进行密码修改" />
             </StackPanel>

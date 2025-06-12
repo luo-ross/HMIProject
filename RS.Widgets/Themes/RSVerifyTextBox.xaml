@@ -71,7 +71,7 @@
                                         x:Name="PART_TxtExpireTime"
                                         Margin="10,0,10,0"
                                         VerticalAlignment="Center"
-                                        FontSize="14"
+                                        FontSize="12"
                                         Foreground="{DynamicResource RSApp.Styles.WatermarkColorStyle}"
                                         Text="{TemplateBinding ExpireTimeDes}"
                                         Visibility="Collapsed" />

@@ -36,7 +36,7 @@
                                                 Margin="0,3,0,3"
                                                 Padding="5"
                                                 CornerRadius="3"
-                                                Effect="{StaticResource RSApp.Styles.DefaultDropShadowEffect}">
+                                                Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="auto" />

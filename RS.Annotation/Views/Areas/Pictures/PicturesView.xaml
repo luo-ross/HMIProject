@@ -408,7 +408,7 @@
                 <Border>
                     <DataGrid
                         x:Name="TagSumModelListDataGrid"
-                        FontSize="14"
+                        FontSize="12"
                         HorizontalScrollBarVisibility="Hidden"
                         ItemsSource="{Binding ImgModelSelect.TagSumModelList}"
                         SelectionMode="Extended"

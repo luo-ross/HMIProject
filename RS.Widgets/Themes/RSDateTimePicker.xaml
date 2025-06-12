@@ -1,0 +1,275 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
+    xmlns:model="clr-namespace:RS.Widgets.Models"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <converters:BackgroundToForegroundConverter x:Key="BackgroundToForegroundConverter" />
+    <Style TargetType="{x:Type rs:RSDateTimePicker}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="#eee" />
+        <Setter Property="Margin" Value="5,2,5,2" />
+        <Setter Property="MinWidth" Value="70" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="CornerRadius" Value="3" />
+        <Setter Property="DateTimeFormat" Value="yyyy-MM-dd HH:mm:ss" />
+        <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="True" />
+        <Setter Property="rs:TextBoxHelper.Watermark" Value="请选择日期" />
+        <Setter Property="Foreground" Value="{DynamicResource RSApp.Styles.Button.Foreground}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type rs:RSDateTimePicker}">
+                    <Border
+                        x:Name="PART_Border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                x:Name="PART_TxtDate"
+                                Margin="0,0,-5,0"
+                                Padding="2,3,3,3"
+                                rs:TextBoxHelper.IsShowClearButton="{TemplateBinding rs:TextBoxHelper.IsShowClearButton}"
+                                rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                BorderThickness="0"
+                                IsEnabled="{TemplateBinding IsEnabled}"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=FormattedDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, ValidatesOnDataErrors=True}" />
+                            <ToggleButton
+                                x:Name="PART_BtnDatePicker"
+                                Grid.Column="1"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Date}"
+                                Foreground="#707070"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                            <rs:RSPopup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                HorizontalOffset="0"
+                                IsOpen="{Binding ElementName=PART_BtnDatePicker, Path=IsChecked}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                SnapsToDevicePixels="True"
+                                VerticalOffset="0">
+                                <Grid Margin="18,0,18,18" SnapsToDevicePixels="True">
+                                    <Border
+                                        x:Name="DropDownBorder"
+                                        Background="#fff"
+                                        BorderBrush="#E4E9F2"
+                                        BorderThickness="1,1,1,1"
+                                        CornerRadius="5">
+                                        <Grid x:Name="PART_PopupHost" Height="400">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+
+                                                <rs:RSPicker
+                                                    x:Name="PART_Year"
+                                                    Grid.Column="0"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                                    rs:TextBoxHelper.Watermark="年"
+                                                    BorderThickness="0,0,1,0"
+                                                    Description="年"
+                                                    IsCanSearch="{TemplateBinding IsCanSearch}"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=YearList}"
+                                                    SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=YearSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <rs:RSPicker
+                                                    x:Name="PART_Month"
+                                                    Grid.Column="1"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                                    rs:TextBoxHelper.Watermark="月"
+                                                    BorderThickness="0,0,1,0"
+                                                    Description="月"
+                                                    IsCanSearch="{TemplateBinding IsCanSearch}"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MonthList}"
+                                                    SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MonthSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <rs:RSPicker
+                                                    x:Name="PART_Day"
+                                                    Grid.Column="2"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                                    rs:TextBoxHelper.Watermark="日"
+                                                    BorderThickness="0,0,1,0"
+                                                    Description="日"
+                                                    IsCanSearch="{TemplateBinding IsCanSearch}"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=DayList}"
+                                                    SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=DaySelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <rs:RSPicker
+                                                    x:Name="PART_Hour"
+                                                    Grid.Column="3"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                                    rs:TextBoxHelper.Watermark="时"
+                                                    BorderThickness="0,0,1,0"
+                                                    Description="时"
+                                                    IsCanSearch="{TemplateBinding IsCanSearch}"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=HourList}"
+                                                    SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=HourSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <rs:RSPicker
+                                                    x:Name="PART_Minute"
+                                                    Grid.Column="4"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                                    rs:TextBoxHelper.Watermark="分"
+                                                    BorderThickness="0,0,1,0"
+                                                    Description="分"
+                                                    IsCanSearch="{TemplateBinding IsCanSearch}"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MinuteList}"
+                                                    SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MinuteSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <rs:RSPicker
+                                                    x:Name="PART_Second"
+                                                    Grid.Column="5"
+                                                    rs:TextBoxHelper.IsShowClearButton="True"
+                                                    rs:TextBoxHelper.Watermark="秒"
+                                                    BorderThickness="0,0,1,0"
+                                                    Description="秒"
+                                                    IsCanSearch="{TemplateBinding IsCanSearch}"
+                                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SecondList}"
+                                                    SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SecondSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </Grid>
+
+                                            <Border
+                                                Grid.Row="1"
+                                                BorderBrush="#eee"
+                                                BorderThickness="0,1,0,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button
+                                                        x:Name="PART_BtnConfirm"
+                                                        Grid.Column="0"
+                                                        Padding="8"
+                                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.CheckMark}"
+                                                        rs:ControlsHelper.IconHeight="12"
+                                                        rs:ControlsHelper.IconWidth="17"
+                                                        Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                                                    <Button
+                                                        x:Name="PART_BtnCancel"
+                                                        Grid.Column="1"
+                                                        Padding="8"
+                                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Wrong}"
+                                                        rs:ControlsHelper.IconHeight="13"
+                                                        rs:ControlsHelper.IconWidth="13"
+                                                        Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <Grid.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="18"
+                                            Opacity="0.1"
+                                            ShadowDepth="0"
+                                            Color="#000000" />
+                                    </Grid.Effect>
+                                </Grid>
+                            </rs:RSPopup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="DisplayParts" Value="Date">
+                            <Setter TargetName="PART_Hour" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Minute" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Second" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="DisplayParts" Value="Time">
+                            <Setter TargetName="PART_Year" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Month" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Day" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+
+                        <Trigger Property="DisplayParts" Value="Year">
+                            <Setter TargetName="PART_Month" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Day" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Hour" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Minute" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Second" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="DisplayParts" Value="Month">
+                            <Setter TargetName="PART_Year" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Day" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Hour" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Minute" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Second" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="DisplayParts" Value="Day">
+                            <Setter TargetName="PART_Year" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Month" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Hour" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Minute" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Second" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="DisplayParts" Value="Hour">
+                            <Setter TargetName="PART_Year" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Month" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Day" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Minute" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Second" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="DisplayParts" Value="Minute">
+                            <Setter TargetName="PART_Year" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Month" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Day" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Hour" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Second" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="DisplayParts" Value="Second">
+                            <Setter TargetName="PART_Year" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Month" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Day" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Hour" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Minute" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#eee" />
+                            <Setter Property="Foreground" Value="#949494" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

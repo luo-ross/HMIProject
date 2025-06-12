@@ -92,13 +92,13 @@
                         <TextBlock
                             Margin="0,20,0,0"
                             HorizontalAlignment="Center"
-                            FontSize="14"
+                            FontSize="12"
                             Foreground="#949494"
                             Text="请查看邮箱获取验证码" />
 
                         <TextBlock
                             HorizontalAlignment="Center"
-                            FontSize="14"
+                            FontSize="12"
                             Foreground="#949494"
                             Text="{Binding SignUpModel.Email}" />
 
@@ -149,7 +149,7 @@
                         <TextBlock
                             Margin="0,15,0,0"
                             HorizontalAlignment="Center"
-                            FontSize="14"
+                            FontSize="12"
                             Foreground="{StaticResource RSApp.Styles.Danger}">
                             <Run Text="剩余时间" />
                             <Run Text="{Binding RemainingTime, StringFormat='{}{0:F0}'}" />
@@ -193,7 +193,7 @@
 
                 <TextBlock
                     HorizontalAlignment="Center"
-                    FontSize="14"
+                    FontSize="12"
                     Foreground="#949494"
                     Text="请点击下面按钮返回登录界面" />
             </StackPanel>

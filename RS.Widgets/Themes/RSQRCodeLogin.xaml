@@ -42,7 +42,7 @@
                                                 Margin="{DynamicResource RSApp.Styles.DefautMarginStyle}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                FontSize="14"
+                                                FontSize="12"
                                                 Foreground="#fff"
                                                 Text="获取二维码中..." />
                                         </StackPanel>

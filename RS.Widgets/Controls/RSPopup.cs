@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows;
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using RS.Win32API;
+using RS.Win32API.Structs;
 namespace RS.Widgets.Controls
 {
 
@@ -92,10 +94,11 @@ namespace RS.Widgets.Controls
         private void UpdateWindow()
         {
             var handle = ((HwndSource)PresentationSource.FromVisual(this.Child)).Handle;
-            HWND hWnd = new HWND(handle);
-            if (Ross.GetWindowRect(hWnd, out RECT lpRect))
+
+            RECT lpRect = new RECT();
+            if (NativeMethods.IntGetWindowRect(new HandleRef(null, handle), ref lpRect))
             {
-                Ross.SetWindowPos(new HWND(hWnd),new HWND(Topmost ? -1 : -2) , lpRect.left, lpRect.top, (int)this.Width, (int)this.Height, 0);
+                NativeMethods.SetWindowPos(new HandleRef(null, handle), new HandleRef(null, Topmost ? -1 : -2), lpRect.left, lpRect.top, (int)this.Width, (int)this.Height, 0);
             }
         }
 
