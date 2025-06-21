@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Resources;
 using System.Windows.Shapes;
+using RS.Widgets.Controls;
 
 namespace RS.Annotation.Views.Areas
 {
@@ -1204,6 +1205,7 @@ namespace RS.Annotation.Views.Areas
             }
 
             this.IsAnnotationCanvasHostMouseLeftPressDown = false;
+
             //结束我们的鼠标平移事件
             this.IsAnnotationCanvasHostMouseMoveEvent = false;
 
@@ -1382,6 +1384,7 @@ namespace RS.Annotation.Views.Areas
                 {
                     continue;
                 }
+
                 rectModel.Rectangle.Fill = this.GetFillColor(rectModel.TagModel.TagColor);
                 rectModel.Rectangle.StrokeThickness = 1 / this.ViewModel.Scale;
                 if (rectModel.IsSelect)

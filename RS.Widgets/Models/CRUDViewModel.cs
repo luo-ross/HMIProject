@@ -4,7 +4,7 @@ using NPOI.Util;
 using RS.Commons;
 using RS.Commons.Enums;
 using RS.Models;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 

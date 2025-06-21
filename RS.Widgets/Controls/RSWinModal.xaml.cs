@@ -1,4 +1,4 @@
-﻿using RS.Widgets.Interface;
+﻿using RS.Widgets.Interfaces;
 
 namespace RS.Widgets.Controls
 {

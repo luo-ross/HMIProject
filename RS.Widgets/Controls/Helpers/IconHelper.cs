@@ -1,6 +1,6 @@
 ﻿using RS.Win32API;
 using RS.Win32API.Enums;
-using RS.Win32API.Handles;
+using RS.Win32API.SafeHandles;
 using RS.Win32API.Structs;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace RS.Widgets.Controls.Helpers
+namespace RS.Widgets.Controls
 {
 
     public static class IconHelper
@@ -96,7 +96,7 @@ namespace RS.Widgets.Controls.Helpers
         ///     Critical: Since it calls CreateIconHandleFromBitmapFrame
         /// </SecurityNote>
         /// <returns>A new HICON based on the image source</returns>
-        [SecurityCritical]
+       
         public static IconHandle CreateIconHandleFromImageSource(ImageSource image, Size size)
         {
             EnsureSystemMetrics();
@@ -148,12 +148,12 @@ namespace RS.Widgets.Controls.Helpers
             }
             else if (renderRatio > aspectRatio)
             {
-                double scaledRenderWidth = (img.Width / img.Height) * renderSize.Width;
+                double scaledRenderWidth = img.Width / img.Height * renderSize.Width;
                 drawingDimensions = new Rect((renderSize.Width - scaledRenderWidth) / 2, 0, scaledRenderWidth, renderSize.Height);
             }
             else if (renderRatio < aspectRatio)
             {
-                double scaledRenderHeight = (img.Height / img.Width) * renderSize.Height;
+                double scaledRenderHeight = img.Height / img.Width * renderSize.Height;
                 drawingDimensions = new Rect(0, (renderSize.Height - scaledRenderHeight) / 2, renderSize.Width, scaledRenderHeight);
             }
 
@@ -178,7 +178,7 @@ namespace RS.Widgets.Controls.Helpers
         /// <returns></returns>
         //
         //  Creates and HICON from a bitmap frame
-        [SecurityCritical]
+       
         private static IconHandle CreateIconHandleFromBitmapFrame(BitmapFrame sourceBitmapFrame)
         {
             if (sourceBitmapFrame == null)
@@ -212,7 +212,7 @@ namespace RS.Widgets.Controls.Helpers
         /// <SecurityNote>
         ///     Critical: Critical as this code create a DIB section and writes data to it
         /// </SecurityNote>
-        [SecurityCritical]
+       
         internal static IconHandle CreateIconCursor(
             byte[] colorArray,
             int width,
@@ -238,9 +238,9 @@ namespace RS.Widgets.Controls.Helpers
                                                     );
                 bi.bmiHeader_biCompression = NativeMethods.BI_RGB;
 
-                IntPtr bits = IntPtr.Zero;
+                nint bits = nint.Zero;
                 colorBitmap = NativeMethods.CreateDIBSection(
-                                        new HandleRef(null, IntPtr.Zero),   // A device context. Pass null in if no DIB_PAL_COLORS is used.
+                                        new HandleRef(null, nint.Zero),   // A device context. Pass null in if no DIB_PAL_COLORS is used.
                                         ref bi,                             // A BITMAPINFO structure which specifies the dimensions and colors.
                                         NativeMethods.DIB_RGB_COLORS,       // Specifies the type of data contained in the bmiColors array member of the BITMAPINFO structure
                                         ref bits,                           // An out Pointer to a variable that receives a pointer to the location of the DIB bit values
@@ -248,7 +248,7 @@ namespace RS.Widgets.Controls.Helpers
                                         0                                   // dwOffset. This value is ignored if hSection is NULL
                                         );
 
-                if (colorBitmap.IsInvalid || bits == IntPtr.Zero)
+                if (colorBitmap.IsInvalid || bits == nint.Zero)
                 {
                     // Note we will release the GDI resources in the finally block.
                     return IconHandle.GetInvalidIcon();
@@ -326,18 +326,18 @@ namespace RS.Widgets.Controls.Helpers
                 //    ^             ^
                 //  offsetBit = 0x80   offsetBit = 0x01
                 int byteIndex = hPos / 8;
-                byte offsetBit = (byte)(0x80 >> (hPos % 8));
+                byte offsetBit = (byte)(0x80 >> hPos % 8);
 
                 // Now we turn the mask on or off accordingly.
                 if (colorArray[i * 4 + 3] /* Alpha value since it's in Argb32 Format */ == 0x00)
                 {
                     // Set the mask bit to 1.
-                    bitsMask[byteIndex + bytesPerScanLine * vPos] |= (byte)offsetBit;
+                    bitsMask[byteIndex + bytesPerScanLine * vPos] |= offsetBit;
                 }
                 else
                 {
                     // Reset the mask bit to 0
-                    bitsMask[byteIndex + bytesPerScanLine * vPos] &= (byte)(~offsetBit);
+                    bitsMask[byteIndex + bytesPerScanLine * vPos] &= (byte)~offsetBit;
                 }
 
                 // Since the scan line of the mask bitmap has to be aligned to word. We have set all padding bits to 1.
@@ -361,8 +361,8 @@ namespace RS.Widgets.Controls.Helpers
         internal static int AlignToBytes(double original, int nBytesCount)
         {
             Debug.Assert(nBytesCount > 0, "The N-Byte has to be greater than 0!");
-            int nBitsCount = 8 << (nBytesCount - 1);
-            return (((int)Math.Ceiling(original) + (nBitsCount - 1)) / nBitsCount) * nBitsCount;
+            int nBitsCount = 8 << nBytesCount - 1;
+            return ((int)Math.Ceiling(original) + (nBitsCount - 1)) / nBitsCount * nBitsCount;
         }
 
         ///
@@ -441,7 +441,7 @@ namespace RS.Widgets.Controls.Helpers
         ///
         private static int MyAbs(int valueHave, int valueWant, bool fPunish)
         {
-            int diff = (valueHave - valueWant);
+            int diff = valueHave - valueWant;
 
             if (diff < 0)
             {

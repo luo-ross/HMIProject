@@ -8,6 +8,7 @@ using RS.HMI.IBLL;
 using RS.Models;
 using RS.RESTfulApi;
 using RS.Widgets.Controls;
+using RS.Widgets.Controls;
 using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System;

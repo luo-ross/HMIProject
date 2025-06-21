@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RS.Commons;
 using RS.HMI.Client.Models;
 using RS.Widgets.Controls;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using System.Windows;
 

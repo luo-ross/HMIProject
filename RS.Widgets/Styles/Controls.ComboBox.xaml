@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
@@ -12,7 +13,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-
+    <converters:ClipConverter x:Key="ClipConverter" />
     <Style x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
@@ -141,36 +142,43 @@
                                 x:Name="Popup"
                                 AllowsTransparency="True"
                                 Focusable="False"
-                                HorizontalOffset="-2"
+                                HorizontalOffset="-7"
                                 IsOpen="{TemplateBinding IsDropDownOpen}"
                                 Placement="Bottom"
                                 PopupAnimation="None"
-                                StaysOpen="True"
-                                VerticalOffset="4">
-                                <Border
-                                    MinWidth="{TemplateBinding ActualWidth}"
-                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                    Margin="15"
-                                    Background="#FFF"
-                                    BorderBrush="#eee"
-                                    BorderThickness="1,0,1,1"
-                                    CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                                    Effect="{StaticResource RSApp.Styles.DropDownEffect}">
-                                    <Grid x:Name="DropDown" SnapsToDevicePixels="True">
-                                        <ScrollViewer SnapsToDevicePixels="True">
-                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                        </ScrollViewer>
-                                        <ContentControl
-                                            x:Name="PART_EmptyData"
-                                            Margin="15"
-                                            rs:ControlsHelper.EmptyDataDes="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.EmptyDataDes)}"
-                                            rs:ControlsHelper.IconData="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconData)}"
-                                            rs:ControlsHelper.IconHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconHeight)}"
-                                            rs:ControlsHelper.IconWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconWidth)}"
-                                            Template="{StaticResource RSApp.ControlTemplate.EmptyDataTemplate}"
-                                            Visibility="Collapsed" />
-                                    </Grid>
+                                SnapsToDevicePixels="True"
+                                StaysOpen="True">
+                                <Border Margin="15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                    <Border
+                                        MinWidth="{TemplateBinding ActualWidth}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Margin="5"
+                                        Background="#FFF"
+                                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                                        <Border.Clip>
+                                            <MultiBinding Converter="{StaticResource ClipConverter}">
+                                                <Binding ElementName="DropDownBorder" Path="CornerRadius" />
+                                                <Binding ElementName="DropDownBorder" Path="ActualWidth" />
+                                                <Binding ElementName="DropDownBorder" Path="ActualHeight" />
+                                            </MultiBinding>
+                                        </Border.Clip>
+                                        <Grid x:Name="DropDown">
+                                            <ScrollViewer>
+                                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                            </ScrollViewer>
+                                            <ContentControl
+                                                x:Name="PART_EmptyData"
+                                                Margin="15"
+                                                rs:ControlsHelper.EmptyDataDes="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.EmptyDataDes)}"
+                                                rs:ControlsHelper.IconData="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconData)}"
+                                                rs:ControlsHelper.IconHeight="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconHeight)}"
+                                                rs:ControlsHelper.IconWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Path=(rs:ControlsHelper.IconWidth)}"
+                                                Template="{StaticResource RSApp.ControlTemplate.EmptyDataTemplate}"
+                                                Visibility="Collapsed" />
+                                        </Grid>
+                                    </Border>
                                 </Border>
+
                             </Popup>
                         </Grid>
                     </Border>

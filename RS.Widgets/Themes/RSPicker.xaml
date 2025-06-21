@@ -97,7 +97,7 @@
                                     Background="Transparent"
                                     ClipToBounds="True"
                                     SnapsToDevicePixels="True" />
-                                <Button
+                                <RepeatButton
                                     x:Name="PART_BtnScrollUp"
                                     Grid.Row="0"
                                     Height="30"
@@ -110,7 +110,7 @@
                                     Background="#fff"
                                     Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
 
-                                <Button
+                                <RepeatButton
                                     x:Name="PART_BtnScrollDown"
                                     Grid.Row="2"
                                     Height="30"

@@ -2,7 +2,7 @@
 using NPOI.POIFS.Crypt.Dsig.Services;
 using RS.Commons;
 using RS.Widgets.Enums;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using System;
 using System.Collections;

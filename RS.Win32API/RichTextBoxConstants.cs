@@ -8,7 +8,6 @@ namespace RS.Win32API
 {
     public static class RichTextBoxConstants
     {
-
         // flags for enum that we don't want public
         //
         internal const int RTB_HORIZ = 0x0001;

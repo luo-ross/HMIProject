@@ -1,5 +1,5 @@
 ﻿using RS.Commons;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using System.Windows;
 using System.Windows.Controls;

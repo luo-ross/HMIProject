@@ -1,9 +1,11 @@
-﻿using System;
+﻿using RS.Win32API.Standard;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace RS.Win32API.Structs
 {
@@ -11,52 +13,52 @@ namespace RS.Win32API.Structs
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {
-        public int left;
-        public int top;
-        public int right;
-        public int bottom;
+        private int left;
+        private int top;
+        private int right;
+        private int bottom;
 
         public RECT(int left, int top, int right, int bottom)
         {
-            this.left = left;
-            this.top = top;
-            this.right = right;
-            this.bottom = bottom;
+            this.Left = left;
+            this.Top = top;
+            this.Right = right;
+            this.Bottom = bottom;
         }
 
         public int Width
         {
-            get { return right - left; }
+            get { return Right - Left; }
         }
 
         public int Height
         {
-            get { return bottom - top; }
+            get { return Bottom - Top; }
         }
 
         public void Offset(int dx, int dy)
         {
-            left += dx;
-            top += dy;
-            right += dx;
-            bottom += dy;
+            Left += dx;
+            Top += dy;
+            Right += dx;
+            Bottom += dy;
         }
 
         public bool IsEmpty
         {
             get
             {
-                return left >= right || top >= bottom;
+                return Left >= Right || Top >= Bottom;
             }
         }
 
 
         public RECT(System.Drawing.Rectangle r)
         {
-            this.left = r.Left;
-            this.top = r.Top;
-            this.right = r.Right;
-            this.bottom = r.Bottom;
+            this.Left = r.Left;
+            this.Top = r.Top;
+            this.Right = r.Right;
+            this.Bottom = r.Bottom;
         }
 
         public static RECT FromXYWH(int x, int y, int width, int height)
@@ -64,12 +66,78 @@ namespace RS.Win32API.Structs
             return new RECT(x, y, x + width, y + height);
         }
 
-        public System.Drawing.Size Size
+
+        public int Left
         {
-            get
+            get { return left; }
+            set { left = value; }
+        }
+
+
+        public int Right
+        {
+            get { return right; }
+            set { right = value; }
+        }
+
+
+        public int Top
+        {
+            get { return top; }
+            set { top = value; }
+        }
+
+
+        public int Bottom
+        {
+            get { return bottom; }
+            set { bottom = value; }
+        }
+
+
+
+
+        public POINT Position
+        {
+            get { return new POINT { x = Left, y = Top }; }
+        }
+
+
+        public SIZE Size
+        {
+            get { return new SIZE { cx = Width, cy = Height }; }
+        }
+
+        public static RECT Union(RECT rect1, RECT rect2)
+        {
+            return new RECT
             {
-                return new System.Drawing.Size(this.right - this.left, this.bottom - this.top);
+                Left = Math.Min(rect1.Left, rect2.Left),
+                Top = Math.Min(rect1.Top, rect2.Top),
+                Right = Math.Max(rect1.Right, rect2.Right),
+                Bottom = Math.Max(rect1.Bottom, rect2.Bottom),
+            };
+        }
+
+        public override bool Equals(object obj)
+        {
+            try
+            {
+                var rc = (RECT)obj;
+                return rc.Bottom == Bottom
+                && rc.Left == Left
+                    && rc.Right == Right
+                    && rc.Top == Top;
             }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return (left << 16 | Utility.LOWORD(right)) ^ (top << 16 | Utility.LOWORD(bottom));
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RS.Commons.Attributs;
 using RS.Widgets.Enums;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using RS.Win32API;
+using RS.Win32API.Enums;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -158,7 +159,7 @@ namespace RS.Widgets.Controls
             int nWidth = (int)SystemParameters.WorkArea.Width;  // 新的宽度
             int nHeight = (int)SystemParameters.WorkArea.Height; // 新的高度
             //Ross.SetWindowPos(new HWND(hWnd), HWND.Null, (nWidth - 300)/2, 0, 300, nHeight, SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
-            NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null,IntPtr.Zero), nWidth - 300, 0, 300, nHeight, NativeMethods.SWP_NOZORDER | NativeMethods.SWP_NOACTIVATE);
+            NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null,IntPtr.Zero), nWidth - 300, 0, 300, nHeight, (int)(SWP.NOZORDER | SWP.NOACTIVATE));
         }
 
         /// <summary>

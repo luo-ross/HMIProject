@@ -10,44 +10,42 @@ namespace RS.Widgets.Controls
 {
     public class MenuItemHelper
     {
-        /// <summary>
-        /// Select Icon Fill
-        /// </summary>
-        public static readonly DependencyProperty IconFillProperty =
+        
+        public static readonly DependencyProperty CheckedIconFillProperty =
             DependencyProperty.RegisterAttached(
-                "IconFill",
+                "CheckedIconFill",
                 typeof(Brush),
                 typeof(MenuItemHelper),
                 new PropertyMetadata(null));
-        public static Brush GetIconFill(DependencyObject obj)
+        public static Brush GetCheckedIconFill(DependencyObject obj)
         {
-            return (Brush)obj.GetValue(IconFillProperty);
+            return (Brush)obj.GetValue(CheckedIconFillProperty);
         }
 
         public static void SetImageData(DependencyObject obj, Brush value)
         {
-            obj.SetValue(IconFillProperty, value);
+            obj.SetValue(CheckedIconFillProperty, value);
         }
 
 
 
         /// <summary>
-        /// 这是自定义Pata 路径
+        /// 选中图像样式
         /// </summary>
-        public static readonly DependencyProperty IconDataProperty =
+        public static readonly DependencyProperty CheckedIconProperty =
             DependencyProperty.RegisterAttached(
-                "IconData",
+                "CheckedIcon",
                 typeof(Geometry),
                 typeof(MenuItemHelper),
                 new PropertyMetadata(null));
-        public static Geometry GetIconData(DependencyObject obj)
+        public static Geometry GetCheckedIcon(DependencyObject obj)
         {
-            return (Geometry)obj.GetValue(IconDataProperty);
+            return (Geometry)obj.GetValue(CheckedIconProperty);
         }
 
-        public static void SetIconData(DependencyObject obj, Geometry value)
+        public static void SetCheckedIcon(DependencyObject obj, Geometry value)
         {
-            obj.SetValue(IconDataProperty, value);
+            obj.SetValue(CheckedIconProperty, value);
         }
 
     }

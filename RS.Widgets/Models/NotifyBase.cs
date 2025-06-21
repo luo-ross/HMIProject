@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using RS.Widgets.Controls;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;

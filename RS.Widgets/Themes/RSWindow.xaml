@@ -72,7 +72,7 @@
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid x:Name="PART_CaptionHost">
+                                        <Grid x:Name="PART_CaptionHost" WindowChrome.IsHitTestVisibleInChrome="True">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto" />
                                                 <ColumnDefinition />
@@ -85,14 +85,11 @@
                                                     Margin="{TemplateBinding IconMargin}"
                                                     VerticalAlignment="Center"
                                                     CornerRadius="{TemplateBinding IconCornerRadius}">
-                                                    <!--<Border.InputBindings>
-                                                        <MouseBinding Command="{x:Static SystemCommands.ShowSystemMenuCommand}" Gesture="RightClick" />
-                                                    </Border.InputBindings>-->
-                                                    <!--<i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="MouseRightButtonDown">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseLeftButtonDown">
                                                             <i:InvokeCommandAction Command="{x:Static SystemCommands.ShowSystemMenuCommand}" />
                                                         </i:EventTrigger>
-                                                    </i:Interaction.Triggers>-->
+                                                    </i:Interaction.Triggers>
                                                     <Border.Background>
                                                         <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon}" />
                                                     </Border.Background>
@@ -133,12 +130,14 @@
                                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                                ToolTip="最小化" />
+                                                ToolTip="最小化"
+                                                WindowChrome.IsHitTestVisibleInChrome="True" />
                                             <Button
                                                 x:Name="PART_BtnMaxRestore"
                                                 Margin="8,3,8,3"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
-                                                Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                                WindowChrome.IsHitTestVisibleInChrome="True" />
                                             <Button
                                                 x:Name="PART_BtnClose"
                                                 Margin="8,3,8,3"
@@ -146,7 +145,8 @@
                                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                                ToolTip="关闭" />
+                                                ToolTip="关闭"
+                                                WindowChrome.IsHitTestVisibleInChrome="True" />
                                         </StackPanel>
                                     </Grid>
 
@@ -168,68 +168,67 @@
                                     <Grid
                                         x:Name="PART_ResizeHost"
                                         Grid.Row="0"
-                                        Grid.RowSpan="2"
-                                        WindowChrome.IsHitTestVisibleInChrome="True">
+                                        Grid.RowSpan="2">
                                         <Rectangle
                                             x:Name="PART_Top"
                                             Height="5"
                                             Margin="5,0,5,0"
                                             VerticalAlignment="Top"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="Top" />
                                         <Rectangle
                                             x:Name="PART_Bottom"
                                             Height="5"
                                             Margin="5,0,5,0"
                                             VerticalAlignment="Bottom"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="Bottom" />
                                         <Rectangle
                                             x:Name="PART_Left"
                                             Width="5"
                                             Margin="0,5,0,5"
                                             HorizontalAlignment="Left"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="Left" />
                                         <Rectangle
                                             x:Name="PART_Right"
                                             Width="5"
                                             Margin="0,5,0,5"
                                             HorizontalAlignment="Right"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="Right" />
                                         <Rectangle
-                                            x:Name="PART_LeftBottom"
+                                            x:Name="PART_BottomLeft"
                                             Width="5"
                                             Height="5"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Bottom"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="BottomLeft" />
                                         <Rectangle
-                                            x:Name="PART_RightBottom"
+                                            x:Name="PART_BottomRight"
                                             Width="5"
                                             Height="5"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Bottom"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="BottomRight" />
                                         <Rectangle
-                                            x:Name="PART_RightTop"
+                                            x:Name="PART_TopRight"
                                             Width="5"
                                             Height="5"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Top"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="TopRight" />
                                         <Rectangle
-                                            x:Name="PART_LeftTop"
+                                            x:Name="PART_TopLeft"
                                             Width="6"
                                             Height="5"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Top"
                                             Fill="Transparent"
-                                            Stroke="{x:Null}" />
+                                            WindowChrome.ResizeGripDirection="TopLeft" />
                                     </Grid>
                                 </Grid>
                             </rs:RSDialog>
@@ -324,16 +323,16 @@
                             <Setter Property="Cursor" Value="SizeNS" />
                         </Trigger>
 
-                        <Trigger SourceName="PART_LeftTop" Property="IsMouseOver" Value="True">
+                        <Trigger SourceName="PART_TopLeft" Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="SizeNWSE" />
                         </Trigger>
-                        <Trigger SourceName="PART_RightBottom" Property="IsMouseOver" Value="True">
+                        <Trigger SourceName="PART_BottomRight" Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="SizeNWSE" />
                         </Trigger>
-                        <Trigger SourceName="PART_RightTop" Property="IsMouseOver" Value="True">
+                        <Trigger SourceName="PART_TopRight" Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="SizeNESW" />
                         </Trigger>
-                        <Trigger SourceName="PART_LeftBottom" Property="IsMouseOver" Value="True">
+                        <Trigger SourceName="PART_BottomLeft" Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="SizeNESW" />
                         </Trigger>
                     </ControlTemplate.Triggers>

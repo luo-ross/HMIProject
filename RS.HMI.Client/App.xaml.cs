@@ -27,9 +27,6 @@ namespace RS.HMI.Client
 
         public App()
         {
-           
-
-
 
 
             //配置依赖注入服务
@@ -44,10 +41,11 @@ namespace RS.HMI.Client
             //loginView.Show();
             var homeView = ServiceProvider?.GetRequiredService<HomeView>();
             homeView?.Show();
-
-
-
         }
+
+
+
+
 
 
         private void App_OnConfigIocServices(HostApplicationBuilder builder)

@@ -1,5 +1,6 @@
-﻿using RS.Widgets.Enums;
-using RS.Widgets.Interface;
+﻿using RS.Widgets.Controls;
+using RS.Widgets.Enums;
+using RS.Widgets.Interfaces;
 using ScottPlot.TickGenerators.Financial;
 using ScottPlot.TickGenerators.TimeUnits;
 using System;
@@ -20,6 +21,20 @@ namespace RS.Widgets.Controls
 {
     public class RSDateTimePicker : ContentControl
     {
+        private class RSDateTimePickerModelTreeEnumerator : ModelTreeEnumerator
+        {
+            private RSDateTimePicker _RSDateTimePicker;
+
+            protected override bool IsUnchanged => base.Content == _RSDateTimePicker.Content;
+
+            internal RSDateTimePickerModelTreeEnumerator(RSDateTimePicker _rsDateTimePicker, object child)
+                : base(child)
+            {
+                _RSDateTimePicker = _rsDateTimePicker;
+            }
+        }
+
+
         private RSPopup PART_Popup;
         private Border PART_Border;
         private ToggleButton PART_BtnDatePicker;
@@ -32,7 +47,6 @@ namespace RS.Widgets.Controls
 
         private int MinYear = DateTime.MinValue.Year;
         private int MaxYear = DateTime.MaxValue.Year;
-        private bool IsFirstTimeInit = true;
         static RSDateTimePicker()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDateTimePicker), new FrameworkPropertyMetadata(typeof(RSDateTimePicker)));
@@ -55,7 +69,6 @@ namespace RS.Widgets.Controls
         {
 
         }
-
 
         private void PART_Popup_Loaded(object sender, RoutedEventArgs e)
         {
@@ -140,8 +153,6 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(RSDateTimePicker), new PropertyMetadata(new CornerRadius(5)));
-
-
 
 
         [Description("年")]
@@ -460,7 +471,6 @@ namespace RS.Widgets.Controls
 
             this.MinuteList = new ObservableCollection<int>(minuteList);
 
-
             var defaultMinute = this.MinuteSelected;
             //首相尝试使用默认值
             if (defaultMinute == null)
@@ -644,7 +654,7 @@ namespace RS.Widgets.Controls
                 var dateTime = this.DateTimeSelected.Value;
                 if (dateTime.Year != this.YearSelected)
                 {
-                    this.YearSelected= dateTime.Year;
+                    this.YearSelected = dateTime.Year;
                 }
                 if (dateTime.Month != this.MonthSelected)
                 {
@@ -876,11 +886,6 @@ namespace RS.Widgets.Controls
             var actualHeight = this.PART_Border.ActualHeight;
             var popupActualWidth = this.PART_PopupHost.ActualWidth;
             var popupActualHeight = this.PART_PopupHost.ActualHeight;
-
-            if (popupActualWidth < actualWidth)
-            {
-                //this.PART_Popup.Width = actualWidth + 40;
-            }
             this.PART_Popup.VerticalOffset = -(popupActualHeight / 2 + actualHeight / 2);
         }
 

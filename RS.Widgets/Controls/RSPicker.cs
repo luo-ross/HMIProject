@@ -1,19 +1,21 @@
 ﻿using RS.Widgets.Models;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class RSPicker : ContentControl
+    public class RSPicker : RangeBase
     {
         private Grid PART_ContentHost;
-        private Button PART_BtnScrollUp;
-        private Button PART_BtnScrollDown;
+        private RepeatButton PART_BtnScrollUp;
+        private RepeatButton PART_BtnScrollDown;
         private Canvas PART_Canvas;
         private bool IsCanRefreshItemsList = true;
         public List<object> SourceList;
@@ -195,8 +197,8 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_ContentHost = this.GetTemplateChild(nameof(this.PART_ContentHost)) as Grid;
-            this.PART_BtnScrollUp = this.GetTemplateChild(nameof(this.PART_BtnScrollUp)) as Button;
-            this.PART_BtnScrollDown = this.GetTemplateChild(nameof(this.PART_BtnScrollDown)) as Button;
+            this.PART_BtnScrollUp = this.GetTemplateChild(nameof(this.PART_BtnScrollUp)) as RepeatButton;
+            this.PART_BtnScrollDown = this.GetTemplateChild(nameof(this.PART_BtnScrollDown)) as RepeatButton;
             this.PART_Canvas = this.GetTemplateChild(nameof(this.PART_Canvas)) as Canvas;
             if (this.PART_BtnScrollUp != null)
             {
@@ -215,6 +217,27 @@ namespace RS.Widgets.Controls
 
             this.RefreshItemsList();
         }
+
+        private void SmallDecrement()
+        {
+            double num = Math.Max(base.Value - base.SmallChange, base.Minimum);
+            if (base.Value != num)
+            {
+                base.Value = num;
+                //RaiseScrollEvent(ScrollEventType.SmallDecrement);
+            }
+        }
+
+        private void SmallIncrement()
+        {
+            double num = Math.Min(base.Value + base.SmallChange, base.Maximum);
+            if (base.Value != num)
+            {
+                base.Value = num;
+                //RaiseScrollEvent(ScrollEventType.SmallIncrement);
+            }
+        }
+
 
         /// <summary>
         /// 更新实际渲染资源
@@ -401,6 +424,8 @@ namespace RS.Widgets.Controls
             this.SelectedIndex++;
             this.RefreshItemsList();
         }
+
+        public DispatcherTimer DispatcherTimer { get; set; }
 
         private void PART_BtnScrollUp_Click(object sender, RoutedEventArgs e)
         {

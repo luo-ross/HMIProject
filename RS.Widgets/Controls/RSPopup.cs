@@ -12,9 +12,9 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using RS.Win32API;
 using RS.Win32API.Structs;
+using RS.Widgets.Controls;
 namespace RS.Widgets.Controls
 {
-
     public class RSPopup : Popup
     {
         /// <summary> 
@@ -98,7 +98,7 @@ namespace RS.Widgets.Controls
             RECT lpRect = new RECT();
             if (NativeMethods.IntGetWindowRect(new HandleRef(null, handle), ref lpRect))
             {
-                NativeMethods.SetWindowPos(new HandleRef(null, handle), new HandleRef(null, Topmost ? -1 : -2), lpRect.left, lpRect.top, (int)this.Width, (int)this.Height, 0);
+                NativeMethods.SetWindowPos(new HandleRef(null, handle), new HandleRef(null, Topmost ? -1 : -2), lpRect.Left, lpRect.Top, (int)this.Width, (int)this.Height, 0);
             }
         }
 

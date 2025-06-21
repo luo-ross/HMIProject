@@ -24,6 +24,7 @@ using RS.HMI.ClientData.Entities;
 using RS.Commons.Helper;
 using HslCommunication.ModBus;
 using CommunityToolkit.Mvvm.Input;
+using RS.Widgets.Controls;
 
 namespace RS.HMI.Client.Controls
 {

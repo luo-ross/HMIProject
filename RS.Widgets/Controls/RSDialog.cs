@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using RS.Commons;
-using RS.Widgets.Interface;
+using RS.Widgets.Controls;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using RS.Win32API;
 using System;

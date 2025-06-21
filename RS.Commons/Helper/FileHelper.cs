@@ -518,56 +518,11 @@ namespace RS.Commons.Helper
         }
 
 
-        /// <summary>
-        /// 打开文件所在位置
-        /// </summary>
-        public static void ExplorerFile(string filePath)
-        {
-         
-            if (!File.Exists(filePath) && !Directory.Exists(filePath))
-            {
-                return;
-            }
-
-            if (Directory.Exists(filePath))
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = "explorer.exe",
-                    //Arguments = $"/select,\"{filePath}\"",
-                    Arguments = $"\"{filePath}\"",
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                };
-                Process.Start(startInfo);
-            }
-            else
-            {
-                IntPtr pidlList = ILCreateFromPathW(filePath);
-                if (pidlList != IntPtr.Zero)
-                {
-                    try
-                    {
-                        Marshal.ThrowExceptionForHR(SHOpenFolderAndSelectItems(pidlList, 0, IntPtr.Zero, 0));
-                    }
-                    finally
-                    {
-                        ILFree(pidlList);
-                    }
-                }
-            }
-        }
+     
 
 
-        [DllImport("shell32.dll", ExactSpelling = true)]
-        private static extern void ILFree(IntPtr pidlList);
+      
 
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern IntPtr ILCreateFromPathW(string pszPath);
-
-        [DllImport("shell32.dll", ExactSpelling = true)]
-        private static extern int SHOpenFolderAndSelectItems(IntPtr pidlList, uint cild, IntPtr children, uint dwFlags);
 
     
     }

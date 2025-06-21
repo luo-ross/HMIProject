@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RS.Widgets.Controls;
-using RS.Widgets.Interface;
+using RS.Widgets.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;

@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Controls;
 using RS.Widgets.Behaviors;
+using RS.Widgets.Controls;
 
 namespace RS.Widgets.Controls
 {

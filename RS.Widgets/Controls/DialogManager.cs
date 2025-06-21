@@ -1,4 +1,4 @@
-﻿using RS.Widgets.Interface;
+﻿using RS.Widgets.Interfaces;
 using RS.Win32API;
 using System;
 using System.Collections.Generic;

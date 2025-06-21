@@ -1,5 +1,5 @@
 ﻿using RS.Win32API;
-using RS.Win32API.Structs;
+using RS.Win32API.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

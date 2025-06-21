@@ -7,11 +7,12 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
+    <converters:ClipConverter x:Key="ClipConverter" />
     <converters:BackgroundToForegroundConverter x:Key="BackgroundToForegroundConverter" />
     <Style TargetType="{x:Type rs:RSDateTimePicker}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -64,21 +65,28 @@
                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
                             <rs:RSPopup
                                 x:Name="PART_Popup"
+                                Height="380"
                                 AllowsTransparency="True"
-                                HorizontalOffset="0"
+                                HorizontalOffset="-5"
                                 IsOpen="{Binding ElementName=PART_BtnDatePicker, Path=IsChecked}"
                                 Placement="Bottom"
                                 PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 SnapsToDevicePixels="True"
                                 VerticalOffset="0">
-                                <Grid Margin="18,0,18,18" SnapsToDevicePixels="True">
+                                <Border Margin="15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                                     <Border
                                         x:Name="DropDownBorder"
+                                        Margin="5"
                                         Background="#fff"
-                                        BorderBrush="#E4E9F2"
-                                        BorderThickness="1,1,1,1"
-                                        CornerRadius="5">
-                                        <Grid x:Name="PART_PopupHost" Height="400">
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                        <Border.Clip>
+                                            <MultiBinding Converter="{StaticResource ClipConverter}">
+                                                <Binding ElementName="DropDownBorder" Path="CornerRadius" />
+                                                <Binding ElementName="DropDownBorder" Path="ActualWidth" />
+                                                <Binding ElementName="DropDownBorder" Path="ActualHeight" />
+                                            </MultiBinding>
+                                        </Border.Clip>
+                                        <Grid x:Name="PART_PopupHost">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="*" />
                                                 <RowDefinition Height="auto" />
@@ -159,7 +167,6 @@
                                                     ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SecondList}"
                                                     SelectedItem="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SecondSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             </Grid>
-
                                             <Border
                                                 Grid.Row="1"
                                                 BorderBrush="#eee"
@@ -189,14 +196,7 @@
                                             </Border>
                                         </Grid>
                                     </Border>
-                                    <Grid.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="18"
-                                            Opacity="0.1"
-                                            ShadowDepth="0"
-                                            Color="#000000" />
-                                    </Grid.Effect>
-                                </Grid>
+                                </Border>
                             </rs:RSPopup>
                         </Grid>
                     </Border>

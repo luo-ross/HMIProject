@@ -6,12 +6,4 @@
         Opacity="0.2"
         ShadowDepth="-1"
         Color="#000" />
-
-    <DropShadowEffect
-        x:Key="RSApp.Styles.DropDownEffect"
-        BlurRadius="15"
-        Direction="270"
-        Opacity="0.2"
-        ShadowDepth="5"
-        Color="#000" />
 </ResourceDictionary>

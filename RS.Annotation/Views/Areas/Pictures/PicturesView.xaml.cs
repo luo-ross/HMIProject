@@ -21,6 +21,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using System.Reflection.Emit;
+using RS.Widgets.Controls;
 
 namespace RS.Annotation.Views.Areas
 {
@@ -895,7 +896,7 @@ namespace RS.Annotation.Views.Areas
             var imgModelSelect = this.ViewModel.ImgModelSelect;
             if (File.Exists(imgModelSelect.ImgPath))
             {
-                FileHelper.ExplorerFile(imgModelSelect.ImgPath);
+              RS.Widgets.Controls.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
             }
         }
 

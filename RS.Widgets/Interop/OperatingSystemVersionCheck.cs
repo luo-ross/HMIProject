@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RS.Widgets.Structs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Interop
 {
-    internal static class OperatingSystemVersionCheck
+    public static class OperatingSystemVersionCheck
     {
         internal static bool IsVersionOrLater(OperatingSystemVersion version)
         {

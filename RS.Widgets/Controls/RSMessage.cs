@@ -1,4 +1,4 @@
-﻿using RS.Widgets.Interface;
+﻿using RS.Widgets.Interfaces;
 using ScottPlot;
 using System;
 using System.Collections.Generic;
