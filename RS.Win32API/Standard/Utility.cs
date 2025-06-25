@@ -393,9 +393,55 @@ namespace RS.Win32API.Standard
 
             return i;
         }
+      
 
+        /// <include file='doc\NativeMethods.uex' path='docs/doc[@for="NativeMethods.Util.GetPInvokeStringLength"]/*' />
+        /// <devdoc>
+        ///     Computes the string size that should be passed to a typical Win32 call.
+        ///     This will be the character count under NT, and the ubyte count for Windows 95.
+        /// </devdoc>
+        public static int GetPInvokeStringLength(String s)
+        {
+            if (s == null)
+            {
+                return 0;
+            }
 
+            if (Marshal.SystemDefaultCharSize == 2)
+            {
+                return s.Length;
+            }
+            else
+            {
+                if (s.Length == 0)
+                {
+                    return 0;
+                }
+                if (s.IndexOf('\0') > -1)
+                {
+                    return GetEmbeddedNullStringLengthAnsi(s);
+                }
+                else
+                {
+                    return NativeMethods.lstrlen(s);
+                }
+            }
+        }
 
+        private static int GetEmbeddedNullStringLengthAnsi(String s)
+        {
+            int n = s.IndexOf('\0');
+            if (n > -1)
+            {
+                String left = s.Substring(0, n);
+                String right = s.Substring(n + 1);
+                return GetPInvokeStringLength(left) + GetEmbeddedNullStringLengthAnsi(right) + 1;
+            }
+            else
+            {
+                return GetPInvokeStringLength(s);
+            }
+        }
 
 
     }

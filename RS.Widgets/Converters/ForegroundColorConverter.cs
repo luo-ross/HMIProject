@@ -10,7 +10,7 @@ namespace RS.Widgets.Converters
     {
         public object? Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null) return null;
+            if (value == null) return Colors.Black.ToString(); ;
 
             Color backgroundColor = Colors.White;
             if (value is string strColor)

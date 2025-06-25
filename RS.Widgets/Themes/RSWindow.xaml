@@ -13,7 +13,7 @@
     <converters:ForegroundColorConverter x:Key="ForegroundColorConverter" />
     <Style x:Key="RSApp.Styles.RSWindowBaseStyle" TargetType="{x:Type rs:RSWindowBase}">
         <Setter Property="ResizeMode" Value="CanResize" />
-        <Setter Property="Background" Value="#F1F2F3" />
+        <Setter Property="Background" Value="#F3F3F3" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
@@ -29,6 +29,7 @@
     <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWindow}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Margin" Value="15" />
+        <Setter Property="IsShowTitle" Value="True" />
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect
@@ -53,12 +54,10 @@
                                     <Binding Path="BorderCornerRadius" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
                                     <Binding ElementName="PART_Border" Path="ActualWidth" />
                                     <Binding ElementName="PART_Border" Path="ActualHeight" />
+                                    <Binding ElementName="PART_Border" Path="BorderThickness" />
                                 </MultiBinding>
                             </Border.Clip>
-                            <rs:RSDialog
-                                x:Name="PART_WinContentHost"
-                                Grid.Row="1"
-                                DialogKey="Default">
+                            <rs:RSDialog x:Name="PART_WinContentHost" DialogKey="Default">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -67,48 +66,54 @@
                                     <Grid
                                         x:Name="PART_Caption"
                                         Grid.Row="0"
-                                        Background="Transparent">
+                                        Height="{TemplateBinding CaptionHeight}">
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid x:Name="PART_CaptionHost" WindowChrome.IsHitTestVisibleInChrome="True">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Border
-                                                    x:Name="PART_Icon"
-                                                    Width="{TemplateBinding IconWidth}"
-                                                    Height="{TemplateBinding IconHeight}"
-                                                    Margin="{TemplateBinding IconMargin}"
-                                                    VerticalAlignment="Center"
-                                                    CornerRadius="{TemplateBinding IconCornerRadius}">
-                                                    <i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="MouseLeftButtonDown">
-                                                            <i:InvokeCommandAction Command="{x:Static SystemCommands.ShowSystemMenuCommand}" />
-                                                        </i:EventTrigger>
-                                                    </i:Interaction.Triggers>
-                                                    <Border.Background>
-                                                        <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon}" />
-                                                    </Border.Background>
-                                                </Border>
-                                                <TextBlock
-                                                    x:Name="PART_Title"
-                                                    VerticalAlignment="Center"
-                                                    Text="{TemplateBinding Title}" />
-                                            </StackPanel>
 
+                                        <StackPanel
+                                            x:Name="PART_CaptionTitle"
+                                            Grid.Column="0"
+                                            Orientation="Horizontal">
                                             <ContentControl
-                                                x:Name="PART_CaptionContent"
+                                                x:Name="PART_LeftCaptionContent"
                                                 Grid.Column="1"
-                                                Content="{TemplateBinding CaptionContent}" />
-                                        </Grid>
+                                                Content="{TemplateBinding LeftCaptionContent}" />
+
+                                            <Border
+                                                x:Name="PART_Icon"
+                                                Width="{TemplateBinding IconWidth}"
+                                                Height="{TemplateBinding IconHeight}"
+                                                Margin="{TemplateBinding IconMargin}"
+                                                VerticalAlignment="Center"
+                                                CornerRadius="{TemplateBinding IconCornerRadius}"
+                                                WindowChrome.IsHitTestVisibleInChrome="True">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                                        <i:InvokeCommandAction Command="{x:Static SystemCommands.ShowSystemMenuCommand}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Icon}" />
+                                                </Border.Background>
+                                            </Border>
+                                            <TextBlock
+                                                x:Name="PART_Title"
+                                                VerticalAlignment="Center"
+                                                Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                                                Text="{TemplateBinding Title}" />
+                                        </StackPanel>
+
+                                        <ContentControl
+                                            x:Name="PART_MidCaptionContent"
+                                            Grid.Column="1"
+                                            Content="{TemplateBinding MidCaptionContent}" />
 
                                         <Border
                                             x:Name="PART_InfoBorder"
-                                            Grid.ColumnSpan="2"
+                                            Grid.ColumnSpan="3"
                                             Padding="5"
                                             VerticalAlignment="Top"
                                             Visibility="Visible">
@@ -120,13 +125,12 @@
 
                                         <StackPanel
                                             x:Name="PART_WinBtnCommands"
-                                            Grid.Column="1"
+                                            Grid.Column="2"
                                             Orientation="Horizontal">
                                             <Button
                                                 x:Name="PART_Minimize"
                                                 Margin="8,3,8,3"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Minus}"
-                                                rs:ControlsHelper.IconHeight="2"
                                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
@@ -171,28 +175,28 @@
                                         Grid.RowSpan="2">
                                         <Rectangle
                                             x:Name="PART_Top"
-                                            Height="5"
+                                            Height="3"
                                             Margin="5,0,5,0"
                                             VerticalAlignment="Top"
                                             Fill="Transparent"
                                             WindowChrome.ResizeGripDirection="Top" />
                                         <Rectangle
                                             x:Name="PART_Bottom"
-                                            Height="5"
+                                            Height="3"
                                             Margin="5,0,5,0"
                                             VerticalAlignment="Bottom"
                                             Fill="Transparent"
                                             WindowChrome.ResizeGripDirection="Bottom" />
                                         <Rectangle
                                             x:Name="PART_Left"
-                                            Width="5"
+                                            Width="3"
                                             Margin="0,5,0,5"
                                             HorizontalAlignment="Left"
                                             Fill="Transparent"
                                             WindowChrome.ResizeGripDirection="Left" />
                                         <Rectangle
                                             x:Name="PART_Right"
-                                            Width="5"
+                                            Width="3"
                                             Margin="0,5,0,5"
                                             HorizontalAlignment="Right"
                                             Fill="Transparent"
@@ -223,7 +227,7 @@
                                             WindowChrome.ResizeGripDirection="TopRight" />
                                         <Rectangle
                                             x:Name="PART_TopLeft"
-                                            Width="6"
+                                            Width="5"
                                             Height="5"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Top"
@@ -232,6 +236,7 @@
                                     </Grid>
                                 </Grid>
                             </rs:RSDialog>
+
                         </Border>
                     </Border>
 
@@ -252,7 +257,6 @@
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
                             <Setter TargetName="PART_Client" Property="Panel.ZIndex" Value="-1" />
-                            <Setter TargetName="PART_CaptionHost" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsFitSystem" Value="False">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="1" />
@@ -275,6 +279,7 @@
                         </Trigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel}" Value="{x:Null}">
                             <Setter TargetName="PART_InfoBorder" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Caption" Property="Background" Value="{x:Null}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=InfoBarModel.InfoType}" Value="None">
                             <Setter TargetName="PART_Caption" Property="Background" Value="{StaticResource RSApp.Styles.Success}" />
@@ -302,11 +307,32 @@
                             <Setter TargetName="PART_InfoBorder" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_TxtInfo" Property="Text" Value="与服务器连接失败,请检查你的网络!" />
                         </DataTrigger>
-                        <Trigger Property="IsHidenWinCommandBtn" Value="True">
+                        <Trigger Property="IsShowWinBtnCommands" Value="False">
                             <Setter TargetName="PART_WinBtnCommands" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsShowTitle" Value="False">
                             <Setter TargetName="PART_Title" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsShowIcon" Value="False">
+                            <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsShowMidCaptionContent" Value="False">
+                            <Setter TargetName="PART_MidCaptionContent" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+
+                        <Trigger Property="IsShowLeftCaptionContent" Value="False">
+                            <Setter TargetName="PART_LeftCaptionContent" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsShowInfo" Value="False">
+                            <Setter TargetName="PART_InfoBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsShowCaption" Value="False">
+                            <Setter TargetName="PART_Caption" Property="Visibility" Value="Collapsed" />
                         </Trigger>
 
                         <Trigger SourceName="PART_Left" Property="IsMouseOver" Value="True">

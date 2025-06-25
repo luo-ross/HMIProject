@@ -13,6 +13,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSLoading.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMessage.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSModal.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSNavigate.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSNumberic.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSPhoneTextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSQRCodeLogin.xaml" />

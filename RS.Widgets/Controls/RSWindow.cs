@@ -27,6 +27,7 @@ namespace RS.Widgets.Controls
 
         public RSWindow()
         {
+           
             this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow, CanCloseWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, MinimizeWindow, CanMinimizeWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeRestoreWindow, CanMaximizeWindow));
@@ -194,16 +195,28 @@ namespace RS.Widgets.Controls
         }
 
 
-        [Description("自定义标题栏内容")]
+        [Description("自定义中部标题栏内容")]
         [Browsable(false)]
-        public object CaptionContent
+        public object MidCaptionContent
         {
-            get { return (object)GetValue(CaptionContentProperty); }
-            set { SetValue(CaptionContentProperty, value); }
+            get { return (object)GetValue(MidCaptionContentProperty); }
+            set { SetValue(MidCaptionContentProperty, value); }
         }
 
-        public static readonly DependencyProperty CaptionContentProperty =
-            DependencyProperty.Register("CaptionContent", typeof(object), typeof(RSWindow), new PropertyMetadata(null));
+        public static readonly DependencyProperty MidCaptionContentProperty =
+            DependencyProperty.Register("MidCaptionContent", typeof(object), typeof(RSWindow), new PropertyMetadata(null));
+
+
+        [Description("自定义左侧标题栏内容")]
+        [Browsable(false)]
+        public object LeftCaptionContent
+        {
+            get { return (object)GetValue(LeftCaptionContentProperty); }
+            set { SetValue(LeftCaptionContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty LeftCaptionContentProperty =
+            DependencyProperty.Register("LeftCaptionContent", typeof(object), typeof(RSWindow), new PropertyMetadata(null));
 
 
 
@@ -259,6 +272,74 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty IsShowTitleProperty =
             DependencyProperty.Register("IsShowTitle", typeof(bool), typeof(RSWindow), new PropertyMetadata(true));
+
+
+        public bool IsShowIcon
+        {
+            get { return (bool)GetValue(IsShowIconProperty); }
+            set { SetValue(IsShowIconProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowIconProperty =
+            DependencyProperty.Register("IsShowIcon", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
+
+
+
+
+        public bool IsShowMidCaptionContent
+        {
+            get { return (bool)GetValue(IsShowMidCaptionContentProperty); }
+            set { SetValue(IsShowMidCaptionContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowMidCaptionContentProperty =
+            DependencyProperty.Register("IsShowMidCaptionContent", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
+
+
+        public bool IsShowLeftCaptionContent
+        {
+            get { return (bool)GetValue(IsShowLeftCaptionContentProperty); }
+            set { SetValue(IsShowLeftCaptionContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowLeftCaptionContentProperty =
+            DependencyProperty.Register("IsShowLeftCaptionContent", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
+
+
+
+
+        public bool IsShowInfo
+        {
+            get { return (bool)GetValue(IsShowInfoProperty); }
+            set { SetValue(IsShowInfoProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowInfoProperty =
+            DependencyProperty.Register("IsShowInfo", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
+
+
+        [Description("是否显示窗体关闭放大缩小按钮")]
+        [Browsable(true)]
+        public bool IsShowWinBtnCommands
+        {
+            get { return (bool)GetValue(IsShowWinBtnCommandsProperty); }
+            set { SetValue(IsShowWinBtnCommandsProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowWinBtnCommandsProperty =
+            DependencyProperty.Register("IsShowWinBtnCommands", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
+
+
+
+
+        public bool IsShowCaption
+        {
+            get { return (bool)GetValue(IsShowCaptionProperty); }
+            set { SetValue(IsShowCaptionProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShowCaptionProperty =
+            DependencyProperty.Register("IsShowCaption", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
 
 
 

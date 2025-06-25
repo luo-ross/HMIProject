@@ -35,7 +35,9 @@
         <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
         <Setter Property="rs:TextBoxHelper.IsMonitoring" Value="True" />
         <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="False" />
-        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.ControlTemplate.DefaultDataError}" />
+        <Setter Property="rs:ControlsHelper.DesForeground" Value="#6B7280" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Templates.DefaultDataError}" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -48,57 +50,73 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
-                    <Border
-                        x:Name="border"
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                        SnapsToDevicePixels="True">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
-
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="PART_Description">
                             <TextBlock
-                                x:Name="PART_Watermark"
-                                Grid.Column="0"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Background="Transparent"
-                                FontSize="{TemplateBinding FontSize}"
-                                Foreground="#949494"
-                                Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
-                                Visibility="Collapsed" />
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{TemplateBinding rs:ControlsHelper.DesForeground}"
+                                Text="{TemplateBinding rs:ControlsHelper.Description}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                        </Border>
+                        <Border
+                            x:Name="border"
+                            Grid.Row="1"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="PART_Watermark"
+                                    Grid.Column="0"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Background="Transparent"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Foreground="#949494"
+                                    Text="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                    Visibility="Collapsed" />
 
-                            <ScrollViewer
-                                x:Name="PART_ContentHost"
-                                Grid.Column="0"
-                                Margin="0"
-                                Focusable="false"
-                                HorizontalScrollBarVisibility="Auto"
-                                VerticalScrollBarVisibility="Auto" />
+                                <ScrollViewer
+                                    x:Name="PART_ContentHost"
+                                    Grid.Column="0"
+                                    Margin="0"
+                                    Focusable="false"
+                                    HorizontalScrollBarVisibility="Auto"
+                                    VerticalScrollBarVisibility="Auto" />
 
-                            <Button
-                                x:Name="PART_BtnClear"
-                                Grid.Column="1"
-                                Margin="0"
-                                Padding="5,3,5,3"
-                                HorizontalAlignment="Right"
-                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
-                                rs:ControlsHelper.IconHeight="12"
-                                rs:ControlsHelper.IconWidth="12"
-                                Command="{x:Static rs:RSCommands.CleanTextCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                Foreground="#949494"
-                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                ToolTip="清除输入框内容"
-                                Visibility="Collapsed" />
-                        </Grid>
-                    </Border>
+                                <Button
+                                    x:Name="PART_BtnClear"
+                                    Grid.Column="1"
+                                    Margin="0"
+                                    Padding="5,3,5,3"
+                                    HorizontalAlignment="Right"
+                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
+                                    rs:ControlsHelper.IconHeight="12"
+                                    rs:ControlsHelper.IconWidth="12"
+                                    Command="{x:Static rs:RSCommands.CleanTextCommand}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    Foreground="#949494"
+                                    Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                    ToolTip="清除输入框内容"
+                                    Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -135,6 +153,11 @@
                         <Trigger Property="IsReadOnly" Value="True">
                             <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.Description)}" Value="{x:Null}">
+                            <Setter TargetName="PART_Description" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -1,6 +1,7 @@
 ﻿using RS.Widgets.Models;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -11,7 +12,7 @@ using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class RSPicker : RangeBase
+    public class RSPicker : ContentControl
     {
         private Grid PART_ContentHost;
         private RepeatButton PART_BtnScrollUp;
@@ -218,25 +219,27 @@ namespace RS.Widgets.Controls
             this.RefreshItemsList();
         }
 
-        private void SmallDecrement()
+        public void SmallDecrement()
         {
-            double num = Math.Max(base.Value - base.SmallChange, base.Minimum);
-            if (base.Value != num)
-            {
-                base.Value = num;
-                //RaiseScrollEvent(ScrollEventType.SmallDecrement);
-            }
+            //double num = Math.Max(base.Value - base.SmallChange, base.Minimum);
+            //if (base.Value != num)
+            //{
+            //    base.Value = num;
+            //    //RaiseScrollEvent(ScrollEventType.SmallDecrement);
+            //}
+
+          
         }
 
-        private void SmallIncrement()
-        {
-            double num = Math.Min(base.Value + base.SmallChange, base.Maximum);
-            if (base.Value != num)
-            {
-                base.Value = num;
-                //RaiseScrollEvent(ScrollEventType.SmallIncrement);
-            }
-        }
+        //public void SmallIncrement()
+        //{
+        //    double num = Math.Min(base.Value + base.SmallChange, base.Maximum);
+        //    if (base.Value != num)
+        //    {
+        //        base.Value = num;
+        //        //RaiseScrollEvent(ScrollEventType.SmallIncrement);
+        //    }
+        //}
 
 
         /// <summary>

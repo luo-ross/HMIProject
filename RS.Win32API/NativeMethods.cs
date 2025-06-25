@@ -4085,5 +4085,9 @@ namespace RS.Win32API
         #endregion
 
 
+        [DllImport(ExternDll.DwmAPI)]
+        public static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attr, ref int attrValue, int attrSize);
+
+
     }
 }

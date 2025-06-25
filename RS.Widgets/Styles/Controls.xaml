@@ -32,7 +32,7 @@
     <Style TargetType="{x:Type Control}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     </Style>
-    <Style BasedOn="{StaticResource RSApp.Styles.FormTextBlockStyle}" TargetType="{x:Type TextBlock}" />
+    <Style BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}" TargetType="{x:Type TextBlock}" />
     <Style BasedOn="{StaticResource RSApp.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.ComboBoxStyle}" TargetType="{x:Type ComboBox}" />
     <Style BasedOn="{StaticResource RSApp.Styles.GroupBoxStyle}" TargetType="{x:Type GroupBox}" />

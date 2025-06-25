@@ -12,7 +12,7 @@
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="Foreground" Value="#333" />
         <Setter Property="Background" Value="#fff" />
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="True" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="Template">
             <Setter.Value>
@@ -32,7 +32,9 @@
                                 x:Name="PART_TxtSearch"
                                 Grid.Column="0"
                                 Margin="0"
-                                Padding="0"
+                                rs:ControlsHelper.IconHeight="12"
+                                rs:ControlsHelper.IconWidth="12"
+                                rs:TextBoxHelper.IsShowClearButton="{TemplateBinding rs:TextBoxHelper.IsShowClearButton}"
                                 rs:TextBoxHelper.Watermark="请输入查询内容"
                                 Background="Transparent"
                                 BorderBrush="Transparent"
@@ -42,17 +44,22 @@
                             <Button
                                 x:Name="PART_BtnSearch"
                                 Grid.Column="1"
-                                Margin="0"
-                                Padding="0"
+                                Margin="3"
+                                Padding="5"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Search}"
                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
                         </Grid>
                     </Border>
 
                     <ControlTemplate.Triggers>
-                        <!--<Trigger SourceName="PART_BtnSearch" Property="IsMouseOver" Value="true">
-                            <Setter TargetName="PART_BtnSearch" Property="Cursor" Value="Hand" />
-                        </Trigger>-->
+                        <Trigger Property="IsOnlyShowSearchIcon" Value="true">
+                            <Setter TargetName="PART_TxtSearch" Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="PART_BtnSearch" Property="Padding" Value="15,8,11,8" />
+                            <Setter TargetName="PART_BtnSearch" Property="Margin" Value="0" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

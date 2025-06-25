@@ -110,10 +110,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Views\Areas\Company\" />
 	  <Folder Include="Views\Areas\FormHost\" />
 	  <Folder Include="Views\Areas\Department\" />
 	  <Folder Include="Views\Areas\Navigation\" />
-	  <Folder Include="Views\Areas\Company\" />
 	  <Folder Include="Views\Areas\Groups\" />
 	</ItemGroup>
 

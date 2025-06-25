@@ -94,7 +94,7 @@
                             <Setter TargetName="PART_ValidErrorTip" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger SourceName="PART_ValidErrorTip" Property="IsMouseOver" Value="True">
-                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Styles.DataErrorTemplate}" />
+                            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Templates.DataError}" />
                         </Trigger>
 
                         <Trigger Property="rs:ControlsHelper.IsRequired" Value="True">

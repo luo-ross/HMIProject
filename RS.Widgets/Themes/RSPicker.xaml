@@ -54,6 +54,7 @@
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="MinWidth" Value="70" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Foreground" Value="#333" />
         <Setter Property="SelectedBackground" Value="#881E90FF" />
         <Setter Property="ItemTemplate" Value="{StaticResource ItemWrapperDataTemplate}" />
         <Setter Property="Template">
@@ -74,6 +75,7 @@
                             <TextBlock
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
                                 Style="{StaticResource RSApp.Styles.FormTextBlockStyle}"
                                 Text="{TemplateBinding Description}" />
 
@@ -105,8 +107,8 @@
                                     VerticalAlignment="Top"
                                     rs:ControlsHelper.CornerRadius="0"
                                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.UpArrow}"
-                                    rs:ControlsHelper.IconHeight="5"
-                                    rs:ControlsHelper.IconWidth="10"
+                                    rs:ControlsHelper.IconHeight="7"
+                                    rs:ControlsHelper.IconWidth="12"
                                     Background="#fff"
                                     Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
 
@@ -118,8 +120,8 @@
                                     VerticalAlignment="Bottom"
                                     rs:ControlsHelper.CornerRadius="0"
                                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.DownArrow}"
-                                    rs:ControlsHelper.IconHeight="5"
-                                    rs:ControlsHelper.IconWidth="10"
+                                    rs:ControlsHelper.IconHeight="7"
+                                    rs:ControlsHelper.IconWidth="12"
                                     Background="#fff"
                                     Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
 

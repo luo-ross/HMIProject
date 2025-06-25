@@ -1,4 +1,5 @@
-﻿using RS.Win32API;
+﻿using RS.Widgets.Enums;
+using RS.Win32API;
 using RS.Win32API.Enums;
 using RS.Win32API.SafeHandles;
 using RS.Win32API.Structs;
@@ -15,6 +16,21 @@ namespace RS.Widgets.Controls
 
     public static class IconHelper
     {
+        private const string Prefix = "RSApp.Icons.";
+        public static Geometry GetGeometry(IconKey key)
+        {
+            string resourceKey = Prefix + key.ToString();
+            object resource = Application.Current.TryFindResource(resourceKey);
+            return resource as Geometry;
+        }
+
+        public static Geometry GetGeometry(string fullKey)
+        {
+            object resource = Application.Current.TryFindResource(fullKey);
+            return resource as Geometry;
+        }
+
+
         private static Size s_smallIconSize;
         private static Size s_iconSize;
         private static int s_systemBitDepth;
@@ -28,7 +44,6 @@ namespace RS.Widgets.Controls
             if (s_systemBitDepth == 0)
             {
                 // The values here *may* change, but it's not worthwhile to requery.
-
                 // We need to release the DC to correctly track our native handles.
                 var hdcDesktop = new HandleRef(null, NativeMethods.GetDC(new HandleRef()));
                 try
@@ -208,12 +223,12 @@ namespace RS.Widgets.Controls
         }
 
         // Also used by PenCursorManager
-        // Creates a 32 bit per pixel Icon or cursor.  This code is moved from framework\ms\internal\ink\pencursormanager.cs
+        // Creates a 32 bit per pixel Icon or cursor.  This code is moved from framework\ms\public\ink\pencursormanager.cs
         /// <SecurityNote>
         ///     Critical: Critical as this code create a DIB section and writes data to it
         /// </SecurityNote>
        
-        internal static IconHandle CreateIconCursor(
+        public static IconHandle CreateIconCursor(
             byte[] colorArray,
             int width,
             int height,
@@ -358,7 +373,7 @@ namespace RS.Widgets.Controls
         /// <param name="original">The original value</param>
         /// <param name="nBytesCount">N-Byte</param>
         /// <returns>the nearest bit count which is aligned to N-Byte</returns>
-        internal static int AlignToBytes(double original, int nBytesCount)
+        public static int AlignToBytes(double original, int nBytesCount)
         {
             Debug.Assert(nBytesCount > 0, "The N-Byte has to be greater than 0!");
             int nBitsCount = 8 << nBytesCount - 1;
@@ -454,7 +469,7 @@ namespace RS.Widgets.Controls
         /// From a list of BitmapFrames find the one that best matches the requested dimensions.
         /// The methods used here are copied from Win32 sources.  We want to be consistent with
         /// system behaviors.
-        private static BitmapFrame GetBestMatch(ReadOnlyCollection<BitmapFrame> frames, Size size)
+        public static BitmapFrame GetBestMatch(ReadOnlyCollection<BitmapFrame> frames, Size size)
         {
             if (size.Width == 0)
             {
@@ -513,5 +528,7 @@ namespace RS.Widgets.Controls
 
             return frames[bestIndex];
         }
+
+
     }
 }

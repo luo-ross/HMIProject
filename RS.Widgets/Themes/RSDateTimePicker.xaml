@@ -84,8 +84,10 @@
                                                 <Binding ElementName="DropDownBorder" Path="CornerRadius" />
                                                 <Binding ElementName="DropDownBorder" Path="ActualWidth" />
                                                 <Binding ElementName="DropDownBorder" Path="ActualHeight" />
+                                                <Binding ElementName="DropDownBorder" Path="BorderThickness" />
                                             </MultiBinding>
                                         </Border.Clip>
+
                                         <Grid x:Name="PART_PopupHost">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="*" />

@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
@@ -8,14 +9,22 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <ControlTemplate x:Key="RSApp.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
+    <converters:ColorBlendConverter x:Key="ColorBlendConverter" />
+
+    <ControlTemplate x:Key="RSApp.Templates.IconButton" TargetType="{x:Type ButtonBase}">
         <Border
             x:Name="PART_Border"
             Padding="{TemplateBinding Padding}"
-            Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+            <Border.Background>
+                <MultiBinding Converter="{StaticResource ColorBlendConverter}">
+                    <Binding Path="Background" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                    <Binding Path="(rs:ControlsHelper.BlendRatio)" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                </MultiBinding>
+            </Border.Background>
+
             <Path
                 x:Name="PART_Path"
                 Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
@@ -25,15 +34,16 @@
                 Data="{TemplateBinding rs:ControlsHelper.IconData}"
                 Fill="{TemplateBinding Foreground}"
                 IsEnabled="{TemplateBinding IsEnabled}"
-                Stretch="Fill" />
+                Stretch="Uniform" />
+
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Cursor" Value="Hand" />
-                <Setter Property="Background" Value="#22000000" />
+                <Setter Property="rs:ControlsHelper.BlendRatio" Value="0.35" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="PART_Border" Property="Background" Value="#eeeeee" />
+                <Setter Property="rs:ControlsHelper.BlendRatio" Value="0.15" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Background" Value="#eee" />
@@ -43,7 +53,7 @@
     </ControlTemplate>
 
 
-    <ControlTemplate x:Key="RSApp.ControlTemplate.EmptyDataTemplate" TargetType="{x:Type ContentControl}">
+    <ControlTemplate x:Key="RSApp.Templates.EmptyData" TargetType="{x:Type ContentControl}">
         <Border>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Path
@@ -66,7 +76,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="RSApp.ControlTemplate.DefaultDataError">
+    <ControlTemplate x:Key="RSApp.Templates.DefaultDataError">
         <Border
             BorderBrush="#ff5b5b"
             BorderThickness="1"
@@ -124,7 +134,7 @@
     </ControlTemplate>
 
 
-    <ControlTemplate x:Key="RSApp.Styles.DataErrorTemplate">
+    <ControlTemplate x:Key="RSApp.Templates.DataError">
         <AdornedElementPlaceholder x:Name="PART_Adorned">
             <Border>
                 <Grid>

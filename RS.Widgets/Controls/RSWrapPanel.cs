@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +14,15 @@ namespace RS.Widgets.Controls
     {
         public RSWrapPanel()
         {
-            this.SizeChanged += RSWrapPanel_SizeChanged;
+            //this.SizeChanged += RSWrapPanel_SizeChanged;
         }
+
 
         private void RSWrapPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.UpdateViusalItemWidth();
         }
+
 
         [Description("最小内容宽度")]
         public GridLength MinItemWidth
@@ -59,12 +62,18 @@ namespace RS.Widgets.Controls
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
-            this.UpdateViusalItemWidth();
+            //this.UpdateViusalItemWidth();
         }
+
 
         private void UpdateViusalItemWidth()
         {
-           
+            if (this.ActualWidth == 0)
+            {
+                return;
+            }
+
+
             var count = this.Children.Count;
             if (count == 0)
             {
@@ -93,7 +102,9 @@ namespace RS.Widgets.Controls
 
             var actualCount = Math.Floor(actualWidth / itemWidth);
             itemWidth = actualWidth / actualCount;
-            this.ItemWidth = itemWidth;
+            //这里需要减去一个像素，暂时解决宽度不能自适应的问题
+            this.ItemWidth = Math.Min(this.ActualWidth, itemWidth) - 1;
+
         }
     }
 }

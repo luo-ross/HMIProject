@@ -211,9 +211,11 @@
                                     <Binding ElementName="SubMenuBorder" Path="CornerRadius" />
                                     <Binding ElementName="SubMenuBorder" Path="ActualWidth" />
                                     <Binding ElementName="SubMenuBorder" Path="ActualHeight" />
+                                    <Binding ElementName="SubMenuBorder" Path="BorderThickness" />
                                 </MultiBinding>
                             </Border.Clip>
                             <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+
                                 <Grid RenderOptions.ClearTypeHint="Enabled">
                                     <ItemsPresenter
                                         x:Name="ItemsPresenter"
@@ -400,13 +402,10 @@
                                     <Binding ElementName="SubMenuBorder" Path="CornerRadius" />
                                     <Binding ElementName="SubMenuBorder" Path="ActualWidth" />
                                     <Binding ElementName="SubMenuBorder" Path="ActualHeight" />
+                                    <Binding ElementName="SubMenuBorder" Path="BorderThickness" />
                                 </MultiBinding>
                             </Border.Clip>
-                            <ScrollViewer
-                                x:Name="SubMenuScrollViewer"
-                                Background="{x:Null}"
-                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                              TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
                                 <Grid RenderOptions.ClearTypeHint="Enabled">
                                     <ItemsPresenter
                                         x:Name="ItemsPresenter"

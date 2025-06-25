@@ -7,6 +7,7 @@ using System.Security.Permissions;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using RS.Win32API.Standard;
 
 namespace RS.Win32API.Structs
 {
@@ -521,7 +522,7 @@ namespace RS.Win32API.Structs
 
             string lDescription = "";
             if (msg == NativeMethods.WM_PARENTNOTIFY)
-                lDescription = Parenthesize(MsgToString(Util.LOWORD(wparam)));
+                lDescription = Parenthesize(MsgToString(Utility.LOWORD(wparam)));
 
             return "msg=0x" + Convert.ToString(msg, 16) + ID
             + " hwnd=0x" + Convert.ToString((long)hWnd, 16)

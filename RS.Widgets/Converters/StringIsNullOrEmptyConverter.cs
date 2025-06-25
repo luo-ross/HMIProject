@@ -4,6 +4,7 @@
 
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace RS.Widgets.Converters
@@ -16,6 +17,7 @@ namespace RS.Widgets.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+           
             return string.IsNullOrEmpty(value as string);
         }
 

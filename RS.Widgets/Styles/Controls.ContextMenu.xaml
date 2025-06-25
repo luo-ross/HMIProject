@@ -29,7 +29,6 @@
                     <Border
                         x:Name="PART_Border"
                         Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
@@ -38,9 +37,10 @@
                                 <Binding ElementName="PART_Border" Path="CornerRadius" />
                                 <Binding ElementName="PART_Border" Path="ActualWidth" />
                                 <Binding ElementName="PART_Border" Path="ActualHeight" />
+                                <Binding ElementName="PART_Border" Path="BorderThickness" />
                             </MultiBinding>
                         </Border.Clip>
-                        <Grid>
+                        <Grid Background="{TemplateBinding Background}">
                             <ScrollViewer
                                 x:Name="SubMenuScrollViewer"
                                 CanContentScroll="True"

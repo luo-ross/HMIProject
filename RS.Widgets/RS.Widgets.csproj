@@ -37,6 +37,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Resource Include="Assets\NoiseAsset_256X256_PNG.png" />
 	  <Resource Include="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 
@@ -56,10 +57,6 @@
 		<Page Update="Styles\Controls.Border.xaml">
 			<SubType>Designer</SubType>
 		</Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="AutomationPeers\" />
 	</ItemGroup>
 
 </Project>

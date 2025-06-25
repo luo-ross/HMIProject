@@ -22,7 +22,7 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </rs:RSWindow.Resources>
-    <rs:RSWindow.CaptionContent>
+    <rs:RSWindow.MidCaptionContent>
         <Border
             Grid.Row="0"
             Height="{Binding ElementName=this, Path=CaptionHeight}"
@@ -137,7 +137,7 @@
                 </Grid>
             </Grid>
         </Border>
-    </rs:RSWindow.CaptionContent>
+    </rs:RSWindow.MidCaptionContent>
     <Border Background="#F1F2F7">
         <Grid>
             <Grid.RowDefinitions>

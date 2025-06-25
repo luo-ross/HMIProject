@@ -42,15 +42,14 @@
         BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
         TargetType="{x:Type ButtonBase}">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="5" />
-        <Setter Property="Template" Value="{StaticResource RSApp.ControlTemplate.IconButtonTemplate}" />
+        <Setter Property="Template" Value="{StaticResource RSApp.Templates.IconButton}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Cursor" Value="Hand" />
             </Trigger>
-
         </Style.Triggers>
     </Style>
 
@@ -295,10 +294,16 @@
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border
                         Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                        <Border.Background>
+                            <MultiBinding Converter="{StaticResource ColorBlendConverter}" ConverterParameter="#dddddd">
+                                <Binding Path="Background" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                <Binding Path="(rs:ControlsHelper.BlendRatio)" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                            </MultiBinding>
+                        </Border.Background>
+
                         <Grid>
                             <ContentControl
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -312,11 +317,11 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Opacity" Value="0.9" />
                 <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="rs:ControlsHelper.BlendRatio" Value="0.15" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Opacity" Value="0.8" />
+                <Setter Property="rs:ControlsHelper.BlendRatio" Value="0.35" />
             </Trigger>
         </Style.Triggers>
     </Style>

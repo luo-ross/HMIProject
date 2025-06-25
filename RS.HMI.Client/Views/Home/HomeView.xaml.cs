@@ -42,7 +42,7 @@ namespace RS.HMI.Client.Views
 
         private async void BtnSearch_OnBtnSearchCallBack(string obj)
         {
-            this.NotifyIcon.ShowBalloonTip(5000, "测试", "Hello World", ToolTipIcon.Info);
+            //this.NotifyIcon.ShowBalloonTip(5000, "测试", "Hello World", ToolTipIcon.Info);
             //await this.MessageBox.ShowMessageAsync($@"搜索事件触发, 查询条件{this.ViewModel.Test}");
         }
 

@@ -13,9 +13,8 @@
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="Padding" Value="3,3,3,3" />
-        <!--<Setter Property="Foreground" Value="#1A1A1A" />-->
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.ControlTemplate.DefaultDataError}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Templates.DefaultDataError}" />
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="True">
                 <Setter Property="MinWidth" Value="20" />
@@ -42,7 +41,6 @@
         BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}"
         TargetType="{x:Type TextBlock}">
         <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="Foreground" Value="#333" />
     </Style>
 
 </ResourceDictionary>

@@ -42,6 +42,22 @@ namespace RS.Widgets.Controls
         public static readonly DependencyProperty SearchContentProperty =
             DependencyProperty.Register("SearchContent", typeof(string), typeof(RSSearch), new PropertyMetadata(string.Empty));
 
+
+
+
+        public bool IsOnlyShowSearchIcon
+        {
+            get { return (bool)GetValue(IsOnlyShowSearchIconProperty); }
+            set { SetValue(IsOnlyShowSearchIconProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsOnlyShowSearchIconProperty =
+            DependencyProperty.Register("IsOnlyShowSearchIcon", typeof(bool), typeof(RSSearch), new PropertyMetadata(false));
+
+
+
+
+
         /// <summary>
         /// 搜索事件触发回调
         /// </summary>

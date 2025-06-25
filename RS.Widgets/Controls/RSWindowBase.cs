@@ -68,16 +68,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("BorderCornerRadius", typeof(CornerRadius), typeof(RSWindowBase), new PropertyMetadata(new CornerRadius(0)));
 
 
-        [Description("是否显示窗体关闭放大缩小按钮")]
-        [Browsable(true)]
-        public bool IsHidenWinCommandBtn
-        {
-            get { return (bool)GetValue(IsHidenWinCommandBtnProperty); }
-            set { SetValue(IsHidenWinCommandBtnProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsHidenWinCommandBtnProperty =
-            DependencyProperty.Register("IsHidenWinCommandBtn", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
 
         #region Icon参数设置
 
@@ -124,6 +114,9 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty IconMarginProperty =
             DependencyProperty.Register("IconMargin", typeof(Thickness), typeof(RSWindowBase), new PropertyMetadata(new Thickness(5, 0, 0, 0)));
+
+
+
 
         #endregion
 

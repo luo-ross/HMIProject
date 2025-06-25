@@ -5,20 +5,20 @@
     xmlns:areas="clr-namespace:RS.HMI.Client.Views.Areas"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hmi="clr-namespace:RS.HMI.Client.Controls"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:RS.HMI.Client.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
     x:Name="this"
     Title="上位机客户端"
-    MinWidth="1024"
-    MinHeight="600"
+    MinWidth="500"
+    MinHeight="500"
     d:DataContext="{d:DesignInstance Type=local:HomeViewModel}"
     BorderCornerRadius="5"
     CaptionHeight="36"
     Icon="/Assets/login-bg.jpg"
-    IsFitSystem="False"
+    IsFitSystem="True"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
-    IsShowTitle="False"
     ResizeMode="CanResizeWithGrip"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -27,7 +27,10 @@
     </rs:RSWindow.DataContext>-->
     <rs:RSWindow.Resources>
         <ResourceDictionary>
+            <rs:ForegroundColorConverter x:Key="ForegroundColorConverter" />
             <rs:ClipConverter x:Key="ClipConverter" />
+            <rs:IconKeyConverter x:Key="IconKeyConverter" />
+            <rs:EnumConverter x:Key="EnumConverter" />
             <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
             <DataTemplate DataType="{x:Type areas:UserViewModel}">
                 <areas:UserView />
@@ -37,7 +40,54 @@
             </DataTemplate>
         </ResourceDictionary>
     </rs:RSWindow.Resources>
-    <rs:RSWindow.CaptionContent>
+    <rs:RSWindow.LeftCaptionContent>
+        <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
+            <Button
+                Padding="8"
+                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
+                rs:ControlsHelper.IconHeight="12"
+                rs:ControlsHelper.IconWidth="12"
+                Command="{x:Static NavigationCommands.BrowseBack}"
+                CommandTarget="{Binding ElementName=PART_Navigate}"
+                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                ToolTip="点击可后退，按住可查看历史记录" />
+            <Button
+                Padding="8"
+                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
+                rs:ControlsHelper.IconHeight="12"
+                rs:ControlsHelper.IconWidth="12"
+                Command="{x:Static NavigationCommands.BrowseForward}"
+                CommandTarget="{Binding ElementName=PART_Navigate}"
+                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                ToolTip="点击可前进，按住可查看历史记录" />
+
+            <ToggleButton
+                x:Name="PART_BtnNavSwitch"
+                Grid.Row="0"
+                Margin="3,0,0,0"
+                Padding="8"
+                HorizontalAlignment="Left"
+                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
+                rs:ControlsHelper.IconHeight="12"
+                rs:ControlsHelper.IconWidth="12"
+                IsChecked="{Binding ElementName=PART_Navigate, Path=IsNavExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                IsThreeState="False">
+                <ToggleButton.Style>
+                    <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=PART_Navigate, Path=ScreenSize}" Value="Small">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+
+
+        </StackPanel>
+    </rs:RSWindow.LeftCaptionContent>
+    <rs:RSWindow.MidCaptionContent>
         <Grid Margin="5,0,5,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -45,64 +95,183 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Text="上位机客户端" />
-                <Button
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
-                    rs:ControlsHelper.IconHeight="13"
-                    rs:ControlsHelper.IconWidth="13"
-                    Command="{x:Static NavigationCommands.BrowseBack}"
-                    CommandTarget="{Binding ElementName=PART_Frame}"
-                    Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                    ToolTip="点击可后退，按住可查看历史记录" />
-                <Button
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
-                    rs:ControlsHelper.IconHeight="13"
-                    rs:ControlsHelper.IconWidth="13"
-                    Command="{x:Static NavigationCommands.BrowseForward}"
-                    CommandTarget="{Binding ElementName=PART_Frame}"
-                    Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                    ToolTip="点击可前进，按住可查看历史记录" />
-
-            </StackPanel>
-            <Grid Grid.Column="1">
-                <rs:RSNotifyIcon x:Name="NotifyIcon" Icon="/Assets/logo.ico">
-                    <rs:RSNotifyIcon.ContextMenu>
-                        <ContextMenu Placement="MousePoint">
-                            <MenuItem Header="test1" />
-                            <MenuItem Header="test2" />
-                            <Separator />
-                            <MenuItem Header="test3">
-                                <MenuItem Header="test4" />
-                                <MenuItem Header="test5" />
-                                <MenuItem Header="test6" />
-                                <MenuItem Header="test7">
-                                    <MenuItem Header="test8" />
-                                    <MenuItem Header="test9" />
-                                    <MenuItem Header="test10" />
-                                </MenuItem>
-                            </MenuItem>
-                        </ContextMenu>
-                    </rs:RSNotifyIcon.ContextMenu>
-                </rs:RSNotifyIcon>
-                <!--<TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="这是中间的内容，想咋搞咋搞" />-->
-
-
-            </Grid>
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}" Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
             </StackPanel>
         </Grid>
-    </rs:RSWindow.CaptionContent>
+    </rs:RSWindow.MidCaptionContent>
+
     <Grid>
+        <rs:RSNavigate x:Name="PART_Navigate" Content="{Binding ViewModelSelect}" />
+    </Grid>
+
+
+    <!--<Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border
+            x:Name="PART_NavHost"
+            Grid.Column="0"
+            Width="260"
+            Background="#FFFFFF">
+            <Border.Effect>
+                <DropShadowEffect
+                    BlurRadius="5"
+                    Direction="0"
+                    Opacity="0.12"
+                    ShadowDepth="1"
+                    Color="#A1ACB6" />
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="10,50,0,10">
+    -->
+    <!--<StackPanel Grid.Row="0" Orientation="Horizontal">
+                         <Image
+                             Width="30"
+                             Height="30"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             Source="/Assets/logo.ico" />
+                         <TextBlock
+                             Margin="5,0,0,0"
+                             FontSize="18"
+                             Foreground="#475569"
+                             Text="HMI-Client" />
+                     </StackPanel>-->
+    <!--
+
+
+                    <StackPanel
+                        x:Name="PART_CaptionTitle"
+                        Grid.Column="0"
+                        Orientation="Horizontal">
+                        <Border
+                            x:Name="PART_Icon"
+                            Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconWidth, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Margin="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconMargin, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            VerticalAlignment="Center"
+                            CornerRadius="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconCornerRadius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
+                                    <i:InvokeCommandAction Command="{x:Static SystemCommands.ShowSystemMenuCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Icon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </Border.Background>
+                        </Border>
+                        <TextBlock
+                            x:Name="PART_Title"
+                            VerticalAlignment="Center"
+                            Foreground="{Binding ElementName=PART_NavHost, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                            Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <ToggleButton
+                        x:Name="PART_TogBtnNav"
+                        Margin="0,0,-15,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Style="{DynamicResource RSApp.Styles.NavSideToggleStyle}"
+                        WindowChrome.IsHitTestVisibleInChrome="True" />
+                </Grid>
+                <ScrollViewer Grid.Row="1">
+    -->
+    <!--<ItemsControl ItemsSource="{Binding NavigateModelList}">
+                         <ItemsControl.ItemTemplate>
+                             <DataTemplate>
+                                 <RadioButton
+                                     Margin="0,5,0,5"
+                                     rs:ControlsHelper.IconData="{Binding IconKey, Converter={StaticResource IconKeyConverter}}"
+                                     Command="{Binding NavCommand}"
+                                     Content="{Binding Name}"
+                                     GroupName="NavigateGroup"
+                                     Style="{StaticResource RSApp.Styles.NavItemStyle}" />
+                             </DataTemplate>
+                         </ItemsControl.ItemTemplate>
+                     </ItemsControl>-->
+    <!--
+
+
+                    <RadioButton
+                        Margin="0,5,0,5"
+                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
+                        Content="测试"
+                        GroupName="NavigateGroup"
+                        Style="{StaticResource RSApp.Styles.NavItemStyle}" />
+                </ScrollViewer>
+
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Column="1" Panel.ZIndex="-1">
+            <Grid x:Name="PART_ContentHost" Margin="25,15,15,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Border
+                    x:Name="PART_Header"
+                    Padding="3,2,3,2"
+                    Background="#fff"
+                    CornerRadius="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Button
+                                x:Name="PART_BtnNavShow"
+                                Padding="10"
+                                HorizontalAlignment="Left"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
+                                rs:ControlsHelper.IconHeight="12"
+                                rs:ControlsHelper.IconWidth="15"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                Visibility="Collapsed" />
+
+
+                            <RadioButton Content="控制面板" Style="{StaticResource RSApp.Styles.BreadCrumbStyle}" />
+                            <TextBlock Foreground="#7F475569" Text="/" />
+                            <RadioButton Content="首页" Style="{StaticResource RSApp.Styles.BreadCrumbStyle}" />
+                        </StackPanel>
+
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}" Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+                <ContentControl x:Name="PART_Body" />
+
+                <Grid x:Name="PART_Footer" />
+            </Grid>
+        </ScrollViewer>
+    </Grid>-->
+
+
+
+
+
+
+    <!--<Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0">
@@ -112,40 +281,69 @@
                     <RowDefinition />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0" Padding="10">
-                    <rs:RSSearch
-                        x:Name="BtnSearch"
-                        Margin="3,0,0,0"
-                        IsTextChangedSearch="True"
-                        OnBtnSearchCallBack="BtnSearch_OnBtnSearchCallBack"
-                        SearchContent="{Binding SearchContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
+
+                <StackPanel>
+                    <Button
+                        Padding="10"
+                        HorizontalAlignment="Left"
+                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
+                        rs:ControlsHelper.IconHeight="12"
+                        rs:ControlsHelper.IconWidth="15"
+                        Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                    <Border Grid.Row="0" Padding="10">
+                        <rs:RSSearch
+                            x:Name="BtnSearch"
+                            Margin="3,0,0,0"
+                            IsTextChangedSearch="True"
+                            OnBtnSearchCallBack="BtnSearch_OnBtnSearchCallBack"
+                            SearchContent="{Binding SearchContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </Border>
+                </StackPanel>
+
                 <Border Grid.Row="1">
-                    <ScrollViewer>
+
+                    <ItemsControl ItemsSource="{Binding NavigateModelList}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <RadioButton
+                                    Margin="0,5,0,5"
+                                    rs:ControlsHelper.IconData="{Binding IconKey, Converter={StaticResource IconKeyConverter}}"
+                                    Command="{Binding NavCommand}"
+                                    Content="{Binding Name}"
+                                    GroupName="NavigateGroup"
+                                    Style="{StaticResource RSApp.Styles.NavItemStyle}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+    -->
+    <!--<ScrollViewer>
                         <StackPanel>
                             <RadioButton
                                 Margin="0,5,0,5"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Home}"
+                                Command="{Binding NavCommand}"
                                 Content="监控中心"
-                                Style="{StaticResource RSApp.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavItemStyle}" />
 
                             <RadioButton
                                 Margin="0,3,0,3"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.SerialPort}"
+                                Command="{Binding NavCommand}"
                                 Content="串口通讯1"
-                                Style="{StaticResource RSApp.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavItemStyle}" />
 
                             <RadioButton
                                 Margin="0,3,0,3"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ModbusTCP}"
                                 Content="ModbusTCP"
-                                Style="{StaticResource RSApp.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavItemStyle}" />
 
                             <RadioButton
                                 Margin="0,3,0,3"
                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.ModbusRTU}"
                                 Content="ModbusRTU"
-                                Style="{StaticResource RSApp.Styles.NavButton}" />
+                                Style="{StaticResource RSApp.Styles.NavItemStyle}" />
 
                             <TreeView
                                 HorizontalAlignment="Stretch"
@@ -179,17 +377,21 @@
                                 </TreeView.ItemTemplate>
                             </TreeView>
                         </StackPanel>
-                    </ScrollViewer>
+                    </ScrollViewer>-->
+    <!--
                 </Border>
                 <Border
                     Grid.Row="2"
                     Padding="0,8,0,8"
-                    BorderBrush="{StaticResource RSApp.SolidColorBrush.EBEBEB}"
-                    BorderThickness="0,1,0,0">
+                    BorderBrush="{StaticResource RSApp.SolidColorBrush.EBEBEB}">
                     <RadioButton
+                        Margin="0,5,0,5"
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
+                        Command="{Binding NavCommand}"
+                        CommandParameter="{Binding}"
                         Content="设置"
-                        Style="{StaticResource RSApp.Styles.NavButton}" />
+                        GroupName="NavigateGroup"
+                        Style="{StaticResource RSApp.Styles.NavItemStyle}" />
                 </Border>
             </Grid>
         </Border>
@@ -274,6 +476,5 @@
                 </StackPanel>
             </Border>
         </Grid>
-
-    </Grid>
+    </Grid>-->
 </rs:RSWindow>

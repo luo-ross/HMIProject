@@ -194,5 +194,59 @@ namespace RS.Widgets.Controls
         }
         #endregion
 
+
+
+
+        public static readonly DependencyProperty DescriptionProperty = DependencyProperty.RegisterAttached(
+       "Description",
+       typeof(string),
+       typeof(ControlsHelper),
+       new FrameworkPropertyMetadata(null));
+
+        public static string GetDescription(UIElement element)
+        {
+            return (string)element.GetValue(DescriptionProperty);
+        }
+
+        public static void SetDescription(UIElement element, string value)
+        {
+            element.SetValue(DescriptionProperty, value);
+        }
+
+
+        public static readonly DependencyProperty DesForegroundProperty = DependencyProperty.RegisterAttached(
+       "DesForeground",
+       typeof(Brush),
+       typeof(ControlsHelper),
+       new FrameworkPropertyMetadata(null));
+
+        public static Brush GetDesForeground(UIElement element)
+        {
+            return (Brush)element.GetValue(DesForegroundProperty);
+        }
+
+        public static void SetDesForeground(UIElement element, Brush value)
+        {
+            element.SetValue(DesForegroundProperty, value);
+        }
+
+
+      
+        public static readonly DependencyProperty BlendRatioProperty =
+            DependencyProperty.RegisterAttached(
+                "BlendRatio",
+                typeof(double),
+                typeof(ControlsHelper),
+                new PropertyMetadata(0D));
+
+        public static void SetBlendRatio(UIElement element, double value)
+        {
+            element.SetValue(BlendRatioProperty, value);
+        }
+
+        public static double GetBlendRatio(UIElement element)
+        {
+            return (double)element.GetValue(BlendRatioProperty);
+        }
     }
 }
