@@ -90,6 +90,7 @@
                 </GroupBox.Header>
                 <rs:RSDataGrid
                     x:Name="UserDataGrid"
+                    rs:ScrollViewHelper.DisableScroll="True"
                     ItemsSource="{Binding ModelList, UpdateSourceTrigger=PropertyChanged}"
                     PaginationCommand="{Binding PaginationCommand}"
                     SelectedItem="{Binding ModelSelect}"

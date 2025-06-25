@@ -21,7 +21,7 @@ namespace RS.HMI.Client.Views
         /// 获取或设置搜索按钮点击时执行的命令
         /// </summary>
         public ICommand NavCommand { get; }
-        public HomeViewModel(RoleViewModel roleViewModel)
+        public HomeViewModel(UserViewModel viewModel)
         {
             this.NavCommand = new RelayCommand(NavigateClick);
 
@@ -31,7 +31,7 @@ namespace RS.HMI.Client.Views
                 IconKey = IconKey.Home,
             });
 
-            this.ViewModelSelect = roleViewModel;
+            this.ViewModelSelect = viewModel;
         }
 
         private void NavigateClick()
