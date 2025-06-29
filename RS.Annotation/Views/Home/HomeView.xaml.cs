@@ -65,7 +65,7 @@ namespace RS.Annotation.Views.Home
             {
                 return;
             }
-            await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
                 //获取项目
                 var projectModel = this.ProjectView.ViewModel.ProjectModelSelect;

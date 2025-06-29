@@ -407,8 +407,8 @@ namespace RS.Widgets.Shell
 
         private RECT _GetAdjustedWindowRect(RECT rcWindow)
         {
-            var dwStyle = NativeMethods.GetWindowLongPtr(_hwnd, NativeMethods.GWL_STYLE);
-            var dwExStyle = NativeMethods.GetWindowLongPtr(_hwnd, NativeMethods.GWL_EXSTYLE);
+            var dwStyle = NativeMethods.GetWindowLongPtr64(new HandleRef(this,_hwnd), NativeMethods.GWL_STYLE);
+            var dwExStyle = NativeMethods.GetWindowLongPtr64(new HandleRef(this, _hwnd), NativeMethods.GWL_EXSTYLE);
             return NativeMethods.AdjustWindowRectEx(rcWindow, dwStyle, bMenu: false, dwExStyle);
         }
 
@@ -688,14 +688,14 @@ namespace RS.Widgets.Shell
 
         private bool _ModifyStyle(WS removeStyle, WS addStyle)
         {
-            WS wS = (WS)NativeMethods.GetWindowLongPtr(_hwnd, NativeMethods.GWL_STYLE).ToInt32();
+            WS wS = (WS)NativeMethods.GetWindowLongPtr64(new HandleRef(this, _hwnd), NativeMethods.GWL_STYLE).ToInt32();
             WS wS2 = (wS & ~removeStyle) | addStyle;
             if (wS == wS2)
             {
                 return false;
             }
 
-            NativeMethods.SetWindowLongPtr(_hwnd, NativeMethods.GWL_STYLE, new IntPtr((int)wS2));
+            NativeMethods.SetWindowLongPtr64(new HandleRef(this, _hwnd), NativeMethods.GWL_STYLE, new HandleRef(this, (IntPtr)wS2));
             return true;
         }
 
@@ -732,7 +732,7 @@ namespace RS.Widgets.Shell
             IntPtr systemMenu = NativeMethods.GetSystemMenu(_hwnd, bRevert: false);
             if (IntPtr.Zero != systemMenu)
             {
-                WS value = (WS)NativeMethods.GetWindowLongPtr(_hwnd, GWL.STYLE).ToInt32();
+                WS value = (WS)NativeMethods.GetWindowLongPtr64(new HandleRef(this, _hwnd), (int)GWL.STYLE).ToInt32();
                 bool flag2 = Utility.IsFlagSet((int)value, 131072);
                 bool flag3 = Utility.IsFlagSet((int)value, 65536);
                 bool flag4 = Utility.IsFlagSet((int)value, 262144);

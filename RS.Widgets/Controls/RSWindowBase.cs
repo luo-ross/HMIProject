@@ -28,9 +28,7 @@ namespace RS.Widgets.Controls
             this.WindowStyle = WindowStyle.None;
             this.AllowsTransparency = true;
             #endregion
-            this.SizeChanged += RSWindowBase_SizeChanged;
             this.StateChanged += RSWindow_StateChanged;
-            this.Activated += RSWindowBase_Activated;
             this.Loaded += RSWindowBase_Loaded;
             this.Closing += RSWindow_Closing;
         }
@@ -54,7 +52,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("IsMaxsizedFullScreen", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(false));
 
 
-
         [Description("圆角边框大小")]
         [Browsable(true)]
         [Category("自定义窗口样式")]
@@ -71,8 +68,6 @@ namespace RS.Widgets.Controls
 
         #region Icon参数设置
 
-
-
         public CornerRadius IconCornerRadius
         {
             get { return (CornerRadius)GetValue(IconCornerRadiusProperty); }
@@ -81,7 +76,6 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty IconCornerRadiusProperty =
             DependencyProperty.Register("IconCornerRadius", typeof(CornerRadius), typeof(RSWindowBase), new PropertyMetadata(new CornerRadius(10)));
-
 
 
         public double IconWidth
@@ -94,7 +88,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("IconWidth", typeof(double), typeof(RSWindowBase), new PropertyMetadata(20D));
 
 
-
         public double IconHeight
         {
             get { return (double)GetValue(IconHeightProperty); }
@@ -105,7 +98,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("IconHeight", typeof(double), typeof(RSWindowBase), new PropertyMetadata(20D));
 
 
-
         public Thickness IconMargin
         {
             get { return (Thickness)GetValue(IconMarginProperty); }
@@ -114,9 +106,6 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty IconMarginProperty =
             DependencyProperty.Register("IconMargin", typeof(Thickness), typeof(RSWindowBase), new PropertyMetadata(new Thickness(5, 0, 0, 0)));
-
-
-
 
         #endregion
 
@@ -134,11 +123,7 @@ namespace RS.Widgets.Controls
             }
         }
 
-        private void RSWindowBase_Activated(object? sender, EventArgs e)
-        {
-
-        }
-
+      
         private void RSWindow_StateChanged(object? sender, EventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
@@ -156,15 +141,12 @@ namespace RS.Widgets.Controls
             NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null, IntPtr.Zero), 0, 0, nWidth, nHeight, (int)(SWP.NOZORDER | SWP.NOACTIVATE));
         }
 
-
-        private void RSWindowBase_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-        }
-
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
         }
+
+
+
     }
 }

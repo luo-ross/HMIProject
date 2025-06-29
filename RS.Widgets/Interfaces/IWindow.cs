@@ -7,16 +7,9 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Interfaces
 {
-    public interface IWindow : IInfoBar
+    public interface IWindow : IDialogBase, ILoading, IMessage, IInfoBar, IModal, IWinModal
     {
-        IModal GetModal();
-
-        ILoading GetLoading();
-
-        IDialog GetDialog();
-
-        IMessage GetMessageBox();
-
-        IMessage GetWinMessageBox();
+        IDialog Dialog { get; }
+        IWinMessage WinMessageBox { get; }
     }
 }

@@ -36,7 +36,7 @@ namespace RS.Widgets.Controls
         }
 
 
-        public void HideModal()
+        public void CloseModal()
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -44,6 +44,5 @@ namespace RS.Widgets.Controls
                 this.Visibility = Visibility.Collapsed;
             });
         }
-
     }
 }

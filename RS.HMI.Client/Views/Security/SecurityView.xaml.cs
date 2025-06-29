@@ -77,7 +77,7 @@ namespace RS.HMI.Client.Views
                 IsIndeterminate = true,
             };
 
-            var operateResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
                 var emailModel = new EmailModel();
                 emailModel.Email = this.ViewModel.Email;

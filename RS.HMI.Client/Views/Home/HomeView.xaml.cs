@@ -4,9 +4,13 @@ using RS.Commons.Attributs;
 using RS.Widgets.Controls;
 using RS.Widgets.Structs;
 using RS.Win32API;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Navigation;
 
 namespace RS.HMI.Client.Views
 {
@@ -23,14 +27,21 @@ namespace RS.HMI.Client.Views
             this.ViewModel = homeViewModel;
             this.SizeChanged += HomeView_SizeChanged;
             this.Loaded += HomeView_Loaded;
+            this.Closing += HomeView_Closing;
         }
 
-      
 
         private void HomeView_Loaded(object sender, RoutedEventArgs e)
         {
 
         }
+
+
+
+        private void HomeView_Closing(object? sender, CancelEventArgs e)
+        {
+        }
+
 
         private void HomeView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -38,7 +49,7 @@ namespace RS.HMI.Client.Views
             //var height = this.PART_ContentHost.ActualHeight;
             //this.PART_ContentHost.Clip = this.GetBorderClipRect(new CornerRadius(10), width, height);
         }
-      
+
 
         private async void BtnSearch_OnBtnSearchCallBack(string obj)
         {
@@ -48,12 +59,12 @@ namespace RS.HMI.Client.Views
 
         private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-        
+
         }
 
         private void NotifyIcon_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-           
+
         }
     }
 }

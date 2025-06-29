@@ -1,4 +1,4 @@
-﻿using RS.Widgets.Enums;
+﻿using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,19 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace RS.Widgets.Converters
 {
-    public class ScreenSizeConditionConverter : IValueConverter
+    public class EventArgsConverter: IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ScreenSize screenSize)
-            {
-                // 检查屏幕尺寸是否为Small或Medium
-                return screenSize == ScreenSize.Small || screenSize == ScreenSize.Medium;
-            }
-            return false;
+            var eventArgs = value as MouseButtonEventArgs;
+            var dataContext = parameter ; 
+            return new Tuple<object, MouseButtonEventArgs>(dataContext, eventArgs);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -180,7 +180,7 @@ namespace RS.Widgets.Models
         public virtual async void SearchClick()
         {
             LoadingConfig loadingConfig = new LoadingConfig();
-            var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
 
                 return OperateResult.CreateSuccessResult();
@@ -188,7 +188,7 @@ namespace RS.Widgets.Models
 
             if (!operateResult.IsSuccess)
             {
-                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message, "错误提示");
+                await this.MessageBox.ShowMessageAsync(operateResult.Message, "错误提示");
             }
         }
 
@@ -222,7 +222,7 @@ namespace RS.Widgets.Models
         /// </summary>
         public virtual async void DeleteClick(T? modelSelect)
         {
-            await this.Dialog.GetMessageBox().ShowMessageAsync("方法未实现");
+            await this.MessageBox.ShowMessageAsync("方法未实现");
         }
 
 
@@ -259,7 +259,7 @@ namespace RS.Widgets.Models
         /// </summary>
         public virtual async void DetailsClick(T? modelSelect)
         {
-            await this.Dialog.GetMessageBox().ShowMessageAsync("方法未实现");
+            await this.MessageBox.ShowMessageAsync("方法未实现");
         }
 
 
@@ -273,7 +273,7 @@ namespace RS.Widgets.Models
         /// </summary>
         public virtual async void ExportClick(ObservableCollection<T>? collection)
         {
-            await this.Dialog.GetMessageBox().ShowMessageAsync("方法未实现");
+            await this.MessageBox.ShowMessageAsync("方法未实现");
         }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace RS.Widgets.Models
         /// </summary>
         public virtual async void CloseClick()
         {
-            await this.Dialog.GetMessageBox().ShowMessageAsync("方法未实现");
+            await this.MessageBox.ShowMessageAsync("方法未实现");
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace RS.Widgets.Models
         /// <returns></returns>
         public virtual async Task PaginationAsync(Pagination pagination)
         {
-            await this.Dialog.GetMessageBox().ShowMessageAsync("方法未实现");
+            await this.MessageBox.ShowMessageAsync("方法未实现");
         }
 
         /// <summary>

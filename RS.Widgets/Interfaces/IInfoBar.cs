@@ -11,7 +11,6 @@ namespace RS.Widgets.Interfaces
 {
     public interface IInfoBar
     {
-
         /// <summary>
         /// 添加消息
         /// </summary>

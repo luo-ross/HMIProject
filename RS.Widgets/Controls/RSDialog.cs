@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.HighPerformance.Helpers;
+using CommunityToolkit.Mvvm.Messaging;
+using NPOI.SS.Formula.Functions;
 using RS.Commons;
 using RS.Widgets.Controls;
 using RS.Widgets.Interfaces;
@@ -19,140 +21,247 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
-    public class RSDialog : ContentControl, IDialog
+    public class RSDialog : ContentControl, IDialog, IMessage, ILoading, IModal, IWinModal, IDialogBase
     {
         private RSLoading PART_Loading;
         private RSMessage PART_Message;
         private RSModal PART_Modal;
-        private IWindow ParentWin;
-
-        //public IMessage MessageBox
-        //{
-        //    get
-        //    {
-        //        return this.PART_Message;
-        //    }
-        //}
-
-        //public IMessage WinMessageBox
-        //{
-        //    get
-        //    {
-        //        return new RSWinMessage()
-        //        {
-        //            Owner = (RSWindow)this.ParentWin,
-        //            Width = 350,
-        //            Height = 250
-        //        };
-        //    }
-        //}
+        public RSNavigate Navigate { get; private set; }
+        public RSWindow ParentWin { get; private set; }
 
         static RSDialog()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDialog), new FrameworkPropertyMetadata(typeof(RSDialog)));
         }
+
         public RSDialog()
         {
-            this.Loaded += RSDialog_Loaded;
             this.Unloaded += RSDialog_Unloaded;
+            this.DataContextChanged += RSDialog_DataContextChanged;
+        }
+
+        private void RSDialog_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            DialogHelper.UnregisterDialog(e.OldValue);
+            DialogHelper.RegisterDialog(e.NewValue, this);
         }
 
         private void RSDialog_Unloaded(object sender, RoutedEventArgs e)
         {
-            //注销Dialog
-            DialogManager.UnregisterDialog(DialogKey);
+            DialogHelper.UnregisterDialog(this.DataContext);
         }
 
-        private void RSDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.ParentWin = this.TryFindParent<RSWindow>();
-        }
 
-        //public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        //{
-        //    return await this.PART_Loading.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
-        //}
-
-        //public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        //{
-        //    return await this.PART_Loading.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
-        //}
-
-
-        [Description("对话框编码")]
-        public string DialogKey
-        {
-            get { return (string)GetValue(DialogKeyProperty); }
-            set { SetValue(DialogKeyProperty, value); }
-        }
-
-        public static readonly DependencyProperty DialogKeyProperty =
-            DependencyProperty.Register("DialogKey", typeof(string), typeof(RSDialog), new PropertyMetadata(null, OnDialogKeyPropertyChanged));
-
-        private static void OnDialogKeyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is RSDialog rsDialog)
-            {
-                //注册Dialog
-                DialogManager.RegisterDialog(rsDialog.DialogKey, rsDialog);
-            }
-        }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+            this.ParentWin = this.TryFindParent<RSWindow>();
+            this.Navigate = this.TryFindParent<RSNavigate>();
             this.PART_Loading = this.GetTemplateChild(nameof(this.PART_Loading)) as RSLoading;
             this.PART_Message = this.GetTemplateChild(nameof(this.PART_Message)) as RSMessage;
             this.PART_Modal = GetTemplateChild(nameof(PART_Modal)) as RSModal;
         }
 
-        public IWindow GetParentWin()
+        #region Interface implementation
+
+        public Task<OperateResult> InvokeAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            return this.ParentWin;
+            return this.Loading.InvokeAsync(func, loadingConfig, cancellationToken);
         }
 
-        public ILoading GetLoading()
+        public Task<OperateResult<T>> InvokeAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            return this.PART_Loading;
+            return this.Loading.InvokeAsync(func, loadingConfig, cancellationToken);
         }
 
-        public IModal GetModal()
+        void IModal.ShowModal(object content)
         {
-           return this.PART_Modal;
-        }
-    
-        public void ShowModal(object modalContent)
-        {
-            this.PART_Modal.ShowModal(modalContent);
+            this.Modal.ShowModal(content);
         }
 
-        public void HideModal()
+        void IModal.CloseModal()
         {
-            this.PART_Modal.HideModal();
+            this.Modal.CloseModal();
         }
 
-        public IMessage GetMessageBox()
+        void IWinModal.ShowModal(object content)
         {
-            return this.PART_Message;
+            this.WinModal.ShowModal(content);
         }
 
-        public IMessage GetWinMessageBox()
+        void IWinModal.CloseModal()
         {
-            return new RSWinMessage()
+            this.WinModal.CloseModal();
+        }
+
+
+        public void ShowDialog(object content)
+        {
+            this.WinModal.ShowDialog(content);
+        }
+
+        public void HandleBtnClickEvent()
+        {
+            this.MessageBox.HandleBtnClickEvent();
+        }
+
+        public void MessageBoxDisplay(Window window)
+        {
+            this.MessageBox.MessageBoxDisplay(window);
+        }
+
+        public void MessageBoxClose()
+        {
+            this.MessageBox.MessageBoxClose();
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText = null, string caption = null, MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage icon = MessageBoxImage.None, MessageBoxResult defaultResult = MessageBoxResult.None, MessageBoxOptions options = MessageBoxOptions.None)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button, icon, defaultResult, options);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button, icon);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button, icon, defaultResult);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult, MessageBoxOptions options)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button, icon, defaultResult, options);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption, MessageBoxButton button)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button, icon);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button, icon, defaultResult);
+        }
+
+        IWindow IDialog.ParentWin
+        {
+            get
             {
-                Owner = (RSWindow)this.ParentWin,
-                Width = 350,
-                Height = 250
-            };
+                return this.ParentWin;
+            }
         }
 
-        public IModal GetWinModal()
+        INavigate IDialog.Navigate
         {
-            return new RSWinModal()
+            get
             {
-                Owner = (RSWindow)this.ParentWin,
-            };
+                return this.Navigate;
+            }
         }
-    
+
+
+        public ILoading Loading
+        {
+            get
+            {
+                return this.PART_Loading;
+            }
+        }
+
+        public ILoading RootLoading
+        {
+            get
+            {
+                return this.ParentWin?.Loading;
+            }
+        }
+
+
+        public IModal Modal
+        {
+            get
+            {
+                return this.PART_Modal;
+            }
+        }
+
+        public IModal RootModal
+        {
+            get
+            {
+                return this.ParentWin?.Modal;
+            }
+        }
+
+        public IMessage MessageBox
+        {
+            get
+            {
+                return this.PART_Message;
+            }
+        }
+
+        public IMessage RootMessageBox
+        {
+            get
+            {
+                return this.ParentWin.MessageBox;
+            }
+        }
+
+
+        public IWinModal WinModal
+        {
+            get
+            {
+                return new RSWinModal(this.ParentWin as Window);
+            }
+        }
+
+        public IWinMessage WinMessageBox
+        {
+            get
+            {
+                return new RSWinMessage(this.ParentWin as Window);
+            }
+        }
+
+
+
+        #endregion
+
     }
 }

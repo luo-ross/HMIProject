@@ -227,7 +227,7 @@ namespace RS.HMI.Client.Views.Areas
         public override async Task PaginationAsync(Pagination pagination)
         {
             LoadingConfig loadingConfig = new LoadingConfig();
-            var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
                 var dataResult = await RSAppAPI.Role.GetRole.AESHttpPostAsync<Pagination, RS.Models.PageDataModel<RoleModel>>(pagination, nameof(RSAppAPI));
                 if (!dataResult.IsSuccess)
@@ -249,7 +249,7 @@ namespace RS.HMI.Client.Views.Areas
 
             if (!operateResult.IsSuccess)
             {
-                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message, "错误提示");
+                await this.MessageBox.ShowMessageAsync(operateResult.Message, "错误提示");
             }
         }
 

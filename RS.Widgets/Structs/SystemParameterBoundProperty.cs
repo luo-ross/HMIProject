@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace RS.Widgets.Structs
 {
-    public struct _SystemParameterBoundProperty
+    public struct SystemParameterBoundProperty
     {
         public string SystemParameterPropertyName { get; set; }
 

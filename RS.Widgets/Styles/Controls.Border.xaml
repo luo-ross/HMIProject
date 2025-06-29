@@ -6,6 +6,7 @@
         <Setter Property="Width" Value="15" />
         <Setter Property="Height" Value="15" />
         <Setter Property="Margin" Value="5,0,5,0" />
+
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Visibility" Value="Collapsed" />

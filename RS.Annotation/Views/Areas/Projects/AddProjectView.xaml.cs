@@ -149,7 +149,7 @@ namespace RS.Annotation.Views.Areas
 
             //AddProjectCallBack?.Invoke(true);
 
-            var validLoginResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var validLoginResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
 
                 DateTime dateTime = DateTime.Now;

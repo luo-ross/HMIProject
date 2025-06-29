@@ -81,7 +81,7 @@ namespace RS.Annotation.Views.Areas
             //判断标签名称是否存在
             if (tagModelList.Any(t => t.ClassName == this.ViewModel.TagModelEdit.ClassName && t.Id != this.ViewModel.TagModelEdit.Id))
             {
-                await this.HostView.GetMessageBox().ShowMessageAsync("标签名称已存在！");
+                await this.HostView.MessageBox.ShowMessageAsync("标签名称已存在！");
                 this.TxtClassName.SelectAll();
                 this.TxtClassName.Focus();
                 return;
@@ -90,7 +90,7 @@ namespace RS.Annotation.Views.Areas
             //判断标签颜色是否存在
             if (tagModelList.Any(t => t.TagColor == this.ViewModel.TagModelEdit.TagColor && t.Id != this.ViewModel.TagModelEdit.Id))
             {
-                await this.HostView.GetMessageBox().ShowMessageAsync("标签颜色已存在！");
+                await this.HostView.MessageBox.ShowMessageAsync("标签颜色已存在！");
                 this.TxtTagCor.SelectAll();
                 this.TxtTagCor.Focus();
                 return;
@@ -106,7 +106,7 @@ namespace RS.Annotation.Views.Areas
             {
                 if (!ShortCutUtil.ShortCutList.Contains(this.TxtShortCut.Text))
                 {
-                    await this.HostView.GetMessageBox().ShowMessageAsync("快捷键不受支持！");
+                    await this.HostView.MessageBox.ShowMessageAsync("快捷键不受支持！");
                     this.TxtShortCut.SelectAll();
                     this.TxtShortCut.Focus();
                     return;
@@ -114,7 +114,7 @@ namespace RS.Annotation.Views.Areas
 
                 if (tagModelList.Any(t => t.ShortCut == this.TxtShortCut.Text && t.Id != this.ViewModel.TagModelEdit.Id))
                 {
-                    await this.HostView.GetMessageBox().ShowMessageAsync("快捷键冲突！");
+                    await this.HostView.MessageBox.ShowMessageAsync("快捷键冲突！");
                     this.TxtShortCut.SelectAll();
                     this.TxtShortCut.Focus();
                     return;

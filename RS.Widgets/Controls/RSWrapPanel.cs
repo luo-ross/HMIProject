@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RS.Widgets.Structs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,41 +13,6 @@ namespace RS.Widgets.Controls
 {
     public class RSWrapPanel : WrapPanel
     {
-        public RSWrapPanel()
-        {
-            //this.SizeChanged += RSWrapPanel_SizeChanged;
-        }
-
-
-        private void RSWrapPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            this.UpdateViusalItemWidth();
-        }
-
-
-        [Description("最小内容宽度")]
-        public GridLength MinItemWidth
-        {
-            get { return (GridLength)GetValue(MinItemWidthProperty); }
-            set { SetValue(MinItemWidthProperty, value); }
-        }
-
-        public static readonly DependencyProperty MinItemWidthProperty =
-            DependencyProperty.Register("MinItemWidth", typeof(GridLength), typeof(RSWrapPanel), new PropertyMetadata(new GridLength(200)));
-
-
-
-        [Description("最大内容宽度")]
-        public GridLength MaxItemWidth
-        {
-            get { return (GridLength)GetValue(MaxItemWidthProperty); }
-            set { SetValue(MaxItemWidthProperty, value); }
-        }
-        public static readonly DependencyProperty MaxItemWidthProperty =
-            DependencyProperty.Register("MaxItemWidth", typeof(GridLength), typeof(RSWrapPanel), new PropertyMetadata(GridLength.Auto));
-
-
-
         [Description("一行显示几个")]
         public int Cols
         {
@@ -55,56 +21,92 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty ColsProperty =
-            DependencyProperty.Register("Cols", typeof(int), typeof(RSWrapPanel), new PropertyMetadata(0));
+            DependencyProperty.Register("Cols", typeof(int), typeof(RSWrapPanel), new PropertyMetadata(0, OnColsChanged));
 
-
-
-        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
+        private static void OnColsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
-            //this.UpdateViusalItemWidth();
+            var panel = d as RSWrapPanel;
+            panel?.InvalidateMeasure();
         }
 
-
-        private void UpdateViusalItemWidth()
+        protected override Size MeasureOverride(Size constraint)
         {
-            if (this.ActualWidth == 0)
-            {
-                return;
-            }
+            double itemWidth = this.ItemWidth;
+            bool hasItemWidth = !Double.IsNaN(itemWidth);
 
+            if (Orientation == Orientation.Horizontal && hasItemWidth && constraint.Width != double.PositiveInfinity)
+            {
+                double availableWidth = constraint.Width;
+                int n = Math.Max(1, (int)Math.Floor(availableWidth / itemWidth));
+                double actualWidth = availableWidth / n;
 
-            var count = this.Children.Count;
-            if (count == 0)
-            {
-                return;
-            }
-            bool isAutoCaculateItemWidth = true;
-            if (this.Cols != 0)
-            {
-                isAutoCaculateItemWidth = false;
-            }
-            double itemWidth = 0;
-            var actualWidth = this.ActualWidth;
-            if (isAutoCaculateItemWidth)
-            {
-                itemWidth = actualWidth / count;
-                if (this.MaxItemWidth != GridLength.Auto)
+                double totalHeight = 0;
+                double maxHeight = 0;
+                int colIndex = 0;
+
+                foreach (UIElement child in InternalChildren)
                 {
-                    itemWidth = Math.Min(this.MaxItemWidth.Value, itemWidth);
+                    if (child == null) continue;
+                    child.Measure(new Size(actualWidth, constraint.Height));
+                    maxHeight = Math.Max(maxHeight, child.DesiredSize.Height);
+                    colIndex++;
+                    if (colIndex >= n)
+                    {
+                        totalHeight += maxHeight;
+                        maxHeight = 0;
+                        colIndex = 0;
+                    }
                 }
-                itemWidth = Math.Max(this.MinItemWidth.Value, itemWidth);
+                if (colIndex > 0) { 
+                    totalHeight += maxHeight;
+                }
+                return new Size(availableWidth, totalHeight);
             }
             else
             {
-                itemWidth = actualWidth / this.Cols;
+                return base.MeasureOverride(constraint);
             }
-
-            var actualCount = Math.Floor(actualWidth / itemWidth);
-            itemWidth = actualWidth / actualCount;
-            //这里需要减去一个像素，暂时解决宽度不能自适应的问题
-            this.ItemWidth = Math.Min(this.ActualWidth, itemWidth) - 1;
-
         }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            double itemWidth = this.ItemWidth;
+            bool hasItemWidth = !Double.IsNaN(itemWidth);
+
+            if (Orientation == Orientation.Horizontal && hasItemWidth && finalSize.Width != double.PositiveInfinity)
+            {
+                double availableWidth = finalSize.Width;
+                int n = Math.Max(1, (int)Math.Floor(availableWidth / itemWidth));
+                double actualWidth = availableWidth / n;
+
+                double x = 0, y = 0;
+                double maxHeight = 0;
+                int colIndex = 0;
+
+                foreach (UIElement child in InternalChildren)
+                {
+                    if (child == null) continue;
+                    double height = child.DesiredSize.Height;
+                    child.Arrange(new Rect(x, y, actualWidth, height));
+                    maxHeight = Math.Max(maxHeight, height);
+                    colIndex++;
+                    x += actualWidth;
+
+                    if (colIndex >= n)
+                    {
+                        y += maxHeight;
+                        x = 0;
+                        colIndex = 0;
+                        maxHeight = 0;
+                    }
+                }
+                return finalSize;
+            }
+            else
+            {
+                return base.ArrangeOverride(finalSize);
+            }
+        }
+      
     }
 }

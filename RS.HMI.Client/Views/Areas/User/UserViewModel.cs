@@ -6,6 +6,7 @@ using RS.Commons.Attributs;
 using RS.Commons.Extensions;
 using RS.HMI.Client.Models;
 using RS.RESTfulApi;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace RS.HMI.Client.Views.Areas
     /// 用户管理视图模型
     /// </summary>
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
-    public class UserViewModel : CRUDViewModel<UserModel>
+    public class UserViewModel : CRUDViewModel<UserModel>,INavigate
     {
         private readonly IIdGenerator<long> IdGenerator;
 
@@ -84,7 +85,7 @@ namespace RS.HMI.Client.Views.Areas
         public async Task SearchClick(object obj)
         {
             LoadingConfig loadingConfig = new LoadingConfig();
-            var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
                 await Task.Delay(2000);
                 return OperateResult.CreateSuccessResult();
@@ -92,7 +93,7 @@ namespace RS.HMI.Client.Views.Areas
 
             if (!operateResult.IsSuccess)
             {
-                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message, "错误提示");
+                await this.MessageBox.ShowMessageAsync(operateResult.Message, "错误提示");
             }
         }
 
@@ -144,7 +145,7 @@ namespace RS.HMI.Client.Views.Areas
         public override async Task PaginationAsync(Pagination pagination)
         {
             LoadingConfig loadingConfig = new LoadingConfig();
-            var operateResult = await this.Dialog.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            var operateResult = await this.Navigate.Loading.InvokeAsync(async (cancellationToken) =>
                {
                    var dataResult = await RSAppAPI.User.GetUser.AESHttpPostAsync<Pagination, RS.Models.PageDataModel<UserModel>>(pagination, nameof(RSAppAPI));
                    if (!dataResult.IsSuccess)
@@ -161,12 +162,13 @@ namespace RS.HMI.Client.Views.Areas
                    {
                        this.ModelList = new ObservableCollection<UserModel>(pageList);
                    });
+
                    return OperateResult.CreateSuccessResult();
                }, loadingConfig: loadingConfig);
 
             if (!operateResult.IsSuccess)
             {
-                await this.Dialog.GetMessageBox().ShowMessageAsync(operateResult.Message, "错误提示");
+                await this.MessageBox.ShowMessageAsync(operateResult.Message, "错误提示");
             }
         }
 

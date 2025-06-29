@@ -12,6 +12,7 @@
         <Setter Property="Background" Value="#FFF" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Foreground" Value="#333333" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="BorderThickness" Value="1" />
         <!--<Setter Property="HorizontalOffset" Value="2" />-->
         <!--<Setter Property="VerticalOffset" Value="-12" />-->

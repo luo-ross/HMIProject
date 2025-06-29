@@ -63,7 +63,7 @@ namespace RS.Widgets.Controls
         private void SubmitExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             var formService = this.FormService;
-            this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+            this.Loading.InvokeAsync(async (cancellationToken) =>
             {
                 await formService.FormSubmitCommand.ExecuteAsync(null);
                 return OperateResult.CreateSuccessResult();

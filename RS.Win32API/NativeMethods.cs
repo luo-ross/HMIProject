@@ -1163,6 +1163,29 @@ namespace RS.Win32API
         public const int ERROR_NO_MORE_ITEMS = 259;
         public const int ERROR_OPERATION_ABORTED = 995;
 
+
+
+        public const UInt32 PD_ALLPAGES = 0x00000000;
+        public const UInt32 PD_SELECTION = 0x00000001;
+        public const UInt32 PD_PAGENUMS = 0x00000002;
+        public const UInt32 PD_NOSELECTION = 0x00000004;
+        public const UInt32 PD_NOPAGENUMS = 0x00000008;
+        public const UInt32 PD_USEDEVMODECOPIESANDCOLLATE = 0x00040000;
+        public const UInt32 PD_DISABLEPRINTTOFILE = 0x00080000;
+        public const UInt32 PD_HIDEPRINTTOFILE = 0x00100000;
+        public const UInt32 PD_CURRENTPAGE = 0x00400000;
+        public const UInt32 PD_NOCURRENTPAGE = 0x00800000;
+        public const UInt32 PD_RESULT_CANCEL = 0x0;
+        public const UInt32 PD_RESULT_PRINT = 0x1;
+        public const UInt32 PD_RESULT_APPLY = 0x2;
+        public const UInt32 START_PAGE_GENERAL = 0xFFFFFFFF;
+
+
+        public const int S_OK = 0x00000000;
+        public const int S_FALSE = 0x00000001;
+
+
+
         //GetDeviceCaps()
         public const int LOGPIXELSX = 88;
         public const int LOGPIXELSY = 90;
@@ -1903,19 +1926,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32)]
         public static extern int SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
-
-
-        public static IntPtr GetParent(HandleRef hWnd)
-        {
-            IntPtr parent = NativeMethodsSetLastError.GetParent(hWnd);
-            int lastWin32Error = Marshal.GetLastWin32Error();
-            if (parent == IntPtr.Zero && lastWin32Error != 0)
-            {
-                throw new Win32Exception(lastWin32Error);
-            }
-
-            return parent;
-        }
+        
 
         public static IntPtr GetWindowStyle(HandleRef hWnd, bool exStyle)
         {
@@ -1955,27 +1966,11 @@ namespace RS.Win32API
         public static extern bool ShowWindow(HandleRef hWnd, int nCmdShow);
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
-
         public static extern IntPtr GetWindow(HandleRef hWnd, int uCmd);
 
-        public static IntPtr CriticalSetWindowLong(HandleRef hWnd, int nIndex, IntPtr dwNewLong)
-        {
-            IntPtr zero = IntPtr.Zero;
-            if (IntPtr.Size == 4)
-            {
-                int value = NativeMethodsSetLastError.SetWindowLong(hWnd, nIndex, NativeMethods.IntPtrToInt32(dwNewLong));
-                zero = new IntPtr(value);
-            }
-            else
-            {
-                zero = NativeMethodsSetLastError.SetWindowLongPtr(hWnd, nIndex, dwNewLong);
-            }
-
-            return zero;
-        }
+    
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
-
         public static extern IntPtr GetForegroundWindow();
 
 
@@ -1983,9 +1978,7 @@ namespace RS.Win32API
         public static extern IntPtr LoadLibrary(string lpFileName);
 
 
-
         [DllImport(ExternDll.PresentationNativeDll, CallingConvention = CallingConvention.Cdecl)]
-
         [return: MarshalAs(UnmanagedType.I1)]
         public static extern bool IsWindows10RS5OrGreater();
 
@@ -2301,27 +2294,10 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
-
         public static extern IntPtr GetDesktopWindow();
 
-        public static bool TrySetFocus(HandleRef hWnd)
-        {
-            IntPtr result = IntPtr.Zero;
-            return TrySetFocus(hWnd, ref result);
-        }
-
-
-        public static bool TrySetFocus(HandleRef hWnd, ref IntPtr result)
-        {
-            result = NativeMethodsSetLastError.SetFocus(hWnd);
-            int lastWin32Error = Marshal.GetLastWin32Error();
-            if (result == IntPtr.Zero && lastWin32Error != 0)
-            {
-                return false;
-            }
-
-            return true;
-        }
+     
+      
 
         [DllImport(ExternDll.DwmAPI, BestFitMapping = false)]
         public static extern int DwmIsCompositionEnabled(out int enabled);
@@ -2334,7 +2310,7 @@ namespace RS.Win32API
         public static extern bool IntChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, [Optional][In][Out] ref CHANGEFILTERSTRUCT pChangeFilterStruct);
 
         [DllImport(ExternDll.User32, EntryPoint = "ChangeWindowMessageFilter", SetLastError = true)]
-        [SecurityCritical]
+        
 
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IntChangeWindowMessageFilter(WM message, MSGFLT dwFlag);
@@ -2385,12 +2361,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool IsWindowVisible(HandleRef hWnd);
-
-
-        public static bool EnableWindowNoThrow(HandleRef hWnd, bool enable)
-        {
-            return NativeMethodsSetLastError.EnableWindow(hWnd, enable);
-        }
+      
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool IsWindowEnabled(HandleRef hWnd);
@@ -2408,32 +2379,10 @@ namespace RS.Win32API
         }
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, SetLastError = true)]
-        [SecurityCritical]
-
         public static extern IntPtr SendMessage(HandleRef hWnd, WM msg, IntPtr wParam, IconHandle iconHandle);
 
-
-
-        public static IntPtr SetWindowLong(HandleRef hWnd, int nIndex, IntPtr dwNewLong)
-        {
-            IntPtr zero = IntPtr.Zero;
-            if (IntPtr.Size == 4)
-            {
-                int value = NativeMethodsSetLastError.SetWindowLong(hWnd, nIndex, NativeMethods.IntPtrToInt32(dwNewLong));
-                zero = new IntPtr(value);
-            }
-            else
-            {
-                zero = NativeMethodsSetLastError.SetWindowLongPtr(hWnd, nIndex, dwNewLong);
-            }
-
-            return zero;
-        }
-
         [DllImport(ExternDll.User32, SetLastError = true)]
-
         public static extern IntPtr SetActiveWindow(HandleRef hWnd);
-
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, EntryPoint = "SetWindowPlacement", ExactSpelling = true, SetLastError = true)]
         public static extern bool IntSetWindowPlacement(HandleRef hWnd, [In] ref WINDOWPLACEMENT placement);
@@ -2558,22 +2507,22 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32)]
-        [SecurityCritical]
+        
         public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
         [DllImport(ExternDll.User32)]
         public static extern SafeDC GetDC(IntPtr hwnd);
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Unicode)]
-        [SecurityCritical]
+        
         public static extern SafeDC CreateDC([MarshalAs(UnmanagedType.LPWStr)] string lpszDriver, [MarshalAs(UnmanagedType.LPWStr)] string lpszDevice, IntPtr lpszOutput, IntPtr lpInitData);
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Unicode, SetLastError = true)]
-        [SecurityCritical]
+        
         public static extern SafeDC CreateCompatibleDC(IntPtr hdc);
 
         [DllImport(ExternDll.User32)]
-        [SecurityCritical]
+        
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteDC(IntPtr hdc);
 
@@ -2624,23 +2573,13 @@ namespace RS.Win32API
         }
 
 
-        public static IntPtr GetWindowLongPtr(IntPtr hwnd, int nIndex)
-        {
-            IntPtr zero = IntPtr.Zero;
-            zero = ((8 != IntPtr.Size) ? new IntPtr(NativeMethodsSetLastError.GetWindowLong(hwnd, (int)nIndex)) : NativeMethodsSetLastError.GetWindowLongPtr(hwnd, nIndex));
-            if (IntPtr.Zero == zero)
-            {
-                throw new Win32Exception();
-            }
-
-            return zero;
-        }
+     
 
         [DllImport(ExternDll.User32, EntryPoint = "AdjustWindowRectEx", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool _AdjustWindowRectEx(ref RECT lpRect, IntPtr dwStyle, [MarshalAs(UnmanagedType.Bool)] bool bMenu, IntPtr dwExStyle);
 
-        [SecurityCritical]
+        
         public static RECT AdjustWindowRectEx(RECT lpRect, IntPtr dwStyle, bool bMenu, IntPtr dwExStyle)
         {
             if (!_AdjustWindowRectEx(ref lpRect, dwStyle, bMenu, dwExStyle))
@@ -2651,15 +2590,7 @@ namespace RS.Win32API
             return lpRect;
         }
 
-        public static IntPtr SetWindowLongPtr(IntPtr hwnd, int gwl_Index, IntPtr dwNewLong)
-        {
-            if (8 == IntPtr.Size)
-            {
-                return NativeMethodsSetLastError.SetWindowLongPtr(hwnd, gwl_Index, dwNewLong);
-            }
-
-            return new IntPtr(NativeMethodsSetLastError.SetWindowLong(hwnd, gwl_Index, dwNewLong.ToInt32()));
-        }
+       
 
 
         /// <SecurityNote>
@@ -3334,29 +3265,7 @@ namespace RS.Win32API
         [DllImport(ExternDll.User32)]
         public static extern IntPtr GetSystemMenu(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool bRevert);
 
-
-
-        // This is aliased as a macro in 32bit Windows.
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-        public static IntPtr GetWindowLongPtr(IntPtr hwnd, GWL nIndex)
-        {
-            IntPtr ret = IntPtr.Zero;
-            if (8 == IntPtr.Size)
-            {
-                ret = NativeMethodsSetLastError.GetWindowLongPtr(hwnd, (int)nIndex);
-            }
-            else
-            {
-                ret = new IntPtr(NativeMethodsSetLastError.GetWindowLong(hwnd, (int)nIndex));
-            }
-            if (IntPtr.Zero == ret)
-            {
-                throw new Win32Exception();
-            }
-            return ret;
-        }
+     
 
         /// <summary>
         /// Sets attributes to control how visual styles are applied to a specified window.
@@ -3382,7 +3291,7 @@ namespace RS.Win32API
         /// </SecurityNote>
 
 
-        [DllImport("uxtheme.dll", PreserveSig = false)]
+        [DllImport(ExternDll.Uxtheme, PreserveSig = false)]
         public static extern void SetWindowThemeAttribute([In] IntPtr hwnd, [In] WINDOWTHEMEATTRIBUTETYPE eAttribute, [In] ref WTA_OPTIONS pvAttribute, [In] uint cbAttribute);
 
 
@@ -3609,14 +3518,7 @@ namespace RS.Win32API
         /// </SecurityNote>
 
 
-        public static IntPtr SetWindowLongPtr(IntPtr hwnd, GWL nIndex, IntPtr dwNewLong)
-        {
-            if (8 == IntPtr.Size)
-            {
-                return NativeMethodsSetLastError.SetWindowLongPtr(hwnd, (int)nIndex, dwNewLong);
-            }
-            return new IntPtr(NativeMethodsSetLastError.SetWindowLong(hwnd, (int)nIndex, dwNewLong.ToInt32()));
-        }
+   
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -4088,6 +3990,36 @@ namespace RS.Win32API
         [DllImport(ExternDll.DwmAPI)]
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attr, ref int attrValue, int attrSize);
 
+
+        /// <SecurityNote>
+        ///     Critical: Because of suppression
+        /// </SecurityNote>
+        [DllImport(ExternDll.Comdlg32, CharSet = CharSet.Auto)]
+        public static extern Int32 PrintDlgEx(IntPtr pdex);
+
+        /// <SecurityNote>
+        ///     Critical: Because of suppression
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32)]
+        public static extern Int32 GlobalFree(IntPtr hMem);
+
+        /// <SecurityNote>
+        ///     Critical: Because of suppression
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32)]
+        public static extern IntPtr GlobalLock(IntPtr hMem);
+
+        /// <SecurityNote>
+        ///     Critical: Because of suppression
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32)]
+        public static extern bool GlobalUnlock(IntPtr hMem);
+
+        ///<SecurityNote>
+        ///     Critical - elevates via a SUC.
+        ///</SecurityNote>
+        [DllImport(ExternDll.User32, SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto, BestFitMapping = false)]
+        public static extern int MessageBox(HandleRef hWnd, string text, string caption, int type);
 
     }
 }

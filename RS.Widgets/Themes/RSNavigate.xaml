@@ -11,18 +11,155 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.CheckBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBoxItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.RadioButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToggleButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <converters:ScreenSizeConditionConverter x:Key="ScreenSizeConditionConverter" />
+    <converters:SmallOrMediumScreenSizeConverter x:Key="SmallOrMediumScreenSizeConverter" />
     <converters:ClipConverter x:Key="ClipConverter" />
     <converters:ForegroundColorConverter x:Key="ForegroundColorConverter" />
+    <converters:IconKeyConverter x:Key="IconKeyConverter" />
+    <converters:LevelToThicknessConverter x:Key="LevelToThicknessConverter" />
+    <converters:LevelToSharedSizeGroupConverter x:Key="LevelToSharedSizeGroupConverter" />
+    <converters:EventArgsConverter x:Key="EventArgsConverter" />
+
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
     <QuadraticEase x:Key="EaseOutFunction" EasingMode="EaseOut" />
+
     <QuadraticEase x:Key="EaseInFunction" EasingMode="EaseIn" />
+
+
+
+    <DataTemplate x:Key="NavDefaultDataTemplate" DataType="{x:Type model:NavigateModel}">
+        <Border
+            x:Name="PART_Boder"
+            Padding="5,8,5,8"
+            Background="Transparent"
+            CornerRadius="5">
+            <Border Padding="{Binding Level, Converter={StaticResource LevelToThicknessConverter}, ConverterParameter=25}" Background="Transparent">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" SharedSizeGroup="{Binding Level, Converter={StaticResource LevelToSharedSizeGroupConverter}, ConverterParameter=NavSharedSizeGroup}" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Rectangle
+                        x:Name="PART_SelectedRect"
+                        Width="3"
+                        Height="15"
+                        Fill="#005A9E"
+                        RadiusX="1"
+                        RadiusY="1"
+                        Visibility="Hidden" />
+                    <Path
+                        x:Name="PART_Icon"
+                        Grid.Column="1"
+                        Width="12"
+                        Height="12"
+                        Margin="8,0,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{Binding IconKey, Converter={StaticResource IconKeyConverter}}"
+                        Fill="#333"
+                        Stretch="Fill" />
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="{Binding NavName}" />
+                    <Path
+                        x:Name="PART_ChildrenIcon"
+                        Grid.Column="3"
+                        Width="10"
+                        Height="10"
+                        Margin="8,0,15,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{StaticResource RSApp.Icons.RightArrow}"
+                        Fill="#333"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform"
+                        Visibility="Collapsed">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <RotateTransform x:Name="PART_ChildrenIconRoate" Angle="0" />
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+            </Border>
+        </Border>
+
+        <DataTemplate.Triggers>
+            <Trigger SourceName="PART_Boder" Property="IsMouseOver" Value="True">
+                <Setter TargetName="PART_Boder" Property="Cursor" Value="Hand" />
+                <Setter TargetName="PART_Boder" Property="Background" Value="#EDEDED" />
+            </Trigger>
+            <DataTrigger Binding="{Binding IsExpand}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard x:Name="RotateStoryboard">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="PART_ChildrenIconRoate"
+                                Storyboard.TargetProperty="Angle"
+                                To="90"
+                                Duration="00:00:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <StopStoryboard BeginStoryboardName="RotateStoryboard" />
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsSelect}" Value="True">
+                <Setter TargetName="PART_Boder" Property="Background" Value="#EAEAEA" />
+                <Setter TargetName="PART_SelectedRect" Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding HasChildren}" Value="True">
+                <Setter TargetName="PART_ChildrenIcon" Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <Trigger SourceName="PART_Icon" Property="Data" Value="{x:Null}">
+                <Setter TargetName="PART_Icon" Property="Visibility" Value="Hidden" />
+            </Trigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NavGrouplDataTemplate" DataType="{x:Type model:NavigateModel}">
+        <Border
+            x:Name="PART_Boder"
+            Padding="5,8,5,8"
+            Background="Transparent">
+            <Grid Margin="{Binding Level, Converter={StaticResource LevelToThicknessConverter}, ConverterParameter=25}">
+                <TextBlock
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Foreground="#949494"
+                    Text="{Binding NavName}" />
+            </Grid>
+        </Border>
+        <DataTemplate.Triggers />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type model:NavigateModel}">
+        <ContentPresenter x:Name="PART_Content" DataContext="{Binding}" />
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsGroupNav}" Value="False">
+                <Setter TargetName="PART_Content" Property="ContentTemplate" Value="{StaticResource NavDefaultDataTemplate}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsGroupNav}" Value="True">
+                <Setter TargetName="PART_Content" Property="ContentTemplate" Value="{StaticResource NavGrouplDataTemplate}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
 
     <Style TargetType="{x:Type rs:RSNavigate}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -42,9 +179,10 @@
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition x:Name="PART_NavCol" Width="auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
+
                             <Border
                                 x:Name="PART_ContentHost"
                                 Grid.Column="1"
@@ -61,38 +199,41 @@
                                         <Binding ElementName="PART_ContentHost" Path="BorderThickness" />
                                     </MultiBinding>
                                 </Border.Clip>
-                                <ScrollViewer Grid.Row="1" Margin="0,0,5,0">
-                                    <Grid Margin="15,15,15,15">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <ContentPresenter />
-                                        <Border
-                                            x:Name="PART_Footer"
-                                            Grid.Row="1"
-                                            Padding="0,15,0,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="auto" />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition Width="auto" />
-                                                </Grid.ColumnDefinitions>
+                                <rs:RSDialog x:Name="PART_Dialog">
+                                    <ScrollViewer Grid.Row="1" Margin="0,0,5,0">
+                                        <Grid Margin="15,15,15,15">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <ContentPresenter />
+                                            <Border
+                                                x:Name="PART_Footer"
+                                                Grid.Row="1"
+                                                Padding="0,15,0,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition Width="auto" />
+                                                    </Grid.ColumnDefinitions>
 
-                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                                    <TextBlock Foreground="#333" Text="© 2025 made with By Reserved" />
-                                                </StackPanel>
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                        <TextBlock Foreground="#333" Text="© 2025 made with By Reserved" />
+                                                    </StackPanel>
 
-                                                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                                    <TextBlock Foreground="#333">
-                                                        <Run Text="Version:" />
-                                                        <Run Text="1.0" />
-                                                    </TextBlock>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-                                    </Grid>
-                                </ScrollViewer>
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                        <TextBlock Foreground="#333">
+                                                            <Run Text="Version:" />
+                                                            <Run Text="1.0" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+                                    </ScrollViewer>
+                                </rs:RSDialog>
+
                             </Border>
 
                             <Border
@@ -106,6 +247,7 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
+
                                     <ToggleButton
                                         x:Name="PART_BtnNavSwitch"
                                         Grid.Row="0"
@@ -127,40 +269,52 @@
                                         IsTextChangedSearch="True"
                                         SearchContent="{Binding SearchContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <ScrollViewer Grid.Row="2">
-                                        <Grid>
-                                            <StackPanel>
-                                                <RadioButton
-                                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
-                                                    Content="测试"
-                                                    GroupName="NavigateGroup"
-                                                    Style="{StaticResource RSApp.Styles.NavItemStyle}" />
-
-                                                <RadioButton
-                                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Home}"
-                                                    Content="测试"
-                                                    GroupName="NavigateGroup"
-                                                    Style="{StaticResource RSApp.Styles.NavItemStyle}" />
-
-                                                <RadioButton
-                                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Audience}"
-                                                    Content="测试"
-                                                    GroupName="NavigateGroup"
-                                                    Style="{StaticResource RSApp.Styles.NavItemStyle}" />
-
-                                                <RadioButton
-                                                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BeautyFilter}"
-                                                    Content="测试"
-                                                    GroupName="NavigateGroup"
-                                                    Style="{StaticResource RSApp.Styles.NavItemStyle}" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </ScrollViewer>
+                                    <ListBox
+                                        x:Name="PART_NavList"
+                                        Grid.Row="2"
+                                        BorderThickness="0"
+                                        ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavigateModelList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VirtualizingPanel.IsVirtualizing="True">
+                                        <ListBox.Resources>
+                                            <rs:BindingProxy x:Key="NavCommandProxy" Data="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                        </ListBox.Resources>
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="{x:Type ListBoxItem}">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="Foreground" Value="#333" />
+                                                <Setter Property="IsTabStop" Value="False" />
+                                                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Margin" Value="5,2,5,2" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                            <Border
+                                                                Background="{TemplateBinding Background}"
+                                                                FocusVisualStyle="{x:Null}"
+                                                                Focusable="True">
+                                                                <i:Interaction.Triggers>
+                                                                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                                                        <i:InvokeCommandAction
+                                                                            Command="{Binding Source={StaticResource NavCommandProxy}, Path=Data.NavItemInernalClickCommand}"
+                                                                            EventArgsConverter="{StaticResource EventArgsConverter}"
+                                                                            EventArgsConverterParameter="{Binding}"
+                                                                            PassEventArgsToCommand="True" />
+                                                                    </i:EventTrigger>
+                                                                </i:Interaction.Triggers>
+                                                                <ContentPresenter />
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
+                                    </ListBox>
                                 </Grid>
                             </Border>
-
                         </Grid>
-
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -173,11 +327,10 @@
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=NavType}" Value="Floating" />
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsNavExpanded}" Value="True" />
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ScreenSize, Converter={StaticResource ScreenSizeConditionConverter}}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ScreenSize, Converter={StaticResource SmallOrMediumScreenSizeConverter}}" Value="True" />
                             </MultiDataTrigger.Conditions>
+
                             <Setter TargetName="PART_NavHost" Property="Grid.ColumnSpan" Value="2" />
-                            <Setter TargetName="PART_ContentHost" Property="Grid.Column" Value="0" />
-                            <Setter TargetName="PART_ContentHost" Property="Grid.ColumnSpan" Value="2" />
                             <Setter TargetName="PART_NavHost" Property="Background" Value="#FBF9F9F9" />
                             <Setter TargetName="PART_NavHost" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="PART_NavHost" Property="Margin" Value="0" />
@@ -204,10 +357,22 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_BtnNavSwitch" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_ContentHost" Property="CornerRadius" Value="0" />
+                            <Setter TargetName="PART_ContentHost" Property="BorderThickness" Value="0" />
+                            <Setter TargetName="PART_NavHost" Property="BorderThickness" Value="0" />
                         </MultiTrigger>
+
+                        <Trigger Property="ScreenSize" Value="Medium">
+                            <Setter TargetName="PART_NavCol" Property="Width" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavMinWidth}" />
+                        </Trigger>
+
+                        <Trigger Property="ScreenSize" Value="Small">
+                            <Setter TargetName="PART_ContentHost" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="PART_ContentHost" Property="Grid.ColumnSpan" Value="2" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
 </ResourceDictionary>

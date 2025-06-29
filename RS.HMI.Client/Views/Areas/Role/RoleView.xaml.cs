@@ -24,14 +24,14 @@ namespace RS.HMI.Client.Views.Areas
         {
             var userFormView = App.ServiceProvider.GetRequiredService<UserFormView>();
             var rsForm = new RSForm(userFormView,message);
-            rsForm.Owner = (Window)this.GetParentWin();
+            rsForm.Owner = (Window)this.ParentWin;
             rsForm.Closed += RsForm_Closed;
             rsForm.Show();
         }
 
         private void RsForm_Closed(object? sender, EventArgs e)
         {
-            var window = (Window)this.GetParentWin();
+            var window = (Window)this.ParentWin;
             window?.Activate();
         }
 

@@ -7,6 +7,7 @@
     <Style x:Key="{x:Type TreeView}" TargetType="TreeView">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="Template">
@@ -28,6 +29,7 @@
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
@@ -88,6 +90,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="#000" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="rs:TreeViewItemHelper.IsEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>

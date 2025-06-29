@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
-namespace RS.Commons.Helper
+namespace RS.Widgets.Commons
 {
     public static class ImgHelper
     {

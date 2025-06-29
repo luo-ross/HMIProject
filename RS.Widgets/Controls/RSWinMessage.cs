@@ -11,7 +11,7 @@ using System.Windows.Controls;
 
 namespace RS.Widgets.Controls
 {
-    public class RSWinMessage : RSWindowBase, IMessage
+    public class RSWinMessage : RSWindowBase, IWinMessage
     {
         public Button PART_BtnYes { get; set; }
         public Button PART_BtnOK { get; set; }
@@ -23,10 +23,10 @@ namespace RS.Widgets.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWinMessage), new FrameworkPropertyMetadata(typeof(RSWinMessage)));
         }
 
-        public RSWinMessage(Window owner = null)
+        public RSWinMessage(Window owner)
         {
-            this.Width = 600;
-            this.Height = 350;
+            this.Width = 350;
+            this.Height = 250;
             this.BorderCornerRadius = new CornerRadius(5);
             this.Owner = owner;
             if (this.Owner == null)

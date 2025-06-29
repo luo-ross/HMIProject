@@ -710,7 +710,7 @@ namespace RS.Annotation.Views.Areas
             if (openFileDialog.ShowDialog() == true)
             {
                 var fileNames = openFileDialog.FileNames;
-                var validLoginResult = await this.HomeView.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+                var validLoginResult = await this.HomeView.Loading.InvokeAsync(async (cancellationToken) =>
                 {
                     LoadImgModelFromDisk(fileNames.ToList());
                     return OperateResult.CreateSuccessResult();
@@ -739,7 +739,7 @@ namespace RS.Annotation.Views.Areas
             if (dialog.ShowDialog(hwnd) == true)
             {
                 string selectFolder = dialog.SelectedPath;
-                var validLoginResult = await this.HomeView.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+                var validLoginResult = await this.HomeView.Loading.InvokeAsync(async (cancellationToken) =>
                 {
                     string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".tif" };
                     var fileNames = imageExtensions.SelectMany(ext => Directory.EnumerateFiles(selectFolder,

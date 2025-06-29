@@ -8,42 +8,16 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Interfaces
 {
-    public interface IDialog 
+    public interface IDialog : IDialogBase, ILoading, IMessage, IModal, IWinModal
     {
-        /// <summary>
-        /// 获取控件的父级窗体
-        /// </summary>
-        /// <returns></returns>
-        IWindow GetParentWin();
+        IWindow ParentWin { get; }
 
-        /// <summary>
-        /// 获取Mask类型的加载
-        /// </summary>
-        /// <returns></returns>
-        ILoading GetLoading();
+        ILoading RootLoading { get; }
 
-        /// <summary>
-        /// 获取Mask类型的对话框
-        /// </summary>
-        /// <returns></returns>
-        IModal GetModal();
+        IModal RootModal { get; }
 
-        /// <summary>
-        /// 获取Mask类型的对话框
-        /// </summary>
-        /// <returns></returns>
-        IMessage GetMessageBox();
+        IMessage RootMessageBox { get; }
 
-        /// <summary>
-        /// 获取窗体类型的Modal
-        /// </summary>
-        /// <returns></returns>
-        IModal GetWinModal();
-
-        /// <summary>
-        /// 获取窗体类型的消息对话框
-        /// </summary>
-        /// <returns></returns>
-        IMessage GetWinMessageBox();
+        INavigate Navigate { get; }
     }
 }

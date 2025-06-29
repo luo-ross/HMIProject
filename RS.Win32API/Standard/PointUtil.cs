@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace RS.Win32API.Standard
 {
-    public static class PointUtil
+    public static class PointHelper
     {
         
         public static Point ClientToRoot(Point point, PresentationSource presentationSource)

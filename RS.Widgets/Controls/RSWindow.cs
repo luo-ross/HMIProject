@@ -12,7 +12,7 @@ using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class RSWindow : RSWindowBase, IInfoBar, IWindow
+    public class RSWindow : RSWindowBase, IInfoBar, IWindow, IDialogBase, ILoading, IMessage, IModal, IWinModal
     {
         private Button PART_Minimize;
         private Button PART_BtnMaxRestore;
@@ -27,7 +27,6 @@ namespace RS.Widgets.Controls
 
         public RSWindow()
         {
-           
             this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow, CanCloseWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, MinimizeWindow, CanMinimizeWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeRestoreWindow, CanMaximizeWindow));
@@ -36,8 +35,6 @@ namespace RS.Widgets.Controls
             // 添加命令绑定
             this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
         }
-
-      
 
 
         [Description("消息")]
@@ -110,15 +107,6 @@ namespace RS.Widgets.Controls
             });
         }
 
-        //public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        //{
-        //    return await this.PART_WinContentHost.InvokeLoadingActionAsync(func, loadingConfig, cancellationToken);
-        //}
-
-        //public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
-        //{
-        //    return await this.PART_WinContentHost.InvokeLoadingActionAsync<T>(func, loadingConfig, cancellationToken);
-        //}
 
         private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
         {
@@ -354,55 +342,180 @@ namespace RS.Widgets.Controls
         }
 
 
-        /// <summary>
-        /// 显示模态
-        /// </summary>
-        public void ShowModal(object modalContent)
+        #region Interface implementation
+
+        public Task<OperateResult> InvokeAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            this.PART_WinContentHost.ShowModal(modalContent);
-            //this.Content = modalContent;
-            //this.Show();
+            return this.Loading.InvokeAsync(func, loadingConfig, cancellationToken);
         }
 
-        /// <summary>
-        /// 关闭模态
-        /// </summary>
-        public void HideModal()
+        public Task<OperateResult<T>> InvokeAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {
-            this.PART_WinContentHost.HideModal();
+            return this.Loading.InvokeAsync(func, loadingConfig, cancellationToken);
         }
 
-        public IDialog GetDialog()
+        void IModal.ShowModal(object content)
         {
-            return this.PART_WinContentHost;
+            this.Modal.ShowModal(content);
         }
 
-        public IMessage GetMessageBox()
+        void IModal.CloseModal()
         {
-            return this.PART_WinContentHost.GetMessageBox();
+            this.Modal.CloseModal();
+        }
+
+        void IWinModal.ShowModal(object content)
+        {
+            this.WinModal.ShowModal(content);
+        }
+
+        void IWinModal.CloseModal()
+        {
+            this.WinModal.CloseModal();
+        }
+
+        public void ShowDialog(object content)
+        {
+            this.WinModal.ShowDialog(content);
         }
 
 
-        public IMessage GetWinMessageBox()
+        public void HandleBtnClickEvent()
         {
-            return new RSWinMessage()
+            this.MessageBox.HandleBtnClickEvent();
+        }
+
+        public void MessageBoxDisplay(Window window)
+        {
+            this.MessageBox.MessageBoxDisplay(window);
+        }
+
+        public void MessageBoxClose()
+        {
+            this.MessageBox.MessageBoxClose();
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText = null, string caption = null, MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage icon = MessageBoxImage.None, MessageBoxResult defaultResult = MessageBoxResult.None, MessageBoxOptions options = MessageBoxOptions.None)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button, icon, defaultResult, options);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button, icon);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button, icon, defaultResult);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult, MessageBoxOptions options)
+        {
+            return await this.MessageBox.ShowMessageAsync(messageBoxText, caption, button, icon, defaultResult, options);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption, MessageBoxButton button)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button, icon);
+        }
+
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)
+        {
+            return await this.MessageBox.ShowMessageAsync(window, messageBoxText, caption, button, icon, defaultResult);
+        }
+
+        public ILoading Loading
+        {
+            get
             {
-                Owner = this,
-                Width = 350,
-                Height = 250
-            };
+                return this.PART_WinContentHost?.Loading;
+            }
         }
 
-        public IModal GetModal()
+
+        public IModal Modal
         {
-           return this.PART_WinContentHost.GetModal();
+            get
+            {
+                return this.PART_WinContentHost?.Modal;
+            }
         }
 
-        public ILoading GetLoading()
+
+        public IMessage MessageBox
         {
-            return this.PART_WinContentHost.GetLoading();
+            get
+            {
+                return this.PART_WinContentHost?.MessageBox;
+            }
         }
 
-        
+
+
+
+        public IDialog Dialog
+        {
+            get
+            {
+                return this.PART_WinContentHost;
+            }
+        }
+
+        public IWinModal WinModal
+        {
+            get
+            {
+                return new RSWinModal(this);
+            }
+        }
+
+        public IWinMessage WinMessageBox
+        {
+            get
+            {
+                return new RSWinMessage(this);
+            }
+        }
+
+        #endregion
+
+
+
+
+
+
+
+
     }
 }

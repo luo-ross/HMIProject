@@ -35,6 +35,7 @@
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Padding" Value="3,5,3,5" />
         <Setter Property="Template">
             <Setter.Value>
@@ -528,6 +529,7 @@
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="rs:MenuItemHelper.CheckedIconFill" Value="#06b025" />
         <Setter Property="rs:MenuItemHelper.CheckedIcon" Value="{DynamicResource RSApp.Icons.Checked}" />

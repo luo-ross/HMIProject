@@ -4,7 +4,7 @@
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
 
     <Style x:Key="RSApp.Styles.ThumbSliderStyle" TargetType="Thumb">
-        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -45,6 +45,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
@@ -78,6 +79,7 @@
         BasedOn="{StaticResource RSApp.Styles.RepeatButton.SliderHorizontalTrackStyle}"
         TargetType="{x:Type RepeatButton}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
@@ -94,6 +96,7 @@
         BasedOn="{StaticResource RSApp.Styles.RepeatButton.SliderVerticalTrackStyle}"
         TargetType="{x:Type RepeatButton}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
@@ -283,6 +286,7 @@
         <Setter Property="Maximum" Value="100" />
         <Setter Property="Minimum" Value="0" />
         <Setter Property="Margin" Value="3" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="IsSnapToTickEnabled" Value="True" />
         <Setter Property="AutoToolTipPlacement" Value="None" />

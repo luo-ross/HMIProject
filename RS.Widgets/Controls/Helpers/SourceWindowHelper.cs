@@ -168,8 +168,6 @@ namespace RS.Widgets.Controls
 
         public int StyleFromHwnd
         {
-
-
             get
             {
                 return (int)NativeMethods.GetWindowLong(new HandleRef(this, CriticalHandle), -16);

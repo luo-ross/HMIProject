@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 
 namespace RS.Widgets.Controls
 {
-
     public static class IconHelper
     {
         private const string Prefix = "RSApp.Icons.";

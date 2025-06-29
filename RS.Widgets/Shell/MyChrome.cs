@@ -257,24 +257,24 @@ namespace RS.Widgets.Shell
             PropertyChangedThatRequiresRepaint?.Invoke(this, EventArgs.Empty);
         }
 
-        private static readonly List<_SystemParameterBoundProperty> _BoundProperties = new List<_SystemParameterBoundProperty>
+        private static readonly List<SystemParameterBoundProperty> _BoundProperties = new List<SystemParameterBoundProperty>
     {
-        new _SystemParameterBoundProperty
+        new SystemParameterBoundProperty
         {
             DependencyProperty = CornerRadiusProperty,
             SystemParameterPropertyName = "WindowCornerRadius"
         },
-        new _SystemParameterBoundProperty
+        new SystemParameterBoundProperty
         {
             DependencyProperty = CaptionHeightProperty,
             SystemParameterPropertyName = "WindowCaptionHeight"
         },
-        new _SystemParameterBoundProperty
+        new SystemParameterBoundProperty
         {
             DependencyProperty = ResizeBorderThicknessProperty,
             SystemParameterPropertyName = "WindowResizeBorderThickness"
         },
-        new _SystemParameterBoundProperty
+        new SystemParameterBoundProperty
         {
             DependencyProperty = GlassFrameThicknessProperty,
             SystemParameterPropertyName = "WindowNonClientFrameThickness"
@@ -282,7 +282,7 @@ namespace RS.Widgets.Shell
     };
         public MyChrome()
         {
-            foreach (_SystemParameterBoundProperty boundProperty in _BoundProperties)
+            foreach (SystemParameterBoundProperty boundProperty in _BoundProperties)
             {
                 BindingOperations.SetBinding(this, boundProperty.DependencyProperty, new Binding
                 {

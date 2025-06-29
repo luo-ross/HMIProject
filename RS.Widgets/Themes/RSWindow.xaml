@@ -57,7 +57,7 @@
                                     <Binding ElementName="PART_Border" Path="BorderThickness" />
                                 </MultiBinding>
                             </Border.Clip>
-                            <rs:RSDialog x:Name="PART_WinContentHost" DialogKey="Default">
+                            <rs:RSDialog x:Name="PART_WinContentHost">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />

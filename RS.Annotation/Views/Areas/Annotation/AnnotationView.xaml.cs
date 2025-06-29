@@ -3005,10 +3005,10 @@ namespace RS.Annotation.Views.Areas
         {
             var button = sender as Button;
             var tagModelSelect = this.ViewModel.TagModelSelect;
-            var messageBoxResult = await this.GetMessageBox().ShowMessageAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            var messageBoxResult = await this.MessageBox.ShowMessageAsync("请注意！所有图像实例该标签分类将会全部删除，你确定要这么操作吗?", "系统提示", MessageBoxButton.YesNo, MessageBoxImage.Information);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                var validLoginResult = await this.GetLoading().InvokeLoadingActionAsync(async (cancellationToken) =>
+                var validLoginResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
                 {
                     this.DeleteTagModel(tagModelSelect);
                     return OperateResult.CreateSuccessResult();

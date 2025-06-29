@@ -12,6 +12,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.GroupBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBoxItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Menu.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.MenuItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.PasswordBox.xaml" />
@@ -44,5 +45,5 @@
     <Style BasedOn="{StaticResource RSApp.Styles.DataGridStyle}" TargetType="{x:Type DataGrid}" />
     <Style BasedOn="{StaticResource RSApp.Styles.DataGridRowStyle}" TargetType="{x:Type DataGridRow}" />
     <Style BasedOn="{StaticResource RSApp.Styles.ListBoxStyle}" TargetType="{x:Type ListBox}" />
-
+    <Style BasedOn="{StaticResource RSApp.Styles.ListBoxItemStyle}" TargetType="{x:Type ListBoxItem}" />
 </ResourceDictionary>

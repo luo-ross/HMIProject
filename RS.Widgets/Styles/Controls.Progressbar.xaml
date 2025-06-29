@@ -20,6 +20,7 @@
         <Setter Property="Background" Value="#404042" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Height" Value="5" />
         <Setter Property="Foreground">
             <Setter.Value>

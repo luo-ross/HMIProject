@@ -11,15 +11,11 @@ namespace RS.Widgets.Interfaces
 {
     public interface IDialogManager
     {
-        void RegisterDialog( string dialogKey, IDialog dialog);
+        void RegisterDialog(object dialogKey, IDialog dialog);
 
-        void UnregisterDialog(string dialogKey);
+         void UnregisterDialog(object dialogKey);
 
-        IDialog GetDialog( string dialogKey);
-
-        Task RunWithLoading(string dialogKey, Func<Task> action, LoadingConfig loadingConfig);
-
-        void ShowWinMessage(string msg);
-        void ShowWinModal(object content);
+         IDialog GetDialog(object dialogKey);
+       
     }
 }

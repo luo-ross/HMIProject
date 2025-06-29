@@ -12,7 +12,6 @@
     d:DataContext="{d:DesignInstance Type=local:RoleViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    DialogKey="{Binding DialogKey}"
     mc:Ignorable="d">
     <rs:RSDialog.Resources>
         <ResourceDictionary>
@@ -103,7 +102,7 @@
 
 
                     <Border Grid.Row="0" Padding="3,8,3,15">
-                        <rs:RSWrapPanel SnapsToDevicePixels="True">
+                        <rs:RSWrapPanel ItemWidth="200" SnapsToDevicePixels="True">
                             <ComboBox rs:ControlsHelper.Description="角色名称">
                                 <ComboBoxItem>
                                     <TextBlock Text="12" />

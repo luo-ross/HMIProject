@@ -33,7 +33,7 @@ namespace RS.Widgets.Controls
         }
 
 
-        public async Task<OperateResult> InvokeLoadingActionAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
+        public async Task<OperateResult> InvokeAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -61,7 +61,7 @@ namespace RS.Widgets.Controls
         }
 
 
-        public async Task<OperateResult<T>> InvokeLoadingActionAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
+        public async Task<OperateResult<T>> InvokeAsync<T>(Func<CancellationToken, Task<OperateResult<T>>> func, LoadingConfig loadingConfig, CancellationToken cancellationToken)
         {
             this.Dispatcher.Invoke(() =>
             {

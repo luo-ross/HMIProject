@@ -56,7 +56,6 @@ namespace RS.Widgets.Controls
 
         static OSVersionHelper()
         {
-            WpfLibraryLoader.EnsureLoaded(ExternDll.PresentationNativeDll);
             IsOsWindows10RS5OrGreater = NativeMethods.IsWindows10RS5OrGreater();
             IsOsWindows10RS4OrGreater = NativeMethods.IsWindows10RS4OrGreater();
             IsOsWindows10RS3OrGreater = NativeMethods.IsWindows10RS3OrGreater();
@@ -186,6 +185,42 @@ namespace RS.Widgets.Controls
             }
 
             throw new Exception("OSVersionHelper.GetOsVersion Could not detect OS!");
+        }
+
+
+        public static bool IsVersionOrLater(OperatingSystemVersion version)
+        {
+            // 
+            int major;
+            int minor;
+            PlatformID platform = PlatformID.Win32NT;
+            switch (version)
+            {
+                case OperatingSystemVersion.Windows8:
+                    major = 6;
+                    minor = 2;
+                    break;
+
+                case OperatingSystemVersion.Windows7:
+                    major = 6;
+                    minor = 1;
+                    break;
+
+                case OperatingSystemVersion.WindowsVista:
+                    major = 6;
+                    minor = 0;
+                    break;
+
+                case OperatingSystemVersion.WindowsXPSP2:
+                default:
+                    major = 5;
+                    minor = 1;
+                    break;
+            }
+
+            OperatingSystem os = Environment.OSVersion;
+            return (os.Platform == platform) &&
+                (((os.Version.Major == major) && (os.Version.Minor >= minor)) || (os.Version.Major > major));
         }
 
 

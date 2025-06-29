@@ -58,7 +58,6 @@ namespace RS.Widgets.Controls
 
         #endregion
 
-
         #region Indentation
 
         private static readonly DependencyPropertyKey IndentationPropertyKey =
@@ -106,5 +105,6 @@ namespace RS.Widgets.Controls
             }
             return depth;
         }
+
     }
 }

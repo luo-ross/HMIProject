@@ -210,12 +210,6 @@ namespace RS.Widgets.Controls
 
         private async void RSDataGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            //var scrollViewer = this.PART_DataGrid.FindChild<ScrollViewer>();
-            //if (scrollViewer != null)
-            //{
-            //    scrollViewer.ScrollChanged -= OnScrollChanged;
-            //    scrollViewer.ScrollChanged += OnScrollChanged;
-            //}
             await InternalPaginationAsync();
         }
 
@@ -346,7 +340,6 @@ namespace RS.Widgets.Controls
 
         #endregion
 
-
         #region 依赖属性
 
 
@@ -360,7 +353,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("Pagination", typeof(Pagination), typeof(RSDataGrid), new PropertyMetadata(null));
     
         #endregion
-
 
         public override void OnApplyTemplate()
         {
@@ -466,14 +458,6 @@ namespace RS.Widgets.Controls
             await InternalPaginationAsync();
         }
 
-
-        //private async void OnScrollChanged(object sender, ScrollChangedEventArgs e)
-        //{
-        //    if (e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight)
-        //    {
-        //        await InternalPaginationAsync();
-        //    }
-        //}
 
         private async Task InternalPaginationAsync()
         {

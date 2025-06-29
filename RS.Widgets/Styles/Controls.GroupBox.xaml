@@ -11,6 +11,7 @@
         <Setter Property="Background" Value="#fff" />
         <Setter Property="BorderBrush" Value="#eee" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="Template">
             <Setter.Value>

@@ -10,6 +10,7 @@
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="FontSize" Value="12" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Foreground" Value="#333333" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />

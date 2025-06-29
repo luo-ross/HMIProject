@@ -8,28 +8,47 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public partial class ApplicationViewModel : NotifyBase
+    public  class ApplicationViewModel : NotifyBase
     {
+
+        private bool? isServerConnectSuccess;
         /// <summary>
         /// 服务是否连接成功
         /// </summary>
-        [ObservableProperty]
-        private bool? isServerConnectSuccess;
+        public bool? IsServerConnectSuccess
+        {
+            get { return isServerConnectSuccess; }
+            set
+            {
+                this.SetProperty(ref isServerConnectSuccess,value);
+            }
+        }
 
 
+        private bool? isNetworkAvailable;
         /// <summary>
         /// 网络是否可用
         /// </summary>
-        [ObservableProperty]
-        private bool? isNetworkAvailable;
+        public bool? IsNetworkAvailable
+        {
+            get { return isNetworkAvailable; }
+            set
+            {
+                this.SetProperty(ref isNetworkAvailable, value);
+            }
+        }
 
-
+        private bool isGetSessionModelSuccess;
         /// <summary>
         /// 是否成功获取会话
         /// </summary>
-        [ObservableProperty]
-        private bool isGetSessionModelSuccess;
-       
-    
+        public bool IsGetSessionModelSuccess
+        {
+            get { return isGetSessionModelSuccess; }
+            set
+            {
+                this.SetProperty(ref isGetSessionModelSuccess, value);
+            }
+        }
     }
 }

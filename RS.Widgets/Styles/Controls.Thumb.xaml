@@ -10,6 +10,7 @@
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Width" Value="20" />
         <Setter Property="Height" Value="20" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="50" />
         <Setter Property="BorderThickness" Value="1" />
@@ -44,6 +45,7 @@
         <Setter Property="Height" Value="20" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="Template">
             <Setter.Value>
@@ -83,6 +85,7 @@
         <Setter Property="Width" Value="20" />
         <Setter Property="Height" Value="20" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="Template">
             <Setter.Value>

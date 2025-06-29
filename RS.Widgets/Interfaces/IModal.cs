@@ -9,6 +9,6 @@ namespace RS.Widgets.Interfaces
     public interface IModal
     {
         void ShowModal(object content);
-        void HideModal();
+        void CloseModal();
     }
 }
