@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace RS.Widgets.Controls
 {
@@ -39,6 +40,24 @@ namespace RS.Widgets.Controls
             }
             NavigateList.TryGetValue(dataContext, out var navigate);
             return navigate;
+        }
+
+
+        public static readonly DependencyProperty IsNeedIndentationProperty =
+         DependencyProperty.RegisterAttached(
+             "IsNeedIndentation",
+             typeof(bool),
+             typeof(NavigateHelper),
+             new PropertyMetadata(false));
+
+        public static bool GetIsNeedIndentation(UIElement element)
+        {
+            return (bool)element.GetValue(IsNeedIndentationProperty);
+        }
+
+        public static void SetIsNeedIndentation(UIElement element, bool value)
+        {
+            element.SetValue(IsNeedIndentationProperty, value);
         }
 
     }

@@ -2106,7 +2106,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.ShCore)]
-        internal static extern uint GetProcessDpiAwareness([In] HandleRef hProcess, out IntPtr awareness);
+        public static extern uint GetProcessDpiAwareness([In] HandleRef hProcess, out IntPtr awareness);
 
 
         public static PROCESS_DPI_AWARENESS GetProcessDpiAwareness(HandleRef hProcess)
@@ -2124,11 +2124,11 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32)]
-        internal static extern uint GetDpiForSystem();
+        public static extern uint GetDpiForSystem();
 
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Unicode)]
-        internal static extern uint GetDpiForWindow([In] HandleRef hwnd);
+        public static extern uint GetDpiForWindow([In] HandleRef hwnd);
 
 
         [DllImport(ExternDll.ShCore, CharSet = CharSet.Auto, SetLastError = true)]
@@ -4021,5 +4021,11 @@ namespace RS.Win32API
         [DllImport(ExternDll.User32, SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto, BestFitMapping = false)]
         public static extern int MessageBox(HandleRef hWnd, string text, string caption, int type);
 
+
+        [DllImport(ExternDll.User32)]
+        public static extern IntPtr SetFocus(IntPtr hWnd);
+
+        [DllImport(ExternDll.PresentationNativeDll, EntryPoint = "GetParentWrapper", SetLastError = true)]
+        public static extern IntPtr GetParent(HandleRef hWnd);
     }
 }

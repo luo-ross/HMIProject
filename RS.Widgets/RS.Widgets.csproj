@@ -59,4 +59,9 @@
 		</Page>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="AutomationPeers\" />
+	  <Folder Include="EventArgs\" />
+	</ItemGroup>
+
 </Project>

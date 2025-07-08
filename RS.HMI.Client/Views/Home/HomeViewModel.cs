@@ -35,169 +35,81 @@ namespace RS.HMI.Client.Views
 
             this.NavClickCommand = new RelayCommand<NavigateModel>(NavClick);
 
-            var list = GenerateRandomNavigateModels(10000);
-            this.NavigateModelList = new List<NavigateModel>(list);
-           
+            var dataList = GenerateMenu(3, 15);
+            dataList = this.SortMenu(dataList);
+            this.NavigateModelList = dataList;
         }
 
         private void NavClick(NavigateModel? model)
         {
-            this.ViewModelSelect = model?.ViewMoel;
+            //this.ViewModelSelect = model?.ViewMoel;
+            //先做测试
+            this.ViewModelSelect = UserViewModel;
         }
 
-       
-        public List<NavigateModel> GenerateRandomNavigateModels(int count)
+        public static List<NavigateModel> GenerateMenu(int maxLevel, int menuCountPerLevel, double groupProbability = 0.2)
         {
-            var list = new List<NavigateModel>();
+            var menuList = new List<NavigateModel>();
+            int idCounter = 1;
             var rand = new Random();
-            int idSeed = 1;
 
-            // 1级节点
-            int level1Count = rand.Next(10, 30); // 随机生成10~30个一级节点
-            var level1Nodes = new List<NavigateModel>();
-            for (int i = 0; i < level1Count; i++)
+            void AddMenus(string parentId, int currentLevel)
             {
-                var node = new NavigateModel
+                if (currentLevel > maxLevel) return;
+
+                for (int i = 1; i <= menuCountPerLevel; i++)
                 {
-                    Id = (idSeed++).ToString(),
-                    ParentId = null,
-                    Level = 0,
-                    Order = i + 1,
-                    IsGroupNav = false,
-                    NavName = $"一级菜单_{i + 1}",
-                    IconKey = (IconKey)rand.Next(0, Enum.GetValues(typeof(IconKey)).Length),
-                    IsSelect = false,
-                    HasChildren = true ,// 先设为true，后面再修正
-                    ViewMoel= RoleViewModel
-                };
-
-                if (i%5==0)
-                {
-                    node.IsGroupNav = true;
-                }
-                level1Nodes.Add(node);
-                list.Add(node);
-            }
-
-
-
-            // 2级节点
-            var level2Nodes = new List<NavigateModel>();
-            foreach (var parent in level1Nodes)
-            {
-                int childCount = rand.Next(5, 20); // 每个一级节点下5~20个二级节点
-                for (int i = 0; i < childCount; i++)
-                {
-                    var node = new NavigateModel
+                    string id = (idCounter++).ToString();
+                    bool isGroup = rand.NextDouble() < groupProbability; // groupProbability 概率分组
+                    var menu = new NavigateModel
                     {
-                        Id = (idSeed++).ToString(),
-                        ParentId = parent.Id,
-                        Level = 1,
-                        Order = i + 1,
-                        IsGroupNav = false,
-                        NavName = $"二级菜单_{parent.Order}_{i + 1}",
-                        IconKey = (IconKey)rand.Next(0, Enum.GetValues(typeof(IconKey)).Length),
+                        Id = id,
+                        ParentId = parentId,
+                        Level = currentLevel,
+                        Order = i,
+                        NavName = $"第{currentLevel}级菜舒服舒服sdf单-{i}" + (parentId != null ? $"(父:{parentId})" : ""),
+                        HasChildren = !isGroup && currentLevel < maxLevel, // 分组不再有下级
+                        IsGroupNav = isGroup,
+                        ViewKey = $"View_{currentLevel}_{i}",
+                        IconKey = IconKey.Folder,
+                        IsExpand = false,
                         IsSelect = false,
-                        HasChildren = true ,// 先设为true，后面再修正
-                        ViewMoel = UserViewModel
+                        ViewMoel = null
                     };
+                    menuList.Add(menu);
 
-                    if (i % 15 == 0)
+                    // 只有不是分组时才递归生成下级
+                    if (!isGroup)
                     {
-                        node.IsGroupNav = true;
+                        AddMenus(id, currentLevel + 1);
                     }
-                    level2Nodes.Add(node);
-                    list.Add(node);
-                    if (list.Count >= count) break;
                 }
-                if (list.Count >= count) break;
             }
-
-            // 3级节点
-            foreach (var parent in level2Nodes)
-            {
-                int childCount = rand.Next(2, 10); // 每个二级节点下2~10个三级节点
-                for (int i = 0; i < childCount; i++)
-                {
-                    var node = new NavigateModel
-                    {
-                        Id = (idSeed++).ToString(),
-                        ParentId = parent.Id,
-                        Level = 2,
-                        Order = i + 1,
-                        IsGroupNav = false,
-                        NavName = $"三级菜单_{parent.Order}_{i + 1}",
-                        IsSelect = false,
-                        HasChildren = false // 三级节点没有子节点
-                    };
-                    if (i % 25 == 0)
-                    {
-                        node.IsGroupNav = true;
-                    }
-                    list.Add(node);
-                    if (list.Count >= count) break;
-                }
-                if (list.Count >= count) break;
-            }
-
-            // 修正HasChildren属性
-            var idSet = new HashSet<string>(list.Select(x => x.ParentId).Where(x => !string.IsNullOrEmpty(x)));
-            foreach (var node in list)
-            {
-                node.HasChildren = idSet.Contains(node.Id);
-            }
-
-            // 如果数量不够，补充三级节点
-            while (list.Count < count)
-            {
-                var parent = level2Nodes[rand.Next(level2Nodes.Count)];
-                var node = new NavigateModel
-                {
-                    Id = (idSeed++).ToString(),
-                    ParentId = parent.Id,
-                    Level = 2,
-                    Order = rand.Next(1, 100),
-                    IsGroupNav = false,
-                    NavName = $"三级菜单_补_{list.Count + 1}",
-                    IconKey = (IconKey)rand.Next(0, Enum.GetValues(typeof(IconKey)).Length),
-                    IsSelect = false,
-                    HasChildren = false
-                };
-                list.Add(node);
-            }
-
-            list = SortAsTree(list);
-            return list;
+            AddMenus(null, 0); // 层级从0开始
+            return menuList;
         }
 
-        public  List<NavigateModel> SortAsTree(List<NavigateModel> source)
+        public  List<NavigateModel> SortMenu(List<NavigateModel> menuList)
         {
-            var dict = source.ToDictionary(x => x.Id, x => x);
-            // 按Order排序，找出所有根节点（ParentId为空或为null）
-            var roots = source.Where(x => string.IsNullOrEmpty(x.ParentId)).OrderBy(x => x.Order).ToList();
             var result = new List<NavigateModel>();
+            // 先按Level、Order排序
+            var lookup = menuList
+                .OrderBy(m => m.Level)
+                .ThenBy(m => m.Order)
+                .ToLookup(m => m.ParentId);
 
-            void AddChildren(NavigateModel parent)
+            void AddChildren(string parentId)
             {
-                result.Add(parent);
-                var children = source
-                    .Where(x => x.ParentId == parent.Id)
-                    .OrderBy(x => x.Order)
-                    .ToList();
-                foreach (var child in children)
+                foreach (var menu in lookup[parentId])
                 {
-                    AddChildren(child);
+                    result.Add(menu);
+                    AddChildren(menu.Id); // 递归添加子节点
                 }
             }
 
-            foreach (var root in roots)
-            {
-                AddChildren(root);
-            }
-
+            AddChildren(null); // 顶级菜单ParentId为null
             return result;
         }
-
 
 
 

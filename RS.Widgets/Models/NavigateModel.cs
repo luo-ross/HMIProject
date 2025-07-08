@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System;
@@ -12,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace RS.Widgets.Models
 {
@@ -116,6 +118,20 @@ namespace RS.Widgets.Models
             set
             {
                 this.SetProperty(ref isGroupNav, value);
+            }
+        }
+
+
+        private string viewKey;
+        /// <summary>
+        /// 视图主键
+        /// </summary>
+        public string ViewKey
+        {
+            get { return viewKey; }
+            set
+            {
+                this.SetProperty(ref viewKey, value);
             }
         }
 

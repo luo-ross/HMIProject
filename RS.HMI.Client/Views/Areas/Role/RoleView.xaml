@@ -118,101 +118,18 @@
                             <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
                             <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
                             <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
-
-                            <TextBox rs:ControlsHelper.Description="角色名称" rs:TextBoxHelper.Watermark="请输入角色名称" />
                         </rs:RSWrapPanel>
-                        <!--<Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" MinWidth="50" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" MinWidth="50" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" MinWidth="50" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                HorizontalAlignment="Right"
-                                Foreground="#D8000000"
-                                Text="角色名称" />
-                            <TextBox
-                                Grid.Column="1"
-                                rs:TextBoxHelper.IsShowClearButton="True"
-                                rs:TextBoxHelper.Watermark="请输入角色名称"
-                                IsEnabled="False"
-                                IsReadOnly="True"
-                                Text="{Binding ModelSearch.Name}" />
-                            <TextBlock
-                                Grid.Column="2"
-                                HorizontalAlignment="Right"
-                                Foreground="#D8000000"
-                                Text="所属公司" />
-                            <ComboBox
-                                Grid.Column="3"
-                                rs:TextBoxHelper.IsShowClearButton="True"
-                                rs:TextBoxHelper.Watermark="请选择公司"
-                                DisplayMemberPath="DisplayMember"
-                                SelectedValuePath="SelectedValue" />
-
-                            <TextBlock
-                                Grid.Column="4"
-                                HorizontalAlignment="Right"
-                                Foreground="#D8000000"
-                                Text="创建时间" />
-
-                            <rs:RSDateTimePicker
-                                Grid.Column="5"
-                                DateTimeSelected="{Binding DateTimeSelect, ValidatesOnExceptions=True}"
-                                DisplayParts="Date"
-                                IsReadOnly="False" />
-                        </Grid>-->
                     </Border>
 
 
                     <ItemsControl Grid.Row="1" ItemsSource="{Binding PropertyList}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <rs:RSWrapPanel IsItemsHost="True" SnapsToDevicePixels="True" />
+                                <rs:RSWrapPanel
+                                    Cols="4"
+                                    IsItemsHost="True"
+                                    ItemWidth="200"
+                                    SnapsToDevicePixels="True" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
@@ -225,7 +142,6 @@
                 <GroupBox.Header>
                     <Grid>
                         <TextBlock Text="角色列表" />
-
                     </Grid>
                 </GroupBox.Header>
                 <rs:RSDataGrid

@@ -26,9 +26,9 @@ namespace RS.Widgets.Commons
         }
 
         /// <summary>
-        /// 根据ParentId递归删除所有子节点（Id为string类型，防止死循环）
+        /// 根据ParentId递归删除所有子节点（Id为string类型）
         /// </summary>
-        public static void RemoveRangeWithCascade<T>(
+        public static void CascadeRemoveRange<T>(
             this ObservableCollection<T> collection,
             IEnumerable<T> items,
             Func<T, string> idSelector,

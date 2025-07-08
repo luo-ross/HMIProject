@@ -4,7 +4,7 @@
     xmlns:model="clr-namespace:RS.Widgets.Models"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ControlTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSModal}">
         <Setter Property="Visibility" Value="Collapsed" />

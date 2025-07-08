@@ -48,5 +48,10 @@ namespace RS.Widgets.Controls
             obj.SetValue(CheckedIconProperty, value);
         }
 
+
+
+
+
+
     }
 }

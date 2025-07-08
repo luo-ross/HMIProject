@@ -8,6 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:RS.HMI.Client.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:RS.HMI.Client.Models"
     xmlns:rs="https://github.com/luo-ross/Widgets"
     x:Name="this"
     Title="上位机客户端"
@@ -19,12 +20,11 @@
     Icon="/Assets/login-bg.jpg"
     IsFitSystem="True"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
+    Left="150"
     ResizeMode="CanResizeWithGrip"
+    Top="50"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <!--<rs:RSWindow.DataContext>
-        <local:HomeViewModel />
-    </rs:RSWindow.DataContext>-->
     <rs:RSWindow.Resources>
         <ResourceDictionary>
             <rs:ForegroundColorConverter x:Key="ForegroundColorConverter" />
@@ -94,7 +94,6 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}" Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
             </StackPanel>

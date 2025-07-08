@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ControlTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

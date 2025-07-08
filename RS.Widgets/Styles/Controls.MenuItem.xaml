@@ -361,6 +361,7 @@
                     VerticalAlignment="Center"
                     ContentSource="Icon"
                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
                 <ContentPresenter
                     Grid.Column="2"
                     Margin="3,0,3,0"
@@ -554,15 +555,5 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-
-
-
-
-
-
-
-
-
 
 </ResourceDictionary>

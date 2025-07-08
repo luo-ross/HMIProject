@@ -21,19 +21,6 @@ namespace RS.Widgets.Controls
 {
     public class RSDateTimePicker : ContentControl
     {
-        private class RSDateTimePickerModelTreeEnumerator : ModelTreeEnumerator
-        {
-            private RSDateTimePicker _RSDateTimePicker;
-
-            protected override bool IsUnchanged => base.Content == _RSDateTimePicker.Content;
-
-            internal RSDateTimePickerModelTreeEnumerator(RSDateTimePicker _rsDateTimePicker, object child)
-                : base(child)
-            {
-                _RSDateTimePicker = _rsDateTimePicker;
-            }
-        }
-
 
         private RSPopup PART_Popup;
         private Border PART_Border;
@@ -1005,7 +992,7 @@ namespace RS.Widgets.Controls
         /// <param name="dependencyProperty">依赖属性</param>
         /// <param name="oldValue">旧值</param>
         /// <param name="newValue">新值</param>
-        public void ForcePropertyChanged(DependencyProperty dependencyProperty, object oldValue, object newValue)
+        public  void ForcePropertyChanged(DependencyProperty dependencyProperty, object oldValue, object newValue)
         {
             if (oldValue == null || !oldValue.Equals(newValue))
             {

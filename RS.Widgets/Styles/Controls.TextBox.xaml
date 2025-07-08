@@ -5,7 +5,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ControlTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
     </ResourceDictionary.MergedDictionaries>

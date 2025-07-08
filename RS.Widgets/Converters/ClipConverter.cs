@@ -27,8 +27,23 @@ namespace RS.Widgets.Converters
                 !(values[2] is double height) ||
                 !(values[3] is Thickness borderThickness))
             {
-                return Geometry.Empty; 
+                return Geometry.Empty;
             }
+            var pathGeometry = GetPathGeometry(
+              borderCornerRadius,
+              width,
+              height,
+              borderThickness);
+            return pathGeometry;
+        }
+
+        public static Geometry GetPathGeometry(
+            CornerRadius borderCornerRadius,
+            double width,
+            double height,
+            Thickness borderThickness
+            )
+        {
 
             if (width <= 0 || height <= 0)
             {
@@ -120,6 +135,8 @@ namespace RS.Widgets.Converters
 
             return pathGeometry;
         }
+
+
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {

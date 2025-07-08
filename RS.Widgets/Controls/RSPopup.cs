@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using RS.Win32API;
+using RS.Win32API.Structs;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows;
-using Windows.Win32;
-using Windows.Win32.Foundation;
-using RS.Win32API;
-using RS.Win32API.Structs;
-using RS.Widgets.Controls;
 namespace RS.Widgets.Controls
 {
     public class RSPopup : Popup
     {
+        private HwndSource HwndSource;
         /// <summary> 
         /// 加载窗口随动事件 
         /// </summary> 
         public RSPopup()
         {
             this.Loaded += RSPopup_Loaded;
+            this.Opened += RSPopup_Opened;
+        }
+
+        private void RSPopup_Opened(object? sender, EventArgs e)
+        {
+
         }
 
         private void RSPopup_Loaded(object sender, RoutedEventArgs e)
@@ -73,6 +71,7 @@ namespace RS.Widgets.Controls
             get { return (bool)GetValue(TopmostProperty); }
             set { SetValue(TopmostProperty, value); }
         }
+
         private static void OnTopmostPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as RSPopup)?.UpdateWindow();
@@ -101,6 +100,5 @@ namespace RS.Widgets.Controls
                 NativeMethods.SetWindowPos(new HandleRef(null, handle), new HandleRef(null, Topmost ? -1 : -2), lpRect.Left, lpRect.Top, (int)this.Width, (int)this.Height, 0);
             }
         }
-
     }
 }

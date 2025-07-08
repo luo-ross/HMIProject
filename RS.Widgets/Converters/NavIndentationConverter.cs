@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace RS.Widgets.Converters
 {
-    public class LevelToThicknessConverter : IValueConverter
+    public class NavIndentationConverter : IValueConverter
     {
         // ConverterParameter 传递缩进基数
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

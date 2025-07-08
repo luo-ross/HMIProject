@@ -1,6 +1,6 @@
 1、打包Nuget 命令
 2、进入到项目 使用CMD 运行下面的命令
-dotnet pack -c Release
+dotnet pack -c Release 
 3、然后将生成的nupkg文件放在一个指定的本地Nuget文件下
 4、进入管理Nuget包程序界面
 5、点击程序包源右边的小齿轮设置

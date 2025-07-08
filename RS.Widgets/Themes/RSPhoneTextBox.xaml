@@ -96,7 +96,7 @@
                                     Style="{StaticResource RSApp.Styles.ValidErrorTipBorderStyle}">
                                     <Path Style="{StaticResource RSApp.Styles.ValidErrorTipPathStyle}" />
                                 </Border>
-                                <Popup
+                                <rs:RSPopup
                                     x:Name="PART_PopCountryCode"
                                     AllowsTransparency="True"
                                     IsOpen="{Binding ElementName=PART_TogBtnCountryCode, Path=IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -194,7 +194,7 @@
                                             Stretch="Fill" />
                                     </Grid>
 
-                                </Popup>
+                                </rs:RSPopup>
                             </Grid>
                         </Border>
                     </Grid>

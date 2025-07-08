@@ -13,11 +13,11 @@ using System.Windows.Media.Animation;
 namespace RS.Widgets.Controls
 {
     [TemplatePart(Name =nameof(PART_CountryCodeListBox),Type =typeof(ListBox))]
-    [TemplatePart(Name = nameof(PART_PopCountryCode), Type = typeof(Popup))]
+    [TemplatePart(Name = nameof(PART_PopCountryCode), Type = typeof(RSPopup))]
     public class RSPhoneTextBox : ContentControl
     {
         private ListBox PART_CountryCodeListBox;
-        private Popup PART_PopCountryCode;
+        private RSPopup PART_PopCountryCode;
         static RSPhoneTextBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSPhoneTextBox), new FrameworkPropertyMetadata(typeof(RSPhoneTextBox)));
@@ -137,7 +137,7 @@ namespace RS.Widgets.Controls
             base.OnApplyTemplate();
 
           this.PART_CountryCodeListBox = GetTemplateChild(nameof(PART_CountryCodeListBox)) as ListBox;
-            this.PART_PopCountryCode = GetTemplateChild(nameof(PART_PopCountryCode)) as Popup;
+            this.PART_PopCountryCode = GetTemplateChild(nameof(PART_PopCountryCode)) as RSPopup;
 
             if (this.PART_CountryCodeListBox is not null)
             {

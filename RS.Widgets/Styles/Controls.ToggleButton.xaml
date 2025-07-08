@@ -151,4 +151,16 @@
         </Setter>
     </Style>
 
+
+    <Style x:Key="RSApp.Styles.NavToggleStyle" TargetType="{x:Type ToggleButton}">
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <ContentPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

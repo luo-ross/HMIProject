@@ -14,8 +14,6 @@
         <Setter Property="Foreground" Value="#333333" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="BorderThickness" Value="1" />
-        <!--<Setter Property="HorizontalOffset" Value="2" />-->
-        <!--<Setter Property="VerticalOffset" Value="-12" />-->
         <Setter Property="Placement" Value="Mouse" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="Template">
@@ -36,8 +34,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Placement" Value="Top">
-                            <Setter Property="HorizontalOffset" Value="-12" />
+                            <Setter Property="HorizontalOffset" Value="-13" />
                             <Setter Property="VerticalOffset" Value="-5" />
+                        </Trigger>
+                        <Trigger Property="Content" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

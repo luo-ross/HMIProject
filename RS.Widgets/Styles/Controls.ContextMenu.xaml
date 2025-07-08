@@ -9,9 +9,6 @@
     </ResourceDictionary.MergedDictionaries>
     <converters:ClipConverter x:Key="ClipConverter" />
 
-
-
-
     <Style x:Key="RSApp.Styles.ContextMenuStyle" TargetType="{x:Type ContextMenu}">
         <Setter Property="HasDropShadow" Value="True" />
         <Setter Property="IsTabStop" Value="False" />

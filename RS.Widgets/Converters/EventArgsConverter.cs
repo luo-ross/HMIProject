@@ -14,9 +14,7 @@ namespace RS.Widgets.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var eventArgs = value as MouseButtonEventArgs;
-            var dataContext = parameter ; 
-            return new Tuple<object, MouseButtonEventArgs>(dataContext, eventArgs);
+            return new Tuple<object, object>(parameter, value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
