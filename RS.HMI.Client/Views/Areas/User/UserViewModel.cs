@@ -19,7 +19,7 @@ namespace RS.HMI.Client.Views.Areas
     /// 用户管理视图模型
     /// </summary>
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
-    public class UserViewModel : CRUDViewModel<UserModel>,INavigate
+    public class UserViewModel : CRUDViewModel<UserModel>, INavigate
     {
         private readonly IIdGenerator<long> IdGenerator;
 
@@ -82,8 +82,14 @@ namespace RS.HMI.Client.Views.Areas
         /// <summary>
         /// 查询命令
         /// </summary>
-        public async Task SearchClick(object obj)
+        public override async void SearchClick()
         {
+            var result = await this.ShowMessageAsync("Hello world");
+
+            if (result == MessageBoxResult.Yes)
+            {
+                return;
+            }
             LoadingConfig loadingConfig = new LoadingConfig();
             var operateResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
             {
@@ -198,9 +204,9 @@ namespace RS.HMI.Client.Views.Areas
             await Task.Delay(3000);
         }
 
-        public  override async Task OnFormSubmitAsync(UserModel modelEidt)
+        public override async Task OnFormSubmitAsync(UserModel modelEidt)
         {
-           
+
         }
 
         #endregion

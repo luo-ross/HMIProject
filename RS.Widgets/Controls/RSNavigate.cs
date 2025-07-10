@@ -259,13 +259,9 @@ namespace RS.Widgets.Controls
         {
             var rsNavigate = d as RSNavigate;
             rsNavigate.UpdateView();
-
         }
+
         #endregion
-
-
-
-
 
         public override void OnApplyTemplate()
         {
@@ -289,26 +285,11 @@ namespace RS.Widgets.Controls
                 this.PART_Search.OnBtnSearchCallBack -= PART_Search_OnBtnSearchCallBack;
                 this.PART_Search.OnBtnSearchCallBack += PART_Search_OnBtnSearchCallBack;
             }
-
-
             this.UpdateNavType();
         }
 
 
-
-        // 获取ScrollViewer的通用方法
-        public ScrollViewer GetScrollViewer(DependencyObject depObj)
-        {
-            if (depObj is ScrollViewer) return (ScrollViewer)depObj;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-                var result = GetScrollViewer(child);
-                if (result != null) return result;
-            }
-            return null;
-        }
+     
 
 
         internal void UpdateNavigateModelSelect(NavigateModel? model)
@@ -328,22 +309,27 @@ namespace RS.Widgets.Controls
 
         internal void UpdateNavigateModelList()
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
             var dataList = this.ItemsSource.Where(t => string.IsNullOrEmpty(t.ParentId)).ToList();
-            var copyList = dataList.ToList();
-
-            foreach (var item in copyList)
+            if (this.IsNavExpanded)
             {
-                if (item.IsExpand)
+                var copyList = dataList.ToList();
+                foreach (var item in copyList)
                 {
-                    var index = dataList.IndexOf(item);
-                    var childList = GetChildList(item.Id);
-                    dataList.InsertRange(index + 1, childList);
+                    if (item.IsExpand)
+                    {
+                        var index = dataList.IndexOf(item);
+                        var childList = GetChildList(item.Id);
+                        dataList.InsertRange(index + 1, childList);
+                    }
                 }
             }
 
             this.NavigateModelList = new ObservableCollection<NavigateModel>(dataList);
-            Debug.WriteLine(stopwatch.ElapsedMilliseconds);
+
+            if (this.IsNavExpanded)
+            {
+                this.PART_NavList.ScrollIntoView(this.NavigateModelSelect);
+            }
         }
 
 

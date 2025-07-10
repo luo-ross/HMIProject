@@ -53,6 +53,7 @@
                 </Grid>
             </Setter.Value>
         </Setter>
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSNavigate}">
@@ -67,7 +68,6 @@
                                 <ColumnDefinition x:Name="PART_NavCol" Width="auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-
                             <Border
                                 x:Name="PART_ContentHost"
                                 Grid.Column="1"
@@ -98,7 +98,7 @@
                                         <rs:RSDialog x:Name="PART_Dialog" Grid.RowSpan="2">
                                             <ScrollViewer Margin="0,0,5,0">
                                                 <Grid Margin="15,15,15,0">
-                                                    <ContentPresenter />
+                                                    <Frame x:Name="PART_Frame" Content="{TemplateBinding Content}" />
                                                 </Grid>
                                             </ScrollViewer>
                                         </rs:RSDialog>
@@ -167,10 +167,90 @@
                                 </Grid>
                             </Border>
 
+
+                            <Border
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Padding="2,3,2,3"
+                                VerticalAlignment="Top">
+                                <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
+                                    <Button
+                                        Padding="8"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
+                                        rs:ControlsHelper.IconHeight="12"
+                                        rs:ControlsHelper.IconWidth="12"
+                                        Command="{x:Static NavigationCommands.BrowseBack}"
+                                        CommandTarget="{Binding ElementName=PART_Frame}"
+                                        Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                        ToolTip="点击可后退，按住可查看历史记录"
+                                        WindowChrome.IsHitTestVisibleInChrome="True" />
+
+                                    <Button
+                                        Padding="8"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
+                                        rs:ControlsHelper.IconHeight="12"
+                                        rs:ControlsHelper.IconWidth="12"
+                                        Command="{x:Static NavigationCommands.BrowseForward}"
+                                        CommandTarget="{Binding ElementName=PART_Frame}"
+                                        Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                        ToolTip="点击可前进，按住可查看历史记录"
+                                        WindowChrome.IsHitTestVisibleInChrome="True" />
+
+                                    <ToggleButton
+                                        Grid.Row="0"
+                                        Margin="3,0,0,0"
+                                        Padding="8"
+                                        HorizontalAlignment="Left"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
+                                        rs:ControlsHelper.IconHeight="12"
+                                        rs:ControlsHelper.IconWidth="12"
+                                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsNavExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        IsThreeState="False"
+                                        WindowChrome.IsHitTestVisibleInChrome="True">
+                                        <ToggleButton.Style>
+                                            <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type ToggleButton}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSNavigate}}, Path=ScreenSize}" Value="Small">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
+                                    </ToggleButton>
+
+                                    <Border
+                                        x:Name="PART_Icon"
+                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconWidth}"
+                                        Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconHeight}"
+                                        Margin="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconMargin}"
+                                        VerticalAlignment="Center"
+                                        CornerRadius="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=IconCornerRadius}"
+                                        WindowChrome.IsHitTestVisibleInChrome="True">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseLeftButtonDown">
+                                                <i:InvokeCommandAction Command="{x:Static SystemCommands.ShowSystemMenuCommand}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Border.Background>
+                                            <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Icon}" />
+                                        </Border.Background>
+                                    </Border>
+
+                                    <TextBlock
+                                        x:Name="PART_Title"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Title}" />
+
+                                </StackPanel>
+                            </Border>
+
+
                         </Grid>
                     </Border>
 
                     <ControlTemplate.Triggers>
+
                         <Trigger Property="IsNavExpanded" Value="False">
                             <Setter TargetName="PART_Search" Property="IsOnlyShowSearchIcon" Value="True" />
                             <Setter TargetName="PART_Search" Property="Margin" Value="5,5,0,15" />
@@ -194,12 +274,11 @@
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ScreenSize, Converter={StaticResource SmallOrMediumScreenSizeConverter}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="PART_NavHost" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="PART_NavHost" Property="Padding" Value="0" />
                             <Setter TargetName="PART_NavHost" Property="BorderBrush" Value="#E5E5E5" />
-                            <Setter TargetName="PART_NavHost" Property="Padding" Value="0,40,0,0" />
+                            <!--<Setter TargetName="PART_NavHost" Property="Padding" Value="0,40,0,0" />-->
                             <Setter TargetName="PART_NavHost" Property="Grid.ColumnSpan" Value="2" />
                             <Setter TargetName="PART_NavHost" Property="CornerRadius" Value="0,10,10,0" />
-                            <Setter TargetName="PART_NavHost" Property="BorderThickness" Value="0,1,1,1" />
+                            <!--<Setter TargetName="PART_NavHost" Property="BorderThickness" Value="0,1,1,1" />-->
                             <Setter TargetName="PART_NavHost" Property="Effect">
                                 <Setter.Value>
                                     <DropShadowEffect
@@ -212,15 +291,17 @@
                             </Setter>
                         </MultiDataTrigger>
 
-                        <MultiDataTrigger>
+                        <!--<MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=NavType}" Value="Floating" />
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ScreenSize}" Value="Medium" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="PART_ContentHost" Property="Grid.Column" Value="0" />
-                            <Setter TargetName="PART_ContentHost" Property="Grid.ColumnSpan" Value="2" />
-                            <Setter TargetName="PART_Placeholder" Property="Width" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavCollapsedMinWidth}" />
-                        </MultiDataTrigger>
+                        -->
+                        <!--<Setter TargetName="PART_ContentHost" Property="Grid.Column" Value="0" />-->
+                        <!--<Setter TargetName="PART_ContentHost" Property="Grid.ColumnSpan" Value="2" />-->
+                        <!--<Setter TargetName="PART_Placeholder" Property="Width" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavCollapsedMinWidth}" />-->
+                        <!--
+                        </MultiDataTrigger>-->
 
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -228,6 +309,7 @@
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsNavExpanded}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="PART_NavCol" Property="Width" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavCollapsedMinWidth}" />
+                            <Setter TargetName="PART_NavHost" Property="Margin" Value="0,0,1,0" />
                         </MultiDataTrigger>
 
                         <MultiTrigger>

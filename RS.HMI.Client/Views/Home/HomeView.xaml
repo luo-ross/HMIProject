@@ -20,6 +20,8 @@
     Icon="/Assets/login-bg.jpg"
     IsFitSystem="True"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
+    IsShowIcon="False"
+    IsShowTitle="False"
     Left="150"
     ResizeMode="CanResizeWithGrip"
     Top="50"
@@ -40,7 +42,7 @@
             </DataTemplate>
         </ResourceDictionary>
     </rs:RSWindow.Resources>
-    <rs:RSWindow.LeftCaptionContent>
+    <!--<rs:RSWindow.LeftCaptionContent>
         <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
             <Button
                 Padding="8"
@@ -86,7 +88,7 @@
 
 
         </StackPanel>
-    </rs:RSWindow.LeftCaptionContent>
+    </rs:RSWindow.LeftCaptionContent>-->
     <rs:RSWindow.MidCaptionContent>
         <Grid Margin="5,0,5,0">
             <Grid.ColumnDefinitions>

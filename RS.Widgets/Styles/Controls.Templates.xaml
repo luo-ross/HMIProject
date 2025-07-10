@@ -270,18 +270,21 @@
                 <Setter TargetName="PART_Icon" Property="Visibility" Value="Hidden" />
             </Trigger>
 
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavigate}}, Path=IsNavExpanded}" Value="False">
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavigate}}, Path=IsNavExpanded, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Value="False">
                 <Setter TargetName="PART_NavName" Property="Visibility" Value="Collapsed" />
                 <Setter TargetName="PART_ChildrenIcon" Property="Visibility" Value="Collapsed" />
             </DataTrigger>
 
             <MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=(rs:NavigateHelper.IsNeedIndentation)}" Value="True" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavList}}, Path=(rs:NavigateHelper.IsNeedIndentation)}" Value="True" />
                     <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavigate}}, Path=IsNavExpanded}" Value="True" />
                 </MultiDataTrigger.Conditions>
                 <Setter TargetName="PART_HostGrid" Property="Margin" Value="{Binding Level, Converter={StaticResource NavIndentationConverter}, ConverterParameter=25}" />
             </MultiDataTrigger>
+
+
+
 
         </DataTemplate.Triggers>
     </DataTemplate>
@@ -291,7 +294,7 @@
             x:Name="PART_Border"
             Padding="5,8,5,8"
             Background="Transparent">
-            <Grid Margin="{Binding Level, Converter={StaticResource NavIndentationConverter}, ConverterParameter=25}">
+            <Grid x:Name="PART_HostGrid">
                 <TextBlock
                     Margin="10,0,0,0"
                     HorizontalAlignment="Left"
@@ -305,6 +308,14 @@
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavigate}}, Path=IsNavExpanded}" Value="False">
                 <Setter TargetName="PART_Border" Property="Visibility" Value="Collapsed" />
             </DataTrigger>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavList}}, Path=(rs:NavigateHelper.IsNeedIndentation)}" Value="True" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSNavigate}}, Path=IsNavExpanded}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="PART_HostGrid" Property="Margin" Value="{Binding Level, Converter={StaticResource NavIndentationConverter}, ConverterParameter=25}" />
+            </MultiDataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 

@@ -35,7 +35,7 @@ namespace RS.HMI.Client.Views
 
             this.NavClickCommand = new RelayCommand<NavigateModel>(NavClick);
 
-            var dataList = GenerateMenu(3, 15);
+            var dataList = GenerateMenu(3, 4);
             dataList = this.SortMenu(dataList);
             this.NavigateModelList = dataList;
         }
