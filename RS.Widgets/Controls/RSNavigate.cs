@@ -295,6 +295,11 @@ namespace RS.Widgets.Controls
 
         private void ParentWin_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!this.IsNavExpanded)
+            {
+                return;
+            }
+
             var mouseDownPostion = e.GetPosition(this.PART_NavList);
             var rsNavItem = RSAdorner.GetUIElementUnderMouse<RSNavItem>(this.PART_NavList, mouseDownPostion);
             if (rsNavItem == null)
