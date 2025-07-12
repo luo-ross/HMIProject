@@ -15,11 +15,16 @@ namespace RS.Widgets.Models
 {
     public class ViewModelBase : NotifyBase, IViewModeBase, ILoading, IMessage, IModal, IWinModal
     {
+    
         public ViewModelBase()
         {
 
         }
+    
 
+        /// <summary>
+        /// 对话层
+        /// </summary>
         public IDialog Dialog
         {
             get
@@ -28,6 +33,9 @@ namespace RS.Widgets.Models
             }
         }
 
+        /// <summary>
+        /// 导航
+        /// </summary>
         public INavigate Navigate
         {
             get
@@ -37,7 +45,6 @@ namespace RS.Widgets.Models
         }
 
         #region Interface implementation
-
 
         public Task<OperateResult> InvokeAsync(Func<CancellationToken, Task<OperateResult>> func, LoadingConfig loadingConfig = null, CancellationToken cancellationToken = default)
         {

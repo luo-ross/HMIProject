@@ -5,6 +5,7 @@ using System.Windows.Markup;
 [assembly: XmlnsPrefix("https://github.com/luo-ross/Widgets", "rs")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/Widgets", "RS.Widgets")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/Widgets", "RS.Widgets.Controls")]
+[assembly: XmlnsDefinition("https://github.com/luo-ross/Widgets", "RS.Widgets.Adorners")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/Widgets", "RS.Widgets.Converters")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/Widgets", "RS.Widgets.Behaviors")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/Widgets", "RS.Widgets.PixelShaders")]

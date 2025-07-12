@@ -21,6 +21,7 @@ namespace RS.HMI.Client.Views.Areas
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
     public class UserViewModel : CRUDViewModel<UserModel>, INavigate
     {
+
         private readonly IIdGenerator<long> IdGenerator;
 
         /// <summary>

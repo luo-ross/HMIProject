@@ -10,6 +10,10 @@ using IdGen;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using RS.HMI.Client.Models;
+using System.Windows.Forms.Design;
+using System.ComponentModel;
+using RS.Widgets.Interfaces;
+using RS.Widgets.Models;
 namespace RS.HMI.Client
 {
     public partial class App : ApplicationBase
@@ -27,11 +31,8 @@ namespace RS.HMI.Client
 
         public App()
         {
-
-
             //配置依赖注入服务
             this.OnConfigIocServices += App_OnConfigIocServices;
-          
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -43,26 +44,21 @@ namespace RS.HMI.Client
             homeView?.Show();
         }
 
-
-
-
-
-
         private void App_OnConfigIocServices(HostApplicationBuilder builder)
         {
-
             builder.Services.AddSingleton<IIdGenerator<long>>(service =>
             {
                 int generatorId = Convert.ToInt32(builder.Configuration["IdGenClientId"]);
                 return new IdGenerator(generatorId, IdGeneratorOptions.Default);
             });
-
+          
             //注册当前程序集服务
             builder.Services.RegisterService(Assembly.GetExecutingAssembly());
-         
-            builder.Services.RegisterBLLService();
 
+            builder.Services.RegisterBLLService();
         }
+
+
 
     }
 

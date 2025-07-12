@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿using Org.BouncyCastle.Crypto;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
@@ -11,10 +13,20 @@ namespace RS.Widgets.Controls
         /// </summary>
         public RSNavPopup RSNavPopup { get; set; }
 
+
         public RSNavList()
         {
             this.Unloaded += RSNavList_Unloaded;
+            this.Loaded += RSNavList_Loaded;
         }
+
+        private void RSNavList_Loaded(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+   
+
 
         private void RSNavList_Unloaded(object sender, RoutedEventArgs e)
         {

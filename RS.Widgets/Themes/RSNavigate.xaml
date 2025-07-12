@@ -8,16 +8,12 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.CheckBox.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Frame.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBoxItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.MenuItem.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.RadioButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToggleButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -98,7 +94,10 @@
                                         <rs:RSDialog x:Name="PART_Dialog" Grid.RowSpan="2">
                                             <ScrollViewer Margin="0,0,5,0">
                                                 <Grid Margin="15,15,15,0">
-                                                    <Frame x:Name="PART_Frame" Content="{TemplateBinding Content}" />
+                                                    <Frame
+                                                        x:Name="PART_Frame"
+                                                        Content="{TemplateBinding Content}"
+                                                        Style="{StaticResource RSApp.Styles.NavFramesStyle}" />
                                                 </Grid>
                                             </ScrollViewer>
                                         </rs:RSDialog>

@@ -9,6 +9,7 @@ using RS.Commons.Extensions;
 using RS.Models;
 using RS.RESTfulApi;
 using RS.Widgets.Enums;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using System.Collections;
 using System.ComponentModel;
@@ -78,7 +79,6 @@ namespace RS.Widgets.Controls
         /// </summary>
         private ICryptographyBLL CryptographyBLL;
         #endregion
-
 
         #region 心跳检测
         /// <summary>

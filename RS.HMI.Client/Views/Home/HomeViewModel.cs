@@ -7,6 +7,7 @@ using RS.Commons.Attributs;
 using RS.HMI.Client.Models;
 using RS.HMI.Client.Views.Areas;
 using RS.Widgets.Enums;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,21 +22,18 @@ namespace RS.HMI.Client.Views
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
     public class HomeViewModel : NotifyBase
     {
+        private readonly IViewModelManager ViewModelManager;
         /// <summary>
         /// 获取或设置搜索按钮点击时执行的命令
         /// </summary>
         public ICommand NavClickCommand { get; }
 
-        public RoleViewModel RoleViewModel { get; set; }
-        public UserViewModel UserViewModel { get; set; }
-        public HomeViewModel(RoleViewModel viewModel,UserViewModel userViewModel)
+
+        public HomeViewModel(IViewModelManager viewModelManager)
         {
-            this.RoleViewModel = viewModel;
-            this.UserViewModel = userViewModel;
-
+            this.ViewModelManager = viewModelManager;
             this.NavClickCommand = new RelayCommand<NavigateModel>(NavClick);
-
-            var dataList = GenerateMenu(3, 4);
+            var dataList = GenerateMenu(0, 100);
             dataList = this.SortMenu(dataList);
             this.NavigateModelList = dataList;
         }
@@ -44,7 +42,7 @@ namespace RS.HMI.Client.Views
         {
             //this.ViewModelSelect = model?.ViewMoel;
             //先做测试
-            this.ViewModelSelect = UserViewModel;
+            //this.ViewModelSelect = this.ViewModelManager.GetViewModel<INotifyPropertyChanged>(model.ViewKey);
         }
 
         public static List<NavigateModel> GenerateMenu(int maxLevel, int menuCountPerLevel, double groupProbability = 0.2)
@@ -70,7 +68,7 @@ namespace RS.HMI.Client.Views
                         NavName = $"第{currentLevel}级菜舒服舒服sdf单-{i}" + (parentId != null ? $"(父:{parentId})" : ""),
                         HasChildren = !isGroup && currentLevel < maxLevel, // 分组不再有下级
                         IsGroupNav = isGroup,
-                        ViewKey = $"View_{currentLevel}_{i}",
+                        ViewKey = i % 2 == 0 ? $"RS.HMI.Client/Views.Areas.UserViewModel" : @"RS.HMI.Client/Views.Areas.RoleViewModel",
                         IconKey = IconKey.Folder,
                         IsExpand = false,
                         IsSelect = false,
@@ -85,11 +83,13 @@ namespace RS.HMI.Client.Views
                     }
                 }
             }
+
             AddMenus(null, 0); // 层级从0开始
+
             return menuList;
         }
 
-        public  List<NavigateModel> SortMenu(List<NavigateModel> menuList)
+        public List<NavigateModel> SortMenu(List<NavigateModel> menuList)
         {
             var result = new List<NavigateModel>();
             // 先按Level、Order排序
@@ -108,6 +108,7 @@ namespace RS.HMI.Client.Views
             }
 
             AddChildren(null); // 顶级菜单ParentId为null
+
             return result;
         }
 

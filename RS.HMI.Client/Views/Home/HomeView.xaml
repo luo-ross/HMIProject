@@ -105,8 +105,10 @@
     <Grid>
         <rs:RSNavigate
             x:Name="PART_Navigate"
-            Content="{Binding ViewModelSelect}"
             ItemsSource="{Binding NavigateModelList}"
             NavItemClickCommand="{Binding NavClickCommand}" />
+
+
+
     </Grid>
 </rs:RSWindow>

@@ -1,32 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using IdGen;
-using NPOI.POIFS.Properties;
+using Org.BouncyCastle.Crypto;
 using RS.Commons;
-using RS.Widgets.Commons;
-using RS.Widgets.Converters;
+using RS.Widgets.Adorners;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
-using RS.Win32API;
-using ScottPlot;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Effects;
-using System.Windows.Threading;
-using ZXing;
+using System.Windows.Media.Imaging;
 
 namespace RS.Widgets.Controls
 {
@@ -37,8 +25,10 @@ namespace RS.Widgets.Controls
         private Border PART_NavHost;
         private IDialog PART_Dialog;
         private double CurrenNavWidth;
-        private ListBox PART_NavList;
+        private RSNavList PART_NavList;
         private Frame PART_Frame;
+
+        private IViewModelManager ViewModelManager;
 
         public static readonly RoutedEvent NavItemClickEvent = EventManager.RegisterRoutedEvent(
             nameof(NavItemClick),
@@ -92,12 +82,19 @@ namespace RS.Widgets.Controls
         static RSNavigate()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSNavigate), new FrameworkPropertyMetadata(typeof(RSNavigate)));
+            ContentProperty.OverrideMetadata(typeof(RSNavigate), new FrameworkPropertyMetadata(null, OnContentPropertyChanged));
+        }
+
+        private static void OnContentPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+
         }
 
         public RSNavigate()
         {
             this.Unloaded += RSNavigate_Unloaded;
             this.DataContextChanged += RSNavigate_DataContextChanged;
+            this.ViewModelManager = new ViewModelManager(ApplicationBase.ServiceProvider);
         }
 
         private void RSNavigate_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -274,11 +271,10 @@ namespace RS.Widgets.Controls
                 this.ParentWin.SizeChanged += ParentWin_SizeChanged;
             }
 
-
             this.PART_Search = this.GetTemplateChild(nameof(this.PART_Search)) as RSSearch;
             this.PART_NavHost = this.GetTemplateChild(nameof(this.PART_NavHost)) as Border;
             this.PART_Dialog = this.GetTemplateChild(nameof(this.PART_Dialog)) as RSDialog;
-            this.PART_NavList = this.GetTemplateChild(nameof(this.PART_NavList)) as ListBox;
+            this.PART_NavList = this.GetTemplateChild(nameof(this.PART_NavList)) as RSNavList;
             this.PART_Frame = this.GetTemplateChild(nameof(this.PART_Frame)) as Frame;
             if (this.PART_Search != null)
             {
@@ -286,14 +282,39 @@ namespace RS.Widgets.Controls
                 this.PART_Search.OnBtnSearchCallBack += PART_Search_OnBtnSearchCallBack;
             }
             this.UpdateNavType();
+            if (this.ParentWin != null)
+            {
+                this.ParentWin.PreviewMouseLeftButtonDown += ParentWin_PreviewMouseLeftButtonDown;
+            }
         }
 
+        public RSNavList GetRSNavList()
+        {
+            return this.PART_NavList;
+        }
 
-     
+        private void ParentWin_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var mouseDownPostion = e.GetPosition(this.PART_NavList);
+            var rsNavItem = RSAdorner.GetUIElementUnderMouse<RSNavItem>(this.PART_NavList, mouseDownPostion);
+            if (rsNavItem == null)
+            {
+                return;
+            }
+            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
+            var rsAdorner = new RSNavListSortAdorner(this, rsNavItem);
+            adornerLayer.Add(rsAdorner);
+        }
 
 
         internal void UpdateNavigateModelSelect(NavigateModel? model)
         {
+            if (this.NavigateModelSelect != null
+                && this.NavigateModelSelect.Equals(model))
+            {
+                return;
+            }
+
             //获取到选择项
             if (model != null)
             {
@@ -303,8 +324,8 @@ namespace RS.Widgets.Controls
                 }
                 model.IsSelect = true;
             }
-
             this.NavigateModelSelect = model;
+            this.Content = this.ViewModelManager.GetViewModel<INotifyPropertyChanged>(model.ViewKey);
         }
 
         internal void UpdateNavigateModelList()
@@ -336,7 +357,7 @@ namespace RS.Widgets.Controls
         public List<NavigateModel> GetChildList(string parentId)
         {
             List<NavigateModel> childList = this.ItemsSource.Where(t => t.ParentId == parentId && !string.IsNullOrEmpty(parentId)).ToList();
-            var copyList= childList.ToList();
+            var copyList = childList.ToList();
             foreach (var item in copyList)
             {
                 if (item.IsExpand)

@@ -156,7 +156,7 @@
 
 
                                     <Grid x:Name="PART_Client" Grid.Row="1">
-                                        <AdornerDecorator>
+                                        <AdornerDecorator x:Name="PART_AdornerDecorator">
                                             <Grid>
                                                 <ContentPresenter />
                                                 <ResizeGrip
@@ -236,10 +236,8 @@
                                     </Grid>
                                 </Grid>
                             </rs:RSDialog>
-
                         </Border>
                     </Border>
-
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />

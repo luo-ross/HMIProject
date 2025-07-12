@@ -10,6 +10,7 @@ namespace RS.Widgets.Controls
     {
         public RSNavItem()
         {
+
         }
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -38,6 +39,8 @@ namespace RS.Widgets.Controls
 
             rsNavigate.UpdateNavigateModelSelect(navigateModel);
 
+
+
             if (!rsNavigate.IsNavExpanded)
             {
                 //级联删除
@@ -46,6 +49,8 @@ namespace RS.Widgets.Controls
                 //如果选中 则展开父级
                 rsNavMenuParent?.ExpandParentNav();
             }
+
+
 
             this.RaiseEvent(new RoutedEventArgs()
             {
