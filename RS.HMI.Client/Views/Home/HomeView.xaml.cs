@@ -36,8 +36,7 @@ namespace RS.HMI.Client.Views
 
         private void HomeView_Loaded(object sender, RoutedEventArgs e)
         {
-         
-           
+        
         }
 
         private void HomeView_Closing(object? sender, CancelEventArgs e)

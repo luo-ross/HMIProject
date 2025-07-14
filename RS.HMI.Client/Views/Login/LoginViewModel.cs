@@ -19,7 +19,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RS.HMI.Client.Views
 {
-    public partial class LoginViewModel : NotifyBase
+    public  class LoginViewModel : NotifyBase
     {
         public LoginViewModel()
         {
@@ -113,9 +113,17 @@ namespace RS.HMI.Client.Views
         }
 
 
-        [ObservableProperty]
+
         private double offsetX;
-     
+        public double OffsetX
+        {
+            get { return offsetX; }
+            set
+            {
+                this.SetProperty(ref offsetX, value);
+
+            }
+        }
 
 
 

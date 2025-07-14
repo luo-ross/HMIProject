@@ -21,21 +21,33 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace RS.HMI.Client.Views
 {
-    public partial class RegisterViewModel : NotifyBase
+    public  class RegisterViewModel : NotifyBase
     {
         public RegisterViewModel()
         {
            
         }
+       
+    
+
+
+        private double remainingTime;
         /// <summary>
         /// 剩余时间
         /// </summary>
-        [ObservableProperty]
-        private double remainingTime;
+        public double RemainingTime
+        {
+            get { return remainingTime; }
+            set
+            {
+                this.SetProperty(ref remainingTime, value);
+
+            }
+        }
 
 
 
-    
+
         private SignUpModel signUpModel;
         /// <summary>
         /// 注册

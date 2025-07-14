@@ -2,6 +2,7 @@
 using RS.Widgets.Interfaces;
 using RS.Win32API;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,21 +14,21 @@ namespace RS.Widgets.Controls
     public static class DialogHelper
     {
 
-        private static readonly Dictionary<object, IDialog> DialogList = new();
+        private static readonly ConcurrentDictionary<object, IDialog> DialogDic = new();
 
         public static void RegisterDialog(object dataContext, IDialog dialog)
         {
-            if (dataContext != null)
+            if (dataContext != null && !DialogDic.ContainsKey(dataContext))
             {
-                DialogList[dataContext] = dialog;
+                DialogDic[dataContext] = dialog;
             }
         }
 
         public static void UnregisterDialog(object dataContext)
         {
-            if (dataContext != null && DialogList.ContainsKey(dataContext))
+            if (dataContext != null && DialogDic.ContainsKey(dataContext))
             {
-                DialogList.Remove(dataContext);
+                DialogDic.TryRemove(dataContext, out IDialog dialog);
             }
         }
 
@@ -37,7 +38,7 @@ namespace RS.Widgets.Controls
             {
                 return default;
             }
-            DialogList.TryGetValue(dataContext, out var dialog);
+            DialogDic.TryGetValue(dataContext, out var dialog);
             return dialog;
         }
 

@@ -26,12 +26,12 @@ namespace RS.Widgets.Adorners
             var actualWidth = adornedElement.ActualWidth;
             var actualHeight = adornedElement.ActualHeight;
             VisualBrush visualBrush = new VisualBrush(adornedElement);
-            Rect rect = new Rect(0, 0, actualWidth, actualHeight);
-            if (this.CurrentMousePoint != default)
-            {
-                rect.X = this.CurrentMousePoint.X - actualWidth / 2;
-                rect.Y = this.CurrentMousePoint.Y - actualHeight / 2;
-            }
+
+            var mousePosition = Mouse.GetPosition(this);
+            var x = mousePosition.X - actualWidth / 2;
+            var y = mousePosition.Y - actualHeight / 2;
+            Rect rect = new Rect(x, y, actualWidth, actualHeight);
+
             drawingContext.DrawRectangle(visualBrush, new Pen(), rect);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using NPOI.HSSF.Record.PivotTable;
 using Org.BouncyCastle.Crypto;
 using RS.Commons;
 using RS.Widgets.Adorners;
@@ -24,11 +25,13 @@ namespace RS.Widgets.Controls
         private RSSearch PART_Search;
         private Border PART_NavHost;
         private IDialog PART_Dialog;
-        private double CurrenNavWidth;
         private RSNavList PART_NavList;
         private Frame PART_Frame;
-
+        private Button? PART_BrowseBack;
+        private Button? PART_BrowseForward;
         private IViewModelManager ViewModelManager;
+        private Dictionary<object, NavigateModel> NavViewDic;
+        private bool IsNeedReNav;
 
         public static readonly RoutedEvent NavItemClickEvent = EventManager.RegisterRoutedEvent(
             nameof(NavItemClick),
@@ -82,20 +85,45 @@ namespace RS.Widgets.Controls
         static RSNavigate()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSNavigate), new FrameworkPropertyMetadata(typeof(RSNavigate)));
-            ContentProperty.OverrideMetadata(typeof(RSNavigate), new FrameworkPropertyMetadata(null, OnContentPropertyChanged));
         }
 
-        private static void OnContentPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-
-        }
 
         public RSNavigate()
         {
+            this.NavViewDic = new Dictionary<object, NavigateModel>();
             this.Unloaded += RSNavigate_Unloaded;
             this.DataContextChanged += RSNavigate_DataContextChanged;
-            this.ViewModelManager = new ViewModelManager(ApplicationBase.ServiceProvider);
+            if (ApplicationBase.ServiceProvider != null)
+            {
+                this.ViewModelManager = new ViewModelManager(ApplicationBase.ServiceProvider);
+            }
+            this.CommandBindings.Add(new CommandBinding(NavigationCommands.BrowseBack, BrowseBack, CanBrowseBack));
+            this.CommandBindings.Add(new CommandBinding(NavigationCommands.BrowseForward, BrowseForward, CanBrowseForward));
         }
+
+        private void CanBrowseBack(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.PART_Frame != null && this.PART_Frame.CanGoBack;
+        }
+
+        private void BrowseBack(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.PART_Frame.GoBack();
+            this.IsNeedReNav = true;
+        }
+
+        private void CanBrowseForward(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.PART_Frame != null && this.PART_Frame.CanGoForward;
+        }
+
+        private void BrowseForward(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.PART_Frame.GoForward();
+            this.IsNeedReNav = true;
+        }
+
+
 
         private void RSNavigate_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -242,21 +270,16 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register("FooterContent", typeof(object), typeof(RSNavigate), new PropertyMetadata(null));
 
 
-
-
-        public string ViewKey
+        public bool IsAllowNavDragSort
         {
-            get { return (string)GetValue(ViewKeyProperty); }
-            set { SetValue(ViewKeyProperty, value); }
+            get { return (bool)GetValue(IsAllowNavDragSortProperty); }
+            set { SetValue(IsAllowNavDragSortProperty, value); }
         }
 
-        public static readonly DependencyProperty ViewKeyProperty =
-            DependencyProperty.Register("ViewKey", typeof(string), typeof(RSNavigate), new PropertyMetadata(null, OnViewKeyPropertyChanged));
-        private static void OnViewKeyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsNavigate = d as RSNavigate;
-            rsNavigate.UpdateView();
-        }
+        public static readonly DependencyProperty IsAllowNavDragSortProperty =
+            DependencyProperty.Register("IsAllowNavDragSort", typeof(bool), typeof(RSNavList), new PropertyMetadata(false));
+
+
 
         #endregion
 
@@ -276,41 +299,42 @@ namespace RS.Widgets.Controls
             this.PART_Dialog = this.GetTemplateChild(nameof(this.PART_Dialog)) as RSDialog;
             this.PART_NavList = this.GetTemplateChild(nameof(this.PART_NavList)) as RSNavList;
             this.PART_Frame = this.GetTemplateChild(nameof(this.PART_Frame)) as Frame;
+            this.PART_BrowseBack = this.GetTemplateChild(nameof(this.PART_BrowseBack)) as Button;
+            this.PART_BrowseForward = this.GetTemplateChild(nameof(this.PART_BrowseForward)) as Button;
+
             if (this.PART_Search != null)
             {
                 this.PART_Search.OnBtnSearchCallBack -= PART_Search_OnBtnSearchCallBack;
                 this.PART_Search.OnBtnSearchCallBack += PART_Search_OnBtnSearchCallBack;
             }
+
+            if (this.PART_Frame != null)
+            {
+                this.PART_Frame.ContentRendered += PART_Frame_ContentRendered;
+            }
+
             this.UpdateNavType();
-            if (this.ParentWin != null)
-            {
-                this.ParentWin.PreviewMouseLeftButtonDown += ParentWin_PreviewMouseLeftButtonDown;
-            }
         }
 
-        public RSNavList GetRSNavList()
+        private void PART_Frame_ContentRendered(object? sender, EventArgs e)
         {
-            return this.PART_NavList;
-        }
-
-        private void ParentWin_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (!this.IsNavExpanded)
+            if (!this.IsNeedReNav)
             {
                 return;
             }
 
-            var mouseDownPostion = e.GetPosition(this.PART_NavList);
-            var rsNavItem = RSAdorner.GetUIElementUnderMouse<RSNavItem>(this.PART_NavList, mouseDownPostion);
-            if (rsNavItem == null)
+            this.Dispatcher.InvokeAsync(() =>
             {
-                return;
-            }
-            var adornerLayer = AdornerLayer.GetAdornerLayer(this);
-            var rsAdorner = new RSNavListSortAdorner(this, rsNavItem);
-            adornerLayer.Add(rsAdorner);
-        }
+                var viewModel = this.PART_Frame.Content;
+                if (this.NavViewDic.TryGetValue(viewModel, out NavigateModel navigateModel))
+                {
+                    this.UpdateNavigateModelSelect(navigateModel);
+                    this.UpdateNavigateModelList();
+                }
+                this.IsNeedReNav = false;
+            });
 
+        }
 
         internal void UpdateNavigateModelSelect(NavigateModel? model)
         {
@@ -319,8 +343,6 @@ namespace RS.Widgets.Controls
             {
                 return;
             }
-
-            //获取到选择项
             if (model != null)
             {
                 foreach (var item in this.ItemsSource)
@@ -330,7 +352,19 @@ namespace RS.Widgets.Controls
                 model.IsSelect = true;
             }
             this.NavigateModelSelect = model;
-            this.Content = this.ViewModelManager.GetViewModel<INotifyPropertyChanged>(model.ViewKey);
+        }
+
+        public void GotoNavView(NavigateModel navigateModel)
+        {
+            if (!string.IsNullOrEmpty(navigateModel.ViewModelKey))
+            {
+                var viewModel = this.ViewModelManager.GetViewModel<INotifyPropertyChanged>(navigateModel.ViewModelKey);
+                if (viewModel != null)
+                {
+                    this.Content = viewModel;
+                    this.NavViewDic[viewModel] = navigateModel;
+                }
+            }
         }
 
         internal void UpdateNavigateModelList()
@@ -414,17 +448,6 @@ namespace RS.Widgets.Controls
                 this.ScreenSize = ScreenSize.Large;
                 this.NavType = NavType.AdaptiveWidth;
             }
-        }
-
-
-
-        private void UpdateView()
-        {
-            if (this.NavigateModelSelect == null)
-            {
-                return;
-            }
-            this.SetResourceReference(RSNavigate.ContentProperty, this.NavigateModelSelect.ViewKey);
         }
 
 

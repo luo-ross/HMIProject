@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Models
 {
-    public partial class LoadingConfig : NotifyBase
+    public  class LoadingConfig : NotifyBase
     {
         //示例
         //new LoadingConfig()
@@ -25,11 +25,11 @@ namespace RS.Widgets.Models
         //    }
         public LoadingConfig()
         {
-            this.LoadingType = LoadingType.ProgressBar;
+            this.LoadingType = LoadingType.RotatingAnimation;
             this.IconWidth = 25D;
             this.IconHeight = 25D;
             this.LoadingColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1296db"));
-            this.LoadingBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#35000000"));
+            this.LoadingBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10000000"));
             this.IsIndeterminate = true;
             this.Minimum = 0;
             this.Maximum = 100;
@@ -47,38 +47,123 @@ namespace RS.Widgets.Models
 
         #region 公用属性设置
 
-        [ObservableProperty]
-        private LoadingType loadingType;
 
+        private LoadingType loadingType;
+  
+        public LoadingType LoadingType
+        {
+            get
+            {
+                return loadingType;
+            }
+            set
+            {
+                this.SetProperty(ref loadingType, value);
+            }
+        }
+
+
+
+        private SolidColorBrush loadingColor;
         /// <summary>
         /// 加载图标颜色
         /// </summary>
-        [ObservableProperty]
-        private SolidColorBrush loadingColor;
+        public SolidColorBrush LoadingColor
+        {
+            get
+            {
+                return loadingColor;
+            }
+            set
+            {
+                this.SetProperty(ref loadingColor, value);
+            }
+        }
 
+
+        private SolidColorBrush loadingBackground;
         /// <summary>
         /// 加载背景色
         /// </summary>
-        [ObservableProperty]
-        private SolidColorBrush loadingBackground;
+        public SolidColorBrush LoadingBackground
+        {
+            get
+            {
+                return loadingBackground;
+            }
+            set
+            {
+                this.SetProperty(ref loadingBackground, value);
+            }
+        }
         #endregion
 
-        [ObservableProperty]
+
+
         private Color gradientStopColor;
+       
+        public Color GradientStopColor
+        {
+            get
+            {
+                return gradientStopColor;
+            }
+            set
+            {
+                this.SetProperty(ref gradientStopColor, value);
+            }
+        }
 
 
         #region 这是默认Progessbar的配置 这里仅仅对Progressbar设置有效
+
+
+        private bool isIndeterminate;
         /// <summary>
         /// 是否自动加载
         /// </summary>
-        [ObservableProperty]
-        private bool isIndeterminate;
+        public bool IsIndeterminate
+        {
+            get
+            {
+                return isIndeterminate;
+            }
+            set
+            {
+                this.SetProperty(ref isIndeterminate, value);
+            }
+        }
 
-        [ObservableProperty]
+
+
         private double maximum;
+        public double Maximum
+        {
+            get
+            {
+                return maximum;
+            }
+            set
+            {
+                this.SetProperty(ref maximum, value);
+            }
+        }
 
-        [ObservableProperty]
+
+
+
         private double minimum;
+        public double Minimum
+        {
+            get
+            {
+                return minimum;
+            }
+            set
+            {
+                this.SetProperty(ref minimum, value);
+            }
+        }
 
 
 
@@ -188,17 +273,41 @@ namespace RS.Widgets.Models
             }
         }
 
+
+
+        private double iconWidth;
         /// <summary>
         /// 图标宽度
         /// </summary>
-        [ObservableProperty]
-        private double iconWidth;
+        public double IconWidth
+        {
+            get
+            {
+                return iconWidth;
+            }
+            set
+            {
+                this.SetProperty(ref iconWidth, value);
+            }
+        }
 
+
+
+        private double iconHeight;
         /// <summary>
         /// 图标高度
         /// </summary>
-        [ObservableProperty]
-        private double iconHeight;
+        public double IconHeight
+        {
+            get
+            {
+                return iconHeight;
+            }
+            set
+            {
+                this.SetProperty(ref iconHeight, value);
+            }
+        }
 
         #endregion
 

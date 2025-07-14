@@ -1,23 +1,58 @@
-﻿using RS.Widgets.Enums;
+﻿using RS.Widgets.Adorners;
+using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
     public class RSNavItem : ListBoxItem
     {
+        private RSNavList RSNavList;
         public RSNavItem()
         {
+            this.Loaded += RSNavItem_Loaded;
+        }
 
+        private void RSNavItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.RSNavList = this.TryFindParent<RSNavList>();
         }
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonDown(e);
+
+            if (this.RSNavList != null && this.RSNavList.IsAllowDragSort)
+            {
+                var mouseDownPostion = e.GetPosition(this.RSNavList);
+                var rsNavItem = RSAdorner.GetUIElementUnderMouse<RSNavItem>(this.RSNavList, mouseDownPostion);
+                if (rsNavItem == null)
+                {
+                    return;
+                }
+
+
+                Window activeWindow = Window.GetWindow(rsNavItem);
+                var adornerDecorator = activeWindow.FindChild<AdornerDecorator>();
+                var adornerLayer = adornerDecorator.AdornerLayer;
+                var rsAdorner = new RSNavListSortAdorner(rsNavItem);
+                adornerLayer.Add(rsAdorner);
+
+
+
+            }
+
             this.OnNavItemClick();
+
+
         }
+
+
         private void OnNavItemClick()
         {
             var rsNavigate = this.GetNavigate();
@@ -36,11 +71,8 @@ namespace RS.Widgets.Controls
             {
                 return;
             }
-
             rsNavigate.UpdateNavigateModelSelect(navigateModel);
-
-
-
+            rsNavigate.GotoNavView(navigateModel);
             if (!rsNavigate.IsNavExpanded)
             {
                 //级联删除
@@ -49,8 +81,6 @@ namespace RS.Widgets.Controls
                 //如果选中 则展开父级
                 rsNavMenuParent?.ExpandParentNav();
             }
-
-
 
             this.RaiseEvent(new RoutedEventArgs()
             {

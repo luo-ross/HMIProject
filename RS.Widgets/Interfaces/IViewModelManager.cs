@@ -11,11 +11,11 @@ namespace RS.Widgets.Interfaces
     public interface IViewModelManager
     {
 
-        Type? GetViewModelType(string viewKey);
+        Type? GetViewModelType(string viewModelKey);
 
-        object? GetViewModel(string viewKey);
+        object? GetViewModel(string viewModelKey);
 
-        T? GetViewModel<T>(string viewKey) where T : INotifyPropertyChanged;
+        T? GetViewModel<T>(string viewModelKey) where T : INotifyPropertyChanged;
 
     }
 }

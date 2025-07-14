@@ -158,6 +158,7 @@
                                         rs:ControlsHelper.IconWidth="{TemplateBinding rs:ControlsHelper.IconWidth}"
                                         rs:NavigateHelper.IsNeedIndentation="True"
                                         BorderThickness="0"
+                                        IsAllowDragSort="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsAllowNavDragSort, Mode=TwoWay}"
                                         ItemContainerStyle="{StaticResource RSApp.Styles.NavListBoxItemStyle}"
                                         ItemTemplate="{StaticResource NavDataTemplate}"
                                         ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavigateModelList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -167,33 +168,43 @@
                             </Border>
 
 
-                            <Border
+                            <Grid
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2"
-                                Padding="2,3,2,3"
+                                Margin="2,3,2,3"
                                 VerticalAlignment="Top">
-                                <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel
+                                    Grid.Column="0"
+                                    Margin="5,0,5,0"
+                                    Orientation="Horizontal"
+                                    WindowChrome.IsHitTestVisibleInChrome="True">
                                     <Button
+                                        x:Name="PART_BrowseBack"
                                         Padding="8"
                                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
                                         rs:ControlsHelper.IconHeight="12"
                                         rs:ControlsHelper.IconWidth="12"
                                         Command="{x:Static NavigationCommands.BrowseBack}"
-                                        CommandTarget="{Binding ElementName=PART_Frame}"
                                         Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                         ToolTip="点击可后退，按住可查看历史记录"
                                         WindowChrome.IsHitTestVisibleInChrome="True" />
 
                                     <Button
+                                        x:Name="PART_BrowseForward"
                                         Padding="8"
                                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
                                         rs:ControlsHelper.IconHeight="12"
                                         rs:ControlsHelper.IconWidth="12"
                                         Command="{x:Static NavigationCommands.BrowseForward}"
-                                        CommandTarget="{Binding ElementName=PART_Frame}"
                                         Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                         ToolTip="点击可前进，按住可查看历史记录"
                                         WindowChrome.IsHitTestVisibleInChrome="True" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
 
                                     <ToggleButton
                                         Grid.Row="0"
@@ -242,7 +253,7 @@
                                         Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type rs:RSWindow}}, Path=Title}" />
 
                                 </StackPanel>
-                            </Border>
+                            </Grid>
 
 
                         </Grid>
@@ -274,10 +285,8 @@
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="PART_NavHost" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="PART_NavHost" Property="BorderBrush" Value="#E5E5E5" />
-                            <!--<Setter TargetName="PART_NavHost" Property="Padding" Value="0,40,0,0" />-->
                             <Setter TargetName="PART_NavHost" Property="Grid.ColumnSpan" Value="2" />
                             <Setter TargetName="PART_NavHost" Property="CornerRadius" Value="0,10,10,0" />
-                            <!--<Setter TargetName="PART_NavHost" Property="BorderThickness" Value="0,1,1,1" />-->
                             <Setter TargetName="PART_NavHost" Property="Effect">
                                 <Setter.Value>
                                     <DropShadowEffect
@@ -289,18 +298,6 @@
                                 </Setter.Value>
                             </Setter>
                         </MultiDataTrigger>
-
-                        <!--<MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=NavType}" Value="Floating" />
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ScreenSize}" Value="Medium" />
-                            </MultiDataTrigger.Conditions>
-                        -->
-                        <!--<Setter TargetName="PART_ContentHost" Property="Grid.Column" Value="0" />-->
-                        <!--<Setter TargetName="PART_ContentHost" Property="Grid.ColumnSpan" Value="2" />-->
-                        <!--<Setter TargetName="PART_Placeholder" Property="Width" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NavCollapsedMinWidth}" />-->
-                        <!--
-                        </MultiDataTrigger>-->
 
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>

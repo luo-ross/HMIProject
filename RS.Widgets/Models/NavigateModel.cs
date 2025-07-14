@@ -122,16 +122,16 @@ namespace RS.Widgets.Models
         }
 
 
-        private string viewKey;
+        private string viewModelKey;
         /// <summary>
         /// 视图主键
         /// </summary>
-        public string ViewKey
+        public string ViewModelKey
         {
-            get { return viewKey; }
+            get { return viewModelKey; }
             set
             {
-                this.SetProperty(ref viewKey, value);
+                this.SetProperty(ref viewModelKey, value);
             }
         }
 

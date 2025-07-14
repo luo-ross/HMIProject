@@ -18,7 +18,7 @@ namespace RS.HMI.Client.Views.Areas
     /// <summary>
     /// 用户管理视图模型
     /// </summary>
-    [ServiceInjectConfig(ServiceLifetime.Scoped)]
+    [ServiceInjectConfig(ServiceLifetime.Transient)]
     public class UserViewModel : CRUDViewModel<UserModel>, INavigate
     {
 
@@ -85,14 +85,9 @@ namespace RS.HMI.Client.Views.Areas
         /// </summary>
         public override async void SearchClick()
         {
-            var result = await this.ShowMessageAsync("Hello world");
-
-            if (result == MessageBoxResult.Yes)
-            {
-                return;
-            }
+            
             LoadingConfig loadingConfig = new LoadingConfig();
-            var operateResult = await this.Loading.InvokeAsync(async (cancellationToken) =>
+            var operateResult = await this.Navigate.Loading.InvokeAsync(async (cancellationToken) =>
             {
                 await Task.Delay(2000);
                 return OperateResult.CreateSuccessResult();
@@ -154,6 +149,7 @@ namespace RS.HMI.Client.Views.Areas
             LoadingConfig loadingConfig = new LoadingConfig();
             var operateResult = await this.Navigate.Loading.InvokeAsync(async (cancellationToken) =>
                {
+                   await Task.Delay(5000);
                    var dataResult = await RSAppAPI.User.GetUser.AESHttpPostAsync<Pagination, RS.Models.PageDataModel<UserModel>>(pagination, nameof(RSAppAPI));
                    if (!dataResult.IsSuccess)
                    {

@@ -14,7 +14,7 @@ namespace RS.Widgets.Adorners
     public class RSAdorner : Adorner
     {
         public Window ParentWin;
-        public Point CurrentMousePoint;
+        public Point CurrentMouseWinPoint;
         public RSAdorner(FrameworkElement adornedElement) : base(adornedElement)
         {
             Loaded += RSAdorner_Loaded;
@@ -32,8 +32,8 @@ namespace RS.Widgets.Adorners
 
         private void RSAdorner_Loaded(object sender, RoutedEventArgs e)
         {
-            this.CurrentMousePoint = Mouse.GetPosition(this);
-            this.ParentWin = this.TryFindParent<Window>();
+            this.ParentWin = Window.GetWindow(this);
+            this.CurrentMouseWinPoint = Mouse.GetPosition(this.ParentWin);
             if (this.ParentWin != null)
             {
                 this.ParentWin.PreviewMouseLeftButtonUp += ParentWin_PreviewMouseLeftButtonUp;
@@ -44,7 +44,7 @@ namespace RS.Widgets.Adorners
 
         private void ParentWin_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            this.CurrentMousePoint = e.GetPosition(this);
+            this.CurrentMouseWinPoint = e.GetPosition(this.ParentWin);
             this.OnParentWin_PreviewMouseMove(sender, e);
             this.InvalidateVisual();
         }

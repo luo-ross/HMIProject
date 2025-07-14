@@ -14,7 +14,7 @@ using System.Windows.Media.Animation;
 
 namespace RS.HMI.Client.Models
 {
-    public partial class ModbusConfigModel : NotifyBase
+    public  class ModbusConfigModel : NotifyBase
     {
         /// <summary>
         /// 数据唯一主键
@@ -335,11 +335,23 @@ namespace RS.HMI.Client.Models
         }
 
 
+
+
+        private bool isValid;
         /// <summary>
         /// 是否验证通过
         /// </summary>
-        [ObservableProperty]
-        private bool isValid;
+        public bool IsValid
+        {
+            get
+            {
+                return isValid;
+            }
+            set
+            {
+                this.SetProperty(ref isValid, value);
+            }
+        }
 
 
         /// <summary>

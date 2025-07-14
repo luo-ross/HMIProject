@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Widgets.Enums;
 using System;
 using System.Collections.Generic;
 using System.Windows.Documents;
@@ -8,7 +9,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 分页信息 分页核心  
     /// </summary>
-    public partial class Pagination : NotifyBase
+    public  class Pagination : NotifyBase
     {
 
         public event Action<Pagination> OnRowsChanged;
@@ -68,13 +69,22 @@ namespace RS.Widgets.Models
         }
 
 
-        /// <summary>
-        /// 排序列  
-        /// </summary>
-        [ObservableProperty]
+
         private string sidx = "Id";
-      
-        
+        /// <summary>
+        /// 排序列
+        /// </summary>
+        public string Sidx
+        {
+            get { return sidx; }
+            set
+            {
+                this.SetProperty(ref sidx, value);
+
+            }
+        }
+
+
 
 
         private List<int> rowlist;
@@ -95,13 +105,21 @@ namespace RS.Widgets.Models
         }
 
 
-        /// <summary>
-        /// 排序类型  
-        /// </summary>
-        [ObservableProperty]
         private string sord = "desc";
-       
-      
+        /// <summary>
+        /// 排序类型
+        /// </summary>
+        public string Sord
+        {
+            get { return sord; }
+            set
+            {
+                this.SetProperty(ref sord, value);
+
+            }
+        }
+
+
 
         private int _Records;
         /// <summary>

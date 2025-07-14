@@ -14,7 +14,7 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 图像资源
     /// </summary>
-    public partial class ImgModel : ViewModelBase
+    public  class ImgModel : ViewModelBase
     {
         public ImgModel(long id, long projectId)
         {
@@ -22,33 +22,79 @@ namespace RS.Widgets.Models
             this.ProjectId = projectId;
         }
 
+
+        private long id;
         /// <summary>
         /// 图像资源主键 编号
         /// </summary>
-        [ObservableProperty]
-        private long id;
+        public long Id
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                this.SetProperty(ref id, value);
+            }
+        }
 
+
+
+        private long projectId;
         /// <summary>
         /// 所属项目
         /// </summary>
-        [ObservableProperty]
-        private long projectId;
+        public long ProjectId
+        {
+            get
+            {
+                return projectId;
+            }
+            set
+            {
+                this.SetProperty(ref projectId, value);
+            }
+        }
 
 
+
+
+        private string imgName;
         /// <summary>
         /// 图像名称
         /// </summary>
-        [ObservableProperty]
-        private string imgName;
+        public string ImgName
+        {
+            get
+            {
+                return imgName;
+            }
+            set
+            {
+                this.SetProperty(ref imgName, value);
+            }
+        }
 
 
+
+        private string imgPath;
         /// <summary>
         /// 图像路径
         /// </summary>
-        [ObservableProperty]
-        private string imgPath;
-     
-       
+        public string ImgPath
+        {
+            get
+            {
+                return imgPath;
+            }
+            set
+            {
+                this.SetProperty(ref imgPath, value);
+            }
+        }
+
+
 
         private BitmapSource thubnailImg;
         /// <summary>

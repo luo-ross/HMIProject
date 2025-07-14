@@ -73,10 +73,10 @@
                             Grid.Column="5"
                             rs:TextBoxHelper.IsShowClearButton="True"
                             rs:TextBoxHelper.Watermark="是否禁用"
-                            DisplayMemberPath="DisplayMember"
+                            DisplayMemberPath="KeyDes"
                             ItemsSource="{Binding IsDisableSelectList}"
                             SelectedValue="{Binding ModelSearch.IsDisabled}"
-                            SelectedValuePath="SelectedValue" />
+                            SelectedValuePath="Key" />
                     </Grid>
                 </Border>
             </GroupBox>
@@ -155,6 +155,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <ToggleButton
+                                        HorizontalAlignment="Left"
                                         IsChecked="{Binding IsDisabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=False}"
                                         IsEnabled="False"
                                         Style="{StaticResource RSApp.Styles.ToggleSwitchStyle}" />

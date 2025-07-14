@@ -11,26 +11,44 @@ using System.Windows;
 
 namespace RS.Widgets.Models
 {
-    public partial class InfoBarModel:NotifyBase
+    public  class InfoBarModel:NotifyBase
     {
+
+
+        private string message;
         /// <summary>
         /// 消息
         /// </summary>
-        [ObservableProperty]
-        private string message;
-   
+        public string Message
+        {
+            get { return message; }
+            set
+            {
+                this.SetProperty(ref message, value);
+
+            }
+        }
+
 
         /// <summary>
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
 
+
+        private InfoType infoType;
         /// <summary>
         /// 消息类型
         /// </summary>
-        [ObservableProperty]
+        public InfoType InfoType
+        {
+            get { return infoType; }
+            set
+            {
+                this.SetProperty(ref infoType, value);
 
-        private InfoType infoType;
+            }
+        }
 
     }
 }

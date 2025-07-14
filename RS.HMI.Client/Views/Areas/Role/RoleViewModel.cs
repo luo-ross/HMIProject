@@ -20,7 +20,7 @@ namespace RS.HMI.Client.Views.Areas
     /// <summary>
     /// 角色管理视图模型
     /// </summary>
-    [ServiceInjectConfig(ServiceLifetime.Scoped)]
+    [ServiceInjectConfig(ServiceLifetime.Transient)]
     public class RoleViewModel : CRUDViewModel<RoleModel>
     {
         private readonly IIdGenerator<long> IdGenerator;

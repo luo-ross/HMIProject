@@ -1,7 +1,12 @@
-﻿using RS.Widgets.Controls;
+﻿using Microsoft.Extensions.Logging;
+using NPOI.POIFS.Properties;
+using NPOI.SS.Formula.Functions;
+using RS.Widgets.Controls;
 using RS.Widgets.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,21 +19,17 @@ namespace RS.Widgets.Adorners
 {
     public class RSNavListSortAdorner : RSDragAdorner
     {
-        private RSNavItem RSNavItem { get; set; }
-        private RSNavigate RSNavigate { get; set; }
-
-        private int DragNavItemIndex;
-        private NavigateModel DragNavigateModel;
         private RSNavItem RSNavItemRelative;
+        private RSNavList RSNavListRelative;
+        private RSNavListSortInfo RSNavListSortInfo { get; set; }
 
-        public RSNavListSortAdorner(RSNavigate rsNavigate, RSNavItem rsNavItem) : base(rsNavItem)
+        public RSNavListSortAdorner(RSNavItem rsNavItem) : base(rsNavItem)
         {
-            this.RSNavItem = rsNavItem;
-            this.RSNavigate = rsNavigate;
-            //获取基础数据
-            this.DragNavigateModel = this.RSNavItem.DataContext as NavigateModel;
-            this.DragNavItemIndex = this.RSNavigate.NavigateModelList.IndexOf(this.DragNavigateModel);
-
+            this.RSNavListSortInfo = new RSNavListSortInfo()
+            {
+                RSNavItem = rsNavItem,
+                RSNavList = rsNavItem.TryFindParent<RSNavList>()
+            };
             this.DrawPen = new Pen()
             {
                 Brush = Brushes.DimGray,
@@ -36,51 +37,6 @@ namespace RS.Widgets.Adorners
                 //DashStyle = new DashStyle(new double[] { 4, 4 }, 0)
             };
         }
-
-
-        public override void OnParentWin_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            base.OnParentWin_PreviewMouseMove(sender, e);
-            var rsNavList = RSNavigate.GetRSNavList();
-
-            var position = e.GetPosition(rsNavList);
-            var rSNavItem = GetUIElementUnderMouse<RSNavItem>(rsNavList, position);
-            if (rSNavItem != null)
-            {
-                this.RSNavItemRelative = rSNavItem;
-            }
-        }
-
-        public override void OnParentWin_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (this.DragNavigateModel == null)
-            {
-                return;
-            }
-
-            this.CurrentMousePoint = e.GetPosition(this);
-            RSNavigate.NavigateModelList.Remove(this.DragNavigateModel);
-            int indexInsertShould = this.DragNavItemIndex;
-            if (this.RSNavItem != null
-                && this.RSNavItemRelative != null
-                && !this.RSNavItem.Equals(this.RSNavItemRelative))
-            {
-
-                var navigateModelRelative = this.RSNavItemRelative.DataContext as NavigateModel;
-                indexInsertShould = RSNavigate.NavigateModelList.IndexOf(navigateModelRelative);
-            }
-
-            indexInsertShould = Math.Max(indexInsertShould, 0);
-            indexInsertShould = Math.Min(indexInsertShould, RSNavigate.NavigateModelList.Count);
-            RSNavigate.NavigateModelList.Insert(indexInsertShould, this.DragNavigateModel);
-            this.DragNavigateModel = null;
-            this.RSNavItemRelative = null;
-
-            base.OnParentWin_PreviewMouseLeftButtonUp(sender, e);
-        }
-
-
-
 
         public Pen DrawPen
         {
@@ -92,6 +48,142 @@ namespace RS.Widgets.Adorners
             DependencyProperty.Register("DrawPen", typeof(Pen), typeof(RSNavListSortAdorner), new PropertyMetadata(null));
 
 
+        public override void OnParentWin_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            base.OnParentWin_PreviewMouseMove(sender, e);
+
+            this.RSNavListRelative = GetUIElementUnderMouse<RSNavList>(this.ParentWin, this.CurrentMouseWinPoint);
+            if (this.RSNavListRelative == null)
+            {
+                return;
+            }
+
+            var position = e.GetPosition(this.RSNavListRelative);
+            var rSNavItem = GetUIElementUnderMouse<RSNavItem>(this.RSNavListRelative, position);
+            if (rSNavItem != null)
+            {
+                this.RSNavItemRelative = rSNavItem;
+            }
+        }
+
+        public override void OnParentWin_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var dragNavItemDataContext = this.RSNavListSortInfo.RSNavItem.DataContext;
+            if (dragNavItemDataContext == null)
+            {
+                return;
+            }
+
+            var dataList = this.RSNavListSortInfo.RSNavList.ItemsSource as IList;
+
+            var dragNavItemIndex = dataList.IndexOf(dragNavItemDataContext);
+
+            dataList.Remove(dragNavItemDataContext);
+
+            int indexInsertShould = dragNavItemIndex;
+
+            IList relativeDataList = dataList;
+            if (this.RSNavListRelative != null)
+            {
+                relativeDataList = this.RSNavListRelative.ItemsSource as IList;
+            }
+
+            object? relativeDataContext = null;
+
+            if (this.RSNavItemRelative != null && !this.RSNavItemRelative.Equals(this.RSNavListSortInfo.RSNavItem))
+            {
+                relativeDataContext = this.RSNavItemRelative.DataContext;
+                indexInsertShould = relativeDataList.IndexOf(relativeDataContext);
+            }
+
+            indexInsertShould = Math.Max(indexInsertShould, 0);
+
+            indexInsertShould = Math.Min(indexInsertShould, relativeDataList.Count);
+
+            relativeDataList.Insert(indexInsertShould, dragNavItemDataContext);
+
+
+            //如果是NavigateModel 则说明这是个树导航
+            if (relativeDataContext != null
+                && relativeDataContext is NavigateModel relativeNavigateModel
+                && dragNavItemDataContext is NavigateModel dragNavigateModel)
+            {
+                // 则需要递归获取树
+                var sourceList = this.RSNavListSortInfo.RSNavList.ItemsSource as IList<NavigateModel>;
+
+                List<NavigateModel> childList = new List<NavigateModel>();
+
+                List<NavigateModel> GetChild(NavigateModel parent)
+                {
+                    var childList = sourceList.Where(t => t.ParentId == parent.Id).ToList();
+                    for (int i = 0; i < childList.Count; i++)
+                    {
+                        var child = childList[i];
+                        //更新Level
+                        child.Level = parent.Level + 1;
+                        var dataList = GetChild(child);
+                        if (dataList.Count > 0)
+                        {
+                            childList.InsertRange(i, dataList);
+                        }
+                    }
+                    return childList;
+                }
+
+                //获取到所有子树
+                var children = GetChild(dragNavigateModel);
+                if (children.Count > 0)
+                {
+                    childList = childList.Concat(children).ToList();
+                }
+
+                //如果相对移动是自己的孩子
+                if (childList.Contains(relativeNavigateModel))
+                {
+                    childList.Where(t => t.ParentId == dragNavigateModel.Id)
+                        .ToList()
+                        .ForEach(t =>
+                        {
+                            t.ParentId = dragNavigateModel.ParentId;
+                            t.Level = dragNavigateModel.Level;
+                        });
+
+                    dragNavigateModel.HasChildren = false;
+                    dragNavigateModel.IsExpand = false;
+                }
+                else
+                {
+                    //如果不是自己的孩子
+                    dragNavigateModel.ParentId = relativeNavigateModel.ParentId;
+                    dragNavigateModel.Level = relativeNavigateModel.Level;
+                }
+
+                  
+                foreach (var item in childList)
+                {
+                    //先要移除
+                    dataList.Remove(item);
+                }
+                indexInsertShould = dataList.IndexOf(dragNavigateModel) + 1;
+
+                //循环插入所有子树
+                for (int i = 0; i < childList.Count; i++)
+                {
+                    var insertShould = childList[i];
+
+                    indexInsertShould = Math.Max(indexInsertShould, 0);
+                    indexInsertShould = Math.Min(indexInsertShould, dataList.Count);
+                    dataList.Insert(indexInsertShould, insertShould);
+                    indexInsertShould++;
+                }
+            }
+
+
+
+            base.OnParentWin_PreviewMouseLeftButtonUp(sender, e);
+        }
+
+
 
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -100,46 +192,21 @@ namespace RS.Widgets.Adorners
             var actualWidth = adornedElement.ActualWidth;
             var actualHeight = adornedElement.ActualHeight;
             VisualBrush visualBrush = new VisualBrush(adornedElement);
-            Rect rect = new Rect(0, 0, actualWidth, actualHeight);
-            if (this.CurrentMousePoint != default)
-            {
-                rect.X = this.CurrentMousePoint.X + 20;
-                rect.Y = this.CurrentMousePoint.Y - 15;
-            }
+
+            var mousePosition = Mouse.GetPosition(this);
+            var x = mousePosition.X + 20;
+            var y = mousePosition.Y - 15;
+            Rect rect = new Rect(x, y, actualWidth, actualHeight);
             drawingContext.DrawRectangle(visualBrush, new Pen(), rect);
 
-
-            if (this.RSNavItemRelative == null)
+            if (this.RSNavItemRelative == null || this.RSNavListRelative == null)
             {
                 return;
             }
-            var rsNavItemRelative = this.RSNavItemRelative;
 
 
-            //var rsNavList = RSNavigate.GetRSNavList();
-            //var rsNavListActualWidth = rsNavList.ActualWidth;
-            //var rsNavListPoint = rsNavList.TransformToVisual(this).Transform(new Point(0, 0));
-            //var rsNavItemRelativePoint = this.RSNavItemRelative.TransformToVisual(this).Transform(new Point(0, 0));
-            //Point startPoint = new Point((int)rsNavListPoint.X + 4, (int)rsNavItemRelativePoint.Y - 2);
-            //Point endPoint = startPoint + new Vector((int)rsNavListActualWidth - 4, 0);
-
-            //var guidelines = new GuidelineSet();
-            //guidelines.GuidelinesX.Add(Math.Round(startPoint.X));
-            //guidelines.GuidelinesY.Add(Math.Round(startPoint.Y));
-            //guidelines.GuidelinesX.Add(Math.Round(endPoint.X));
-            //guidelines.GuidelinesY.Add(Math.Round(endPoint.Y));
-
-            //drawingContext.PushGuidelineSet(guidelines);
-            //// 画参考线
-            //drawingContext.DrawLine(this.DrawPen, startPoint, endPoint);
-           
-            //drawingContext.Pop();
-
-
-
-            var rsNavList = RSNavigate.GetRSNavList();
-            var rsNavListActualWidth = rsNavList.ActualWidth;
-            var rsNavListPoint = rsNavList.TransformToVisual(this).Transform(new Point(0, 0));
+            var rsNavListActualWidth = this.RSNavListRelative.ActualWidth;
+            var rsNavListPoint = this.RSNavListRelative.TransformToVisual(this).Transform(new Point(0, 0));
             var rsNavItemRelativePoint = this.RSNavItemRelative.TransformToVisual(this).Transform(new Point(0, 0));
 
             // 计算起始点和结束点
@@ -185,4 +252,7 @@ namespace RS.Widgets.Adorners
         }
 
     }
+
+
+
 }

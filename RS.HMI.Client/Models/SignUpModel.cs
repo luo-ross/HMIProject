@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RS.HMI.Client.Models
 {
-    public partial class SignUpModel : UserBaseModel
+    public  class SignUpModel : UserBaseModel
     {
 
 
@@ -56,11 +56,19 @@ namespace RS.HMI.Client.Models
         }
 
 
+        private bool isLoginNow ;
         /// <summary>
         /// 是否立即登录
         /// </summary>
-        [ObservableProperty]
-        private bool isLoginNow;
-      
+        public bool IsLoginNow
+        {
+            get { return isLoginNow; }
+            set
+            {
+                this.SetProperty(ref isLoginNow, value);
+              
+            }
+        }
+
     }
 }

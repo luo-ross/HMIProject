@@ -23,15 +23,15 @@ namespace RS.Widgets.Models
         }
 
 
-        public Type? GetViewModelType(string viewKey)
+        public Type? GetViewModelType(string viewModelKey)
         {
-            Type? resolvedType = this.ResolveType(viewKey);
+            Type? resolvedType = this.ResolveType(viewModelKey);
             return resolvedType;
         }
 
-        public object GetViewModel(string viewKey)
+        public object GetViewModel(string viewModelKey)
         {
-            Type? viewModelType = GetViewModelType(viewKey);
+            Type? viewModelType = GetViewModelType(viewModelKey);
             if (viewModelType == null)
             {
                 return null;
@@ -40,9 +40,9 @@ namespace RS.Widgets.Models
         }
 
 
-        public T? GetViewModel<T>(string viewKey) where T : INotifyPropertyChanged
+        public T? GetViewModel<T>(string viewModelKey) where T : INotifyPropertyChanged
         {
-            var viewModel = GetViewModel(viewKey);
+            var viewModel = GetViewModel(viewModelKey);
             if (viewModel == null)
             {
 
@@ -108,7 +108,7 @@ namespace RS.Widgets.Models
         }
 
 
-        public static string FormatType(Type type)
+        public static string GetViewModelKey(Type type)
         {
             if (type == null)
             {

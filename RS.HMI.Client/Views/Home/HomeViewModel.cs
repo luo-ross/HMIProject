@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using OpenCvSharp;
@@ -15,6 +16,7 @@ using System.ComponentModel;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace RS.HMI.Client.Views
 {
@@ -28,21 +30,28 @@ namespace RS.HMI.Client.Views
         /// </summary>
         public ICommand NavClickCommand { get; }
 
+        private DispatcherTimer DispatcherTimer;
 
         public HomeViewModel(IViewModelManager viewModelManager)
         {
             this.ViewModelManager = viewModelManager;
             this.NavClickCommand = new RelayCommand<NavigateModel>(NavClick);
-            var dataList = GenerateMenu(0, 100);
+            var dataList = GenerateMenu(1, 5);
             dataList = this.SortMenu(dataList);
             this.NavigateModelList = dataList;
+            //TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher
+            DispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(30),
+                DispatcherPriority.Background, (s, e) =>
+                {
+                    this.DateTimeNow = DateTime.Now;
+                }, Application.Current.Dispatcher);
         }
 
         private void NavClick(NavigateModel? model)
         {
             //this.ViewModelSelect = model?.ViewMoel;
             //先做测试
-            //this.ViewModelSelect = this.ViewModelManager.GetViewModel<INotifyPropertyChanged>(model.ViewKey);
+            //this.ViewModelSelect = this.ViewModelManager.GetViewModel<INotifyPropertyChanged>(model.ViewModelKey);
         }
 
         public static List<NavigateModel> GenerateMenu(int maxLevel, int menuCountPerLevel, double groupProbability = 0.2)
@@ -68,7 +77,7 @@ namespace RS.HMI.Client.Views
                         NavName = $"第{currentLevel}级菜舒服舒服sdf单-{i}" + (parentId != null ? $"(父:{parentId})" : ""),
                         HasChildren = !isGroup && currentLevel < maxLevel, // 分组不再有下级
                         IsGroupNav = isGroup,
-                        ViewKey = i % 2 == 0 ? $"RS.HMI.Client/Views.Areas.UserViewModel" : @"RS.HMI.Client/Views.Areas.RoleViewModel",
+                        ViewModelKey = i % 2 == 0 ? $"RS.HMI.Client/Views.Areas.UserViewModel" : @"RS.HMI.Client/Views.Areas.RoleViewModel",
                         IconKey = IconKey.Folder,
                         IsExpand = false,
                         IsSelect = false,
@@ -133,6 +142,126 @@ namespace RS.HMI.Client.Views
             }
         }
 
+
+
+        private ObservableCollection<NavigateModel> test1List;
+
+        public ObservableCollection<NavigateModel> Test1List
+        {
+            get
+            {
+                if (test1List == null)
+                {
+                    test1List = new ObservableCollection<NavigateModel>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        test1List.Add(new NavigateModel()
+                        {
+                            NavName = $"数据集1_{i}"
+                        });
+                    }
+                }
+                return test1List;
+            }
+            set
+            {
+                this.SetProperty(ref test1List, value);
+            }
+        }
+
+
+
+        private ObservableCollection<NavigateModel> test2List;
+
+        public ObservableCollection<NavigateModel> Test2List
+        {
+            get
+            {
+                if (test2List == null)
+                {
+                    test2List = new ObservableCollection<NavigateModel>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        test2List.Add(new NavigateModel()
+                        {
+                            NavName = $"数据集2_{i}"
+                        });
+                    }
+                }
+                return test2List;
+            }
+            set
+            {
+                this.SetProperty(ref test2List, value);
+            }
+        }
+
+        private ObservableCollection<NavigateModel> test3List;
+
+        public ObservableCollection<NavigateModel> Test3List
+        {
+            get
+            {
+                if (test3List == null)
+                {
+                    test3List = new ObservableCollection<NavigateModel>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        test3List.Add(new NavigateModel()
+                        {
+                            NavName = $"数据集3_{i}"
+                        });
+                    }
+                }
+                return test3List;
+            }
+            set
+            {
+                this.SetProperty(ref test3List, value);
+            }
+        }
+
+
+        private ObservableCollection<NavigateModel> test4List;
+
+        public ObservableCollection<NavigateModel> Test4List
+        {
+            get
+            {
+                if (test4List == null)
+                {
+                    test4List = new ObservableCollection<NavigateModel>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        test4List.Add(new NavigateModel()
+                        {
+                            NavName = $"数据集4_{i}"
+                        });
+                    }
+                }
+                return test4List;
+            }
+            set
+            {
+                this.SetProperty(ref test4List, value);
+            }
+        }
+
+        private DateTime dateTimeNow;
+        /// <summary>
+        /// 当前时间
+        /// </summary>
+        public DateTime DateTimeNow
+        {
+            get { return dateTimeNow; }
+            set
+            {
+                this.SetProperty(ref dateTimeNow, value);
+            }
+        }
+
+
+
         private INotifyPropertyChanged viewModelSelect;
 
         public INotifyPropertyChanged ViewModelSelect
@@ -170,6 +299,8 @@ namespace RS.HMI.Client.Views
                 this.SetProperty(ref searchContent, value);
             }
         }
+
+
 
 
         private bool isFullScreen;

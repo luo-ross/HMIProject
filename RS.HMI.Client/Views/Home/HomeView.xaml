@@ -42,53 +42,6 @@
             </DataTemplate>
         </ResourceDictionary>
     </rs:RSWindow.Resources>
-    <!--<rs:RSWindow.LeftCaptionContent>
-        <StackPanel Margin="5,0,5,0" Orientation="Horizontal">
-            <Button
-                Padding="8"
-                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseBack}"
-                rs:ControlsHelper.IconHeight="12"
-                rs:ControlsHelper.IconWidth="12"
-                Command="{x:Static NavigationCommands.BrowseBack}"
-                CommandTarget="{Binding ElementName=PART_Navigate}"
-                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                ToolTip="点击可后退，按住可查看历史记录" />
-            <Button
-                Padding="8"
-                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.BrowseForward}"
-                rs:ControlsHelper.IconHeight="12"
-                rs:ControlsHelper.IconWidth="12"
-                Command="{x:Static NavigationCommands.BrowseForward}"
-                CommandTarget="{Binding ElementName=PART_Navigate}"
-                Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                ToolTip="点击可前进，按住可查看历史记录" />
-
-            <ToggleButton
-                x:Name="PART_BtnNavSwitch"
-                Grid.Row="0"
-                Margin="3,0,0,0"
-                Padding="8"
-                HorizontalAlignment="Left"
-                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.More}"
-                rs:ControlsHelper.IconHeight="12"
-                rs:ControlsHelper.IconWidth="12"
-                IsChecked="{Binding ElementName=PART_Navigate, Path=IsNavExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                IsThreeState="False">
-                <ToggleButton.Style>
-                    <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type ToggleButton}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=PART_Navigate, Path=ScreenSize}" Value="Small">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToggleButton.Style>
-            </ToggleButton>
-
-
-        </StackPanel>
-    </rs:RSWindow.LeftCaptionContent>-->
     <rs:RSWindow.MidCaptionContent>
         <Grid Margin="5,0,5,0">
             <Grid.ColumnDefinitions>
@@ -105,10 +58,64 @@
     <Grid>
         <rs:RSNavigate
             x:Name="PART_Navigate"
+            IsAllowNavDragSort="True"
             ItemsSource="{Binding NavigateModelList}"
             NavItemClickCommand="{Binding NavClickCommand}" />
 
+        <!--<TextBlock Text="{Binding DateTimeNow, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss fff}'}" />-->
 
+        <Grid Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <rs:RSNavList
+                Grid.Column="0"
+                IsAllowDragSort="True"
+                ItemsSource="{Binding Test1List}">
+                <rs:RSNavList.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding NavName}" />
+                    </DataTemplate>
+                </rs:RSNavList.ItemTemplate>
+            </rs:RSNavList>
+
+            <rs:RSNavList
+                Grid.Column="1"
+                IsAllowDragSort="True"
+                ItemsSource="{Binding Test2List}">
+                <rs:RSNavList.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding NavName}" />
+                    </DataTemplate>
+                </rs:RSNavList.ItemTemplate>
+            </rs:RSNavList>
+
+            <rs:RSNavList
+                Grid.Column="2"
+                IsAllowDragSort="True"
+                ItemsSource="{Binding Test3List}">
+                <rs:RSNavList.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding NavName}" />
+                    </DataTemplate>
+                </rs:RSNavList.ItemTemplate>
+            </rs:RSNavList>
+
+            <rs:RSNavList
+                Grid.Column="3"
+                IsAllowDragSort="True"
+                ItemsSource="{Binding Test4List}">
+                <rs:RSNavList.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding NavName}" />
+                    </DataTemplate>
+                </rs:RSNavList.ItemTemplate>
+            </rs:RSNavList>
+        </Grid>
 
     </Grid>
 </rs:RSWindow>

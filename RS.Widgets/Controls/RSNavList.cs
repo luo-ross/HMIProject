@@ -20,12 +20,23 @@ namespace RS.Widgets.Controls
             this.Loaded += RSNavList_Loaded;
         }
 
+
+
+        public bool IsAllowDragSort
+        {
+            get { return (bool)GetValue(IsAllowDragSortProperty); }
+            set { SetValue(IsAllowDragSortProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAllowDragSortProperty =
+            DependencyProperty.Register("IsAllowDragSort", typeof(bool), typeof(RSNavList), new PropertyMetadata(false));
+
+
+
         private void RSNavList_Loaded(object sender, RoutedEventArgs e)
         {
            
         }
-
-   
 
 
         private void RSNavList_Unloaded(object sender, RoutedEventArgs e)
