@@ -12,12 +12,14 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using RS.Win32API.SafeHandles;
+using RS.Win32API.Enums;
+using RS.Widgets.Controls.Helpers;
 
 namespace RS.Widgets.Controls
 {
     public class RSNotifyIcon : ContentControl
     {
-        private HwndSource hwndSource;
+        private HwndSource HwndSource;
         private object syncObj = new object();
         private const int WM_TRAYMOUSEMESSAGE = NativeMethods.WM_USER + 1024;
         private int id;
@@ -32,17 +34,36 @@ namespace RS.Widgets.Controls
         private NOTIFYICONDATA nOTIFYICONDATA;
         private bool DesignMode;
         private bool added;
+        private Window ParentWin;
 
         public RSNotifyIcon()
         {
             id = ++nextId;
             this.IsVisibleChanged += RSNotifyIcon_IsVisibleChanged;
             this.CreateHwndSource();
+            this.Loaded += RSNotifyIcon_Loaded;
+        }
+
+        private void RSNotifyIcon_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.ParentWin = this.TryFindParent<Window>();
+            if (this.ParentWin != null)
+            {
+                this.ParentWin.Closing += ParentWin_Closing;
+            }
+        }
+
+        private void ParentWin_Closing(object? sender, CancelEventArgs e)
+        {
+            NativeMethods.SendMessage(this.HwndSource.Handle, WM.CLOSE, IntPtr.Zero, IntPtr.Zero);
         }
 
         private void RSNotifyIcon_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            this.UpdateNotifyIcon(this.IsVisible);
+            if (this.HwndSource != null && !this.HwndSource.IsDisposed)
+            {
+                this.UpdateNotifyIcon(this.IsVisible);
+            }
         }
 
         public virtual void CreateHwndSource()
@@ -55,10 +76,11 @@ namespace RS.Widgets.Controls
                 parameters.WindowClassStyle = 0;
                 parameters.WindowStyle = 0;
                 parameters.ExtendedWindowStyle = 0;
+
                 // 创建 HwndSource
-                hwndSource = new HwndSource(parameters);
+                HwndSource = new HwndSource(parameters);
                 // 设置窗口过程处理
-                hwndSource.AddHook(WndProc);
+                HwndSource.AddHook(WndProc);
             }
         }
 
@@ -182,7 +204,7 @@ namespace RS.Widgets.Controls
                     }
                     break;
                 case NativeMethods.WM_DESTROY:
-                    UpdateNotifyIcon(false);
+                    this.UpdateNotifyIcon(false);
                     break;
             }
 
@@ -204,12 +226,12 @@ namespace RS.Widgets.Controls
                 }
                 this.nOTIFYICONDATA.uCallbackMessage = WM_TRAYMOUSEMESSAGE;
                 this.nOTIFYICONDATA.uFlags = NativeMethods.NIF_MESSAGE;
-                if (showIconInTray && this.hwndSource.Handle == IntPtr.Zero)
+                if (showIconInTray && this.HwndSource.Handle == IntPtr.Zero)
                 {
                     this.CreateHwndSource();
                 }
 
-                this.nOTIFYICONDATA.hWnd = this.hwndSource.Handle;
+                this.nOTIFYICONDATA.hWnd = this.HwndSource.Handle;
                 this.nOTIFYICONDATA.uID = id;
                 this.nOTIFYICONDATA.hIcon = IntPtr.Zero;
                 if (_currentSmallIconHandle != null)
@@ -450,12 +472,12 @@ namespace RS.Widgets.Controls
             if (added && !this.DesignMode)
             {
                 NOTIFYICONDATA data = new NOTIFYICONDATA();
-                if (this.hwndSource == null)
+                if (this.HwndSource == null)
                 {
                     this.CreateHwndSource();
                 }
 
-                data.hWnd = this.hwndSource.Handle;
+                data.hWnd = this.HwndSource.Handle;
                 data.uID = id;
                 data.uFlags = NativeMethods.NIF_INFO;
                 data.uTimeoutOrVersion = timeout;
@@ -512,6 +534,6 @@ namespace RS.Widgets.Controls
             }
 
         }
-      
+
     }
 }

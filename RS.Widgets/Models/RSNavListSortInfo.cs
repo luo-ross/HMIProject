@@ -9,7 +9,7 @@ namespace RS.Widgets.Models
 {
     public class RSNavListSortInfo
     {
-        public RSNavItem RSNavItem { get; set; }
+        public RSNavItem RSListBoxItem { get; set; }
         public RSNavList RSNavList { get; set; }
     }
 }

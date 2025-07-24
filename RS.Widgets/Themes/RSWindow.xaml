@@ -28,7 +28,7 @@
 
     <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWindow}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="Margin" Value="15" />
+        <!--<Setter Property="Margin" Value="15" />-->
         <Setter Property="IsShowTitle" Value="True" />
         <Setter Property="Effect">
             <Setter.Value>
@@ -45,7 +45,7 @@
                     <Border Effect="{TemplateBinding Effect}">
                         <Border
                             x:Name="PART_Border"
-                            Margin="{TemplateBinding Margin}"
+                            Margin="15"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
@@ -134,7 +134,7 @@
                                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                                ToolTip="最小化"
+                                                ToolTip="{TemplateBinding MinimizeDes}"
                                                 WindowChrome.IsHitTestVisibleInChrome="True" />
                                             <Button
                                                 x:Name="PART_BtnMaxRestore"
@@ -149,7 +149,7 @@
                                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                                ToolTip="关闭"
+                                                ToolTip="{TemplateBinding CloseDes}"
                                                 WindowChrome.IsHitTestVisibleInChrome="True" />
                                         </StackPanel>
                                     </Grid>
@@ -241,14 +241,14 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="恢复" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=RestoreDes}" />
                             <Setter TargetName="PART_Border" Property="Margin" Value="0" />
                             <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Restore}" />
                         </Trigger>
                         <Trigger Property="WindowState" Value="Normal">
                             <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="最大化" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MaximizeDes}" />
                             <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Maxsize}" />
                         </Trigger>
                         <Trigger Property="IsFitSystem" Value="True">

@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.Commons.Helper;
 using RS.Widgets.Models;
+using RS.Win32API.Structs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +10,12 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Models
 {
-    public  class ApplicationViewModel : NotifyBase
+    public class ApplicationViewModel : NotifyBase
     {
+        public ApplicationViewModel()
+        {
+           
+        }
 
         private bool? isServerConnectSuccess;
         /// <summary>
@@ -20,7 +26,7 @@ namespace RS.Widgets.Models
             get { return isServerConnectSuccess; }
             set
             {
-                this.SetProperty(ref isServerConnectSuccess,value);
+                this.SetProperty(ref isServerConnectSuccess, value);
             }
         }
 
@@ -50,5 +56,35 @@ namespace RS.Widgets.Models
                 this.SetProperty(ref isGetSessionModelSuccess, value);
             }
         }
+
+
+        private const string WINDOWPLACEMENTConfigKey = "C47C8080-072C-42E1-AB5C-5239C5C16808";
+
+        private WINDOWPLACEMENT _WINDOWPLACEMENT;
+        /// <summary>
+        /// 获取窗体位置
+        /// </summary>
+        public WINDOWPLACEMENT WINDOWPLACEMENT
+        {
+            get
+            {
+                if (_WINDOWPLACEMENT.Equals(default(WINDOWPLACEMENT)))
+                {
+                    this.WINDOWPLACEMENT = ConfigHelpler.GetDefaultConfig(WINDOWPLACEMENTConfigKey, new WINDOWPLACEMENT());
+                }
+                return _WINDOWPLACEMENT;
+            }
+            set
+            {
+                this.SetProperty(ref _WINDOWPLACEMENT, value);
+                ConfigHelpler.SaveAppConfigAsync(WINDOWPLACEMENTConfigKey, WINDOWPLACEMENT);
+            }
+        }
+
+
+
+
+
+
     }
 }

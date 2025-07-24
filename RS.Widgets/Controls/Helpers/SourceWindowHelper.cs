@@ -52,7 +52,6 @@ namespace RS.Widgets.Controls
         public RECT WorkAreaBoundsForNearestMonitor
         {
 
-
             get
             {
                 MONITORINFOEX mONITORINFOEX = new MONITORINFOEX();

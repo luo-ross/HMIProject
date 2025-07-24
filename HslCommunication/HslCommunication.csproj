@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	<UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
+    
   </PropertyGroup>
 
   <ItemGroup>

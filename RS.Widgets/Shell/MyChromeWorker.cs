@@ -1,7 +1,9 @@
-﻿using RS.Widgets.Structs;
+﻿using RS.Widgets.Commons;
+using RS.Widgets.Standard;
+using RS.Widgets.Structs;
 using RS.Win32API;
 using RS.Win32API.Enums;
-using RS.Win32API.Helpers;
+using RS.Win32API.Helper;
 using RS.Win32API.Standard;
 using RS.Win32API.Structs;
 using System.Reflection.Metadata;
@@ -313,22 +315,22 @@ namespace RS.Widgets.Shell
             FrameworkElement frameworkElement = (FrameworkElement)VisualTreeHelper.GetChild(_window, 0);
             if (_chromeInfo.NonClientFrameEdges != 0)
             {
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
                 {
                     margin.Top -= SystemParameters.WindowResizeBorderThickness.Top;
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
                 {
                     margin.Left -= SystemParameters.WindowResizeBorderThickness.Left;
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
                 {
                     margin.Bottom -= SystemParameters.WindowResizeBorderThickness.Bottom;
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
                 {
                     margin.Right -= SystemParameters.WindowResizeBorderThickness.Right;
                 }
@@ -341,22 +343,22 @@ namespace RS.Widgets.Shell
                 RECT rECT = _GetAdjustedWindowRect(windowRect);
                 Rect rect = DpiHelper.DeviceRectToLogical(new Rect(windowRect.Left, windowRect.Top, windowRect.Width, windowRect.Height), dpi.DpiScaleX, dpi.DpiScaleY);
                 Rect rect2 = DpiHelper.DeviceRectToLogical(new Rect(rECT.Left, rECT.Top, rECT.Width, rECT.Height), dpi.DpiScaleX, dpi.DpiScaleY);
-                if (!Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
+                if (!SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
                 {
                     margin.Right -= SystemParameters.WindowResizeBorderThickness.Left;
                 }
 
-                if (!Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
+                if (!SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
                 {
                     margin.Right -= SystemParameters.WindowResizeBorderThickness.Right;
                 }
 
-                if (!Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
+                if (!SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
                 {
                     margin.Bottom -= SystemParameters.WindowResizeBorderThickness.Top;
                 }
 
-                if (!Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
+                if (!SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
                 {
                     margin.Bottom -= SystemParameters.WindowResizeBorderThickness.Bottom;
                 }
@@ -456,22 +458,22 @@ namespace RS.Widgets.Shell
                 DpiScale dpi = DpiHelper.GetSystemDpi();
                 Thickness thickness = DpiHelper.LogicalThicknessToDevice(SystemParameters.WindowResizeBorderThickness, dpi.DpiScaleX, dpi.DpiScaleY);
                 RECT rECT = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
                 {
                     rECT.Top += (int)thickness.Top;
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
                 {
                     rECT.Left += (int)thickness.Left;
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
                 {
                     rECT.Bottom -= (int)thickness.Bottom;
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
                 {
                     rECT.Right -= (int)thickness.Right;
                 }
@@ -551,7 +553,7 @@ namespace RS.Widgets.Shell
         private IntPtr _HandleNCHitTest(WM uMsg, IntPtr wParam, IntPtr lParam, out bool handled)
         {
             DpiScale dpi = DpiHelper.GetSystemDpi();
-            Point point = new Point(Utility.GET_X_LPARAM(lParam), Utility.GET_Y_LPARAM(lParam));
+            Point point = new Point(SystemUtility.GET_X_LPARAM(lParam), SystemUtility.GET_Y_LPARAM(lParam));
             Rect deviceRectangle = _GetWindowRect();
             Point devicePoint = point;
             devicePoint.Offset(0.0 - deviceRectangle.X, 0.0 - deviceRectangle.Y);
@@ -573,7 +575,7 @@ namespace RS.Widgets.Shell
                 }
             }
 
-            if (_chromeInfo.UseAeroCaptionButtons && Utility.IsOSVistaOrNewer && _chromeInfo.GlassFrameThickness != default(Thickness) && _isGlassEnabled)
+            if (_chromeInfo.UseAeroCaptionButtons && OSVersionHelper.IsOSVistaOrNewer && _chromeInfo.GlassFrameThickness != default(Thickness) && _isGlassEnabled)
             {
                 handled = NativeMethods.DwmDefWindowProc(_hwnd, uMsg, wParam, lParam, out var plResult);
                 if (IntPtr.Zero != plResult)
@@ -592,7 +594,7 @@ namespace RS.Widgets.Shell
         {
             if (2 == wParam.ToInt32())
             {
-                SystemCommands.ShowSystemMenu(_window, new Point(Utility.GET_X_LPARAM(lParam), Utility.GET_Y_LPARAM(lParam)));
+                SystemCommands.ShowSystemMenu(_window, new Point(SystemUtility.GET_X_LPARAM(lParam), SystemUtility.GET_Y_LPARAM(lParam)));
             }
 
             handled = false;
@@ -617,7 +619,7 @@ namespace RS.Widgets.Shell
         private IntPtr _HandleWindowPosChanged(WM uMsg, IntPtr wParam, IntPtr lParam, out bool handled)
         {
             WINDOWPOS value = (WINDOWPOS)Marshal.PtrToStructure(lParam, typeof(WINDOWPOS));
-            if (!Utility.IsFlagSet(value.flags, 1))
+            if (!SystemUtility.IsFlagSet(value.flags, 1))
             {
                 _UpdateSystemMenu(null);
                 if (!_isGlassEnabled)
@@ -733,9 +735,9 @@ namespace RS.Widgets.Shell
             if (IntPtr.Zero != systemMenu)
             {
                 WS value = (WS)NativeMethods.GetWindowLongPtr64(new HandleRef(this, _hwnd), (int)GWL.STYLE).ToInt32();
-                bool flag2 = Utility.IsFlagSet((int)value, 131072);
-                bool flag3 = Utility.IsFlagSet((int)value, 65536);
-                bool flag4 = Utility.IsFlagSet((int)value, 262144);
+                bool flag2 = SystemUtility.IsFlagSet((int)value, 131072);
+                bool flag3 = SystemUtility.IsFlagSet((int)value, 65536);
+                bool flag4 = SystemUtility.IsFlagSet((int)value, 262144);
                 switch (windowState)
                 {
                     case WindowState.Maximized:
@@ -839,7 +841,7 @@ namespace RS.Widgets.Shell
             }
 
             Size size;
-            if (wp.HasValue && !Utility.IsFlagSet(wp.Value.flags, 1))
+            if (wp.HasValue && !SystemUtility.IsFlagSet(wp.Value.flags, 1))
             {
                 size = new Size(wp.Value.cx, wp.Value.cy);
             }
@@ -898,7 +900,7 @@ namespace RS.Widgets.Shell
 
         private static IntPtr _CreateRoundRectRgn(Rect region, double radius)
         {
-            if (DoubleUtil.AreClose(0.0, radius))
+            if (DoubleHelper.AreClose(0.0, radius))
             {
                 return NativeMethods.CreateRectRgn((int)Math.Floor(region.Left), (int)Math.Floor(region.Top), (int)Math.Ceiling(region.Right), (int)Math.Ceiling(region.Bottom));
             }
@@ -927,17 +929,17 @@ namespace RS.Widgets.Shell
 
         private static bool _IsUniform(CornerRadius cornerRadius)
         {
-            if (!DoubleUtil.AreClose(cornerRadius.BottomLeft, cornerRadius.BottomRight))
+            if (!DoubleHelper.AreClose(cornerRadius.BottomLeft, cornerRadius.BottomRight))
             {
                 return false;
             }
 
-            if (!DoubleUtil.AreClose(cornerRadius.TopLeft, cornerRadius.TopRight))
+            if (!DoubleHelper.AreClose(cornerRadius.TopLeft, cornerRadius.TopRight))
             {
                 return false;
             }
 
-            if (!DoubleUtil.AreClose(cornerRadius.BottomLeft, cornerRadius.TopRight))
+            if (!DoubleHelper.AreClose(cornerRadius.BottomLeft, cornerRadius.TopRight))
             {
                 return false;
             }
@@ -948,7 +950,7 @@ namespace RS.Widgets.Shell
 
         private void _ExtendGlassFrame()
         {
-            if (!Utility.IsOSVistaOrNewer || IntPtr.Zero == _hwnd)
+            if (!OSVersionHelper.IsOSVistaOrNewer || IntPtr.Zero == _hwnd)
             {
                 return;
             }
@@ -965,25 +967,25 @@ namespace RS.Widgets.Shell
             if (_chromeInfo.NonClientFrameEdges != 0)
             {
                 Thickness thickness2 = DpiHelper.LogicalThicknessToDevice(SystemParameters.WindowResizeBorderThickness, dpi.DpiScaleX, dpi.DpiScaleY);
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 2))
                 {
                     thickness.Top -= thickness2.Top;
                     thickness.Top = Math.Max(0.0, thickness.Top);
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 1))
                 {
                     thickness.Left -= thickness2.Left;
                     thickness.Left = Math.Max(0.0, thickness.Left);
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 8))
                 {
                     thickness.Bottom -= thickness2.Bottom;
                     thickness.Bottom = Math.Max(0.0, thickness.Bottom);
                 }
 
-                if (Utility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
+                if (SystemUtility.IsFlagSet((int)_chromeInfo.NonClientFrameEdges, 4))
                 {
                     thickness.Right -= thickness2.Right;
                     thickness.Right = Math.Max(0.0, thickness.Right);
@@ -1100,7 +1102,7 @@ namespace RS.Widgets.Shell
 
         private void _RestoreGlassFrame()
         {
-            if (Utility.IsOSVistaOrNewer && !(_hwnd == IntPtr.Zero))
+            if (OSVersionHelper.IsOSVistaOrNewer && !(_hwnd == IntPtr.Zero))
             {
                 _hwndSource.CompositionTarget.BackgroundColor = SystemColors.WindowColor;
                 if (NativeMethods.DwmIsCompositionEnabled())

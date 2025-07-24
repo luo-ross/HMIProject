@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Assets\BlueDrag.cur" />

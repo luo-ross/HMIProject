@@ -1,5 +1,6 @@
 ﻿using RS.Widgets.Adorners;
 using RS.Widgets.Enums;
+using RS.Widgets.Extensions;
 using RS.Widgets.Models;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,10 +16,10 @@ namespace RS.Widgets.Controls
         private RSNavList RSNavList;
         public RSNavItem()
         {
-            this.Loaded += RSNavItem_Loaded;
+            this.Loaded += RSListBoxItem_Loaded;
         }
 
-        private void RSNavItem_Loaded(object sender, RoutedEventArgs e)
+        private void RSListBoxItem_Loaded(object sender, RoutedEventArgs e)
         {
             this.RSNavList = this.TryFindParent<RSNavList>();
         }
@@ -30,30 +31,24 @@ namespace RS.Widgets.Controls
             if (this.RSNavList != null && this.RSNavList.IsAllowDragSort)
             {
                 var mouseDownPostion = e.GetPosition(this.RSNavList);
-                var rsNavItem = RSAdorner.GetUIElementUnderMouse<RSNavItem>(this.RSNavList, mouseDownPostion);
-                if (rsNavItem == null)
+                var rsListBoxItem = this.RSNavList.GetUIElementUnderMouse<RSNavItem>(mouseDownPostion);
+                if (rsListBoxItem == null)
                 {
                     return;
                 }
 
-
-                Window activeWindow = Window.GetWindow(rsNavItem);
+                Window activeWindow = Window.GetWindow(rsListBoxItem);
                 var adornerDecorator = activeWindow.FindChild<AdornerDecorator>();
                 var adornerLayer = adornerDecorator.AdornerLayer;
-                var rsAdorner = new RSNavListSortAdorner(rsNavItem);
+                var rsAdorner = new RSNavListSortAdorner(rsListBoxItem);
                 adornerLayer.Add(rsAdorner);
-
-
-
             }
 
-            this.OnNavItemClick();
-
-
+            this.OnRSListBoxItemClick();
         }
 
 
-        private void OnNavItemClick()
+        private void OnRSListBoxItemClick()
         {
             var rsNavigate = this.GetNavigate();
             if (rsNavigate == null)

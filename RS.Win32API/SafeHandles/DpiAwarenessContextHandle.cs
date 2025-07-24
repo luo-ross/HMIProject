@@ -1,5 +1,6 @@
 ﻿using RS.Win32API;
 using RS.Win32API.Enums;
+using RS.Win32API.Helper;
 using RS.Win32API.Standard;
 using System;
 using System.Collections.Generic;
@@ -93,7 +94,7 @@ namespace RS.Win32API.SafeHandles
      
         public bool Equals(IntPtr dpiContext)
         {
-            return DpiHelper.AreDpiAwarenessContextsEqual(DangerousGetHandle(), dpiContext);
+            return SystemDpiHelper.AreDpiAwarenessContextsEqual(DangerousGetHandle(), dpiContext);
         }
 
         public bool Equals(DpiAwarenessContextValue dpiContextEnumValue)

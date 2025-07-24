@@ -8,9 +8,8 @@
 		<PreserveCompilationContext>true</PreserveCompilationContext>
 		<SatelliteResourceLanguages>zh</SatelliteResourceLanguages>
 	</PropertyGroup>
-
 	<ItemGroup>
-	  <TypeScriptCompile Remove="node_modules\**" />
+		<TypeScriptCompile Remove="node_modules\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,7 +23,7 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Include="HtmlTemplates\PasswordReset.cshtml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Include="wwwroot\ServerError.html" />
 		<None Include="wwwroot\AccessDenied.html" />
@@ -236,7 +235,7 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
 		<Content Update="HtmlTemplates\RegisterVerify.cshtml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
@@ -249,8 +248,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Keys-Repository\" />
-	  <Folder Include="wwwroot\lib\axios\" />
+		<Folder Include="Keys-Repository\" />
+		<Folder Include="wwwroot\lib\axios\" />
 	</ItemGroup>
 
 </Project>

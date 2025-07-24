@@ -1,4 +1,5 @@
 ﻿using RS.Win32API.Enums;
+using RS.Win32API.Helper;
 using RS.Win32API.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace RS.Win32API.Standard
 
         public bool IsWindowUnawareOrSystemAware(nint hWnd)
         {
-            DpiAwarenessContextHandle dpiAwarenessContext = DpiHelper.GetDpiAwarenessContext(hWnd);
+            DpiAwarenessContextHandle dpiAwarenessContext = SystemDpiHelper.GetDpiAwarenessContext(hWnd);
             if (!dpiAwarenessContext.Equals(DpiAwarenessContextValue.Unaware))
             {
                 return dpiAwarenessContext.Equals(DpiAwarenessContextValue.SystemAware);

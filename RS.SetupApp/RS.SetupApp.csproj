@@ -12,6 +12,7 @@
 		</AllowedReferenceRelatedFileExtensions>
 		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
 		<AssemblyName>Setup</AssemblyName>
+		
 	</PropertyGroup>
 
 	<ItemGroup>

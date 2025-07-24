@@ -12,7 +12,7 @@
     Height="250"
     Background="#fff"
     BorderCornerRadius="8"
-    IsHidenWinCommandBtn="True"
+    IsShowWinBtnCommands="False"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">

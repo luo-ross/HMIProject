@@ -9,6 +9,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDataGrid.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDateTimePicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDialog.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDragDrop.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSPicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSLoading.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMessage.xaml" />

@@ -18,13 +18,13 @@ namespace RS.Widgets.Controls
     /// </summary>
     public partial class RSNavPopup : Window
     {
-        public RSNavItem RSNavItem { get; set; }
+        public RSNavItem RSListBoxItem { get; set; }
         public RSNavigate RSNavigate { get; set; }
         public RSNavPopup RSNavPopupParent { get; set; }
 
      
      
-        public RSNavPopup(RSNavigate rSNavigate, RSNavPopup rsNavPopupParent, RSNavItem rsNavItem, List<NavigateModel> navigateModelList)
+        public RSNavPopup(RSNavigate rSNavigate, RSNavPopup rsNavPopupParent, RSNavItem rsListBoxItem, List<NavigateModel> navigateModelList)
         {
             InitializeComponent();
             this.Owner = rSNavigate.ParentWin;
@@ -33,7 +33,7 @@ namespace RS.Widgets.Controls
             this.AllowsTransparency = true;
             this.ShowInTaskbar = false;
             this.SizeToContent = SizeToContent.WidthAndHeight;
-            this.RSNavItem = rsNavItem;
+            this.RSListBoxItem = rsListBoxItem;
             this.RSNavPopupParent = rsNavPopupParent;
             this.NavigateModelList = new ObservableCollection<NavigateModel>(navigateModelList);
 
@@ -161,9 +161,9 @@ namespace RS.Widgets.Controls
         public void UpdatePosition()
         {
             //显示在导航的右边
-            var rsNavItemPosition = this.RSNavItem.PointToScreen(new Point(0, 0));
-            this.Left = rsNavItemPosition.X + this.RSNavItem.ActualWidth - 6;
-            this.Top = rsNavItemPosition.Y - 13;
+            var rsListBoxItemPosition = this.RSListBoxItem.PointToScreen(new Point(0, 0));
+            this.Left = rsListBoxItemPosition.X + this.RSListBoxItem.ActualWidth - 6;
+            this.Top = rsListBoxItemPosition.Y - 13;
         }
 
         public Rect GetCurrentScreenWorkingArea()
@@ -178,7 +178,7 @@ namespace RS.Widgets.Controls
 
         internal void ExpandParentNav()
         {
-            var navigateModel = this.RSNavItem.DataContext as NavigateModel;
+            var navigateModel = this.RSListBoxItem.DataContext as NavigateModel;
             if (navigateModel != null)
             {
                 navigateModel.IsExpand = true;

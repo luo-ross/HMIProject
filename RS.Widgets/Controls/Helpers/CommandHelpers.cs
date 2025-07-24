@@ -1,9 +1,3 @@
-//---------------------------------------------------------------------------
-//
-// Copyright (C) Microsoft Corporation.  All rights reserved.
-//
-//---------------------------------------------------------------------------
-
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -23,7 +17,6 @@ namespace RS.Widgets.Controls
         public static TypeConverter _keyGestureConverter = new KeyGestureConverter();
         // Lots of specialized registration methods to avoid new'ing up more common stuff (like InputGesture's) at the callsite, as that's frequently
         // repeated and increases code size.  Do it once, here.  
-
 
 
         public static void RegisterCommandHandler(Type controlType,

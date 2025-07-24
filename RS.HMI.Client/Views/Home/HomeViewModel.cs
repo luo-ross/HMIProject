@@ -153,7 +153,7 @@ namespace RS.HMI.Client.Views
                 if (test1List == null)
                 {
                     test1List = new ObservableCollection<NavigateModel>();
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 20; i++)
                     {
                         test1List.Add(new NavigateModel()
                         {
@@ -180,7 +180,7 @@ namespace RS.HMI.Client.Views
                 if (test2List == null)
                 {
                     test2List = new ObservableCollection<NavigateModel>();
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 20; i++)
                     {
                         test2List.Add(new NavigateModel()
                         {
@@ -205,7 +205,7 @@ namespace RS.HMI.Client.Views
                 if (test3List == null)
                 {
                     test3List = new ObservableCollection<NavigateModel>();
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 20; i++)
                     {
                         test3List.Add(new NavigateModel()
                         {
@@ -231,7 +231,7 @@ namespace RS.HMI.Client.Views
                 if (test4List == null)
                 {
                     test4List = new ObservableCollection<NavigateModel>();
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 20; i++)
                     {
                         test4List.Add(new NavigateModel()
                         {

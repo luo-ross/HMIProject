@@ -1,5 +1,5 @@
 ﻿using RS.Commons.Extend;
-using RS.Widgets.Commons;
+using RS.Widgets.Extensions;
 using ScottPlot.WPF;
 using System;
 using System.Collections.Generic;

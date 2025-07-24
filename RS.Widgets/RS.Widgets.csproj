@@ -6,6 +6,7 @@
 		<UseWPF>true</UseWPF>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,6 +18,10 @@
 
 	<ItemGroup>
 	  <None Remove="PixelShaders\BrightnessContrastEffect.ps" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Include="Commons\AnimatedTypeHelpercs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,7 +66,6 @@
 
 	<ItemGroup>
 	  <Folder Include="AutomationPeers\" />
-	  <Folder Include="EventArgs\" />
 	</ItemGroup>
 
 </Project>

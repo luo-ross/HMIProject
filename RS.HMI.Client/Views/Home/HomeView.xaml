@@ -18,6 +18,7 @@
     BorderCornerRadius="5"
     CaptionHeight="36"
     Icon="/Assets/login-bg.jpg"
+    IsAutoWindowPlacement="False"
     IsFitSystem="True"
     IsMaxsizedFullScreen="{Binding ElementName=CkIsFullScreen, Path=IsChecked}"
     IsShowIcon="False"
@@ -55,16 +56,26 @@
         </Grid>
     </rs:RSWindow.MidCaptionContent>
 
+
     <Grid>
-        <rs:RSNavigate
+
+        <rs:RSNotifyIcon Icon="/Assets/logo.ico">
+            <rs:RSNotifyIcon.ContextMenu>
+                <ContextMenu StaysOpen="False">
+                    <MenuItem Header="测试" />
+                </ContextMenu>
+            </rs:RSNotifyIcon.ContextMenu>
+        </rs:RSNotifyIcon>
+        <!--<rs:RSNavigate
             x:Name="PART_Navigate"
             IsAllowNavDragSort="True"
             ItemsSource="{Binding NavigateModelList}"
-            NavItemClickCommand="{Binding NavClickCommand}" />
+            NavItemClickCommand="{Binding NavClickCommand}" />-->
 
         <!--<TextBlock Text="{Binding DateTimeNow, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss fff}'}" />-->
 
-        <Grid Visibility="Collapsed">
+
+        <Grid Margin="0,50,0,0" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -72,7 +83,53 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <rs:RSNavList
+            <StackPanel rs:DragDropHelper.IsDropTarget="True">
+                <Button
+                    Width="200"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    rs:DragDropHelper.IsDragTarget="True"
+                    Content="Hello World" />
+
+                <ListBox
+                    Height="100"
+                    
+                    rs:DragDropHelper.IsDragTarget="True"
+                    rs:DragDropHelper.IsDropTarget="True"
+                    ItemsSource="{Binding Test1List}">
+                    <!--<ListBoxItem>
+                        <TextBlock Text="1231231" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <TextBlock Text="1231231" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <TextBlock Text="1231231" />
+                    </ListBoxItem>-->
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding NavName}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <TreeView rs:DragDropHelper.IsDragTarget="True" rs:DragDropHelper.IsDropTarget="True">
+                    <TreeViewItem Header="测试1" />
+                    <TreeViewItem Header="测试2" />
+                    <TreeViewItem Header="测试3" />
+                </TreeView>
+
+            </StackPanel>
+
+
+            <StackPanel
+                Grid.Column="1"
+                rs:DragDropHelper.IsDropTarget="True"
+                Background="AliceBlue" />
+
+
+            <!--<rs:RSNavList
                 Grid.Column="0"
                 IsAllowDragSort="True"
                 ItemsSource="{Binding Test1List}">
@@ -114,7 +171,7 @@
                         <TextBlock Text="{Binding NavName}" />
                     </DataTemplate>
                 </rs:RSNavList.ItemTemplate>
-            </rs:RSNavList>
+            </rs:RSNavList>-->
         </Grid>
 
     </Grid>

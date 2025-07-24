@@ -99,12 +99,12 @@ namespace RS.Annotation.Views.Areas
             if (string.IsNullOrEmpty(this.TxtShortCut.Text) || string.IsNullOrWhiteSpace(this.TxtShortCut.Text))
             {
                 var shortCutList = tagModelList.Select(t => t.ShortCut).ToList();
-                this.ViewModel.TagModelEdit.ShortCut = ShortCutUtil.GetShortCutKey(shortCutList);
+                this.ViewModel.TagModelEdit.ShortCut = ShortCutHelper.GetShortCutKey(shortCutList);
                 this.ViewModel.TagModelEdit.IsShortCutAuto = true;
             }
             else
             {
-                if (!ShortCutUtil.ShortCutList.Contains(this.TxtShortCut.Text))
+                if (!ShortCutHelper.ShortCutList.Contains(this.TxtShortCut.Text))
                 {
                     await this.HostView.MessageBox.ShowMessageAsync("快捷键不受支持！");
                     this.TxtShortCut.SelectAll();

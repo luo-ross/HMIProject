@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace RS.Widgets.Controls
+namespace RS.Widgets.Controls.Helpers
 {
     public static class IconHelper
     {

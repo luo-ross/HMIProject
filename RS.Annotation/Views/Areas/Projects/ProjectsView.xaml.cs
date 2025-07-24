@@ -50,7 +50,7 @@ namespace RS.Annotation.Views.Areas
             //在这里显示新增项目内容
             AddProjectView addProjectView = new AddProjectView(this);
             addProjectView.AddProjectCallBack += AddProjectView_AddProjectCallBack;
-            this.HomeView.ShowModal(addProjectView);
+            this.HomeView.Modal?.ShowModal(addProjectView);
         }
 
         private void AddProjectView_AddProjectCallBack(bool isConfirmed)
@@ -64,7 +64,7 @@ namespace RS.Annotation.Views.Areas
             {
 
             }
-            this.HomeView.HideModal();
+            this.HomeView.Modal?.CloseModal();
         }
 
         /// <summary>

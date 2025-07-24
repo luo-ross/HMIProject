@@ -10,8 +10,12 @@ namespace RS.Win32API.Structs
 {
 
     [StructLayout(LayoutKind.Sequential)]
-    public class WINDOWPLACEMENT
+    public struct WINDOWPLACEMENT
     {
+        public WINDOWPLACEMENT()
+        {
+            
+        }
         public int length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
         public int flags;
         public SW showCmd;

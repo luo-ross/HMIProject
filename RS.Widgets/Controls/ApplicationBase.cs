@@ -97,6 +97,11 @@ namespace RS.Widgets.Controls
         private CancellationTokenSource heartbeatCancellation = new CancellationTokenSource();
         #endregion
 
+        static ApplicationBase()
+        {
+            //GlobalHookHelper.Start();
+        }
+
         /// <summary>
         /// 默认构造方法
         /// </summary>
@@ -104,7 +109,15 @@ namespace RS.Widgets.Controls
         {
             ViewModel = new ApplicationViewModel();
             this.OnServerConnect += ApplicationBase_OnServerConnect;
+            this.Exit += ApplicationBase_Exit;
         }
+
+        private void ApplicationBase_Exit(object sender, ExitEventArgs e)
+        {
+            //GlobalHookHelper.Stop();
+        }
+
+
 
         /// <summary>
         /// 和服务端连接成功时触发事件

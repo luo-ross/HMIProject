@@ -21,7 +21,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using System.Reflection.Emit;
-using RS.Widgets.Controls;
+using RS.Widgets.Commons;
 
 namespace RS.Annotation.Views.Areas
 {
@@ -896,7 +896,7 @@ namespace RS.Annotation.Views.Areas
             var imgModelSelect = this.ViewModel.ImgModelSelect;
             if (File.Exists(imgModelSelect.ImgPath))
             {
-              RS.Widgets.Controls.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
+              RS.Widgets.Commons.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
             }
         }
 
@@ -922,7 +922,7 @@ namespace RS.Annotation.Views.Areas
             }
             RemoveImgView removeImgView = new RemoveImgView(this, confirmDes);
             removeImgView.OnReveImgCallBack += RemoveImgView_OnReveImgCallBack;
-            this.HomeView.ShowModal(removeImgView);
+            this.HomeView.Modal?.ShowModal(removeImgView);
         }
 
         private void RemoveImgView_OnReveImgCallBack(bool obj)

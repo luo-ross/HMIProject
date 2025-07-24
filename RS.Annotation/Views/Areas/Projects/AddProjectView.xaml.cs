@@ -157,7 +157,7 @@ namespace RS.Annotation.Views.Areas
                 projectModelAdd.CreateTime = dateTime;
                 projectModelAdd.UpdateTime = dateTime;
 
-                this.HomeView.HideModal();
+                this.HomeView.Modal?.CloseModal();
                 this.HomeView.ProjectView.SetFirstProjectModel(projectModelAdd);
                 return OperateResult.CreateSuccessResult();
             });

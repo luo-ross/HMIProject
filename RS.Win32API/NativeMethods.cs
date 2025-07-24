@@ -1,4 +1,6 @@
-﻿using RS.Win32API.Enums;
+﻿using Microsoft.Win32.SafeHandles;
+using RS.Win32API.Enums;
+using RS.Win32API.Helper;
 using RS.Win32API.Interfaces;
 using RS.Win32API.SafeHandles;
 using RS.Win32API.Standard;
@@ -17,7 +19,7 @@ using System.Text;
 
 namespace RS.Win32API
 {
-    public class NativeMethods
+    public partial class NativeMethods
     {
         public const int PLANES = 14;
         public const int BI_RGB = 0;
@@ -182,6 +184,155 @@ namespace RS.Win32API
         public const int MONITOR_DEFAULTTONEAREST = 0x00000002;
 
         public const int GWL_HINSTANCE = -6;
+
+
+        public const int VK_CANCEL = 0x03;
+        public const int VK_BACK = 0x08;
+        public const int VK_CLEAR = 0x0C;
+        public const int VK_RETURN = 0x0D;
+        public const int VK_PAUSE = 0x13;
+        public const int VK_CAPITAL = 0x14;
+        public const int VK_KANA = 0x15;
+        public const int VK_HANGEUL = 0x15;
+        public const int VK_HANGUL = 0x15;
+        public const int VK_JUNJA = 0x17;
+        public const int VK_FINAL = 0x18;
+        public const int VK_HANJA = 0x19;
+        public const int VK_KANJI = 0x19;
+        public const int VK_ESCAPE = 0x1B;
+        public const int VK_CONVERT = 0x1C;
+        public const int VK_NONCONVERT = 0x1D;
+        public const int VK_ACCEPT = 0x1E;
+        public const int VK_MODECHANGE = 0x1F;
+        public const int VK_SPACE = 0x20;
+        public const int VK_PRIOR = 0x21;
+        public const int VK_NEXT = 0x22;
+        public const int VK_END = 0x23;
+        public const int VK_HOME = 0x24;
+        public const int VK_LEFT = 0x25;
+        public const int VK_UP = 0x26;
+        public const int VK_RIGHT = 0x27;
+        public const int VK_DOWN = 0x28;
+        public const int VK_SELECT = 0x29;
+        public const int VK_PRINT = 0x2A;
+        public const int VK_EXECUTE = 0x2B;
+        public const int VK_SNAPSHOT = 0x2C;
+        public const int VK_INSERT = 0x2D;
+        public const int VK_DELETE = 0x2E;
+        public const int VK_HELP = 0x2F;
+        public const int VK_0 = 0x30;
+        public const int VK_1 = 0x31;
+        public const int VK_2 = 0x32;
+        public const int VK_3 = 0x33;
+        public const int VK_4 = 0x34;
+        public const int VK_5 = 0x35;
+        public const int VK_6 = 0x36;
+        public const int VK_7 = 0x37;
+        public const int VK_8 = 0x38;
+        public const int VK_9 = 0x39;
+        public const int VK_A = 0x41;
+        public const int VK_B = 0x42;
+        public const int VK_C = 0x43;
+        public const int VK_D = 0x44;
+        public const int VK_E = 0x45;
+        public const int VK_F = 0x46;
+        public const int VK_G = 0x47;
+        public const int VK_H = 0x48;
+        public const int VK_I = 0x49;
+        public const int VK_J = 0x4A;
+        public const int VK_K = 0x4B;
+        public const int VK_L = 0x4C;
+        public const int VK_M = 0x4D;
+        public const int VK_N = 0x4E;
+        public const int VK_O = 0x4F;
+        public const int VK_P = 0x50;
+        public const int VK_Q = 0x51;
+        public const int VK_R = 0x52;
+        public const int VK_S = 0x53;
+        public const int VK_T = 0x54;
+        public const int VK_U = 0x55;
+        public const int VK_V = 0x56;
+        public const int VK_W = 0x57;
+        public const int VK_X = 0x58;
+        public const int VK_Y = 0x59;
+        public const int VK_Z = 0x5A;
+        public const int VK_LWIN = 0x5B;
+        public const int VK_RWIN = 0x5C;
+        public const int VK_APPS = 0x5D;
+        public const int VK_POWER = 0x5E;
+        public const int VK_SLEEP = 0x5F;
+        public const int VK_NUMPAD0 = 0x60;
+        public const int VK_NUMPAD1 = 0x61;
+        public const int VK_NUMPAD2 = 0x62;
+        public const int VK_NUMPAD3 = 0x63;
+        public const int VK_NUMPAD4 = 0x64;
+        public const int VK_NUMPAD5 = 0x65;
+        public const int VK_NUMPAD6 = 0x66;
+        public const int VK_NUMPAD7 = 0x67;
+        public const int VK_NUMPAD8 = 0x68;
+        public const int VK_NUMPAD9 = 0x69;
+        public const int VK_MULTIPLY = 0x6A;
+        public const int VK_ADD = 0x6B;
+        public const int VK_SEPARATOR = 0x6C;
+        public const int VK_SUBTRACT = 0x6D;
+        public const int VK_DECIMAL = 0x6E;
+        public const int VK_DIVIDE = 0x6F;
+        public const int VK_F1 = 0x70;
+        public const int VK_F2 = 0x71;
+        public const int VK_F3 = 0x72;
+        public const int VK_F4 = 0x73;
+        public const int VK_F5 = 0x74;
+        public const int VK_F6 = 0x75;
+        public const int VK_F7 = 0x76;
+        public const int VK_F8 = 0x77;
+        public const int VK_F9 = 0x78;
+        public const int VK_F10 = 0x79;
+        public const int VK_F11 = 0x7A;
+        public const int VK_F12 = 0x7B;
+        public const int VK_F13 = 0x7C;
+        public const int VK_F14 = 0x7D;
+        public const int VK_F15 = 0x7E;
+        public const int VK_F16 = 0x7F;
+        public const int VK_F17 = 0x80;
+        public const int VK_F18 = 0x81;
+        public const int VK_F19 = 0x82;
+        public const int VK_F20 = 0x83;
+        public const int VK_F21 = 0x84;
+        public const int VK_F22 = 0x85;
+        public const int VK_F23 = 0x86;
+        public const int VK_F24 = 0x87;
+        public const int VK_NUMLOCK = 0x90;
+        public const int VK_SCROLL = 0x91;
+        public const int VK_RSHIFT = 0xA1;
+        public const int VK_BROWSER_BACK = 0xA6;
+        public const int VK_BROWSER_FORWARD = 0xA7;
+        public const int VK_BROWSER_REFRESH = 0xA8;
+        public const int VK_BROWSER_STOP = 0xA9;
+        public const int VK_BROWSER_SEARCH = 0xAA;
+        public const int VK_BROWSER_FAVORITES = 0xAB;
+        public const int VK_BROWSER_HOME = 0xAC;
+        public const int VK_VOLUME_MUTE = 0xAD;
+        public const int VK_VOLUME_DOWN = 0xAE;
+        public const int VK_VOLUME_UP = 0xAF;
+        public const int VK_MEDIA_NEXT_TRACK = 0xB0;
+        public const int VK_MEDIA_PREV_TRACK = 0xB1;
+        public const int VK_MEDIA_STOP = 0xB2;
+        public const int VK_MEDIA_PLAY_PAUSE = 0xB3;
+        public const int VK_LAUNCH_MAIL = 0xB4;
+        public const int VK_LAUNCH_MEDIA_SELECT = 0xB5;
+        public const int VK_LAUNCH_APP1 = 0xB6;
+        public const int VK_LAUNCH_APP2 = 0xB7;
+        public const int VK_PROCESSKEY = 0xE5;
+        public const int VK_PACKET = 0xE7;
+        public const int VK_ATTN = 0xF6;
+        public const int VK_CRSEL = 0xF7;
+        public const int VK_EXSEL = 0xF8;
+        public const int VK_EREOF = 0xF9;
+        public const int VK_PLAY = 0xFA;
+        public const int VK_ZOOM = 0xFB;
+        public const int VK_NONAME = 0xFC;
+        public const int VK_PA1 = 0xFD;
+        public const int VK_OEM_CLEAR = 0xFE;
 
 
         // Window
@@ -454,8 +605,10 @@ namespace RS.Win32API
        WS_MINIMIZEBOX = 0x00020000,
        WS_MAXIMIZEBOX = 0x00010000,
        WS_EX_DLGMODALFRAME = 0x00000001,
+       WS_EX_TRANSPARENT = 0x00000020,
        WS_EX_MDICHILD = 0x00000040,
        WS_EX_TOOLWINDOW = 0x00000080,
+       WS_EX_WINDOWEDGE = 0x00000100,
        WS_EX_CLIENTEDGE = 0x00000200,
        WS_EX_CONTEXTHELP = 0x00000400,
        WS_EX_RIGHT = 0x00001000,
@@ -469,7 +622,9 @@ namespace RS.Win32API
        WS_EX_TOPMOST = 0x00000008,
        WS_EX_LAYOUTRTL = 0x00400000,
        WS_EX_NOINHERITLAYOUT = 0x00100000,
+       WS_EX_COMPOSITED = 0x02000000,
        WPF_SETMINPOSITION = 0x0001,
+       WPF_RESTORETOMAXIMIZED = 0x0002,
        WM_CHOOSEFONT_GETLOGFONT = (0x0400 + 1);
 
 
@@ -1152,6 +1307,12 @@ namespace RS.Win32API
                         LR_COPYFROMRESOURCE = 0x4000,
                         LR_SHARED = unchecked((int)0x8000);
 
+        public const uint
+           INTERNET_COOKIE_THIRD_PARTY = 0x10,
+           INTERNET_COOKIE_EVALUATE_P3P = 0x40,
+           INTERNET_COOKIE_IS_RESTRICTED = 0x200,
+           COOKIE_STATE_REJECT = 5;
+
         public const int ERROR_FILE_NOT_FOUND = 2;
         public const int ERROR_PATH_NOT_FOUND = 3;
         public const int ERROR_ACCESS_DENIED = 5;
@@ -1181,9 +1342,67 @@ namespace RS.Win32API
         public const UInt32 START_PAGE_GENERAL = 0xFFFFFFFF;
 
 
+
+        public const int IDS_OPEN_IME = 700;
+        public const int IDS_CLOSE_IME = 701;
+        public const int IDS_OPEN_SOFTKEYBOARD = 702;
+        public const int IDS_CLOSE_SOFTKEYBOARD = 703;
+        public const int IDS_RESELECT_CHINESE = 705;
+        public const int IDS_SHUTDOWN = 706;
+        public const int IDS_POWER_OFF = 707;
+        public const int IDS_RESTART = 708;
+        public const int IDS_UNKNOWN = 709;
+        public const int IDS_WINDOWS = 710;
+        public const int IDS_REMOTE_SHUTDOWN_WARNING = 711;
+        public const int IDS_OTHER_USERS_SHUTDOWN_WARNING = 712;
+        public const int IDS_OTHER_USERS_SHUTDOWN_WARNING2 = 713;
+        public const int IDS_OTHER_USERS_RESTART_WARNING = 714;
+        public const int IDS_SAFE_MODE = 719;
+        public const int IDS_NOT_RESPONDING = 750;
+        public const int IDS_NETWORK_DEVICES_SHUTDOWN_WARNING = 751;
+        public const int IDS_OTHER_DEVICES_SHUTDOWN_WARNING = 752;
+        public const int IDS_NETWORK_DEVICES_SHUTDOWN_WARNING2 = 753;
+        public const int IDS_OTHER_DEVICES_SHUTDOWN_WARNING2 = 754;
+        public const int IDS_NETWORK_DEVICES_RESTART_WARNING = 755;
+        public const int IDS_OTHER_DEVICES_RESTART_WARNING = 756;
+        public const int IDS_OK = 800;
+        public const int IDS_CANCEL = 801;
+        public const int IDS_ABORT = 802;
+        public const int IDS_RETRY = 803;
+        public const int IDS_IGNORE = 804;
+        public const int IDS_YES = 805;
+        public const int IDS_NO = 806;
+        public const int IDS_CLOSE_BTN = 807;
+        public const int IDS_HELP1 = 808;
+        public const int IDS_RETRY2 = 809;
+        public const int IDS_CONTINUE = 810;
+        public const int IDS_MINIMIZE = 900;
+        public const int IDS_MAXIMIZE = 901;
+        public const int IDS_RESTORE_UP = 902;
+        public const int IDS_RESTORE_DOWN = 903;
+        public const int IDS_HELP = 904;
+        public const int IDS_CLOSE = 905;
+        public const int IDS_IMAGE = 1001;
+        public const int IDS_TEXT = 1002;
+        public const int IDS_AUDIO = 1003;
+        public const int IDS_OTHER = 1004;
+
+       
+
+        /// <summary>
+        /// 鼠标上大拇指位置处额外的2个键 XBUTTON1 代表前进 
+        /// </summary>
+        public const int XBUTTON1 = 0x0001;
+        /// <summary>
+        ///  鼠标上大拇指位置处额外的2个键 XBUTTON2 代表后退 
+        /// </summary>
+        public const int XBUTTON2 = 0x0002;
+
+
         public const int S_OK = 0x00000000;
         public const int S_FALSE = 0x00000001;
 
+     
 
 
         //GetDeviceCaps()
@@ -1196,6 +1415,11 @@ namespace RS.Win32API
         public const int TME_CANCEL = (unchecked((int)0x80000000));
 
         public const int ABM_GETTASKBARPOS = 0x00000005;
+
+        public const int PROCESS_VM_READ = 0x0010;
+
+        public const int PROCESS_QUERY_INFORMATION = 0x0400;
+
 
         public static HandleRef HWND_TOP = new HandleRef(null, (IntPtr)0);
 
@@ -1226,6 +1450,7 @@ namespace RS.Win32API
         /// <summary>Delegate declaration that matches managed WndProc signatures.</summary>
         public delegate IntPtr MessageHandler(WM uMsg, IntPtr wParam, IntPtr lParam, out bool handled);
 
+        public delegate IntPtr HookProc(int code, IntPtr wParam, IntPtr lParam);
 
 
 
@@ -1300,7 +1525,7 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///     Critical: This code elevates to unmanaged code permission
         /// </SecurityNote>
-        [SecurityCritical, SuppressUnmanagedCodeSecurity]
+
         [DllImport(ExternDll.Kernel32, EntryPoint = "GetModuleFileName", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int IntGetModuleFileName(HandleRef hModule, StringBuilder buffer, int length);
 
@@ -1343,7 +1568,7 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///     Critical: This elevates to unmanaged code permission
         /// </SecurityNote>
-        [SecurityCritical, SuppressUnmanagedCodeSecurity]
+
         [DllImport(ExternDll.Shell32, CharSet = System.Runtime.InteropServices.CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         public static extern int ExtractIconEx(
                                         string szExeFileName,
@@ -1356,7 +1581,7 @@ namespace RS.Win32API
         /// <SecurityNote>
         /// Critical as suppressing UnmanagedCodeSecurity
         /// </SecurityNote>
-        [SecurityCritical, SuppressUnmanagedCodeSecurity]
+
         [DllImport(ExternDll.Gdi32, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "CreateDIBSection")]
         public static extern BitmapHandle publicCreateDIBSection(HandleRef hdc, ref BITMAPINFO bitmapInfo, int iUsage, ref IntPtr ppvBits, SafeFileMappingHandle hSection, int dwOffset);
         /// <SecurityNote>
@@ -1476,7 +1701,7 @@ namespace RS.Win32API
         /// <SecurityNote>
         /// Critical as suppressing UnmanagedCodeSecurity
         /// </SecurityNote>
-        [SecurityCritical, SuppressUnmanagedCodeSecurity]
+
         [DllImport(ExternDll.Gdi32, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "CreateBitmap")]
         public static extern BitmapHandle publicCreateBitmap(int width, int height, int planes, int bitsPerPixel, byte[] lpvBits);
         /// <SecurityNote>
@@ -1501,7 +1726,7 @@ namespace RS.Win32API
         /// <SecurityNote>
         /// Critical as suppressing UnmanagedCodeSecurity
         /// </SecurityNote>
-        [SecurityCritical, SuppressUnmanagedCodeSecurity]
+
         [DllImport(ExternDll.User32, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "CreateIconIndirect")]
         public static extern IconHandle publicCreateIconIndirect([In, MarshalAs(UnmanagedType.LPStruct)] ICONINFO iconInfo);
         /// <SecurityNote>
@@ -1572,7 +1797,7 @@ namespace RS.Win32API
         ///    Critical: This code calls into unmanaged code which elevates
         ///    TreatAsSafe: This method is ok to give out
         /// </SecurityNote>
-        [SecurityCritical, SecurityTreatAsSafe]
+        
         public static void GetMonitorInfo(HandleRef hmonitor, [In, Out] MONITORINFOEX info)
         {
             if (IntGetMonitorInfo(hmonitor, info) == false)
@@ -1590,7 +1815,7 @@ namespace RS.Win32API
         ///    Critical: This code calls into unmanaged code which elevates
         ///    TreatAsSafe: This method is ok to give out
         /// </SecurityNote>
-        [SecurityCritical, SecurityTreatAsSafe]
+        
         public static void GetClientRect(HandleRef hWnd, [In, Out] ref RECT rect)
         {
             if (!IntGetClientRect(hWnd, ref rect))
@@ -1608,7 +1833,7 @@ namespace RS.Win32API
         ///    Critical: This code calls into unmanaged code which elevates
         ///    TreatAsSafe: This method is ok to give out
         /// </SecurityNote>
-        [SecurityCritical, SecurityTreatAsSafe]
+        
         public static void GetWindowRect(HandleRef hWnd, [In, Out] ref RECT rect)
         {
             if (!IntGetWindowRect(hWnd, ref rect))
@@ -1667,7 +1892,6 @@ namespace RS.Win32API
         public static extern IntPtr PostMessage(HandleRef hwnd, int msg, int wparam, int lparam);
 
 
-        [ReflectionPermission(SecurityAction.Assert, Unrestricted = true)]
         public static object PtrToStructure(IntPtr lparam, Type cls)
         {
             return Marshal.PtrToStructure(lparam, cls);
@@ -1690,6 +1914,7 @@ namespace RS.Win32API
             }
             return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
         }
+
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, EntryPoint = "SetWindowLong")]
         [ResourceExposure(ResourceScope.None)]
@@ -1878,6 +2103,8 @@ namespace RS.Win32API
         [ResourceExposure(ResourceScope.None)]
         public static extern bool GetCursorPos([In, Out] POINT pt);
 
+       
+
 
         [DllImport(ExternDll.User32, ExactSpelling = true, CharSet = CharSet.Auto)]
         [ResourceExposure(ResourceScope.None)]
@@ -1926,7 +2153,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32)]
         public static extern int SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
-        
+
 
         public static IntPtr GetWindowStyle(HandleRef hWnd, bool exStyle)
         {
@@ -1968,7 +2195,7 @@ namespace RS.Win32API
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
         public static extern IntPtr GetWindow(HandleRef hWnd, int uCmd);
 
-    
+
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr GetForegroundWindow();
@@ -2205,11 +2432,7 @@ namespace RS.Win32API
 
         public static extern bool BeginPanningFeedback(HandleRef hwnd);
 
-        [DllImport(ExternDll.Uxtheme, CharSet = CharSet.Unicode)]
-        public static extern bool UpdatePanningFeedback(HandleRef hwnd, int lTotalOverpanOffsetX, int lTotalOverpanOffsetY, bool fInInertia);
 
-        [DllImport(ExternDll.Uxtheme, CharSet = CharSet.Unicode)]
-        public static extern bool EndPanningFeedback(HandleRef hwnd, bool fAnimateBack);
 
         [DllImport(ExternDll.User32)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -2250,7 +2473,7 @@ namespace RS.Win32API
             }
         }
 
-        private static int GetEmbeddedNullStringLengthAnsi(String s)
+        public static int GetEmbeddedNullStringLengthAnsi(String s)
         {
             int n = s.IndexOf('\0');
             if (n > -1)
@@ -2296,8 +2519,8 @@ namespace RS.Win32API
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr GetDesktopWindow();
 
-     
-      
+
+
 
         [DllImport(ExternDll.DwmAPI, BestFitMapping = false)]
         public static extern int DwmIsCompositionEnabled(out int enabled);
@@ -2310,41 +2533,11 @@ namespace RS.Win32API
         public static extern bool IntChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, [Optional][In][Out] ref CHANGEFILTERSTRUCT pChangeFilterStruct);
 
         [DllImport(ExternDll.User32, EntryPoint = "ChangeWindowMessageFilter", SetLastError = true)]
-        
+
 
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IntChangeWindowMessageFilter(WM message, MSGFLT dwFlag);
+        public static extern bool IntChangeWindowMessageFilter(WM message, MSGFLT dwFlag);
 
-
-        public static HRESULT ChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, out MSGFLTINFO extStatus)
-        {
-            extStatus = MSGFLTINFO.NONE;
-            if (!Utility.IsOSVistaOrNewer)
-            {
-                return HRESULT.S_FALSE;
-            }
-
-            if (!Utility.IsOSWindows7OrNewer)
-            {
-                if (!IntChangeWindowMessageFilter(message, action))
-                {
-                    return (HRESULT)Win32Error.GetLastError();
-                }
-
-                return HRESULT.S_OK;
-            }
-
-            CHANGEFILTERSTRUCT cHANGEFILTERSTRUCT = default(CHANGEFILTERSTRUCT);
-            cHANGEFILTERSTRUCT.cbSize = (uint)Marshal.SizeOf(typeof(CHANGEFILTERSTRUCT));
-            CHANGEFILTERSTRUCT pChangeFilterStruct = cHANGEFILTERSTRUCT;
-            if (!IntChangeWindowMessageFilterEx(hwnd, message, action, ref pChangeFilterStruct))
-            {
-                return (HRESULT)Win32Error.GetLastError();
-            }
-
-            extStatus = pChangeFilterStruct.ExtStatus;
-            return HRESULT.S_OK;
-        }
 
 
         [DllImport(ExternDll.User32, BestFitMapping = false, CharSet = CharSet.Auto, EntryPoint = "SetWindowText", SetLastError = true)]
@@ -2361,7 +2554,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool IsWindowVisible(HandleRef hWnd);
-      
+
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool IsWindowEnabled(HandleRef hWnd);
@@ -2394,6 +2587,9 @@ namespace RS.Win32API
                 throw new Win32Exception();
             }
         }
+
+     
+      
 
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, EntryPoint = "PostMessage", SetLastError = true)]
@@ -2507,29 +2703,29 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32)]
-        
+
         public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
         [DllImport(ExternDll.User32)]
         public static extern SafeDC GetDC(IntPtr hwnd);
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Unicode)]
-        
+
         public static extern SafeDC CreateDC([MarshalAs(UnmanagedType.LPWStr)] string lpszDriver, [MarshalAs(UnmanagedType.LPWStr)] string lpszDevice, IntPtr lpszOutput, IntPtr lpInitData);
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Unicode, SetLastError = true)]
-        
+
         public static extern SafeDC CreateCompatibleDC(IntPtr hdc);
 
         [DllImport(ExternDll.User32)]
-        
+
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteDC(IntPtr hdc);
 
 
         [DllImport(ExternDll.User32, EntryPoint = "SetWindowPos", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int uFlags);
+        public static extern bool _SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int uFlags);
 
         public static bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int uFlags)
         {
@@ -2544,7 +2740,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "GetWindowRect", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _GetWindowRect(IntPtr hWnd, out RECT lpRect);
+        public static extern bool _GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         public static RECT GetWindowRect(IntPtr hwnd)
         {
@@ -2559,7 +2755,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowPlacement(IntPtr hwnd, WINDOWPLACEMENT lpwndpl);
+        public static extern bool GetWindowPlacement(IntPtr hwnd, WINDOWPLACEMENT lpwndpl);
 
         public static WINDOWPLACEMENT GetWindowPlacement(IntPtr hwnd)
         {
@@ -2573,13 +2769,13 @@ namespace RS.Win32API
         }
 
 
-     
+
 
         [DllImport(ExternDll.User32, EntryPoint = "AdjustWindowRectEx", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool _AdjustWindowRectEx(ref RECT lpRect, IntPtr dwStyle, [MarshalAs(UnmanagedType.Bool)] bool bMenu, IntPtr dwExStyle);
 
-        
+
         public static RECT AdjustWindowRectEx(RECT lpRect, IntPtr dwStyle, bool bMenu, IntPtr dwExStyle)
         {
             if (!_AdjustWindowRectEx(ref lpRect, dwStyle, bMenu, dwExStyle))
@@ -2590,7 +2786,7 @@ namespace RS.Win32API
             return lpRect;
         }
 
-       
+
 
 
         /// <SecurityNote>
@@ -2608,7 +2804,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "AdjustWindowRectEx", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _AdjustWindowRectEx(ref RECT lpRect, WS dwStyle, [MarshalAs(UnmanagedType.Bool)] bool bMenu, WS_EX dwExStyle);
+        public static extern bool _AdjustWindowRectEx(ref RECT lpRect, WS dwStyle, [MarshalAs(UnmanagedType.Bool)] bool bMenu, WS_EX dwExStyle);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -2632,7 +2828,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "ChangeWindowMessageFilter", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _ChangeWindowMessageFilter(WM message, MSGFLT dwFlag);
+        public static extern bool _ChangeWindowMessageFilter(WM message, MSGFLT dwFlag);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -2641,7 +2837,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "ChangeWindowMessageFilterEx", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _ChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, [In, Out, Optional] ref CHANGEFILTERSTRUCT pChangeFilterStruct);
+        public static extern bool _ChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, [In, Out, Optional] ref CHANGEFILTERSTRUCT pChangeFilterStruct);
 
 
 
@@ -2657,65 +2853,26 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Shell32, EntryPoint = "CommandLineToArgvW", CharSet = CharSet.Unicode)]
-        private static extern IntPtr _CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string cmdLine, out int numArgs);
-
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
+        public static extern IntPtr _CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string cmdLine, out int numArgs);
 
 
-        public static string[] CommandLineToArgvW(string cmdLine)
-        {
-            IntPtr argv = IntPtr.Zero;
-            try
-            {
-                int numArgs = 0;
-
-                argv = _CommandLineToArgvW(cmdLine, out numArgs);
-                if (argv == IntPtr.Zero)
-                {
-                    throw new Win32Exception();
-                }
-                var result = new string[numArgs];
-
-                for (int i = 0; i < numArgs; i++)
-                {
-                    IntPtr currArg = Marshal.ReadIntPtr(argv, i * Marshal.SizeOf(typeof(IntPtr)));
-                    result[i] = Marshal.PtrToStringUni(currArg);
-                }
-
-                return result;
-            }
-            finally
-            {
-
-                IntPtr p = _LocalFree(argv);
-                // Otherwise LocalFree failed.
-                Assert.AreEqual(IntPtr.Zero, p);
-            }
-        }
+     
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Gdi32, EntryPoint = "CreateDIBSection", SetLastError = true)]
-        private static extern SafeHBITMAP _CreateDIBSection(SafeDC hdc, [In] ref BITMAPINFO bitmapInfo, int iUsage, [Out] out IntPtr ppvBits, IntPtr hSection, int dwOffset);
+        public static extern SafeHBITMAP _CreateDIBSection(SafeDC hdc, [In] ref BITMAPINFO bitmapInfo, int iUsage, [Out] out IntPtr ppvBits, IntPtr hSection, int dwOffset);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Gdi32, EntryPoint = "CreateDIBSection", SetLastError = true)]
-        private static extern SafeHBITMAP _CreateDIBSectionIntPtr(IntPtr hdc, [In] ref BITMAPINFO bitmapInfo, int iUsage, [Out] out IntPtr ppvBits, IntPtr hSection, int dwOffset);
+        public static extern SafeHBITMAP _CreateDIBSectionIntPtr(IntPtr hdc, [In] ref BITMAPINFO bitmapInfo, int iUsage, [Out] out IntPtr ppvBits, IntPtr hSection, int dwOffset);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static SafeHBITMAP CreateDIBSection(SafeDC hdc, ref BITMAPINFO bitmapInfo, out IntPtr ppvBits, IntPtr hSection, int dwOffset)
         {
             const int DIB_RGB_COLORS = 0;
@@ -2743,7 +2900,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Gdi32, EntryPoint = "CreateRoundRectRgn", SetLastError = true)]
-        private static extern IntPtr _CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
+        public static extern IntPtr _CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -2766,7 +2923,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Gdi32, EntryPoint = "CreateRectRgn", SetLastError = true)]
-        private static extern IntPtr _CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+        public static extern IntPtr _CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -2789,7 +2946,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Gdi32, EntryPoint = "CreateRectRgnIndirect", SetLastError = true)]
-        private static extern IntPtr _CreateRectRgnIndirect([In] ref RECT lprc);
+        public static extern IntPtr _CreateRectRgnIndirect([In] ref RECT lprc);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -2820,7 +2977,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32, SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "CreateWindowExW")]
-        private static extern IntPtr _CreateWindowEx(
+        public static extern IntPtr _CreateWindowEx(
             WS_EX dwExStyle,
             [MarshalAs(UnmanagedType.LPWStr)] string lpClassName,
             [MarshalAs(UnmanagedType.LPWStr)] string lpWindowName,
@@ -2903,7 +3060,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.DwmAPI, EntryPoint = "DwmIsCompositionEnabled", PreserveSig = false)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _DwmIsCompositionEnabled();
+        public static extern bool _DwmIsCompositionEnabled();
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -2911,53 +3068,15 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.DwmAPI, EntryPoint = "DwmGetColorizationColor", PreserveSig = true)]
-        private static extern HRESULT _DwmGetColorizationColor(out uint pcrColorization, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfOpaqueBlend);
+        public static extern HRESULT _DwmGetColorizationColor(out uint pcrColorization, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfOpaqueBlend);
 
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
+       
 
-        public static bool DwmGetColorizationColor(out uint pcrColorization, out bool pfOpaqueBlend)
-        {
-            // Make this call safe to make on downlevel OSes...
-            if (Utility.IsOSVistaOrNewer && IsThemeActive())
-            {
-                HRESULT hr = _DwmGetColorizationColor(out pcrColorization, out pfOpaqueBlend);
-                if (hr.Succeeded)
-                {
-                    return true;
-                }
-            }
-
-            // Default values.  If for some reason the native DWM API fails it's never enough of a reason
-            // to bring down the app.  Empirically it still sometimes returns errors even when the theme service is on.
-            // We'll still use the boolean return value to allow the caller to respond if they care.
-            pcrColorization = 0xFF000000;
-            pfOpaqueBlend = true;
-
-            return false;
-        }
-
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-
-
-        public static bool DwmIsCompositionEnabled()
-        {
-            // Make this call safe to make on downlevel OSes...
-            if (!Utility.IsOSVistaOrNewer)
-            {
-                return false;
-            }
-            return _DwmIsCompositionEnabled();
-        }
+       
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.DwmAPI)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DwmDefWindowProc(IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam, out IntPtr plResult);
@@ -2966,47 +3085,19 @@ namespace RS.Win32API
         ///   Critical : P-Invokes
         /// </SecurityNote>
 
-
         [DllImport(ExternDll.DwmAPI, EntryPoint = "DwmSetWindowAttribute")]
-        private static extern void _DwmSetWindowAttribute(IntPtr hwnd, DWMWA dwAttribute, ref int pvAttribute, int cbAttribute);
+        public static extern void _DwmSetWindowAttribute(IntPtr hwnd, DWMWA dwAttribute, ref int pvAttribute, int cbAttribute);
 
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-
-
-        public static void DwmSetWindowAttributeFlip3DPolicy(IntPtr hwnd, DWMFLIP3D flip3dPolicy)
-        {
-            Assert.IsTrue(Utility.IsOSVistaOrNewer);
-            var dwPolicy = (int)flip3dPolicy;
-            _DwmSetWindowAttribute(hwnd, DWMWA.FLIP3D_POLICY, ref dwPolicy, sizeof(int));
-        }
-
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-
-
-        public static void DwmSetWindowAttributeDisallowPeek(IntPtr hwnd, bool disallowPeek)
-        {
-            Assert.IsTrue(Utility.IsOSWindows7OrNewer);
-            int dwDisallow = (int)(disallowPeek ? Win32Value.TRUE : Win32Value.FALSE);
-            _DwmSetWindowAttribute(hwnd, DWMWA.DISALLOW_PEEK, ref dwDisallow, sizeof(int));
-        }
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, EntryPoint = "EnableMenuItem")]
-        private static extern int _EnableMenuItem(IntPtr hMenu, SC uIDEnableItem, MF uEnable);
+        public static extern int _EnableMenuItem(IntPtr hMenu, SC uIDEnableItem, MF uEnable);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static MF EnableMenuItem(IntPtr hMenu, SC uIDEnableItem, MF uEnable)
         {
             // Returns the previous state of the menu item, or -1 if the menu item does not exist.
@@ -3017,17 +3108,13 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, EntryPoint = "RemoveMenu", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _RemoveMenu(IntPtr hMenu, uint uPosition, uint uFlags);
+        public static extern bool _RemoveMenu(IntPtr hMenu, uint uPosition, uint uFlags);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static void RemoveMenu(IntPtr hMenu, SC uPosition, MF uFlags)
         {
             if (!_RemoveMenu(hMenu, (uint)uPosition, (uint)uFlags))
@@ -3039,17 +3126,13 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, EntryPoint = "DrawMenuBar", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _DrawMenuBar(IntPtr hWnd);
+        public static extern bool _DrawMenuBar(IntPtr hWnd);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static void DrawMenuBar(IntPtr hWnd)
         {
             if (!_DrawMenuBar(hWnd))
@@ -3086,7 +3169,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "GetClientRect", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _GetClientRect(IntPtr hwnd, [Out] out RECT lpRect);
+        public static extern bool _GetClientRect(IntPtr hwnd, [Out] out RECT lpRect);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3107,8 +3190,8 @@ namespace RS.Win32API
         ///   Critical : P-Invokes
         /// </SecurityNote>
 
-        [DllImport("uxtheme.dll", EntryPoint = "GetCurrentThemeName", CharSet = CharSet.Unicode)]
-        private static extern HRESULT _GetCurrentThemeName(
+        [DllImport(ExternDll.Uxtheme, EntryPoint = "GetCurrentThemeName", CharSet = CharSet.Unicode)]
+        public static extern HRESULT _GetCurrentThemeName(
             StringBuilder pszThemeFileName,
             int dwMaxNameChars,
             StringBuilder pszColorBuff,
@@ -3142,7 +3225,7 @@ namespace RS.Win32API
         ///   Critical : P-Invokes
         /// </SecurityNote>
 
-        [DllImport("uxtheme.dll")]
+        [DllImport(ExternDll.Uxtheme)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsThemeActive();
 
@@ -3160,7 +3243,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Kernel32, EntryPoint = "GetModuleFileName", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern int _GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize);
+        public static extern int _GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3219,7 +3302,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "GetMonitorInfo", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _GetMonitorInfo(IntPtr hMonitor, [In, Out] MONITORINFO lpmi);
+        public static extern bool _GetMonitorInfo(IntPtr hMonitor, [In, Out] MONITORINFO lpmi);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3241,7 +3324,7 @@ namespace RS.Win32API
         /// </SecurityNote>
 
         [DllImport(ExternDll.Gdi32, EntryPoint = "GetStockObject", SetLastError = true)]
-        private static extern IntPtr _GetStockObject(StockObject fnObject);
+        public static extern IntPtr _GetStockObject(StockObject fnObject);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3265,7 +3348,7 @@ namespace RS.Win32API
         [DllImport(ExternDll.User32)]
         public static extern IntPtr GetSystemMenu(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool bRevert);
 
-     
+
 
         /// <summary>
         /// Sets attributes to control how visual styles are applied to a specified window.
@@ -3365,7 +3448,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Kernel32, EntryPoint = "LocalFree", SetLastError = true)]
-        private static extern IntPtr _LocalFree(IntPtr hMem);
+        public static extern IntPtr _LocalFree(IntPtr hMem);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3382,7 +3465,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "PostMessage", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
+        public static extern bool _PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3403,7 +3486,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32, SetLastError = true, EntryPoint = "RegisterClassExW")]
-        private static extern short _RegisterClassEx([In] ref WNDCLASSEX lpwcx);
+        public static extern short _RegisterClassEx([In] ref WNDCLASSEX lpwcx);
 
         // Note that this will throw HRESULT_FROM_WIN32(ERROR_CLASS_ALREADY_EXISTS) on duplicate registration.
         // If needed, consider adding a Try* version of this function that returns the error code since that
@@ -3430,7 +3513,7 @@ namespace RS.Win32API
         ///   Critical : P-Invokes
         /// </SecurityNote>
         [DllImport(ExternDll.User32, EntryPoint = "SetActiveWindow", SetLastError = true)]
-        private static extern IntPtr _SetActiveWindow(IntPtr hWnd);
+        public static extern IntPtr _SetActiveWindow(IntPtr hWnd);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3471,7 +3554,7 @@ namespace RS.Win32API
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist")]
 
         [DllImport(ExternDll.User32, EntryPoint = "SetClassLong", SetLastError = true)]
-        private static extern int SetClassLongPtr32(IntPtr hWnd, GCLP nIndex, int dwNewLong);
+        public static extern int SetClassLongPtr32(IntPtr hWnd, GCLP nIndex, int dwNewLong);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3480,7 +3563,7 @@ namespace RS.Win32API
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist")]
 
         [DllImport(ExternDll.User32, EntryPoint = "SetClassLongPtr", SetLastError = true)]
-        private static extern IntPtr SetClassLongPtr64(IntPtr hWnd, GCLP nIndex, IntPtr dwNewLong);
+        public static extern IntPtr SetClassLongPtr64(IntPtr hWnd, GCLP nIndex, IntPtr dwNewLong);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3497,7 +3580,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.Kernel32, SetLastError = true, EntryPoint = "SetProcessWorkingSetSize")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMinimiumWorkingSetSize, IntPtr dwMaximumWorkingSetSize);
+        public static extern bool _SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMinimiumWorkingSetSize, IntPtr dwMaximumWorkingSetSize);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3518,7 +3601,7 @@ namespace RS.Win32API
         /// </SecurityNote>
 
 
-   
+
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3526,7 +3609,7 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.User32, EntryPoint = "SetWindowRgn", SetLastError = true)]
-        private static extern int _SetWindowRgn(IntPtr hWnd, IntPtr hRgn, [MarshalAs(UnmanagedType.Bool)] bool bRedraw);
+        public static extern int _SetWindowRgn(IntPtr hWnd, IntPtr hRgn, [MarshalAs(UnmanagedType.Bool)] bool bRedraw);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3549,7 +3632,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "SetWindowPos", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SWP uFlags);
+        public static extern bool _SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SWP uFlags);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3590,7 +3673,7 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "SystemParametersInfoW", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _SystemParametersInfo_String(SPI uiAction, int uiParam, [MarshalAs(UnmanagedType.LPWStr)] string pvParam, SPIF fWinIni);
+        public static extern bool _SystemParametersInfo_String(SPI uiAction, int uiParam, [MarshalAs(UnmanagedType.LPWStr)] string pvParam, SPIF fWinIni);
 
         /// <summary>Overload of SystemParametersInfo for getting and setting NONCLIENTMETRICS.</summary>
         /// <SecurityNote>
@@ -3598,7 +3681,7 @@ namespace RS.Win32API
         /// </SecurityNote>
         [DllImport(ExternDll.User32, EntryPoint = "SystemParametersInfoW", SetLastError = true, CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _SystemParametersInfo_NONCLIENTMETRICS(SPI uiAction, int uiParam, [In, Out] ref NONCLIENTMETRICS pvParam, SPIF fWinIni);
+        public static extern bool _SystemParametersInfo_NONCLIENTMETRICS(SPI uiAction, int uiParam, [In, Out] ref NONCLIENTMETRICS pvParam, SPIF fWinIni);
 
         /// <summary>Overload of SystemParametersInfo for getting and setting HIGHCONTRAST.</summary>
         /// <SecurityNote>
@@ -3606,7 +3689,7 @@ namespace RS.Win32API
         /// </SecurityNote>
         [DllImport(ExternDll.User32, EntryPoint = "SystemParametersInfoW", SetLastError = true, CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _SystemParametersInfo_HIGHCONTRAST(SPI uiAction, int uiParam, [In, Out] ref HIGHCONTRAST pvParam, SPIF fWinIni);
+        public static extern bool _SystemParametersInfo_HIGHCONTRAST(SPI uiAction, int uiParam, [In, Out] ref HIGHCONTRAST pvParam, SPIF fWinIni);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3619,37 +3702,6 @@ namespace RS.Win32API
             }
         }
 
-        /// <SecurityNote>
-        ///   Critical : P-Invokes
-        /// </SecurityNote>
-        public static NONCLIENTMETRICS SystemParameterInfo_GetNONCLIENTMETRICS()
-        {
-            var metrics = Utility.IsOSVistaOrNewer
-                ? NONCLIENTMETRICS.VistaMetricsStruct
-                : NONCLIENTMETRICS.XPMetricsStruct;
-
-            if (!_SystemParametersInfo_NONCLIENTMETRICS(SPI.GETNONCLIENTMETRICS, metrics.cbSize, ref metrics, SPIF.None))
-            {
-                HRESULT.ThrowLastError();
-            }
-
-            return metrics;
-        }
-
-        /// <SecurityNote>
-        ///   Critical : P-Invokes
-        /// </SecurityNote>
-        public static HIGHCONTRAST SystemParameterInfo_GetHIGHCONTRAST()
-        {
-            var hc = new HIGHCONTRAST { cbSize = Marshal.SizeOf(typeof(HIGHCONTRAST)) };
-
-            if (!_SystemParametersInfo_HIGHCONTRAST(SPI.GETHIGHCONTRAST, hc.cbSize, ref hc, SPIF.None))
-            {
-                HRESULT.ThrowLastError();
-            }
-
-            return hc;
-        }
 
         // This function is strange in that it returns a BOOL if TPM_RETURNCMD isn't specified, but otherwise the command Id.
         // Currently it's only used with TPM_RETURNCMD, so making the signature match that.
@@ -3667,51 +3719,20 @@ namespace RS.Win32API
 
 
         [DllImport(ExternDll.Gdi32, EntryPoint = "SelectObject", SetLastError = true)]
-        private static extern IntPtr _SelectObject(SafeDC hdc, IntPtr hgdiobj);
+        public static extern IntPtr _SelectObject(SafeDC hdc, IntPtr hgdiobj);
 
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-
-
-        public static IntPtr SelectObject(SafeDC hdc, IntPtr hgdiobj)
-        {
-            IntPtr ret = _SelectObject(hdc, hgdiobj);
-            if (ret == IntPtr.Zero)
-            {
-                HRESULT.ThrowLastError();
-            }
-            return ret;
-        }
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Gdi32, EntryPoint = "SelectObject", SetLastError = true)]
-        private static extern IntPtr _SelectObjectSafeHBITMAP(SafeDC hdc, SafeHBITMAP hgdiobj);
+        public static extern IntPtr _SelectObjectSafeHBITMAP(SafeDC hdc, SafeHBITMAP hgdiobj);
 
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-
-
-        public static IntPtr SelectObject(SafeDC hdc, SafeHBITMAP hgdiobj)
-        {
-            IntPtr ret = _SelectObjectSafeHBITMAP(hdc, hgdiobj);
-            if (ret == IntPtr.Zero)
-            {
-                HRESULT.ThrowLastError();
-            }
-            return ret;
-        }
+    
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern int SendInput(int nInputs, ref INPUT pInputs, int cbSize);
 
@@ -3726,11 +3747,9 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, EntryPoint = "UnregisterClass", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UnregisterClassAtom(IntPtr lpClassName, IntPtr hInstance);
+        public static extern bool _UnregisterClassAtom(IntPtr lpClassName, IntPtr hInstance);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3739,13 +3758,11 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.User32, EntryPoint = "UnregisterClass", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UnregisterClassName(string lpClassName, IntPtr hInstance);
+        public static extern bool _UnregisterClassName(string lpClassName, IntPtr hInstance);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static void UnregisterClass(short atom, IntPtr hinstance)
         {
             if (!_UnregisterClassAtom(new IntPtr(atom), hinstance))
@@ -3757,7 +3774,6 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
         public static void UnregisterClass(string lpClassName, IntPtr hInstance)
         {
             if (!_UnregisterClassName(lpClassName, hInstance))
@@ -3769,11 +3785,9 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, SetLastError = true, EntryPoint = "UpdateLayeredWindow")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UpdateLayeredWindow(
+        public static extern bool _UpdateLayeredWindow(
             IntPtr hwnd,
             SafeDC hdcDst,
             [In] ref POINT pptDst,
@@ -3787,11 +3801,9 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.User32, SetLastError = true, EntryPoint = "UpdateLayeredWindow")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UpdateLayeredWindowIntPtr(
+        public static extern bool _UpdateLayeredWindowIntPtr(
             IntPtr hwnd,
             IntPtr hdcDst,
             IntPtr pptDst,
@@ -3805,8 +3817,6 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static void UpdateLayeredWindow(
             IntPtr hwnd,
             SafeDC hdcDst,
@@ -3827,8 +3837,6 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : Calls critical method
         /// </SecurityNote>
-
-
         public static void UpdateLayeredWindow(
             IntPtr hwnd,
             int crKey,
@@ -3848,7 +3856,7 @@ namespace RS.Win32API
         /// </SecurityNote>
 
         [DllImport(ExternDll.Shell32, EntryPoint = "SHAddToRecentDocs")]
-        private static extern void _SHAddToRecentDocs_String(SHARD uFlags, [MarshalAs(UnmanagedType.LPWStr)] string pv);
+        public static extern void _SHAddToRecentDocs_String(SHARD uFlags, [MarshalAs(UnmanagedType.LPWStr)] string pv);
 
         // This overload is required.  There's a cast in the Shell code that causes the wrong vtbl to be used
         // if we let the marshaller convert the parameter to an IUnknown.
@@ -3857,7 +3865,7 @@ namespace RS.Win32API
         /// </SecurityNote>
 
         [DllImport(ExternDll.Shell32, EntryPoint = "SHAddToRecentDocs")]
-        private static extern void _SHAddToRecentDocs_ShellLink(SHARD uFlags, IShellLinkW pv);
+        public static extern void _SHAddToRecentDocs_ShellLink(SHARD uFlags, IShellLinkW pv);
 
         /// <SecurityNote>
         ///   Critical : Calls critical method
@@ -3886,31 +3894,9 @@ namespace RS.Win32API
         /// </SecurityNote>
 
         [DllImport(ExternDll.DwmAPI, EntryPoint = "DwmGetCompositionTimingInfo")]
-        private static extern HRESULT _DwmGetCompositionTimingInfo(IntPtr hwnd, ref DWM_TIMING_INFO pTimingInfo);
+        public static extern HRESULT _DwmGetCompositionTimingInfo(IntPtr hwnd, ref DWM_TIMING_INFO pTimingInfo);
 
-        /// <SecurityNote>
-        ///   Critical : Calls critical method
-        /// </SecurityNote>
-
-        public static DWM_TIMING_INFO? DwmGetCompositionTimingInfo(IntPtr hwnd)
-        {
-            if (!Utility.IsOSVistaOrNewer)
-            {
-                // API was new to Vista.
-                return null;
-            }
-
-            var dti = new DWM_TIMING_INFO { cbSize = Marshal.SizeOf(typeof(DWM_TIMING_INFO)) };
-            HRESULT hr = _DwmGetCompositionTimingInfo(hwnd, ref dti);
-            if (hr == HRESULT.E_PENDING)
-            {
-                // The system isn't yet ready to respond.  Return null rather than throw.
-                return null;
-            }
-            hr.ThrowIfFailed();
-
-            return dti;
-        }
+       
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
@@ -3931,32 +3917,24 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.DwmAPI, PreserveSig = false)]
         public static extern void DwmSetIconicLivePreviewBitmap(IntPtr hwnd, IntPtr hbmp, RefPOINT pptClient, DWM_SIT dwSITFlags);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Shell32, PreserveSig = false)]
         public static extern void SHGetItemFromDataObject(IDataObject pdtobj, DOGIF dwFlags, [In] ref Guid riid, [Out, MarshalAs(UnmanagedType.Interface)] out object ppv);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Shell32, PreserveSig = false)]
         public static extern HRESULT SHCreateItemFromParsingName([MarshalAs(UnmanagedType.LPWStr)] string pszPath, IBindCtx pbc, [In] ref Guid riid, [Out, MarshalAs(UnmanagedType.Interface)] out object ppv);
 
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Shell32)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool Shell_NotifyIcon(NIM dwMessage, [In] NOTIFYICONDATA lpdata);
@@ -3968,8 +3946,6 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Shell32, PreserveSig = false)]
         public static extern void SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string AppID);
 
@@ -3980,8 +3956,6 @@ namespace RS.Win32API
         /// <SecurityNote>
         ///   Critical : P-Invokes
         /// </SecurityNote>
-
-
         [DllImport(ExternDll.Shell32)]
         public static extern HRESULT GetCurrentProcessExplicitAppUserModelID([Out, MarshalAs(UnmanagedType.LPWStr)] out string AppID);
         #endregion
@@ -4027,5 +4001,660 @@ namespace RS.Win32API
 
         [DllImport(ExternDll.PresentationNativeDll, EntryPoint = "GetParentWrapper", SetLastError = true)]
         public static extern IntPtr GetParent(HandleRef hWnd);
+
+
+        /// <SecurityNote>
+        ///     Critical: This elevates to unmanaged code permission
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32, CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "GetTempFileName")]
+        internal static extern uint _GetTempFileName(string tmpPath, string prefix, uint uniqueIdOrZero, StringBuilder tmpFileName);
+
+        /// <SecurityNote>
+        ///     Critical: This elevates to unmanaged code permission
+        /// </SecurityNote>
+        internal static uint GetTempFileName(string tmpPath, string prefix, uint uniqueIdOrZero, StringBuilder tmpFileName)
+        {
+            uint result = _GetTempFileName(tmpPath, prefix, uniqueIdOrZero, tmpFileName);
+            if (result == 0)
+            {
+                throw new Win32Exception();
+            }
+
+            return result;
+        }
+
+
+        /// <SecurityNote>
+        ///     Critical: This elevates to unmanaged code permission
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern bool CreateCaret(HandleRef hwnd, BitmapHandle hbitmap, int width, int height);
+
+        /// <SecurityNote>
+        ///     Critical: This elevates to unmanaged code permission
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern bool ShowCaret(HandleRef hwnd);
+
+        /// <SecurityNote>
+        ///     Critical: This elevates to unmanaged code permission
+        /// </SecurityNote>
+
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern bool HideCaret(HandleRef hwnd);
+
+        /// <SecurityNote>
+        ///     Critical: This elevates to unmanaged code permission
+        /// </SecurityNote>
+
+        [DllImport(ExternDll.User32, ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+        public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
+
+        [DllImport(ExternDll.User32, EntryPoint = "LoadImage", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern IconHandle LoadImageIcon(IntPtr hinst, string stName, int nType, int cxDesired, int cyDesired, int nFlags);
+
+        #region  uncomment this if you plan to use LoadImage to load anything other than Icons/Cursors.
+        [DllImport(ExternDll.User32, CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern SafeHandle LoadImage(IntPtr hinst, string stName, int nType, int cxDesired, int cyDesired, int nFlags);
+        #endregion
+
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///
+        ///     Could be a candidate for safe - as the only information disclosed is whether
+        ///     a certain security measure is on or off.
+        ///     Likely this determination could be made by trying certain actions and failing.
+        ///</SecurityNote>
+        [DllImport(ExternDll.Urlmon, ExactSpelling = true)]
+        internal static extern int CoInternetIsFeatureEnabled(int featureEntry, int dwFlags);
+
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///</SecurityNote>
+        [DllImport(ExternDll.Urlmon, ExactSpelling = true)]
+        internal static extern int CoInternetSetFeatureEnabled(int featureEntry, int dwFlags, bool fEnable);
+
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///
+        ///     Could be a candidate for safe - as the only information disclosed is whether
+        ///     a certain security measure is on or off.
+        ///     Likely this determination could be made by trying certain actions and failing.
+        ///</SecurityNote>
+
+        [DllImport(ExternDll.Urlmon, ExactSpelling = true)]
+        internal static extern int CoInternetIsFeatureZoneElevationEnabled(
+                                                            [MarshalAs(UnmanagedType.LPWStr)] string szFromURL,
+                                                            [MarshalAs(UnmanagedType.LPWStr)] string szToURL,
+                                                           IInternetSecurityManager secMgr,
+                                                            int dwFlags
+                                                            );
+
+
+        ///<SecurityNote>
+        ///     Critical - call is SUC'ed
+        ///</SecurityNote>
+        [DllImport(ExternDll.PresentationHostDll, EntryPoint = "ProcessUnhandledException")]
+        internal static extern void ProcessUnhandledException_DLL([MarshalAs(UnmanagedType.BStr)] string errMsg);
+
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///</SecurityNote>
+
+        [DllImport(ExternDll.Kernel32, CharSet = CharSet.Unicode)]
+        internal static extern bool GetVersionEx([In, Out] OSVERSIONINFOEX ver);
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///</SecurityNote>
+
+        [DllImport(ExternDll.Urlmon, ExactSpelling = true)]
+        internal static extern int CoInternetCreateSecurityManager(
+                                                                    [MarshalAs(UnmanagedType.Interface)] object pIServiceProvider,
+                                                                    [MarshalAs(UnmanagedType.Interface)] out object ppISecurityManager,
+                                                                    int dwReserved);
+       
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="hMem"></param>
+        /// <returns></returns>
+        [DllImport(ExternDll.Kernel32, SetLastError = true), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        internal static extern IntPtr LocalFree(IntPtr hMem);
+
+
+        /// <SecurityNote>
+        ///     Critical: This code elevates to unmanaged code permission
+        /// </SecurityNote>
+        
+        [DllImport(ExternDll.User32, EntryPoint = "RegisterClassEx", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
+        internal static extern UInt16 IntRegisterClassEx(WNDCLASSEX_D wc_d);
+
+        ///<SecurityNote>
+        /// Critical - calls IntRegisterClassEx (the real PInvoke method)
+        ///</SecurityNote>
+        internal static UInt16 RegisterClassEx(WNDCLASSEX_D wc_d)
+        {
+            UInt16 result = IntRegisterClassEx(wc_d);
+            if (result == 0)
+            {
+                throw new Win32Exception();
+            }
+
+            return result;
+        }
+
+        /// <SecurityNote>
+        ///     Critical: This code elevates to unmanaged code permission
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, EntryPoint = "UnregisterClass", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false)]
+        internal static extern int IntUnregisterClass(IntPtr atomString /*lpClassName*/ , IntPtr hInstance);
+
+        ///<SecurityNote>
+        /// Critical - calls IntUnregisterClass (the real PInvoke method)
+        ///</SecurityNote>
+        internal static void UnregisterClass(IntPtr atomString /*lpClassName*/ , IntPtr hInstance)
+        {
+            int result = IntUnregisterClass(atomString, hInstance);
+            if (result == 0)
+            {
+                throw new Win32Exception();
+            }
+        }
+      
+     
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///</SecurityNote>
+        [DllImport(ExternDll.Urlmon, ExactSpelling = true, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        public static extern HRESULT ObtainUserAgentString(int dwOption, StringBuilder userAgent, ref int length);
+
+        ///<SecurityNote>
+        ///     Critical - performs an elevation.
+        ///</SecurityNote>
+        public static string ObtainUserAgentString()
+        {
+            int length = NativeMethods.MAX_PATH;
+            StringBuilder userAgentBuffer = new StringBuilder(length);
+           HRESULT hr = ObtainUserAgentString(0 /*reserved. must be 0*/, userAgentBuffer, ref length);
+
+            // Dev10 821573 - Installing .NET 4.0 adds two parts to the user agent string, i.e.
+            // .NET4.0C and .NET4.0E, potentially causing the user agent string to overflow its
+            // documented maximum length of MAX_PATH. Turns out ObtainUserAgentString can return
+            // a longer string if asked to do so. Therefore we grow the string dynamically when
+            // needed, accommodating for this failure condition.
+            if (hr == HRESULT.E_OUTOFMEMORY)
+            {
+                userAgentBuffer = new StringBuilder(length);
+                hr = ObtainUserAgentString(0 /*reserved. must be 0*/, userAgentBuffer, ref length);
+            }
+
+            hr.ThrowIfFailed();
+
+            return userAgentBuffer.ToString();
+        }
+
+        /// <SecurityNote>
+        ///     Critical: Registering for system broadcast messages
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, EntryPoint = "RegisterPowerSettingNotification")]
+        unsafe public static extern IntPtr RegisterPowerSettingNotification(IntPtr hRecipient, Guid* pGuid, int Flags);
+
+        /// <SecurityNote>
+        ///     Critical: Unregistering for system broadcast messages
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, EntryPoint = "UnregisterPowerSettingNotification")]
+        unsafe public static extern IntPtr UnregisterPowerSettingNotification(IntPtr hPowerNotify);
+
+        /// <SecurityNote>
+        ///     Critical: This code causes elevation to unmanaged code
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32, ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern void SetLastError(int dwErrorCode);
+
+        ///<SecurityNote>
+        /// Critical - Unmanaged code permission is supressed.
+        ///</SecurityNote>
+        [SuppressUnmanagedCodeSecurity, SecurityCritical]
+        [DllImport( ExternDll.Winmm, CharSet = CharSet.Unicode)]
+        public static extern bool PlaySound([In] string soundName, IntPtr hmod, PlaySoundFlags soundFlags);
+
+        //!!! CAUTION
+        // PresentationHost intercepts calls to InternetGetCookieEx & InternetSetCookieEx and delegates them
+        // to the browser. It doesn't do this for InternetGetCookie & InternetSetCookie.
+        // See also Application.Get/SetCookie().
+        //!!!
+        /// <SecurityNote>
+        /// SecurityCritical - calls unmanaged code.
+        /// </SecurityNote>
+        [DllImport(ExternDll.Wininet, SetLastError = true, ExactSpelling = true, EntryPoint = "InternetGetCookieExW", CharSet = CharSet.Unicode)]
+        [SuppressUnmanagedCodeSecurity, SecurityCritical]
+        public static extern bool InternetGetCookieEx([In] string Url, [In] string cookieName,
+            [Out] StringBuilder cookieData, [In, Out] ref UInt32 pchCookieData, uint flags, IntPtr reserved);
+
+        /// <SecurityNote>
+        /// SecurityCritical - calls unmanaged code.
+        /// </SecurityNote>
+        [DllImport(ExternDll.Wininet, SetLastError = true, ExactSpelling = true, EntryPoint = "InternetSetCookieExW", CharSet = CharSet.Unicode)]
+        
+        
+        public static extern uint InternetSetCookieEx([In] string Url, [In] string CookieName, [In] string cookieData, uint flags, [In] string p3pHeader);
+
+#if DRT_NATIVEMETHODS
+
+        [DllImport(ExternDll.User32, ExactSpelling = true, EntryPoint = "mouse_event", CharSet = CharSet.Auto)]
+        public static extern void Mouse_event(int flags, int dx, int dy, int dwData, IntPtr extrainfo);
+
+#endif
+        /////////////////////////////
+        // needed by Framework
+
+        /// <SecurityNote>
+        /// Critical - calls unmanaged code
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32, ExactSpelling = true, CharSet = CharSet.Unicode)]
+        public static extern int GetLocaleInfoW(int locale, int type, string data, int dataSize);
+
+        /// <SecurityNote>
+        /// Critical - calls unmanaged code
+        /// </SecurityNote>
+        [DllImport(ExternDll.Kernel32, ExactSpelling = true, SetLastError = true)]
+        public static extern int FindNLSString(int locale, uint flags, [MarshalAs(UnmanagedType.LPWStr)] string sourceString, int sourceCount, [MarshalAs(UnmanagedType.LPWStr)] string findString, int findCount, out int found);
+
+        ///<SecurityNote>
+        /// Critical as this code performs an elevation.
+        ///</SecurityNote>
+        [DllImport(ExternDll.User32, CharSet = CharSet.Auto, BestFitMapping = false)]
+        public static extern bool SystemParametersInfo(int nAction, int nParam, [In, Out] ANIMATIONINFO anim, int nUpdate);
+
+        ///<SecurityNote>
+        /// Critical as this code performs an elevation.
+        ///</SecurityNote>
+        
+        
+        [DllImport(ExternDll.User32, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        public static extern bool SystemParametersInfo(int nAction, int nParam, [In, Out] ICONMETRICS metrics, int nUpdate);
+
+
+
+        //---------------------------------------------------------------------------
+        // UpdatePanningFeedback : Visual feedback function related to pan gesture
+        // Can Be called only after a BeginPanningFeedback call
+        //
+        // HWND hwnd                 - The handle to the Target window that will receive feedback
+        //                             For the method to succeed this must be the same hwnd as provided in
+        //                             BeginPanningFeedback
+        //
+        // LONG lTotalOverpanOffsetX - The Total displacement that the window has moved in the horizontal direction
+        //                             since the end of scrollable region was reached. The API would move the window by the distance specified
+        //                             A maximum displacement of 30 pixels is allowed
+        //
+        // LONG lTotalOverpanOffsetY - The Total displacement that the window has moved in the horizontal direction
+        //                             since the end of scrollable
+        //                             region was reached. The API would move the window by the distance specified
+        //                             A maximum displacement of 30 pixels is allowed
+        //
+        // BOOL fInInertia           - Flag dictating whether the Application is handling a WM_GESTURE message with the
+        //                             GF_INERTIA FLAG set
+        //
+        //   Incremental calls to UpdatePanningFeedback should make sure they always pass
+        //   the sum of the increments and not just the increment themselves
+        //   Eg : If the initial displacement is 10 pixels and the next displacement 10 pixels
+        //        the second call would be with the parameter as 20 pixels as opposed to 10
+        //   Eg : UpdatePanningFeedback(hwnd, 10, 10, TRUE)
+        //
+
+        [DllImport(ExternDll.Uxtheme, CharSet = CharSet.Unicode)]
+        public static extern bool UpdatePanningFeedback(
+            HandleRef hwnd,
+            int lTotalOverpanOffsetX,
+            int lTotalOverpanOffsetY,
+            bool fInInertia);
+
+        //---------------------------------------------------------------------------
+        //
+        // EndPanningFeedback :Visual feedback reset function related to pan gesture
+        //   Terminates any existing animation that was in process or set up by BeginPanningFeedback and UpdatePanningFeedback
+        //   The EndPanningFeedBack needs to be called Prior to calling any BeginPanningFeedBack if we have already
+        //   called a BeginPanningFeedBack followed by one/ more UpdatePanningFeedback calls
+        //
+        //  HWND hwnd         - The handle to the Target window that will receive feedback
+        //
+        //  BOOL fAnimateBack - Flag to indicate whether you wish the displaced window to move back
+        //                      to the original position via animation or a direct jump.
+        //                      Either way, the method will try to restore the moved window.
+        //                      The latter case exists for compatibility with legacy apps.
+        //
+
+        [DllImport(ExternDll.Uxtheme, CharSet = CharSet.Unicode)]
+        public static extern bool EndPanningFeedback(
+            HandleRef hwnd,
+            bool fAnimateBack);
+
+        /// <summary>
+        ///
+        /// </summary>
+        [DllImport(ExternDll.Kernel32, CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetEvent(IntPtr hEvent);
+
+
+        [DllImport(ExternDll.Kernel32, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern int SetEvent([In] SafeWaitHandle hHandle);
+
+
+        [DllImport(ExternDll.Kernel32, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern int WaitForSingleObject([In] SafeWaitHandle hHandle, [In] int dwMilliseconds);
+
+
+      
+
+        //
+        // COM Helper Methods
+        //
+        ///<SecurityNote>
+        ///     Critical:    Satisfies a LinkDemand on releasecom call.
+        ///</SecurityNote>
+        internal static int SafeReleaseComObject(object o)
+        {
+            int refCount = 0;
+
+            // Validate
+            if (o != null)
+            {
+                if (Marshal.IsComObject(o))
+                {
+                    refCount = Marshal.ReleaseComObject(o);
+                }
+            }
+
+            return refCount;
+        }
+
+
+        /// <SecurityNote>
+        ///     Critical: takes an hwnd, calls unmanaged code
+        /// </SecurityNote>
+
+        [DllImport("WtsApi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool WTSRegisterSessionNotification(IntPtr hwnd, uint dwFlags);
+
+        /// <SecurityNote>
+        ///     Critical: takes an hwnd, calls unmanaged code
+        /// </SecurityNote>
+
+        [DllImport("WtsApi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool WTSUnRegisterSessionNotification(IntPtr hwnd);
+
+        /// <SecurityNote>
+        ///     Critical: Calls unmanaged code.  Returns native process handle.
+        /// </SecurityNote>
+        
+        [DllImport(ExternDll.Kernel32, SetLastError = true)]
+        public static extern IntPtr GetCurrentProcess();
+
+        public const int DUPLICATE_CLOSE_SOURCE = 1;
+        public const int DUPLICATE_SAME_ACCESS = 2;
+
+        /// <SecurityNote>
+        ///     Critical: Calls unmanaged code.  Returns native process handle.
+        /// </SecurityNote>
+        
+        [DllImport(ExternDll.Kernel32, SetLastError = true)]
+        public static extern bool DuplicateHandle(
+            IntPtr hSourceProcess,
+            SafeWaitHandle hSourceHandle,
+            IntPtr hTargetProcessHandle,
+            out IntPtr hTargetHandle,
+            uint dwDesiredAccess,
+            bool fInheritHandle,
+            uint dwOptions
+            );
+
+
+        /// <SecurityNote>
+        ///     Critical: Calls unmanaged code.
+        /// </SecurityNote>
+
+        public static HandleRef SetWindowsHookEx(HookType idHook, HookProc lpfn, IntPtr hMod, int dwThreadId)
+        {
+            IntPtr result = IntSetWindowsHookEx(idHook, lpfn, hMod, dwThreadId);
+            if (result == IntPtr.Zero)
+            {
+                throw new Win32Exception();
+            }
+            return new HandleRef(lpfn, result);
+        }
+
+        /// <SecurityNote>
+        ///     Critical: Calls unmanaged code.
+        /// </SecurityNote>
+
+        [DllImport(ExternDll.User32, EntryPoint = "SetWindowsHookExW", SetLastError = true)]
+        public static extern IntPtr IntSetWindowsHookEx(HookType idHook, HookProc lpfn, IntPtr hMod, int dwThreadId);
+
+        /// <SecurityNote>
+        ///     Critical: Calls unmanaged code.
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern bool UnhookWindowsHookEx(HandleRef hhk);
+
+        /// <SecurityNote>
+        ///     Critical: Calls unmanaged code.
+        /// </SecurityNote>
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern IntPtr CallNextHookEx(HandleRef hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        /// <summary>
+        /// 检测范围	当前活动窗口
+        /// </summary>
+        /// <param name="keyCode"></param>
+        /// <returns></returns>
+        [DllImport(ExternDll.User32, ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern short GetKeyState(int keyCode);
+
+
+        [DllImport(ExternDll.User32, CharSet = CharSet.Unicode)]
+        public static extern int LoadString(IntPtr hInstance, uint uID, StringBuilder lpBuffer, int nBufferMax);
+
+      
+        [DllImport(ExternDll.User32)]
+        public static extern short GetAsyncKeyState(int keyCode);
+
+        public static bool IsKeyDown(int keyCode)
+        {
+            return (GetAsyncKeyState(keyCode) & 0x8000) != 0;
+        }
+
+        public static bool IsKeyDown(Keys keyCode)
+        {
+            return (GetAsyncKeyState((int)keyCode) & 0x8000) != 0;
+        }
+
+
+        public static HRESULT ChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, out MSGFLTINFO extStatus)
+        {
+            extStatus = MSGFLTINFO.NONE;
+            if (!OSVersionHelper.IsOSVistaOrNewer)
+            {
+                return HRESULT.S_FALSE;
+            }
+
+            if (!OSVersionHelper.IsOSWindows7OrNewer)
+            {
+                if (!NativeMethods.IntChangeWindowMessageFilter(message, action))
+                {
+                    return (HRESULT)Win32Error.GetLastError();
+                }
+
+                return HRESULT.S_OK;
+            }
+
+            CHANGEFILTERSTRUCT cHANGEFILTERSTRUCT = default(CHANGEFILTERSTRUCT);
+            cHANGEFILTERSTRUCT.cbSize = (uint)Marshal.SizeOf(typeof(CHANGEFILTERSTRUCT));
+            CHANGEFILTERSTRUCT pChangeFilterStruct = cHANGEFILTERSTRUCT;
+            if (!NativeMethods.IntChangeWindowMessageFilterEx(hwnd, message, action, ref pChangeFilterStruct))
+            {
+                return (HRESULT)Win32Error.GetLastError();
+            }
+
+            extStatus = pChangeFilterStruct.ExtStatus;
+            return HRESULT.S_OK;
+        }
+
+
+        public static string[] CommandLineToArgvW(string cmdLine)
+        {
+            IntPtr argv = IntPtr.Zero;
+            try
+            {
+                int numArgs = 0;
+
+                argv = NativeMethods._CommandLineToArgvW(cmdLine, out numArgs);
+                if (argv == IntPtr.Zero)
+                {
+                    throw new Win32Exception();
+                }
+                var result = new string[numArgs];
+
+                for (int i = 0; i < numArgs; i++)
+                {
+                    IntPtr currArg = Marshal.ReadIntPtr(argv, i * Marshal.SizeOf(typeof(IntPtr)));
+                    result[i] = Marshal.PtrToStringUni(currArg);
+                }
+
+                return result;
+            }
+            finally
+            {
+                IntPtr p = NativeMethods._LocalFree(argv);
+            }
+        }
+
+
+
+        public static bool DwmGetColorizationColor(out uint pcrColorization, out bool pfOpaqueBlend)
+        {
+            // Make this call safe to make on downlevel OSes...
+            if (OSVersionHelper.IsOSVistaOrNewer && NativeMethods.IsThemeActive())
+            {
+                HRESULT hr = NativeMethods._DwmGetColorizationColor(out pcrColorization, out pfOpaqueBlend);
+                if (hr.Succeeded)
+                {
+                    return true;
+                }
+            }
+
+            // Default values.  If for some reason the native DWM API fails it's never enough of a reason
+            // to bring down the app.  Empirically it still sometimes returns errors even when the theme service is on.
+            // We'll still use the boolean return value to allow the caller to respond if they care.
+            pcrColorization = 0xFF000000;
+            pfOpaqueBlend = true;
+
+            return false;
+        }
+
+        public static void DwmSetWindowAttributeFlip3DPolicy(IntPtr hwnd, DWMFLIP3D flip3dPolicy)
+        {
+            if (OSVersionHelper.IsOSVistaOrNewer)
+            {
+                return;
+            }
+            var dwPolicy = (int)flip3dPolicy;
+            NativeMethods._DwmSetWindowAttribute(hwnd, DWMWA.FLIP3D_POLICY, ref dwPolicy, sizeof(int));
+        }
+
+
+        public static void DwmSetWindowAttributeDisallowPeek(IntPtr hwnd, bool disallowPeek)
+        {
+            if (OSVersionHelper.IsOSWindows7OrNewer)
+            {
+                return;
+            }
+            int dwDisallow = (int)(disallowPeek ? Win32Value.TRUE : Win32Value.FALSE);
+            NativeMethods._DwmSetWindowAttribute(hwnd, DWMWA.DISALLOW_PEEK, ref dwDisallow, sizeof(int));
+        }
+
+
+        public static bool DwmIsCompositionEnabled()
+        {
+            // Make this call safe to make on downlevel OSes...
+            if (!OSVersionHelper.IsOSVistaOrNewer)
+            {
+                return false;
+            }
+            return NativeMethods._DwmIsCompositionEnabled();
+        }
+
+
+
+
+        public static NONCLIENTMETRICS SystemParameterInfo_GetNONCLIENTMETRICS()
+        {
+            var metrics = OSVersionHelper.IsOSVistaOrNewer
+                ? NONCLIENTMETRICS.VistaMetricsStruct
+                : NONCLIENTMETRICS.XPMetricsStruct;
+
+            if (!NativeMethods._SystemParametersInfo_NONCLIENTMETRICS(SPI.GETNONCLIENTMETRICS, metrics.cbSize, ref metrics, SPIF.None))
+            {
+                HRESULT.ThrowLastError();
+            }
+
+            return metrics;
+        }
+
+        public static HIGHCONTRAST SystemParameterInfo_GetHIGHCONTRAST()
+        {
+            var hc = new HIGHCONTRAST { cbSize = Marshal.SizeOf(typeof(HIGHCONTRAST)) };
+
+            if (!NativeMethods._SystemParametersInfo_HIGHCONTRAST(SPI.GETHIGHCONTRAST, hc.cbSize, ref hc, SPIF.None))
+            {
+                HRESULT.ThrowLastError();
+            }
+
+            return hc;
+        }
+
+        public static IntPtr SelectObject(SafeDC hdc, IntPtr hgdiobj)
+        {
+            IntPtr ret = NativeMethods._SelectObject(hdc, hgdiobj);
+            if (ret == IntPtr.Zero)
+            {
+                HRESULT.ThrowLastError();
+            }
+            return ret;
+        }
+
+
+        public static IntPtr SelectObject(SafeDC hdc, SafeHBITMAP hgdiobj)
+        {
+            IntPtr ret = NativeMethods._SelectObjectSafeHBITMAP(hdc, hgdiobj);
+            if (ret == IntPtr.Zero)
+            {
+                HRESULT.ThrowLastError();
+            }
+            return ret;
+        }
+
+
+        public static DWM_TIMING_INFO? DwmGetCompositionTimingInfo(IntPtr hwnd)
+        {
+            if (!OSVersionHelper.IsOSVistaOrNewer)
+            {
+                // API was new to Vista.
+                return null;
+            }
+            var dti = new DWM_TIMING_INFO { cbSize = Marshal.SizeOf(typeof(DWM_TIMING_INFO)) };
+            HRESULT hr = NativeMethods._DwmGetCompositionTimingInfo(hwnd, ref dti);
+            if (hr == HRESULT.E_PENDING)
+            {
+                // The system isn't yet ready to respond.  Return null rather than throw.
+                return null;
+            }
+            hr.ThrowIfFailed();
+            return dti;
+        }
+
     }
 }

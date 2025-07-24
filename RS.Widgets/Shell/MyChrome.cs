@@ -1,4 +1,5 @@
-﻿using RS.Widgets.Structs;
+﻿using RS.Widgets.Standard;
+using RS.Widgets.Structs;
 using RS.Win32API.Standard;
 using System;
 using System.Collections.Generic;

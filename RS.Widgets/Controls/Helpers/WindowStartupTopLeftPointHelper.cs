@@ -1,6 +1,10 @@
-﻿using RS.Widgets.Interop;
+﻿using RS.Widgets.Commons;
+using RS.Widgets.Controls.Helpers;
+using RS.Widgets.Interop;
+using RS.Widgets.Standard;
 using RS.Win32API;
 using RS.Win32API.Enums;
+using RS.Win32API.Helper;
 using RS.Win32API.Standard;
 using RS.Win32API.Structs;
 using System;
@@ -46,7 +50,7 @@ namespace RS.Widgets.Controls
                 }
             }
 
-            DpiAwarenessContext = (DpiAwarenessContextValue)DpiHelper.GetDpiAwarenessContext(_hWnd);
+            DpiAwarenessContext = (DpiAwarenessContextValue)SystemDpiHelper.GetDpiAwarenessContext(_hWnd);
             _currentDpiScale = GetDpiScaleForWindow(_hWnd);
         }
 
@@ -98,7 +102,7 @@ namespace RS.Widgets.Controls
 
             if (dpiScale == null)
             {
-                dpiScale = DpiHelper.GetLegacyProcessDpiAwareness() switch
+                dpiScale = SystemDpiHelper.GetLegacyProcessDpiAwareness() switch
                 {
                     PROCESS_DPI_AWARENESS.PROCESS_SYSTEM_DPI_AWARE => DpiHelper.GetSystemDpi(),
                     PROCESS_DPI_AWARENESS.PROCESS_PER_MONITOR_DPI_AWARE => IsPerMonitorDpiScalingEnabled ? DpiHelper.GetWindowDpi(hWnd, fallbackToNearestMonitorHeuristic: false) : DpiHelper.GetSystemDpi(),
@@ -112,14 +116,14 @@ namespace RS.Widgets.Controls
 
         private static void GetProcessDpiAwareness(nint hWnd, out PROCESS_DPI_AWARENESS appManifestProcessDpiAwareness, out PROCESS_DPI_AWARENESS processDpiAwareness)
         {
-            appManifestProcessDpiAwareness = DpiHelper.GetProcessDpiAwareness(hWnd);
+            appManifestProcessDpiAwareness = SystemDpiHelper.GetProcessDpiAwareness(hWnd);
             if (IsPerMonitorDpiScalingEnabled)
             {
                 processDpiAwareness = appManifestProcessDpiAwareness;
             }
             else
             {
-                processDpiAwareness = DpiHelper.GetLegacyProcessDpiAwareness();
+                processDpiAwareness = SystemDpiHelper.GetLegacyProcessDpiAwareness();
             }
         }
 
@@ -163,7 +167,7 @@ namespace RS.Widgets.Controls
                     return IsProcessPerMonitorDpiAware.Value;
                 }
 
-                return DpiHelper.GetProcessDpiAwareness(nint.Zero) == PROCESS_DPI_AWARENESS.PROCESS_PER_MONITOR_DPI_AWARE;
+                return SystemDpiHelper.GetProcessDpiAwareness(nint.Zero) == PROCESS_DPI_AWARENESS.PROCESS_PER_MONITOR_DPI_AWARE;
             }
         }
 

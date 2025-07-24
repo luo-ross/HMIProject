@@ -1,4 +1,3 @@
-using Microsoft.Internal;
 using System;
 namespace RS.Win32API
 {

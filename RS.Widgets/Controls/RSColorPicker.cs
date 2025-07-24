@@ -122,14 +122,14 @@ namespace RS.Widgets.Controls
             }
 
             double h = 0, s = 0, b = 0;
-            ColorUtil.HsbFromColor(color, ref h, ref s, ref b);
+            ColorHelper.HsbFromColor(color, ref h, ref s, ref b);
             this.HSB = new HSB()
             {
                 H = h,
                 S = s,
                 B = b
             };
-            this.HouColor = ColorUtil.ColorFromHsb(this.HSB.H, 1, 1);
+            this.HouColor = ColorHelper.ColorFromHsb(this.HSB.H, 1, 1);
             Canvas.SetLeft(this.PART_ColorSelectThumb, s * this.PART_ColorSelectCanvas.ActualWidth - this.PART_ColorSelectThumb.ActualWidth / 2);
             Canvas.SetTop(this.PART_ColorSelectThumb, (1 - b) * this.PART_ColorSelectCanvas.ActualHeight - this.PART_ColorSelectThumb.ActualHeight / 2);
             Canvas.SetTop(this.PART_HouColorThumb, h * this.PART_HouColorCanvas.ActualHeight - this.PART_HouColorThumb.ActualHeight / 2);
@@ -214,7 +214,7 @@ namespace RS.Widgets.Controls
                 S = this.HSB.S,
                 B = this.HSB.B
             };
-            this.HouColor = ColorUtil.ColorFromHsb(this.HSB.H, 1, 1);
+            this.HouColor = ColorHelper.ColorFromHsb(this.HSB.H, 1, 1);
             this.UpdateColorSelect();
         }
 
@@ -257,7 +257,7 @@ namespace RS.Widgets.Controls
                 B = 1 - top / this.PART_ColorSelectCanvas.ActualHeight,
             };
 
-            var currentColor = ColorUtil.ColorFromAhsb(1, this.HSB.H, this.HSB.S, this.HSB.B);
+            var currentColor = ColorHelper.ColorFromAhsb(1, this.HSB.H, this.HSB.S, this.HSB.B);
             if (currentColor != ColorSelect)
             {
                 this.ColorSelect = currentColor;

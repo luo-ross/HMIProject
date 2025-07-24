@@ -22,7 +22,7 @@ namespace RS.Widgets.Converters
                 backgroundColor = color;
             }
 
-            int luminance = ColorUtil.CalculateLuminance(backgroundColor);
+            int luminance = ColorHelper.CalculateLuminance(backgroundColor);
             // 假设亮度阈值为128  
             if (luminance > 128)
             {

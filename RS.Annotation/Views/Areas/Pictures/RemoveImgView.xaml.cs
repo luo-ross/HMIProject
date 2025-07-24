@@ -55,7 +55,7 @@ namespace RS.Annotation.Views.Areas.Pictures
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            this.HomeView.HideModal();
+            this.HomeView.Modal?.CloseModal();
             bool isDeleteFileFromSystem = this.CkIsDeleteFileFromSystem.IsChecked == true;
             this.PicturesView.RemoveImgModelSelect(isDeleteFileFromSystem);
             OnReveImgCallBack?.Invoke(true);
@@ -63,7 +63,7 @@ namespace RS.Annotation.Views.Areas.Pictures
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.HomeView.HideModal();
+            this.HomeView.Modal?.CloseModal();
             OnReveImgCallBack?.Invoke(false);
         }
     }

@@ -54,7 +54,7 @@ namespace RS.Widgets.Controls
             return new RSNavItem();
         }
 
-        private void RsNavItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void RSListBoxItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
 
         }

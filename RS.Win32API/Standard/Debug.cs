@@ -15,7 +15,7 @@ namespace RS.Win32API.Standard
     /// <summary>A static class for verifying assumptions.</summary>
     public static class Assert
     {
-        private static void _Break()
+        public static void Break()
         {
 #if DEV_DEBUG
             Debugger.Break();
@@ -70,12 +70,12 @@ namespace RS.Win32API.Standard
                 // Two nulls are considered equal, regardless of type semantics.
                 if (null != actual && !actual.Equals(expected))
                 {
-                    _Break();
+                    Break();
                 }
             }
             else if (!expected.Equals(actual))
             {
-                _Break();
+                Break();
             }
         }
 
@@ -94,12 +94,12 @@ namespace RS.Win32API.Standard
                 // Two nulls are considered equal, regardless of type semantics.
                 if (null == actual || actual.Equals(notExpected))
                 {
-                    _Break();
+                    Break();
                 }
             }
             else if (notExpected.Equals(actual))
             {
-                _Break();
+                Break();
             }
         }
 
@@ -118,7 +118,7 @@ namespace RS.Win32API.Standard
         {
             if (condition && !result)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -135,7 +135,7 @@ namespace RS.Win32API.Standard
         {
             if (condition && !result())
             {
-                _Break();
+                Break();
             }
         }
 
@@ -158,12 +158,12 @@ namespace RS.Win32API.Standard
         {
             if (string.IsNullOrEmpty(value))
             {
-                _Break();
+                Break();
             }
 
             if (value.Trim().Length == 0)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -178,7 +178,7 @@ namespace RS.Win32API.Standard
         {
             if (null == value)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -210,7 +210,7 @@ namespace RS.Win32API.Standard
         {
             if (condition)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -225,7 +225,7 @@ namespace RS.Win32API.Standard
         {
             if (condition)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -239,7 +239,7 @@ namespace RS.Win32API.Standard
         {
             if (!condition)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -254,7 +254,7 @@ namespace RS.Win32API.Standard
         {
             if (!condition)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -265,7 +265,7 @@ namespace RS.Win32API.Standard
         [Conditional("DEBUG")]
         public static void Fail()
         {
-            _Break();
+            Break();
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace RS.Win32API.Standard
         [Conditional("DEBUG")]
         public static void Fail(string message)
         {
-            _Break();
+            Break();
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace RS.Win32API.Standard
         {
             if (null != item)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -303,7 +303,7 @@ namespace RS.Win32API.Standard
         {
             if (value < lowerBoundInclusive || value > upperBoundInclusive)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -318,7 +318,7 @@ namespace RS.Win32API.Standard
         {
             if (value < lowerBoundInclusive || value >= upperBoundExclusive)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -334,7 +334,7 @@ namespace RS.Win32API.Standard
         {
             if (Thread.CurrentThread.GetApartmentState() != expectedState)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -343,7 +343,7 @@ namespace RS.Win32API.Standard
         {
             if (null == value)
             {
-                _Break();
+                Break();
             }
         }
 
@@ -352,17 +352,17 @@ namespace RS.Win32API.Standard
         {
             if (null != value)
             {
-                _Break();
+                Break();
             }
         }
 
-        [Conditional("DEBUG")]
-        public static void IsNotOnMainThread()
-        {
-            if (System.Windows.Application.Current.Dispatcher.CheckAccess())
-            {
-                _Break();
-            }
-        }
+        //[Conditional("DEBUG")]
+        //public static void IsNotOnMainThread()
+        //{
+        //    if (System.Windows.Application.Current.Dispatcher.CheckAccess())
+        //    {
+        //        Break();
+        //    }
+        //}
     }
 }

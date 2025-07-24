@@ -2735,7 +2735,7 @@ namespace RS.Annotation.Views.Areas
             var tagModelList = this.GetTagModelList();
             //获取所有标注快捷键
             var shortCutList = tagModelList.Select(t => t.ShortCut).ToList();
-            tagModel.ShortCut = ShortCutUtil.GetShortCutKey(shortCutList);
+            tagModel.ShortCut = ShortCutHelper.GetShortCutKey(shortCutList);
             tagModel.IsSaved = false;
 
             string tagColor = null;

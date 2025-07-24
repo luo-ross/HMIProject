@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 
 namespace RS.Win32API.Structs
 {
@@ -137,7 +136,7 @@ namespace RS.Win32API.Structs
 
         public override int GetHashCode()
         {
-            return (left << 16 | Utility.LOWORD(right)) ^ (top << 16 | Utility.LOWORD(bottom));
+            return (left << 16 | SystemUtility.LOWORD(right)) ^ (top << 16 | SystemUtility.LOWORD(bottom));
         }
     }
 }
