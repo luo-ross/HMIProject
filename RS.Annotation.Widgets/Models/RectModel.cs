@@ -14,12 +14,11 @@ namespace RS.Widgets.Models
     /// </summary>
     public class RectModel : ViewModelBase
     {
-
         public RectModel()
         {
-          
+
         }
-        public RectModel(long id, long pictureId, long projectId)
+        public RectModel(string id,long pictureId, string projectId)
         {
             this.Id = id;
             this.PictureId = pictureId;
@@ -27,11 +26,11 @@ namespace RS.Widgets.Models
         }
 
 
-        private long id;
+        private string id;
         /// <summary>
         /// 矩形主键 编号
         /// </summary>
-        public long Id
+        public string Id
         {
             get
             {
@@ -60,11 +59,11 @@ namespace RS.Widgets.Models
             }
         }
 
-        private long projectId;
+        private string projectId;
         /// <summary>
         /// 矩形所属项目 主键
         /// </summary>
-        public long ProjectId
+        public string ProjectId
         {
             get
             {

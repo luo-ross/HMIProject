@@ -336,9 +336,10 @@ namespace RS.HMIServer.BLL
             //获取默认图像
             if (string.IsNullOrEmpty(userEntity.UserPic))
             {
-                var useImgDefaultDir = this.Configuration["UseImgDefaultDir"];
-                var useImgDefaultList = Directory.GetFiles(useImgDefaultDir);
-                var userPic = useImgDefaultList[Random.Shared.Next(useImgDefaultList.Length)];
+                var UserImgDefaultDir = Directory.GetCurrentDirectory();
+                UserImgDefaultDir = Path.Combine(UserImgDefaultDir, "UserDefaultImg");
+                var useImgDefaultList = Directory.GetFiles(UserImgDefaultDir);
+                var userPic = useImgDefaultList[Random.Shared.Next(0,useImgDefaultList.Length)];
                 userEntity.UserPic = userPic;
             }
 
@@ -381,7 +382,6 @@ namespace RS.HMIServer.BLL
 
             //获取可信度
             var credibility = this.CalculateIOU(imgVerifySessionModel.Rect, verify);
-
 
             //获取配置可信度
             if (!double.TryParse(this.Configuration["ImgVerifyCredibilityThreshold"], out double imgVerifyCredibilityThreshold))

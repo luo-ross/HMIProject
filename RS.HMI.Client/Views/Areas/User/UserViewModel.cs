@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using IdGen;
 using Microsoft.Extensions.DependencyInjection;
 using RS.Commons;
 using RS.Commons.Attributs;
@@ -22,8 +21,6 @@ namespace RS.HMI.Client.Views.Areas
     public class UserViewModel : CRUDViewModel<UserModel>, INavigate
     {
 
-        private readonly IIdGenerator<long> IdGenerator;
-
         /// <summary>
         /// 用户启用
         /// </summary>
@@ -38,9 +35,8 @@ namespace RS.HMI.Client.Views.Areas
         /// 默认构造方法
         /// </summary>
         /// <param name="idGenerator"></param>
-        public UserViewModel(IIdGenerator<long> idGenerator)
+        public UserViewModel()
         {
-            this.IdGenerator = idGenerator;
             this.UserEnableClickCommand = new RelayCommand<UserModel>(UserEnableClick, CanUserEnableClick);
             this.UserDisableClickCommand = new RelayCommand<UserModel>(UserDisableClick, CanUserDisableClick);
         }

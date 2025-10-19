@@ -1,6 +1,4 @@
-﻿using IdGen;
-using Microsoft.Extensions.DependencyInjection;
-using NPOI.SS.Formula.Functions;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NPOI.Util;
 using RS.Commons;
 using RS.Commons.Attributs;
@@ -11,9 +9,6 @@ using RS.Widgets.Models;
 using RS.Widgets.Models.Form;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Tensorflow;
 
 namespace RS.HMI.Client.Views.Areas
 {
@@ -23,15 +18,13 @@ namespace RS.HMI.Client.Views.Areas
     [ServiceInjectConfig(ServiceLifetime.Transient)]
     public class RoleViewModel : CRUDViewModel<RoleModel>
     {
-        private readonly IIdGenerator<long> IdGenerator;
 
         /// <summary>
         /// 默认构造方法
         /// </summary>
         /// <param name="idGenerator"></param>
-        public RoleViewModel(IIdGenerator<long> idGenerator)
+        public RoleViewModel()
         {
-            this.IdGenerator = idGenerator;
 
             //添加测试数据
             this.PropertyList = new ObservableCollection<PropertyBase>();
@@ -81,8 +74,6 @@ namespace RS.HMI.Client.Views.Areas
                 property.DescriptionWidth = new GridLength(descriptionWidth);
             }
         }
-
-
 
 
 

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using RS.HMI.Client.Validation;
 using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,27 @@ namespace RS.HMI.Client.Models
             {
                 this.SetProperty(ref email, value);
                 this.ValidProperty(value);
+            }
+        }
+
+
+        private string? password = string.Empty;
+        /// <summary>
+        /// 用户密码
+        /// </summary>
+        [MaxLength(30, ErrorMessage = "密码长度不能超过30")]
+        [MinLength(8, ErrorMessage = "密码长度至少8位")]
+        [Required(ErrorMessage = "密码输入不能为空")]
+        [PasswordConfirm]
+        public string? Password
+        {
+            get { return password; }
+            set
+            {
+                if (this.SetProperty(ref password, value))
+                {
+                    ValidProperty(value);
+                }
             }
         }
     }

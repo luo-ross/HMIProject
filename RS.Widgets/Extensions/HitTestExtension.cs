@@ -9,20 +9,22 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using RS.Win32API;
 using RS.Win32API.Structs;
+using System.Runtime.CompilerServices;
+using RS.Widgets.Controls;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace RS.Widgets.Extensions
 {
     public static class HitTestExtension
     {
-
-        public static (int Index, UIElement Child)? GetMouseOverChildInfo(this Panel panel)
+        public static (int Index, UIElement? Child) GetMouseOverChildInfo(this Panel panel)
         {
             POINT screenPoint = new POINT();
             NativeMethods.GetCursorPos(screenPoint);
-            Point mousePosition = panel.PointFromScreen(new Point(screenPoint.x, screenPoint.y));
+            Point mousePosition = panel.PointFromScreen(new Point(screenPoint.X, screenPoint.Y));
             var hitTestResult = VisualTreeHelper.HitTest(panel, mousePosition);
             DependencyObject current = hitTestResult?.VisualHit;
-
             while (current != null && current != panel)
             {
                 int index = panel.Children.IndexOf(current as UIElement);
@@ -32,7 +34,7 @@ namespace RS.Widgets.Extensions
                 }
                 current = VisualTreeHelper.GetParent(current);
             }
-            return null;
+            return (-1, default(UIElement));
         }
 
         public static bool IsDescendantOf(this DependencyObject descendant, DependencyObject ancestor)
@@ -104,8 +106,8 @@ namespace RS.Widgets.Extensions
                     {
                         return HitTestFilterBehavior.ContinueSkipSelfAndChildren;
                     }
-
                 }),
+
                 new HitTestResultCallback(hit =>
                 {
                     if (hit.VisualHit is DependencyObject depObj)
@@ -117,6 +119,30 @@ namespace RS.Widgets.Extensions
                 new PointHitTestParameters(point)
             );
             return results;
+        }
+
+
+        /// <summary>
+        /// 这里关键，必须设置窗体鼠标事件可以穿透
+        /// </summary>
+        /// <param name="hitTestable"></param>
+        public static void SetHitTestable(this Window @this, bool hitTestable)
+        {
+            var handle = new WindowInteropHelper(@this).Handle;
+            var styles = NativeMethods.GetWindowLong(new HandleRef(@this, handle), NativeMethods.GWL_EXSTYLE);
+            var flags = styles;
+            if (((flags & NativeMethods.WS_EX_TRANSPARENT) == 0) != hitTestable)
+            {
+                if (hitTestable)
+                {
+                    styles = (flags & ~NativeMethods.WS_EX_TRANSPARENT);
+                }
+                else
+                {
+                    styles = (flags | NativeMethods.WS_EX_TRANSPARENT);
+                }
+                NativeMethods.SetWindowLong(new HandleRef(null, handle), NativeMethods.GWL_EXSTYLE, new HandleRef(null, styles));
+            }
         }
     }
 }

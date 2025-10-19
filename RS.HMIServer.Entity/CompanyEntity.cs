@@ -23,12 +23,12 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 关联公司认证
         /// </summary>
-        public long? RealCompanyId { get; set; }
+        public string? RealCompanyId { get; set; }
 
         /// <summary>
         /// 父级公司 用于集团继承
         /// </summary>
-        public long? ParentId { get; set; }
+        public string? ParentId { get; set; }
 
     }
 }

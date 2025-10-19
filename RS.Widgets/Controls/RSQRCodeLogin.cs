@@ -26,13 +26,13 @@ namespace RS.Widgets.Controls
         private DispatcherTimer QueryQRCodeLoginStatusDispatcherTimer;
         private QRCodeLoginResultModel LoginQRCodeResult;
         private RSQRCodeLogin RSQRCodeLogin;
-        public RSQRCodeLogin.CancelQRCodeLoginEventHandler OnCancelQRCodeLogin;
-        public RSQRCodeLogin.GetLoginQRCodeEventHandler OnGetLoginQRCode;
-        public RSQRCodeLogin.QRCodeAuthLoginSuccessEventHandler OnQRCodeAuthLoginSuccess;
-        public RSQRCodeLogin.QueryQRCodeLoginStatusEventHandler OnQueryQRCodeLoginStatus;
+        public Action<QRCodeLoginResultModel> OnCancelQRCodeLoginEvent;
+        public Func<Task<QRCodeLoginResultModel>> OnGetLoginQRCodeEvent;
+        public Action<QRCodeLoginResultModel> OnQRCodeAuthLoginSuccessEvent;
+        public Func<Task<QRCodeLoginStatusModel>> OnQueryQRCodeLoginStatusEvent;
         private bool IsEndQRCodeLogin = false;
 
-      
+
         public QRCodeLoginTask(RSQRCodeLogin rSQRCodeLogin)
         {
             RSQRCodeLogin = rSQRCodeLogin;
@@ -49,12 +49,12 @@ namespace RS.Widgets.Controls
             RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.BeginGetQRCode;
             this.GenerateQRCodeImgSource(" ", RSQRCodeLogin.QRCodeWidth, RSQRCodeLogin.QRCodeHeight);
 
-            if (OnGetLoginQRCode == null)
+            if (OnGetLoginQRCodeEvent == null)
             {
                 return;
             }
 
-            this.LoginQRCodeResult = await OnGetLoginQRCode?.Invoke();
+            this.LoginQRCodeResult = await OnGetLoginQRCodeEvent?.Invoke();
             if (IsEndQRCodeLogin)
             {
                 return;
@@ -92,7 +92,7 @@ namespace RS.Widgets.Controls
             QueryQRCodeLoginStatusDispatcherTimer?.Stop();
             QueryQRCodeLoginStatusDispatcherTimer = null;
         }
-    
+
 
         private async void QueryQRCodeLoginStatusDispatcherTimer_Tick(object? sender, EventArgs e)
         {
@@ -121,7 +121,7 @@ namespace RS.Widgets.Controls
 
             if (!IsEndQRCodeLogin)
             {
-                var qRCodeLoginStatusModel = await OnQueryQRCodeLoginStatus?.Invoke();
+                var qRCodeLoginStatusModel = await OnQueryQRCodeLoginStatusEvent?.Invoke();
                 if (qRCodeLoginStatusModel != null && qRCodeLoginStatusModel.IsSuccess)
                 {
                     if (!IsEndQRCodeLogin)
@@ -141,7 +141,7 @@ namespace RS.Widgets.Controls
                             this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
                             if (!IsEndQRCodeLogin)
                             {
-                                OnQRCodeAuthLoginSuccess?.Invoke(this.LoginQRCodeResult);
+                                OnQRCodeAuthLoginSuccessEvent?.Invoke(this.LoginQRCodeResult);
                             }
 
                             break;
@@ -149,7 +149,7 @@ namespace RS.Widgets.Controls
                             this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
                             if (!IsEndQRCodeLogin)
                             {
-                                OnCancelQRCodeLogin?.Invoke(this.LoginQRCodeResult);
+                                OnCancelQRCodeLoginEvent?.Invoke(this.LoginQRCodeResult);
                             }
                             break;
                         case QRCodeLoginStatusEnum.QRCodeLoginTimeOut:
@@ -231,29 +231,75 @@ namespace RS.Widgets.Controls
 
         }
 
-        public delegate Task<QRCodeLoginResultModel> GetLoginQRCodeEventHandler();
         /// <summary>
         /// 获取登录二维码
         /// </summary>
-        public event GetLoginQRCodeEventHandler OnGetLoginQRCode;
+        public Func<Task<QRCodeLoginResultModel>> OnGetLoginQRCodeEvent;
 
-        public delegate Task<QRCodeLoginStatusModel> QueryQRCodeLoginStatusEventHandler();
         /// <summary>
         /// 查询二维码登录状态
         /// </summary>
-        public event QueryQRCodeLoginStatusEventHandler OnQueryQRCodeLoginStatus;
+        public Func<Task<QRCodeLoginStatusModel>> OnQueryQRCodeLoginStatusEvent;
 
-        public delegate void QRCodeAuthLoginSuccessEventHandler(QRCodeLoginResultModel loginQRCodeResult);
         /// <summary>
         /// 二维码授权登录成功
         /// </summary>
-        public event QRCodeAuthLoginSuccessEventHandler OnQRCodeAuthLoginSuccess;
+        public Action<QRCodeLoginResultModel> OnQRCodeAuthLoginSuccessEvent;
 
-        public delegate void CancelQRCodeLoginEventHandler(QRCodeLoginResultModel loginQRCodeResult);
         /// <summary>
         /// 取消二维码登录
         /// </summary>
-        public event CancelQRCodeLoginEventHandler OnCancelQRCodeLogin;
+        public Action<QRCodeLoginResultModel> OnCancelQRCodeLoginEvent;
+
+
+
+
+        public Func<Task<QRCodeLoginResultModel>> OnGetLoginQRCode
+        {
+            get { return (Func<Task<QRCodeLoginResultModel>>)GetValue(OnGetLoginQRCodeProperty); }
+            set { SetValue(OnGetLoginQRCodeProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnGetLoginQRCodeProperty =
+            DependencyProperty.Register("OnGetLoginQRCode", typeof(Func<Task<QRCodeLoginResultModel>>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+
+
+
+
+        public Func<Task<QRCodeLoginStatusModel>> OnQueryQRCodeLoginStatus
+        {
+            get { return (Func<Task<QRCodeLoginStatusModel>>)GetValue(OnQueryQRCodeLoginStatusProperty); }
+            set { SetValue(OnQueryQRCodeLoginStatusProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnQueryQRCodeLoginStatusProperty =
+            DependencyProperty.Register("OnQueryQRCodeLoginStatus", typeof(Func<Task<QRCodeLoginStatusModel>>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+
+
+
+
+        public Action<QRCodeLoginResultModel> OnQRCodeAuthLoginSuccess
+        {
+            get { return (Action<QRCodeLoginResultModel>)GetValue(OnQRCodeAuthLoginSuccessProperty); }
+            set { SetValue(OnQRCodeAuthLoginSuccessProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnQRCodeAuthLoginSuccessProperty =
+            DependencyProperty.Register("OnQRCodeAuthLoginSuccess", typeof(Action<QRCodeLoginResultModel>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+
+
+
+
+        public Action<QRCodeLoginResultModel> OnCancelQRCodeLogin
+        {
+            get { return (Action<QRCodeLoginResultModel>)GetValue(OnCancelQRCodeLoginProperty); }
+            set { SetValue(OnCancelQRCodeLoginProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnCancelQRCodeLoginProperty =
+            DependencyProperty.Register("OnCancelQRCodeLogin", typeof(Action<QRCodeLoginResultModel>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+
+
 
         private void BeginQRCodeLoginTrigger()
         {
@@ -263,10 +309,10 @@ namespace RS.Widgets.Controls
             }
             using (QRCodeLoginTask qRCodeLoginTask = new QRCodeLoginTask(this))
             {
-                qRCodeLoginTask.OnCancelQRCodeLogin = this.OnCancelQRCodeLogin;
-                qRCodeLoginTask.OnGetLoginQRCode = this.OnGetLoginQRCode;
-                qRCodeLoginTask.OnQRCodeAuthLoginSuccess = this.OnQRCodeAuthLoginSuccess;
-                qRCodeLoginTask.OnQueryQRCodeLoginStatus = this.OnQueryQRCodeLoginStatus;
+                qRCodeLoginTask.OnCancelQRCodeLoginEvent = this.OnCancelQRCodeLoginEvent;
+                qRCodeLoginTask.OnGetLoginQRCodeEvent = this.OnGetLoginQRCodeEvent;
+                qRCodeLoginTask.OnQRCodeAuthLoginSuccessEvent = this.OnQRCodeAuthLoginSuccessEvent;
+                qRCodeLoginTask.OnQueryQRCodeLoginStatusEvent = this.OnQueryQRCodeLoginStatusEvent;
                 CurrentQRCodeLoginTask = qRCodeLoginTask;
                 qRCodeLoginTask.BeginQRCodeLogin();
             }
@@ -280,7 +326,6 @@ namespace RS.Widgets.Controls
             }
             CurrentQRCodeLoginTask = null;
         }
-
 
 
         /// <summary>

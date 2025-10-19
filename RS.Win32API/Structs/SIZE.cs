@@ -10,7 +10,7 @@ namespace RS.Win32API.Structs
     [StructLayout(LayoutKind.Sequential)]
     public struct SIZE
     {
-        public int cx;
-        public int cy;
+        public int Width;
+        public int Height;
     }
 }

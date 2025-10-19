@@ -10,7 +10,7 @@
     Width="640"
     Height="460"
     Background="#ffffff"
-    BorderCornerRadius="8"
+    CornerRadius="8"
     Foreground="#333333"
     IsFitSystem="True"
     ResizeMode="NoResize"

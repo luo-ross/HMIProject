@@ -11,8 +11,7 @@
 		<PackageReference Include="CommunityToolkit.Common" Version="8.4.0" />
 		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0" />
 		<PackageReference Include="MailKit" Version="4.4.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
-		<PackageReference Include="NewId" Version="4.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.21" />
 		<PackageReference Include="RazorLight" Version="2.3.1" />
 		<PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
 		<PackageReference Include="TencentCloudSDK" Version="3.0.1007" />

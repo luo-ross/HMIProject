@@ -511,8 +511,8 @@ namespace RS.Widgets.Controls
                 NativeMethods.GetCursorPos(pOINT);
                 this.ContextMenu.IsOpen = true;
                 this.ContextMenu.Placement = PlacementMode.AbsolutePoint;
-                this.ContextMenu.HorizontalOffset = pOINT.x;
-                this.ContextMenu.VerticalOffset = pOINT.y;
+                this.ContextMenu.HorizontalOffset = pOINT.X;
+                this.ContextMenu.VerticalOffset = pOINT.Y;
 
                 // VS7 #38994
                 // The solution to this problem was found in MSDN Article ID: Q135788.

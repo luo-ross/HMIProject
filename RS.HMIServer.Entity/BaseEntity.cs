@@ -1,11 +1,4 @@
-﻿using IdGen;
-using RS.Commons.Extensions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RS.HMIServer.Entity
 {
@@ -35,25 +28,24 @@ namespace RS.HMIServer.Entity
     /// </summary>
     public class BaseEntity
     {
-        private readonly IIdGenerator<long> IdGenerator;
+        
         public BaseEntity()
         {
-            //获取分布式主键生成服务
-            this.IdGenerator = ServiceProviderExtensions.GetService<IIdGenerator<long>>();
+          
         }
 
         /// <summary>
         /// 主键 
         /// </summary>
         [Key]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 新增
         /// </summary>
         public BaseEntity Create()
         {
-            this.Id = this.IdGenerator.CreateId();
+            this.Id = Guid.NewGuid().ToString();
             this.CreateTime = DateTime.Now;
             return this;
         }
@@ -87,7 +79,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 创建人
         /// </summary>
-        public long? CreateId { get; set; }
+        public string? CreateId { get; set; }
 
         /// <summary>
         /// 创建时间
@@ -97,7 +89,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 最后一次更新人
         /// </summary>
-        public long? UpdateId { get; set; }
+        public string? UpdateId { get; set; }
 
         /// <summary>
         /// 最后一次更新时间
@@ -107,7 +99,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 删除人
         /// </summary>
-        public long? DeleteId { get; set; }
+        public string? DeleteId { get; set; }
 
         /// <summary>
         /// 删除时间

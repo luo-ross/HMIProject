@@ -11,25 +11,24 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RS.Widgets.Models
 {
-    public  class NotifyBase : ObservableObject, INotifyDataErrorInfo
+    public class NotifyBase : ObservableObject, INotifyDataErrorInfo
     {
         public NotifyBase()
         {
-            this.DefaultErrorKey = Guid.NewGuid().ToString();
-            this.ErrorsDic = new Dictionary<string, IEnumerable<ValidErrorModel>>();
+            this.ErrorsDic = new Dictionary<string, IEnumerable<string>>();
         }
 
 
         #region INotifyDataErrorInfo实现
-        private string DefaultErrorKey;
 
         /// <summary>
         /// 错误字典Key 就是PropertyName 键值就是错误信息列表
         /// </summary>
-        public Dictionary<string, IEnumerable<ValidErrorModel>> ErrorsDic;
+        public Dictionary<string, IEnumerable<string>> ErrorsDic;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public bool HasErrors
@@ -56,7 +55,7 @@ namespace RS.Widgets.Models
                 var errorList = ErrorsDic[propertyName];
                 foreach (var error in errorList)
                 {
-                    yield return error.ErrorMsg;
+                    yield return error;
                 }
             }
             yield break;
@@ -114,23 +113,17 @@ namespace RS.Widgets.Models
             return !HasErrors;
         }
 
-        public void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults, string validErrorKey = null)
+        public void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults)
         {
-            string errorKey = GetErrorKey(validErrorKey);
-            RemoveErrors(propertyName);
-
             //获取已有错误
-            List<ValidErrorModel> validErrorModels = new List<ValidErrorModel>();
+            List<string> validErrorModels = new List<string>();
             if (ErrorsDic.ContainsKey(propertyName))
             {
                 validErrorModels = ErrorsDic[propertyName].ToList();
             }
+
             //创建新错误
-            var newValidErrors = validationResults.Select(t => new ValidErrorModel()
-            {
-                ErrorKey = errorKey,
-                ErrorMsg = t.ErrorMessage
-            });
+            var newValidErrors = validationResults.Select(t => t.ErrorMessage);
             //合并新错误
             validErrorModels = validErrorModels.Concat(newValidErrors).ToList();
             //添加错误
@@ -139,29 +132,19 @@ namespace RS.Widgets.Models
             OnErrorsChanged(propertyName);
         }
 
-        public string GetErrorKey(string validErrorKey)
+        public void AddErrors(string? propertyName, string errorMsg)
         {
-            if (validErrorKey == null)
-            {
-                validErrorKey = DefaultErrorKey;
-            }
-            return validErrorKey;
+            ICollection<ValidationResult> validationResults = new List<ValidationResult>();
+            validationResults.Add(new ValidationResult(errorMsg));
+            this.AddErrors(propertyName, validationResults);
         }
 
-        public void RemoveErrors(string? propertyName, string validErrorKey = null)
+
+        public void RemoveErrors(string? propertyName)
         {
-            string errorKey = GetErrorKey(validErrorKey);
             if (ErrorsDic.ContainsKey(propertyName))
             {
-                var validErrorModels = ErrorsDic[propertyName].ToList();
-                if (validErrorModels != null)
-                {
-                    validErrorModels.RemoveAll(t => t.ErrorKey == errorKey);
-                }
-                if (validErrorModels.Count == 0)
-                {
-                    ErrorsDic.Remove(propertyName);
-                }
+                ErrorsDic.Remove(propertyName);
                 OnErrorsChanged(propertyName);
             }
         }

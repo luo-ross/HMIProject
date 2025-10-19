@@ -29,6 +29,7 @@ namespace RS.HMIServer.Controllers
             return await SecurityBLL.PasswordResetEmailSendAsync(aesEncryptModel, SessionId, Audiences);
         }
 
+
         [HttpPost]
         [Authorize]
         public async Task<OperateResult> EmailPasswordResetConfirm(AESEncryptModel aesEncryptModel)

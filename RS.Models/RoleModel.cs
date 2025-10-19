@@ -25,7 +25,7 @@ namespace RS.Models
         /// <summary>
         /// 绑定公司
         /// </summary>
-        public long? CompanyId { get; set; }
+        public string? CompanyId { get; set; }
 
         /// <summary>
         /// 公司名称

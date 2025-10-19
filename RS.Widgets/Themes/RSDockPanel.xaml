@@ -1,0 +1,272 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <converters:ClipConverter x:Key="ClipConverter" />
+    <converters:ForegroundColorConverter x:Key="ForegroundColorConverter" />
+
+    <Style TargetType="{x:Type rs:RSDockPanel}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="#CCCEDB" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="ActiveCaptionBackground" Value="#006CBE" />
+        <Setter Property="NotActiveCaptionBackground" Value="#EEEEF2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type rs:RSDockPanel}">
+                    <Border
+                        x:Name="PART_Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Focusable="{TemplateBinding Focusable}">
+                        <rs:RSDialog x:Name="PART_Dialog">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid
+                                    x:Name="PART_Caption"
+                                    Grid.Row="0"
+                                    Height="{TemplateBinding CaptionHeight}"
+                                    VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel
+                                        x:Name="PART_CaptionTitle"
+                                        Grid.Column="0"
+                                        Orientation="Horizontal">
+                                        <ContentControl
+                                            x:Name="PART_LeftCaptionContent"
+                                            Grid.Column="1"
+                                            Content="{TemplateBinding LeftCaptionContent}" />
+                                        <TextBlock
+                                            x:Name="PART_Title"
+                                            Grid.Column="0"
+                                            VerticalAlignment="Center"
+                                            Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                                            Text="{TemplateBinding Title}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
+                                    </StackPanel>
+
+                                    <Border
+                                        Grid.Column="1"
+                                        Height="5"
+                                        Margin="5,3,5,3">
+                                        <Border.Background>
+                                            <DrawingBrush
+                                                TileMode="Tile"
+                                                Viewbox="0,0,4,4"
+                                                ViewboxUnits="Absolute"
+                                                Viewport="0,0,4,4"
+                                                ViewportUnits="Absolute">
+                                                <DrawingBrush.Drawing>
+                                                    <GeometryDrawing Brush="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}">
+                                                        <GeometryDrawing.Geometry>
+                                                            <GeometryGroup>
+                                                                <RectangleGeometry Rect="0,0,1,1" />
+                                                                <RectangleGeometry Rect="2,2,1,1" />
+                                                            </GeometryGroup>
+                                                        </GeometryDrawing.Geometry>
+                                                    </GeometryDrawing>
+                                                </DrawingBrush.Drawing>
+                                            </DrawingBrush>
+                                        </Border.Background>
+                                        <ContentControl
+                                            x:Name="PART_MidCaptionContent"
+                                            Grid.Column="1"
+                                            Content="{TemplateBinding MidCaptionContent}" />
+                                    </Border>
+
+                                    <StackPanel
+                                        x:Name="PART_BtnCommands"
+                                        Grid.Column="2"
+                                        Margin="3,0,3,0"
+                                        Orientation="Horizontal">
+
+                                        <ToggleButton
+                                            x:Name="PART_BtnWindowPosition"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.MenuItemDownArrow}"
+                                            rs:ControlsHelper.IconHeight="9"
+                                            rs:ControlsHelper.IconWidth="9"
+                                            Background="{Binding ElementName=PART_Caption, Path=Background}"
+                                            Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                                            Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                            ToolTip="自动隐藏"
+                                            WindowChrome.IsHitTestVisibleInChrome="True" />
+
+                                        <Popup
+                                            x:Name="PART_Popup"
+                                            AllowsTransparency="True"
+                                            Focusable="False"
+                                            HorizontalOffset="0"
+                                            IsOpen="{Binding ElementName=PART_BtnWindowPosition, Path=IsChecked}"
+                                            Placement="Bottom"
+                                            PlacementTarget="{Binding ElementName=PART_BtnWindowPosition}"
+                                            PopupAnimation="None"
+                                            SnapsToDevicePixels="True"
+                                            StaysOpen="False"
+                                            VerticalOffset="3">
+                                            <Border Margin="15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                                <Border
+                                                    x:Name="DropDownBorder"
+                                                    Width="200"
+                                                    Background="#FFF"
+                                                    CornerRadius="3">
+                                                    <Border.Clip>
+                                                        <MultiBinding Converter="{StaticResource ClipConverter}">
+                                                            <Binding ElementName="DropDownBorder" Path="CornerRadius" />
+                                                            <Binding ElementName="DropDownBorder" Path="ActualWidth" />
+                                                            <Binding ElementName="DropDownBorder" Path="ActualHeight" />
+                                                            <Binding ElementName="DropDownBorder" Path="BorderThickness" />
+                                                        </MultiBinding>
+                                                    </Border.Clip>
+                                                    <StackPanel x:Name="DropDown">
+                                                        <MenuItem
+                                                            x:Name="PART_MenuItem_WindowFloatingCommand"
+                                                            Command="{TemplateBinding WindowFloatingCommand}"
+                                                            CommandParameter="{Binding ElementName=PART_Popup}"
+                                                            Header="浮动" />
+                                                        <MenuItem
+                                                            Command="{TemplateBinding WindowDockingCommand}"
+                                                            CommandParameter="{Binding ElementName=PART_Popup}"
+                                                            Header="停靠" />
+                                                        <MenuItem
+                                                            Command="{TemplateBinding WindowTabDockingCommand}"
+                                                            CommandParameter="{Binding ElementName=PART_Popup}"
+                                                            Header="作为选项式文档停靠" />
+                                                        <MenuItem
+                                                            x:Name="PART_MenuItem_WindowAutoHiddenCommand"
+                                                            Command="{TemplateBinding WindowAutoHiddenCommand}"
+                                                            CommandParameter="{Binding ElementName=PART_Popup}"
+                                                            Header="自动隐藏" />
+                                                        <MenuItem
+                                                            Command="{TemplateBinding CloseWindowCommand}"
+                                                            CommandParameter="{Binding ElementName=PART_Popup}"
+                                                            Header="关闭" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Border>
+                                        </Popup>
+
+                                        <CheckBox
+                                            x:Name="PART_AutoHidden"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Peg}"
+                                            rs:ControlsHelper.IconHeight="9"
+                                            rs:ControlsHelper.IconWidth="9"
+                                            Background="{Binding ElementName=PART_Caption, Path=Background}"
+                                            Command="{TemplateBinding WindowAutoHiddenCommand}"
+                                            Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                                            IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsAutoHidden, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                            ToolTip="自动隐藏"
+                                            WindowChrome.IsHitTestVisibleInChrome="True" />
+
+                                        <Button
+                                            x:Name="PART_BtnMaxRestore"
+                                            Margin="0"
+                                            rs:ControlsHelper.IconHeight="9"
+                                            rs:ControlsHelper.IconWidth="9"
+                                            Background="{Binding ElementName=PART_Caption, Path=Background}"
+                                            Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                                            Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                            Visibility="Collapsed"
+                                            WindowChrome.IsHitTestVisibleInChrome="True" />
+
+                                        <Button
+                                            x:Name="PART_BtnClose"
+                                            Margin="0"
+                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
+                                            rs:ControlsHelper.IconHeight="9"
+                                            rs:ControlsHelper.IconWidth="9"
+                                            Background="{Binding ElementName=PART_Caption, Path=Background}"
+                                            Command="{TemplateBinding CloseWindowCommand}"
+                                            Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
+                                            Style="{StaticResource RSApp.Styles.IconButtonStyle}"
+                                            ToolTip="关闭(Shift+Esc)"
+                                            WindowChrome.IsHitTestVisibleInChrome="True" />
+                                    </StackPanel>
+
+                                    <Grid.ContextMenu>
+                                        <ContextMenu IsOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsCaptionContextMenuOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <MenuItem
+                                                x:Name="PART_ContextMenu_WindowFloatingCommand"
+                                                Command="{TemplateBinding WindowFloatingCommand}"
+                                                Header="浮动" />
+                                            <MenuItem Command="{TemplateBinding WindowDockingCommand}" Header="停靠" />
+                                            <MenuItem Command="{TemplateBinding WindowTabDockingCommand}" Header="作为选项式文档停靠" />
+                                            <MenuItem
+                                                x:Name="PART_ContextMenu_WindowAutoHiddenCommand"
+                                                Command="{TemplateBinding WindowAutoHiddenCommand}"
+                                                Header="自动隐藏" />
+                                            <MenuItem Command="{TemplateBinding CloseWindowCommand}" Header="关闭" />
+                                        </ContextMenu>
+                                    </Grid.ContextMenu>
+                                </Grid>
+
+                                <Grid x:Name="PART_Client" Grid.Row="1">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Grid>
+                            </Grid>
+                        </rs:RSDialog>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsActive" Value="True">
+                            <Setter TargetName="PART_Caption" Property="Background" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ActiveCaptionBackground}" />
+                        </Trigger>
+
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter TargetName="PART_Caption" Property="Background" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=NotActiveCaptionBackground}" />
+                        </Trigger>
+
+                        <Trigger Property="IsAutoHidden" Value="True">
+                            <Setter TargetName="PART_AutoHidden" Property="rs:ControlsHelper.IconRotateAngle" Value="0" />
+                        </Trigger>
+
+                        <Trigger Property="IsAutoHidden" Value="False">
+                            <Setter TargetName="PART_AutoHidden" Property="rs:ControlsHelper.IconRotateAngle" Value="-90" />
+                        </Trigger>
+
+                        <Trigger Property="IsWindowDockPanel" Value="True">
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_AutoHidden" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_ContextMenu_WindowFloatingCommand" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_ContextMenu_WindowAutoHiddenCommand" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_MenuItem_WindowFloatingCommand" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_MenuItem_WindowAutoHiddenCommand" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ParentWindow.WindowState}" Value="Maximized">
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=RestoreWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding Source={x:Static rs:RSWindowBase.SystemRestoreDes}}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Restore}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ParentWindow.WindowState}" Value="Normal">
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MaximizeWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding Source={x:Static rs:RSWindowBase.SystemMaximizeDes}}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Maxsize}" />
+                        </DataTrigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

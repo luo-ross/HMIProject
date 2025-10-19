@@ -22,7 +22,7 @@ namespace RS.Widgets.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length < 4 ||
-                !(values[0] is CornerRadius borderCornerRadius) ||
+                !(values[0] is CornerRadius cornerRadius) ||
                 !(values[1] is double width) ||
                 !(values[2] is double height) ||
                 !(values[3] is Thickness borderThickness))
@@ -30,7 +30,7 @@ namespace RS.Widgets.Converters
                 return Geometry.Empty;
             }
             var pathGeometry = GetPathGeometry(
-              borderCornerRadius,
+              cornerRadius,
               width,
               height,
               borderThickness);
@@ -38,7 +38,7 @@ namespace RS.Widgets.Converters
         }
 
         public static Geometry GetPathGeometry(
-            CornerRadius borderCornerRadius,
+            CornerRadius cornerRadius,
             double width,
             double height,
             Thickness borderThickness
@@ -62,16 +62,16 @@ namespace RS.Widgets.Converters
                 return Geometry.Empty;
             }
 
-            double topLeftRadius = Math.Min(borderCornerRadius.TopLeft, (right - left) / 2);
+            double topLeftRadius = Math.Min(cornerRadius.TopLeft, (right - left) / 2);
             topLeftRadius = Math.Min(topLeftRadius, (bottom - top) / 2);
 
-            double topRightRadius = Math.Min(borderCornerRadius.TopRight, (right - left) / 2);
+            double topRightRadius = Math.Min(cornerRadius.TopRight, (right - left) / 2);
             topRightRadius = Math.Min(topRightRadius, (bottom - top) / 2);
 
-            double bottomRightRadius = Math.Min(borderCornerRadius.BottomRight, (right - left) / 2);
+            double bottomRightRadius = Math.Min(cornerRadius.BottomRight, (right - left) / 2);
             bottomRightRadius = Math.Min(bottomRightRadius, (bottom - top) / 2);
 
-            double bottomLeftRadius = Math.Min(borderCornerRadius.BottomLeft, (right - left) / 2);
+            double bottomLeftRadius = Math.Min(cornerRadius.BottomLeft, (right - left) / 2);
             bottomLeftRadius = Math.Min(bottomLeftRadius, (bottom - top) / 2);
 
 

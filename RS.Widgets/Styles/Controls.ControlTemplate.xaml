@@ -1,0 +1,139 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <ControlTemplate x:Key="RSApp.ControlTemplate.IconButtonTemplate" TargetType="{x:Type ButtonBase}">
+        <Border
+            Padding="{TemplateBinding Padding}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+            <Path
+                Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                Fill="{TemplateBinding Foreground}"
+                Stretch="Fill" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Background" Value="#22EEEEEE" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#18EEEEEE" />
+                <Setter Property="Opacity" Value="0.8" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+
+    <ControlTemplate x:Key="RSApp.ControlTemplate.EmptyDataTemplate" TargetType="{x:Type ContentControl}">
+        <Border>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Path
+                    x:Name="PART_EmptyDataIcon"
+                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                    Fill="#949494"
+                    Stretch="Fill" />
+                <TextBlock
+                    Margin="0,3,0,0"
+                    Foreground="#949494"
+                    Text="{TemplateBinding rs:ControlsHelper.EmptyDataDes}" />
+            </StackPanel>
+        </Border>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
+                <Setter TargetName="PART_EmptyDataIcon" Property="Data" Value="{StaticResource RSApp.Icons.EmptyData}" />
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="RSApp.ControlTemplate.DefaultDataError">
+        <Border
+            BorderBrush="#ff5b5b"
+            BorderThickness="1"
+            CornerRadius="3">
+            <Grid>
+                <AdornedElementPlaceholder>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            x:Name="PART_ValidErrorTipHost"
+                            Grid.Column="1"
+                            VerticalAlignment="Stretch"
+                            Background="Transparent"
+                            Visibility="Visible">
+                            <TextBlock
+                                x:Name="PART_ValidErrorTip"
+                                Margin="2,0,2,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="Red"
+                                Text="❋" />
+                        </Border>
+                    </Grid>
+                </AdornedElementPlaceholder>
+                <Popup
+                    x:Name="PART_ErrorPopup"
+                    AllowsTransparency="True"
+                    HorizontalOffset="3"
+                    IsOpen="False"
+                    Placement="Right"
+                    PlacementTarget="{Binding ElementName=PART_ValidErrorTipHost}"
+                    StaysOpen="True"
+                    VerticalOffset="-1">
+                    <Border Padding="10,5,10,5" Background="#ff5b5b">
+                        <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
+                    </Border>
+                </Popup>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <Trigger SourceName="PART_ValidErrorTipHost" Property="IsMouseOver" Value="True">
+                <Setter TargetName="PART_ErrorPopup" Property="IsOpen" Value="True" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+
+    <ControlTemplate x:Key="RSApp.Styles.DataErrorTemplates">
+        <AdornedElementPlaceholder x:Name="PART_Adorned">
+            <Border>
+                <Grid>
+                    <Popup
+                        x:Name="PART_ErrorPopup"
+                        AllowsTransparency="True"
+                        HorizontalOffset="2"
+                        IsOpen="True"
+                        Placement="Right"
+                        PlacementTarget="{Binding ElementName=PART_Adorned}"
+                        StaysOpen="True"
+                        VerticalOffset="5">
+                        <Border Padding="10,5,10,5" Background="#ff5b5b">
+                            <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+        </AdornedElementPlaceholder>
+    </ControlTemplate>
+
+
+</ResourceDictionary>

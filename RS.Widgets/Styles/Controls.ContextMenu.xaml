@@ -10,10 +10,11 @@
     <converters:ClipConverter x:Key="ClipConverter" />
 
     <Style x:Key="RSApp.Styles.ContextMenuStyle" TargetType="{x:Type ContextMenu}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="#333333" />
         <Setter Property="HasDropShadow" Value="True" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="#fff" />
         <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
@@ -60,6 +61,4 @@
         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
-
-
 </ResourceDictionary>

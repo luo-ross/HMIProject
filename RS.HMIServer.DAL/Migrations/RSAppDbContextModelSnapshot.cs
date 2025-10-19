@@ -24,17 +24,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.AreaEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -49,11 +49,11 @@ namespace RS.HMIServer.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ParentId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -65,17 +65,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.ColPermissionEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -93,8 +93,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<int?>("Sort")
                         .HasColumnType("int");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -106,20 +106,20 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.CompanyEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Area")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -131,14 +131,14 @@ namespace RS.HMIServer.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ParentId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("RealCompanyId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("RealCompanyId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -150,8 +150,8 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.CompanyProfileEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -163,14 +163,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -196,8 +196,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<decimal?>("RegisteredCapital")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -212,8 +212,8 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.CountryEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Abbr")
                         .HasColumnType("nvarchar(max)");
@@ -221,14 +221,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("ChName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -242,8 +242,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("PhoneCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -255,8 +255,8 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.DepartmentEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Abbr")
                         .HasColumnType("nvarchar(max)");
@@ -264,17 +264,17 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("ChName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CompanyId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CompanyId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -285,8 +285,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -298,8 +298,8 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.DutyEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Abbr")
                         .HasColumnType("nvarchar(max)");
@@ -307,17 +307,17 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("ChName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CompanyId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CompanyId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -328,11 +328,11 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("PartmentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("PartmentId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -344,32 +344,32 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.EmailInfoEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("GuestId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("GuestId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -381,17 +381,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.LogOnEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -408,14 +408,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Salt")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -424,26 +424,26 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.PhoneInfoEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CountryCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("GuestId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("GuestId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
@@ -451,8 +451,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -464,8 +464,8 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.RealCompanyEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -476,14 +476,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -512,8 +512,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<decimal?>("RegisteredCapital")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -528,8 +528,8 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.RealNameEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
@@ -540,14 +540,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<long?>("BirthDay")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -567,14 +567,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -583,20 +583,20 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.RoleEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CompanyId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CompanyId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -611,8 +611,8 @@ namespace RS.HMIServer.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -624,11 +624,11 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.RolePermissionMapEntity", b =>
                 {
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long>("PermissionId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("PermissionId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("C")
                         .HasColumnType("bit");
@@ -654,17 +654,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.SystemPermissionEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -678,14 +678,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ParentId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Sort")
                         .HasColumnType("int");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -697,17 +697,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.TablePermissionEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -721,14 +721,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ParentId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Sort")
                         .HasColumnType("int");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
@@ -740,17 +740,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.ThirdPartyLogOnEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -774,14 +774,14 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<int?>("PlatformType")
                         .HasColumnType("int");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -790,17 +790,17 @@ namespace RS.HMIServer.DAL.Migrations
 
             modelBuilder.Entity("RS.HMIServer.Entity.UserEntity", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long?>("CreateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("CreateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("DeleteId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("DeleteId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime2");
@@ -820,8 +820,8 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UpdateId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UpdateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime2");

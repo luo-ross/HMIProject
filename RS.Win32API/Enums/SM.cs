@@ -87,6 +87,7 @@ namespace RS.Win32API.Enums
         CYFOCUSBORDER = 84,
         TABLETPC = 86,
         MEDIACENTER = 87,
+        CXPADDEDBORDER=96,
         REMOTESESSION = 0x1000,
         REMOTECONTROL = 0x2001,
     }

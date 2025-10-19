@@ -12,52 +12,24 @@
     <converters:ClipConverter x:Key="ClipConverter" />
     <converters:ForegroundColorConverter x:Key="ForegroundColorConverter" />
     <Style x:Key="RSApp.Styles.RSWindowBaseStyle" TargetType="{x:Type rs:RSWindowBase}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="ResizeMode" Value="CanResize" />
         <Setter Property="Background" Value="#F3F3F3" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome
-                    CaptionHeight="50"
-                    GlassFrameThickness="-1"
-                    ResizeBorderThickness="0"
-                    UseAeroCaptionButtons="False" />
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style BasedOn="{StaticResource RSApp.Styles.RSWindowBaseStyle}" TargetType="{x:Type rs:RSWindow}">
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-        <!--<Setter Property="Margin" Value="15" />-->
         <Setter Property="IsShowTitle" Value="True" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect
-                    BlurRadius="15"
-                    Opacity="0.1"
-                    ShadowDepth="-1"
-                    Color="#000" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWindow}">
-                    <Border Effect="{TemplateBinding Effect}">
+                    <Border x:Name="PART_Effect">
                         <Border
                             x:Name="PART_Border"
-                            Margin="15"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                            <Border.Clip>
-                                <MultiBinding Converter="{StaticResource ClipConverter}">
-                                    <Binding Path="BorderCornerRadius" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
-                                    <Binding ElementName="PART_Border" Path="ActualWidth" />
-                                    <Binding ElementName="PART_Border" Path="ActualHeight" />
-                                    <Binding ElementName="PART_Border" Path="BorderThickness" />
-                                </MultiBinding>
-                            </Border.Clip>
-                            <rs:RSDialog x:Name="PART_WinContentHost">
+                            <rs:RSDialog x:Name="PART_Dialog">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -134,7 +106,7 @@
                                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                                ToolTip="{TemplateBinding MinimizeDes}"
+                                                ToolTip="{Binding Source={x:Static rs:RSWindowBase.SystemMinimizeDes}}"
                                                 WindowChrome.IsHitTestVisibleInChrome="True" />
                                             <Button
                                                 x:Name="PART_BtnMaxRestore"
@@ -149,7 +121,7 @@
                                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                                                ToolTip="{TemplateBinding CloseDes}"
+                                                ToolTip="{Binding Source={x:Static rs:RSWindowBase.SystemCloseDes}}"
                                                 WindowChrome.IsHitTestVisibleInChrome="True" />
                                         </StackPanel>
                                     </Grid>
@@ -239,18 +211,7 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="WindowState" Value="Maximized">
-                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=RestoreDes}" />
-                            <Setter TargetName="PART_Border" Property="Margin" Value="0" />
-                            <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Restore}" />
-                        </Trigger>
-                        <Trigger Property="WindowState" Value="Normal">
-                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=MaximizeDes}" />
-                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Maxsize}" />
-                        </Trigger>
+
                         <Trigger Property="IsFitSystem" Value="True">
                             <Setter TargetName="PART_Client" Property="Grid.Row" Value="0" />
                             <Setter TargetName="PART_Client" Property="Grid.RowSpan" Value="2" />
@@ -359,6 +320,49 @@
                         <Trigger SourceName="PART_BottomLeft" Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="SizeNESW" />
                         </Trigger>
+
+                        <Trigger Property="IsUseCornerRadius" Value="True">
+                            <Setter TargetName="PART_Effect" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect
+                                        BlurRadius="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=BlurRadius}"
+                                        Opacity="0.5"
+                                        ShadowDepth="-1"
+                                        Color="#000" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="WindowStyle" Value="None" />
+                            <Setter Property="AllowsTransparency" Value="True" />
+                            <Setter TargetName="PART_Border" Property="Margin" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=BlurRadius}" />
+                            <Setter TargetName="PART_Border" Property="Clip">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource ClipConverter}">
+                                        <Binding Path="CornerRadius" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                        <Binding ElementName="PART_Border" Path="ActualWidth" />
+                                        <Binding ElementName="PART_Border" Path="ActualHeight" />
+                                        <Binding ElementName="PART_Border" Path="BorderThickness" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding Source={x:Static rs:RSWindowBase.SystemRestoreDes}}" />
+                            <Setter TargetName="PART_Border" Property="Margin" Value="0" />
+                            <Setter TargetName="PART_Border" Property="Clip" Value="{x:Null}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Restore}" />
+                            <Setter TargetName="PART_Border" Property="Padding" Value="7" />
+                        </Trigger>
+                        <Trigger Property="WindowState" Value="Normal">
+                            <Setter TargetName="PART_BtnMaxRestore" Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="ToolTip" Value="{Binding Source={x:Static rs:RSWindowBase.SystemMaximizeDes}}" />
+                            <Setter TargetName="PART_BtnMaxRestore" Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Maxsize}" />
+                        </Trigger>
+
+                        <Trigger Property="WindowStyle" Value="None">
+                            <Setter TargetName="PART_Border" Property="Padding" Value="0" />
+                        </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -1,4 +1,5 @@
-﻿using RS.Win32API;
+﻿using RS.Widgets.Enums;
+using RS.Win32API;
 using RS.Win32API.Structs;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -9,6 +10,25 @@ namespace RS.Widgets.Commons
 {
     public static class PointHelper
     {
+
+        public static RectArea GetRectArea(Rect rect, Point point)
+        {
+          
+            double thirdWidth = rect.Width / 3;
+            double thirdHeight = rect.Height / 3;
+
+            int horizontalPos = point.X < rect.Left ? 0 :
+                               point.X > rect.Right ? 2 :
+                               point.X < rect.Left + thirdWidth ? 0 :
+                               point.X < rect.Left + 2 * thirdWidth ? 1 : 2;
+
+            int verticalPos = point.Y < rect.Top ? 0 :
+                             point.Y > rect.Bottom ? 2 :
+                             point.Y < rect.Top + thirdHeight ? 0 :
+                             point.Y < rect.Top + 2 * thirdHeight ? 1 : 2;
+
+            return (RectArea)(verticalPos * 3 + horizontalPos);
+        }
 
         public static Point ClientToRoot(Point point, PresentationSource presentationSource)
         {
@@ -147,7 +167,7 @@ namespace RS.Widgets.Commons
             {
                 RECT rect = default;
                 NativeMethods.GetClientRect(handleRef, ref rect);
-                pt.x = rect.Right - pt.x;
+                pt.X= rect.Right - pt.X;
             }
 
             return pt;
@@ -175,7 +195,7 @@ namespace RS.Widgets.Commons
 
         public static Point ToPoint(POINT pt)
         {
-            return new Point(pt.x, pt.y);
+            return new Point(pt.X, pt.Y);
         }
 
         public static RECT FromRect(Rect rect)
@@ -197,6 +217,9 @@ namespace RS.Widgets.Commons
             result.Height = rc.Bottom - rc.Top;
             return result;
         }
+
+
+
      
     }
 }

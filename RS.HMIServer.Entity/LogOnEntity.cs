@@ -29,7 +29,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 用户主键
         /// </summary>
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
 
     }
 }

@@ -16,7 +16,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 父级
         /// </summary>
-        public long? ParentId { get; set; }
+        public string? ParentId { get; set; }
 
         /// <summary>
         /// 级别

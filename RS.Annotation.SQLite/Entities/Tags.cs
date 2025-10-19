@@ -11,13 +11,13 @@ namespace RS.Annotation.SQLite.Entities
         /// <summary>
         /// 标签唯一主键
         /// </summary>
-        public long Id { get; set; }
+        public string Id { get; set; }
 
 
         /// <summary>
         /// 所属项目
         /// </summary>
-        public long ProjectId { get; set; }
+        public string ProjectId { get; set; }
 
 
 

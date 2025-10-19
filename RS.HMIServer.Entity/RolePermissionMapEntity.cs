@@ -16,13 +16,13 @@ namespace RS.HMIServer.Entity
         /// 角色主键
         /// </summary>
         [Key]
-        public long RoleId { get; set; }
+        public string RoleId { get; set; }
 
         /// <summary>
         /// 权限主键
         /// </summary>
         [Key]
-        public long PermissionId { get; set; }
+        public string PermissionId { get; set; }
 
         /// <summary>
         /// 权限类型

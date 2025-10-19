@@ -3,11 +3,14 @@ using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using RS.SetupApp.Controls;
 using RS.SetupApp.Models;
+using RS.Widgets.Commons;
 using RS.Widgets.Controls;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
+using System.Resources;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -21,6 +24,7 @@ namespace RS.SetupApp.Views
     /// </summary>
     public partial class HomeView : RSWindow
     {
+        private const string resourcePath = "MyPublish.zip";
         public HomeViewModel ViewModel { get; set; }
 
         /// <summary>
@@ -240,14 +244,14 @@ namespace RS.SetupApp.Views
         }
 
 
-
-
+       
         private long GetProgramSize()
         {
             long totalSize = 0;
-            using (MemoryStream memoryStream = new MemoryStream(Resource.MyPublish))
+
+            using (var stream = ResourceHelper.GetResourceStream(Assembly.GetExecutingAssembly(), resourcePath))
             {
-                using (ZipArchive archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
+                using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
                 {
                     foreach (ZipArchiveEntry entry in archive.Entries)
                     {
@@ -255,14 +259,15 @@ namespace RS.SetupApp.Views
                     }
                 }
             }
+
             return totalSize;
         }
 
         private int GetProgramZipList()
         {
-            using (MemoryStream memoryStream = new MemoryStream(Resource.MyPublish))
+            using (var stream = ResourceHelper.GetResourceStream(Assembly.GetExecutingAssembly(), resourcePath))
             {
-                using (ZipArchive archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
+                using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
                 {
                     return archive.Entries.Count;
                 }
@@ -270,18 +275,18 @@ namespace RS.SetupApp.Views
         }
 
 
-        private QiyiMessageBox QiyiMessageBox;
-        private bool ShowQiyiMessageBox(object resourceKey)
+        private MessageBoxView MessageBoxView;
+        private bool ShowMessageBoxView(object resourceKey)
         {
             return this.Dispatcher.Invoke(() =>
              {
                  var readAndAgreementConfirmMessage = this.TryFindResource(resourceKey);
-                 QiyiMessageBox = new QiyiMessageBox()
+                 MessageBoxView = new MessageBoxView()
                  {
                      MessageContent = readAndAgreementConfirmMessage,
                      Owner = this,
                  };
-                 return QiyiMessageBox.ShowDialog() == true;
+                 return MessageBoxView.ShowDialog() == true;
              });
         }
 
@@ -293,7 +298,7 @@ namespace RS.SetupApp.Views
             //则提示用户进行选择
             if (!this.ViewModel.IsReadAndAgree)
             {
-                var result = this.ShowQiyiMessageBox("ReadAndAgreementConfirmMessage");
+                var result = this.ShowMessageBoxView("ReadAndAgreementConfirmMessage");
                 if (!result)
                 {
                     return;
@@ -328,7 +333,7 @@ namespace RS.SetupApp.Views
             {
                 if (isNeedConfirm)
                 {
-                    var result = this.ShowQiyiMessageBox("IsContinueInstallConfirmMessage");
+                    var result = this.ShowMessageBoxView("IsContinueInstallConfirmMessage");
                     if (!result)
                     {
                         return null;
@@ -362,8 +367,8 @@ namespace RS.SetupApp.Views
         /// </summary>
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            this.QiyiMessageBox.DialogResult = true;
-            this.QiyiMessageBox?.Close();
+            this.MessageBoxView.DialogResult = true;
+            this.MessageBoxView?.Close();
         }
 
         /// <summary>
@@ -371,8 +376,8 @@ namespace RS.SetupApp.Views
         /// </summary>
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.QiyiMessageBox.DialogResult = false;
-            this.QiyiMessageBox?.Close();
+            this.MessageBoxView.DialogResult = false;
+            this.MessageBoxView?.Close();
         }
 
         /// <summary>
@@ -420,15 +425,20 @@ namespace RS.SetupApp.Views
                 }
             }
 
-            if (token.IsCancellationRequested)
-            {
-                return TaskStatus.Canceled;
-            }
-
             //解压缩文件
-            using (MemoryStream stream = new MemoryStream(Resource.MyPublish))
+            using (var zipFileStream = ResourceHelper.GetResourceStream(Assembly.GetExecutingAssembly(), resourcePath))
             {
-                using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
+                return await UnZipFileAsync(zipFileStream, this.InstallActualPath, token);
+            }
+        }
+
+
+        private async Task<TaskStatus> UnZipFileAsync(Stream zipFileStream, string targetFilePath, CancellationToken token)
+        {
+            try
+            {
+                //解压缩文件
+                using (ZipArchive archive = new ZipArchive(zipFileStream, ZipArchiveMode.Read))
                 {
                     //循环解压
                     for (int i = 0; i < archive.Entries.Count; i++)
@@ -440,9 +450,10 @@ namespace RS.SetupApp.Views
                         var entry = archive.Entries[i];
 
                         //获取到加压路径
-                        var targetPath = Path.Combine(this.InstallActualPath, entry.FullName);
-                        this.ViewModel.RunningTooltip = @$"正在解压 {targetPath}";
-                        if (entry.Length == 0)
+                        var targetPath = Path.Combine(targetFilePath, entry.FullName);
+                        this.ViewModel.RunningTooltip = @$"Unzipping: {targetPath}";
+
+                        if (IsDirectoryEntry(entry))
                         {
                             Directory.CreateDirectory(targetPath);
                         }
@@ -457,7 +468,7 @@ namespace RS.SetupApp.Views
                                     if (IsFileLocked(targetPath))
                                     {
                                         checkCount++;
-                                        this.ViewModel.RunningTooltip = "检测到文件被占用，请及时关闭主程序！";
+                                        this.ViewModel.RunningTooltip = "The file is detected as being occupied. Please close the main program in time!";
                                         await Task.Delay(10 * 1000);
                                         if (checkCount < 2)
                                         {
@@ -474,11 +485,12 @@ namespace RS.SetupApp.Views
                                     }
                                 }
 
-                                using (var outputStream = File.Create(targetPath))
+                                int optimalBufferSize = 256 * 1024; // 256KB
+                                using (var outputStream = new FileStream(targetPath, FileMode.Create, FileAccess.Write, FileShare.None, optimalBufferSize, useAsync: true))
                                 {
                                     try
                                     {
-                                        await inputStream.CopyToAsync(outputStream, token);
+                                        await inputStream.CopyToAsync(outputStream, 81920, token);
                                     }
                                     catch (TaskCanceledException ex)
                                     {
@@ -487,19 +499,32 @@ namespace RS.SetupApp.Views
                                 }
                             }
                         }
-
-                        await Task.Delay(20);
                         this.ViewModel.AccumulatedSteps += 1;
                     }
-
                 }
+
+                return TaskStatus.RanToCompletion;
+            }
+            catch (Exception ex)
+            {
+                this.ViewModel.RunningTooltip = ex.Message;
+                return TaskStatus.Faulted;
             }
 
-            return TaskStatus.RanToCompletion;
         }
 
 
-
+        // <summary>
+        /// 判断Zip条目是否为文件夹（目录）
+        /// </summary>
+        private bool IsDirectoryEntry(ZipArchiveEntry entry)
+        {
+            if (entry.FullName.EndsWith("/") || entry.FullName.EndsWith("\\"))
+            {
+                return true;
+            }
+            return false;
+        }
 
 
         /// <summary>

@@ -147,12 +147,6 @@ namespace RS.Annotation.Views.Areas
             if (openFileDialog.ShowDialog() == true)
             {
                 string projectPath = openFileDialog.FileName;
-
-                //await this.HomeView.LoadingInvokeAsync(() =>
-                //{
-                //    var sdf =
-
-                //});
             }
         }
 
@@ -194,7 +188,7 @@ namespace RS.Annotation.Views.Areas
                 }).ToList();
 
                 //从数据库里加载项目都配置了哪些图像
-                var imgModelList = db.Pictures.Select(t => new ImgModel(t.Id, t.ProjectId)
+                var imgModelList = db.Pictures.Select(t => new ImgModel(t.ProjectId)
                 {
                     ImgName = t.ImgName,
                     ImgPath = t.ImgPath,

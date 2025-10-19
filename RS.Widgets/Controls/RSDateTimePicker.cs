@@ -1,8 +1,6 @@
 ﻿using RS.Widgets.Controls;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
-using ScottPlot.TickGenerators.Financial;
-using ScottPlot.TickGenerators.TimeUnits;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

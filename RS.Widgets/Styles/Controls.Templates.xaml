@@ -42,7 +42,12 @@
                 Data="{TemplateBinding rs:ControlsHelper.IconData}"
                 Fill="{TemplateBinding Foreground}"
                 IsEnabled="{TemplateBinding IsEnabled}"
-                Stretch="Uniform" />
+                RenderTransformOrigin="0.5,0.5"
+                Stretch="Uniform">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                </Path.RenderTransform>
+            </Path>
 
         </Border>
         <ControlTemplate.Triggers>
@@ -97,14 +102,6 @@
                             VerticalAlignment="Stretch"
                             Background="Transparent"
                             Visibility="Visible">
-                            <!--<TextBlock
-                                x:Name="PART_ValidErrorTip"
-                                Margin="0,0,0,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="11"
-                                Foreground="Red"
-                                Text="❋" />-->
                             <Path
                                 x:Name="PART_ValidErrorTip"
                                 Width="8"

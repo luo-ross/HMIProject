@@ -10,8 +10,8 @@ namespace RS.Win32API.Structs
     [StructLayout(LayoutKind.Sequential)]
     public class POINT
     {
-        public int x;
-        public int y;
+        public int X;
+        public int Y;
 
         public POINT()
         {
@@ -19,15 +19,15 @@ namespace RS.Win32API.Structs
 
         public POINT(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
 
 #if DEBUG
         public override string ToString()
         {
-            return "{x=" + x + ", y=" + y + "}";
+            return "{x=" + X + ", y=" + Y + "}";
         }
 #endif
     }

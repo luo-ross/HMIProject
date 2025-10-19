@@ -20,10 +20,8 @@ namespace RS.Annotation.Commons
     {
         static class NativeMethods
         {
-
             public struct IconInfo
             {
-
                 public bool fIcon;
 
                 public int xHotspot;
@@ -33,21 +31,16 @@ namespace RS.Annotation.Commons
                 public IntPtr hbmMask;
 
                 public IntPtr hbmColor;
-
             }
 
             [DllImport("user32.dll")]
-
             public static extern SafeIconHandle CreateIconIndirect(ref IconInfo icon);
 
             [DllImport("user32.dll")]
-
             public static extern bool DestroyIcon(IntPtr hIcon);
 
             [DllImport("user32.dll")]
-
             [return: MarshalAs(UnmanagedType.Bool)]
-
             public static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
 
         }

@@ -21,7 +21,7 @@ namespace RS.Widgets.IO
         /// Create a new BitStreamReader to unpack the bits in a buffer of bytes
         /// </summary>
         /// <param name="buffer">Buffer of bytes</param>
-        internal BitStreamReader(byte[] buffer)
+        public BitStreamReader(byte[] buffer)
         {
             Debug.Assert(buffer != null);
 
@@ -34,7 +34,7 @@ namespace RS.Widgets.IO
         /// </summary>
         /// <param name="buffer">Buffer of bytes</param>
         /// <param name="startIndex">The index to start reading at</param>
-        internal BitStreamReader(byte[] buffer, int startIndex)
+        public BitStreamReader(byte[] buffer, int startIndex)
         {
             Debug.Assert(buffer != null);
 
@@ -53,7 +53,7 @@ namespace RS.Widgets.IO
         /// </summary>
         /// <param name="buffer">Buffer of bytes</param>
         /// <param name="bufferLengthInBits">Maximum number of bytes to read from the buffer</param>
-        internal BitStreamReader(byte[] buffer, uint bufferLengthInBits)
+        public BitStreamReader(byte[] buffer, uint bufferLengthInBits)
             : this(buffer)
         {
             if (bufferLengthInBits > (buffer.Length * Native.BitsPerByte))
@@ -67,7 +67,7 @@ namespace RS.Widgets.IO
         /// <summary>
         /// Read a specified number of bits from the stream into a long
         /// </summary>
-        internal long ReadUInt64(int countOfBits)
+        public long ReadUInt64(int countOfBits)
         {
             // we only support 1-64 bits currently, not multiple bytes, and not 0 bits
             if (countOfBits > Native.BitsPerLong || countOfBits <= 0)
@@ -96,7 +96,7 @@ namespace RS.Widgets.IO
         /// </summary>
         /// <param name="countOfBits"></param>
         /// <returns></returns>
-        internal ushort ReadUInt16(int countOfBits)
+        public ushort ReadUInt16(int countOfBits)
         {
             // we only support 1-16 bits currently, not multiple bytes, and not 0 bits
             if (countOfBits > Native.BitsPerShort || countOfBits <= 0)
@@ -124,7 +124,7 @@ namespace RS.Widgets.IO
         /// <summary>
         /// Read a specified number of bits from the stream in reverse byte order
         /// </summary>
-        internal uint ReadUInt16Reverse(int countOfBits)
+        public uint ReadUInt16Reverse(int countOfBits)
         {
             // we only support 1-8 bits currently, not multiple bytes, and not 0 bits
             if (countOfBits > Native.BitsPerShort || countOfBits <= 0)
@@ -154,7 +154,7 @@ namespace RS.Widgets.IO
         /// <summary>
         /// Read a specified number of bits from the stream into a single byte
         /// </summary>
-        internal uint ReadUInt32(int countOfBits)
+        public uint ReadUInt32(int countOfBits)
         {
             // we only support 1-8 bits currently, not multiple bytes, and not 0 bits
             if (countOfBits > Native.BitsPerInt || countOfBits <= 0)
@@ -182,7 +182,7 @@ namespace RS.Widgets.IO
         /// <summary>
         /// Read a specified number of bits from the stream in reverse byte order
         /// </summary>
-        internal uint ReadUInt32Reverse(int countOfBits)
+        public uint ReadUInt32Reverse(int countOfBits)
         {
             // we only support 1-8 bits currently, not multiple bytes, and not 0 bits
             if (countOfBits > Native.BitsPerInt || countOfBits <= 0)
@@ -213,7 +213,7 @@ namespace RS.Widgets.IO
         /// Reads a single bit from the buffer
         /// </summary>
         /// <returns></returns>
-        internal bool ReadBit()
+        public bool ReadBit()
         {
             byte b = ReadByte(1);
             return ((b & 1) == 1);
@@ -227,7 +227,7 @@ namespace RS.Widgets.IO
         /// <remarks>For example, if 2 bits are read from the stream, then a full byte
         /// will be created with the least significant bits set to the 2 unpacked bits
         /// from the stream</remarks>
-        internal byte ReadByte(int countOfBits)
+        public byte ReadByte(int countOfBits)
         {
             // if the end of the stream has been reached, then throw an exception
             if (EndOfStream)
@@ -302,7 +302,7 @@ namespace RS.Widgets.IO
         /// data to read.
         /// </summary>
         /// <value>True if stream end has been reached</value>
-        internal bool EndOfStream
+        public bool EndOfStream
         {
             get
             {
@@ -313,7 +313,7 @@ namespace RS.Widgets.IO
         /// <summary>
         /// The current read index in the array
         /// </summary>
-        internal int CurrentIndex
+        public int CurrentIndex
         {
             get
             {

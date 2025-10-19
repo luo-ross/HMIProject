@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NPOI.POIFS.Properties;
 using NPOI.SS.Formula.Functions;
+using RS.Widgets.Commons;
 using RS.Widgets.Controls;
 using RS.Widgets.Enums;
 using RS.Widgets.Extensions;
@@ -116,7 +117,7 @@ namespace RS.Widgets.Adorners
                 rsListBoxItemRelativeActualHeight);
 
             var mousePositionCurrent = Mouse.GetPosition(this);
-            var rectArea = RSAdorner.GetRectArea(rsListBoxItemRelativeRect, mousePositionCurrent);
+            var rectArea = PointHelper.GetRectArea(rsListBoxItemRelativeRect, mousePositionCurrent);
 
             var dataList = this.RSNavListSortInfo.RSNavList.ItemsSource as IList;
             dataList.Remove(dragRSListBoxItemDataContext);
@@ -305,7 +306,7 @@ namespace RS.Widgets.Adorners
                 rsListBoxItemRelativePoint.Y,
                 rsListBoxItemRelativeActualWidth,
                 rsListBoxItemRelativeActualHeight);
-            var rectArea = RSAdorner.GetRectArea(rsListBoxItemRelativeRect, mousePositionCurrent);
+            var rectArea = PointHelper.GetRectArea(rsListBoxItemRelativeRect, mousePositionCurrent);
 
             // 计算起始点和结束点
             Point startPoint;

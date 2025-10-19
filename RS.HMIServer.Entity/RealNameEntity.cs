@@ -48,7 +48,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 绑定用户
         /// </summary>
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
 
     }
 }

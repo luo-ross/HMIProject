@@ -58,29 +58,7 @@ namespace RS.Widgets.Models
         }
 
 
-        private const string WINDOWPLACEMENTConfigKey = "C47C8080-072C-42E1-AB5C-5239C5C16808";
-
-        private WINDOWPLACEMENT _WINDOWPLACEMENT;
-        /// <summary>
-        /// 获取窗体位置
-        /// </summary>
-        public WINDOWPLACEMENT WINDOWPLACEMENT
-        {
-            get
-            {
-                if (_WINDOWPLACEMENT.Equals(default(WINDOWPLACEMENT)))
-                {
-                    this.WINDOWPLACEMENT = ConfigHelpler.GetDefaultConfig(WINDOWPLACEMENTConfigKey, new WINDOWPLACEMENT());
-                }
-                return _WINDOWPLACEMENT;
-            }
-            set
-            {
-                this.SetProperty(ref _WINDOWPLACEMENT, value);
-                ConfigHelpler.SaveAppConfigAsync(WINDOWPLACEMENTConfigKey, WINDOWPLACEMENT);
-            }
-        }
-
+    
 
 
 

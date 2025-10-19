@@ -15,18 +15,18 @@ namespace RS.Widgets.Models
     /// </summary>
     public class TagModel : ViewModelBase
     {
-        public TagModel(long id, long projectId)
+        public TagModel(string id,string projectId)
         {
             this.Id = id;
             this.ProjectId = projectId;
         }
 
 
-        private long id;
+        private string id;
         /// <summary>
         /// 标签主键 编号
         /// </summary>
-        public long Id
+        public string Id
         {
             get
             {
@@ -38,11 +38,11 @@ namespace RS.Widgets.Models
             }
         }
 
-        private long projectId;
+        private string projectId;
         /// <summary>
         /// 所属项目
         /// </summary>
-        public long ProjectId
+        public string ProjectId
         {
             get
             {

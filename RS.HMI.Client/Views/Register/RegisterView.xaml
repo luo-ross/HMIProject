@@ -160,7 +160,7 @@
             </Grid>
             <Button
                 x:Name="BtnReturn"
-                Margin="10,3,0,0"
+                Margin="5,5,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Return}"

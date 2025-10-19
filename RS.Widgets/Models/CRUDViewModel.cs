@@ -310,15 +310,15 @@ namespace RS.Widgets.Models
             var modelBase = this.ModelEdit as ModelBase;
             if (modelBase == null)
             {
-               throw new ArgumentNullException(nameof(modelBase));
+                throw new ArgumentNullException(nameof(modelBase));
             }
-          
+
             switch (this.CRUD)
             {
                 case CRUD.Add:
                     break;
                 case CRUD.Update:
-                    if (modelBase.Id == null|| modelBase.Id==0)
+                    if (string.IsNullOrEmpty(modelBase.Id))
                     {
                         throw new ArgumentNullException(nameof(modelBase.Id));
                     }

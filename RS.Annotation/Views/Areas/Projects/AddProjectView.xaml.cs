@@ -1,31 +1,12 @@
-﻿using IdGen;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Win32;
-using RS.Commons;
-using RS.Models;
-using RS.Widgets.Controls;
-using RS.Widgets.Enums;
-using RS.Widgets.Models;
-using RS.Annotation.Models;
+﻿using Microsoft.Win32;
 using RS.Annotation.Views.Home;
 using RS.Annotation.Widgets.Controls;
 using RS.Annotation.Widgets.Enums;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using RS.Commons;
 using RS.Widgets.Controls;
+using RS.Widgets.Models;
+using System.IO;
+using System.Windows;
 
 namespace RS.Annotation.Views.Areas
 {
@@ -36,12 +17,11 @@ namespace RS.Annotation.Views.Areas
     {
         public HomeView HomeView { get; set; }
         public ProjectsViewModel ViewModel { get; set; }
-        public IIdGenerator<long> IdGenerator { get; set; }
+    
         public AddProjectView(ProjectsView projectsView)
         {
             InitializeComponent();
-
-            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IIdGenerator<long>>();
+            
             this.DataContext = projectsView.ViewModel;
             this.ViewModel = projectsView.ViewModel;
             this.Loaded += AddProjectView_Loaded;
@@ -55,7 +35,7 @@ namespace RS.Annotation.Views.Areas
             this.TaskDetect.IsChecked = true;
             //获取默认文件存储路径
             (string projectPath, string projectName) = GetDefaultProjectPathAndName();
-            ProjectModel projectModel = new ProjectModel(IdGenerator.CreateId());
+            ProjectModel projectModel = new ProjectModel(Guid.NewGuid().ToString());
             projectModel.ProjectName = projectName;
             projectModel.ProjectPath = projectPath;
             //设置默认任务类型

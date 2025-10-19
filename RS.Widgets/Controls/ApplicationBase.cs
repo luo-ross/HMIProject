@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTK.Compute.OpenCL;
 using RS.Commons;
 using RS.Commons.Extensions;
 using RS.Models;
@@ -133,6 +132,7 @@ namespace RS.Widgets.Controls
                 {
                     ViewModel.IsGetSessionModelSuccess = false;
                     RSWinInfoBar.ShowInfoAsync(getSessionModelResult.Message, InfoType.Error);
+                    return;
                 }
                 ViewModel.IsGetSessionModelSuccess = true;
 #if DEBUG

@@ -223,6 +223,14 @@ namespace RS.Widgets.Models
             }
         }
 
+        public IInfoBar InfoBar
+        {
+            get
+            {
+                return this.ParentWin;
+            }
+        }
+
         #endregion
     }
 

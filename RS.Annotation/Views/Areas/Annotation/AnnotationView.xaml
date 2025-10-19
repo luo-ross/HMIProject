@@ -388,7 +388,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Button
                             Margin="0,0,3,0"
-                            Padding="10,0,10,0"
+                            Padding="8,5,8,5"
                             rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.LeftArrow}"
                             rs:ControlsHelper.IconHeight="15"
                             rs:ControlsHelper.IconWidth="10"
@@ -410,7 +410,7 @@
 
                         <Button
                             Margin="0,0,3,0"
-                            Padding="10,0,10,0"
+                            Padding="8,5,8,5"
                             rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.RightArrow}"
                             rs:ControlsHelper.IconHeight="15"
                             rs:ControlsHelper.IconWidth="10"

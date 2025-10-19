@@ -392,3 +392,7 @@ FodyWeavers.xsd
 /RS.Python/result.jpg
 /RS.HMIServer/Keys-Repository/key-131cd650-921d-4482-87b3-f07f24eeba9e.xml
 /rs.hmi.vueclient/.env.production
+/RS.Python/ultralytics
+/RS.HMIServer/Keys-Repository/key-3d30c986-1812-44b8-b9cd-eec849155b34.xml
+/RS.HMIServer/Keys-Repository/key-555C1014-E849-4456-98FC-083307422D01.bin
+/RS.HMIServer/Keys-Repository/key-7948DE50-2B7F-4E39-9382-8CA7B8125625.bin

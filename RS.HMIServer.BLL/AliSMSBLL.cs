@@ -22,8 +22,8 @@ namespace RS.HMIServer.BLL
         // 使用AK&SK初始化账号Client 
         private Client CreateDysmsapiClient(string endpoint)
         {
-            string accessKeyId = Configuration["SMSConfig:AccessKeyId"];
-            string accessKeySecret = Configuration["SMSConfig:AccessKeySecret"];
+            string accessKeyId = Configuration["SMSService:AccessKeyId"];
+            string accessKeySecret = Configuration["SMSService:AccessKeySecret"];
 
             Config config = new Config
             {

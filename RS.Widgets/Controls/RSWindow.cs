@@ -14,27 +14,23 @@ namespace RS.Widgets.Controls
 {
     public class RSWindow : RSWindowBase, IInfoBar, IWindow, IDialogBase, ILoading, IMessage, IModal, IWinModal
     {
-        private Button PART_Minimize;
-        private Button PART_BtnMaxRestore;
-        private Button PART_BtnClose;
-        private RSDialog PART_WinContentHost;
+        private RSDialog PART_Dialog;
         private DispatcherTimer InfoBarTimer;
-
         static RSWindow()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSWindow), new FrameworkPropertyMetadata(typeof(RSWindow)));
         }
 
-        public RSWindow()
+
+        public bool IsShowInfo
         {
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow, CanCloseWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, MinimizeWindow, CanMinimizeWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeRestoreWindow, CanMaximizeWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, MaximizeRestoreWindow, CanRestoreWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu, CanShowSystemMenu));
-            // 添加命令绑定
-            this.CommandBindings.Add(new CommandBinding(RSCommands.CleanTextCommand, CleanTextText));
+            get { return (bool)GetValue(IsShowInfoProperty); }
+            set { SetValue(IsShowInfoProperty, value); }
         }
+
+        public static readonly DependencyProperty IsShowInfoProperty =
+            DependencyProperty.Register("IsShowInfo", typeof(bool), typeof(RSWindow), new PropertyMetadata(true));
+
 
 
         [Description("消息")]
@@ -107,238 +103,10 @@ namespace RS.Widgets.Controls
             });
         }
 
-
-        private void CleanTextText(object sender, ExecutedRoutedEventArgs e)
-        {
-            RSCommands.CleanText(e.Parameter);
-        }
-
-        private void CanWindowMove(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-
-        private void WindowMaxRestore(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (this.PART_BtnMaxRestore.Command != null && this.PART_BtnMaxRestore.Command.CanExecute(null))
-            {
-                if (!(this.ResizeMode == ResizeMode.NoResize))
-                {
-                    this.PART_BtnMaxRestore.Command.Execute(null);
-                }
-            }
-        }
-
-        private void CanShowSystemMenu(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-        private void ShowSystemMenu(object sender, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.ShowSystemMenu(this, this.PointToScreen(Mouse.GetPosition(this)));
-        }
-
-        private void CanRestoreWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = this.WindowState == WindowState.Maximized;
-        }
-
-        private void CanMaximizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = this.WindowState == WindowState.Normal;
-        }
-
-        private void MaximizeRestoreWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                SystemCommands.RestoreWindow(this);
-            }
-            else
-            {
-                SystemCommands.MaximizeWindow(this);
-            }
-        }
-
-        private void CanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-        private void MinimizeWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.MinimizeWindow(this);
-        }
-
-        private void CanCloseWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-        private void CloseWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.CloseWindow(this);
-        }
-
-
-        [Description("自定义中部标题栏内容")]
-        [Browsable(false)]
-        public object MidCaptionContent
-        {
-            get { return (object)GetValue(MidCaptionContentProperty); }
-            set { SetValue(MidCaptionContentProperty, value); }
-        }
-
-        public static readonly DependencyProperty MidCaptionContentProperty =
-            DependencyProperty.Register("MidCaptionContent", typeof(object), typeof(RSWindow), new PropertyMetadata(null));
-
-
-        [Description("自定义左侧标题栏内容")]
-        [Browsable(false)]
-        public object LeftCaptionContent
-        {
-            get { return (object)GetValue(LeftCaptionContentProperty); }
-            set { SetValue(LeftCaptionContentProperty, value); }
-        }
-
-        public static readonly DependencyProperty LeftCaptionContentProperty =
-            DependencyProperty.Register("LeftCaptionContent", typeof(object), typeof(RSWindow), new PropertyMetadata(null));
-
-
-
-        [Description("标题栏高度设置")]
-        [Browsable(true)]
-        [Category("自定义窗口样式")]
-        public double CaptionHeight
-        {
-            get { return (double)GetValue(CaptionHeightProperty); }
-            set { SetValue(CaptionHeightProperty, value); }
-        }
-
-        public static readonly DependencyProperty CaptionHeightProperty =
-            DependencyProperty.Register("CaptionHeight", typeof(double), typeof(RSWindow), new PropertyMetadata(32D));
-
-
-
-        [Description("是否沉浸式")]
-        [Browsable(true)]
-        [Category("自定义窗口样式")]
-        public bool IsFitSystem
-        {
-            get { return (bool)GetValue(IsFitSystemProperty); }
-            set { SetValue(IsFitSystemProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsFitSystemProperty =
-            DependencyProperty.Register("IsFitSystem", typeof(bool), typeof(RSWindow), new PropertyMetadata(false));
-
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            if (e.Property == IsMaxsizedFullScreenProperty)
-            {
-                if (this.IsMaxsizedFullScreen)
-                {
-                    SystemCommands.MaximizeWindow(this);
-                }
-                else
-                {
-                    SystemCommands.RestoreWindow(this);
-                }
-            }
-        }
-
-
-        [Description("是否显示标题")]
-        public bool IsShowTitle
-        {
-            get { return (bool)GetValue(IsShowTitleProperty); }
-            set { SetValue(IsShowTitleProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowTitleProperty =
-            DependencyProperty.Register("IsShowTitle", typeof(bool), typeof(RSWindow), new PropertyMetadata(true));
-
-
-        public bool IsShowIcon
-        {
-            get { return (bool)GetValue(IsShowIconProperty); }
-            set { SetValue(IsShowIconProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowIconProperty =
-            DependencyProperty.Register("IsShowIcon", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
-
-
-
-
-        public bool IsShowMidCaptionContent
-        {
-            get { return (bool)GetValue(IsShowMidCaptionContentProperty); }
-            set { SetValue(IsShowMidCaptionContentProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowMidCaptionContentProperty =
-            DependencyProperty.Register("IsShowMidCaptionContent", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
-
-
-        public bool IsShowLeftCaptionContent
-        {
-            get { return (bool)GetValue(IsShowLeftCaptionContentProperty); }
-            set { SetValue(IsShowLeftCaptionContentProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowLeftCaptionContentProperty =
-            DependencyProperty.Register("IsShowLeftCaptionContent", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
-
-
-
-
-        public bool IsShowInfo
-        {
-            get { return (bool)GetValue(IsShowInfoProperty); }
-            set { SetValue(IsShowInfoProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowInfoProperty =
-            DependencyProperty.Register("IsShowInfo", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
-
-
-        [Description("是否显示窗体关闭放大缩小按钮")]
-        [Browsable(true)]
-        public bool IsShowWinBtnCommands
-        {
-            get { return (bool)GetValue(IsShowWinBtnCommandsProperty); }
-            set { SetValue(IsShowWinBtnCommandsProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowWinBtnCommandsProperty =
-            DependencyProperty.Register("IsShowWinBtnCommands", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
-
-
-
-
-        public bool IsShowCaption
-        {
-            get { return (bool)GetValue(IsShowCaptionProperty); }
-            set { SetValue(IsShowCaptionProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowCaptionProperty =
-            DependencyProperty.Register("IsShowCaption", typeof(bool), typeof(RSWindowBase), new PropertyMetadata(true));
-
-
-
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.PART_Minimize = this.GetTemplateChild(nameof(this.PART_Minimize)) as Button;
-            this.PART_BtnMaxRestore = this.GetTemplateChild(nameof(this.PART_BtnMaxRestore)) as Button;
-            this.PART_BtnClose = this.GetTemplateChild(nameof(this.PART_BtnClose)) as Button;
-            this.PART_WinContentHost = this.GetTemplateChild(nameof(this.PART_WinContentHost)) as RSDialog;
+            this.PART_Dialog = this.GetTemplateChild(nameof(this.PART_Dialog)) as RSDialog;
         }
 
 
@@ -459,7 +227,7 @@ namespace RS.Widgets.Controls
         {
             get
             {
-                return this.PART_WinContentHost?.Loading;
+                return this.PART_Dialog?.Loading;
             }
         }
 
@@ -468,7 +236,7 @@ namespace RS.Widgets.Controls
         {
             get
             {
-                return this.PART_WinContentHost?.Modal;
+                return this.PART_Dialog?.Modal;
             }
         }
 
@@ -477,7 +245,7 @@ namespace RS.Widgets.Controls
         {
             get
             {
-                return this.PART_WinContentHost?.MessageBox;
+                return this.PART_Dialog?.MessageBox;
             }
         }
 
@@ -488,7 +256,7 @@ namespace RS.Widgets.Controls
         {
             get
             {
-                return this.PART_WinContentHost;
+                return this.PART_Dialog;
             }
         }
 
@@ -509,13 +277,5 @@ namespace RS.Widgets.Controls
         }
 
         #endregion
-
-
-
-
-
-
-
-
     }
 }

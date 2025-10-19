@@ -1,5 +1,4 @@
 ﻿using RS.Widgets.Interfaces;
-using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

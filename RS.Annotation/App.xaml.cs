@@ -7,7 +7,6 @@ using RS.Annotation.Views;
 using RS.Annotation.Views.Home;
 using System.Reflection;
 using System.Windows;
-using IdGen;
 
 namespace RS.Annotation
 {
@@ -42,11 +41,6 @@ namespace RS.Annotation
 
         private void App_OnConfigServices(HostApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<IIdGenerator<long>>(service =>
-            {
-                int generatorId = Convert.ToInt32(builder.Configuration["IdGenClientId"]);
-                return new IdGenerator(generatorId, IdGeneratorOptions.Default);
-            });
             //注册业务逻辑服务
             builder.Services.RegisterBLLService();
             //注册当前程序集服务

@@ -103,7 +103,7 @@ namespace RS.Widgets.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDataGrid), new FrameworkPropertyMetadata(typeof(RSDataGrid)));
 
         //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
-        //        new CommandBinding(InternalAddCommand, InternalAddCommandExecuted, CanInternalAddCommandExecute));
+        //        new CommandBinding(InternalWindowFloatingCommand, InternalAddCommandExecuted, CanInternalAddCommandExecute));
         //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
         //        new CommandBinding(InternalDeleteCommand, InternalDeleteCommandExecuted, CanInternalDeleteCommandExecute));
         //    CommandManager.RegisterClassCommandBinding(typeof(RSDataGrid),
@@ -200,8 +200,6 @@ namespace RS.Widgets.Controls
             this.Pagination.OnPageChanged += Pagination_OnPageChanged;
             this.MouseEnter += RSDataGrid_MouseEnter;
         }
-
-       
 
         private void RSDataGrid_MouseEnter(object sender, MouseEventArgs e)
         {

@@ -1,4 +1,3 @@
-using IdGen;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -17,6 +16,7 @@ using RS.HMIServer.Filters;
 using RS.Models;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Threading.Channels;
 
 namespace RS.HMIServer
 {
@@ -56,13 +56,6 @@ namespace RS.HMIServer
         public static void Main(string[] args)
         {
 
-            //在 ASP.NET Core 3.x 及之前版本中，应用程序的创建和配置通常通过 WebHostBuilder 或 HostBuilder 来完成。
-            //然而，从 ASP.NET Core 3.1 开始，特别是在 ASP.NET Core 5 和更高版本中，引入了一种更简洁的语法来启动和配置应用程序
-            //这通常是通过调用 HMIServerlication.CreateBuilder(args) 来实现的（在 ASP.NET Core 6 及更高版本中）。
-            //ASP.NET Core 6 及更高版本在 ASP.NET Core 6 及更高版本中，Program.cs 文件的结构发生了显著变化
-            //以支持更简洁的顶级语句和更简洁的应用程序配置。
-            //在这种新的结构中，HMIServerlication.CreateBuilder(args) 被用于创建一个新的 WebApplicationBuilder 实例
-            //该实例用于配置应用程序的各个方面，包括日志记录、依赖注入（DI）容器中的服务注册等。
             var builder = WebApplication.CreateBuilder(args);
 
             //配置解决跨域问题
@@ -81,21 +74,11 @@ namespace RS.HMIServer
 
             builder.Services.AddHttpContextAccessor();
 
-
-            //AddControllersWithViews 是 ASP.NET Core MVC 框架中的一个服务扩展方法
-            //它用于在应用程序的服务集合（IServiceCollection）中添加对 MVC 控制器的支持,并且这些控制器支持视图（Views）。
-            //这个方法通常在你的 ASP.NET Core 应用程序的启动配置中使用，特别是在使用 MVC 架构时。
-            //当你调用 AddControllersWithViews 时，ASP.NET Core 会配置 MVC 框架以支持控制器和视图。
-            //这意味着你的应用程序将能够处理来自用户的 HTTP 请求，并将这些请求路由到相应的 MVC 控制器。
-            //控制器将执行一些逻辑处理，并可能返回一个视图（View），该视图随后会被渲染成 HTML 并发送给客户端。
-            //使用场景
-            //当你的 ASP.NET Core 应用程序使用 MVC 架构，并且你需要控制器来处理请求并返回包含视图的响应时。
-            //当你需要利用 MVC 框架提供的路由、模型绑定、模型验证、过滤器等功能时。
-            builder.Services.AddControllersWithViews(configure =>
+            builder.Services.AddControllers(configure =>
             {
                 configure.Filters.Add<ExceptionFilter>();
                 configure.Filters.Add<AuthorizationFilter>();
-                configure.Filters.Add<ActionFilter>(); 
+                configure.Filters.Add<ActionFilter>();
                 configure.Filters.Add<ResourceFilter>();
             }).AddJsonOptions(configure =>
             {
@@ -112,20 +95,6 @@ namespace RS.HMIServer
                     .UseFileSystemProject(Directory.GetCurrentDirectory())
                     .UseMemoryCachingProvider()
                     .Build();
-            });
-
-            //AddSingleton 是 ASP.NET Core（以及更广泛的.NET Core 和.NET Framework 的依赖注入（DI）容器）中的一个方法
-            //用于向服务容器中注册一个服务，其生命周期为单例（Singleton）。
-            //这意味着在应用程序的整个生命周期内，无论请求多少次，该服务的实例都将是相同的。
-            //使用场景
-            //当你的应用程序中有一些资源或配置信息，它们在应用程序的生命周期内只需要被加载或初始化一次时，使用单例模式是非常合适的。
-            //对于那些需要维护状态或状态的更改在整个应用程序中都需要被感知的服务，单例模式也是一个好的选择。
-            //注册动态生成分布式主键服务
-            builder.Services.AddSingleton<IIdGenerator<long>>(service =>
-            {
-                var configuration = builder.Configuration;
-                int generatorId = Convert.ToInt32(configuration["IdGenClientId"]);
-                return new IdGenerator(generatorId, IdGeneratorOptions.Default);
             });
 
             //AddDataProtection 是 ASP.NET Core 中用于向应用程序的服务集合（IServiceCollection）添加数据保护服务的方法。
@@ -204,11 +173,8 @@ namespace RS.HMIServer
             //该实现能够为最小 API 生成必要的元数据，从而使这些 API 能够在 Swagger 等工具中展示。
             builder.Services.AddEndpointsApiExplorer();
 
-            //AddSwaggerGen 是 ASP.NET Core 中用于集成 Swagger（现在称为 OpenAPI）的一个扩展方法
-            //它属于 Swashbuckle.AspNetCore 包。
-            //Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。
-            //通过 AddSwaggerGen，你可以将 Swagger 集成到你的 ASP.NET Core 应用中，从而自动生成 API 文档
-            //这对于 API 的开发、测试和消费都是非常有帮助的。
+            //配置使用最新版本的Swagger 
+            //Swashbuckle 在 .NET 9 或更高版本中不可用。 有关替代方法，请参阅 ASP.NET Core API 应用中的 OpenAPI 支持概述。
             builder.Services.AddSwaggerGen();
 
             //在 ASP.NET Core 中，AddHttpClient 是一个用于配置和注册 HttpClient 实例的扩展方法
@@ -229,29 +195,9 @@ namespace RS.HMIServer
             //这个必须放在builder.Build()后才生效
             ServiceProviderExtensions.ConfigServices(AppHost);
 
-            //配置HTTP请求管道。
             if (AppHost.Environment.IsDevelopment())
             {
-
-                AppHost.UseDeveloperExceptionPage();
-
-                // UseHsts用于实现 HTTP 严格传输安全协议（HTTP Strict Transport Security，简称 HSTS）。
-                // HSTS 是一种安全功能，它允许网站通过 HTTP 响应头来告诉浏览器，在接下来的一段时间内（通常是几个月）
-                // 该网站的所有通信都必须通过 HTTPS 进行，而不是 HTTP。
-                // 这有助于防止中间人攻击和其他类型的网络攻击，因为它确保了用户与网站之间的通信始终是加密的。
-                //在 ASP.NET Core 应用中，UseHsts 中间件通常被添加到应用的请求处理管道中，以确保所有后续的请求都通过 HTTPS 进行。
-                //这个中间件应该被放置在 HTTPS 重定向中间件（UseHttpsRedirection）之后，以确保在启用 HSTS 之前，
-                //所有非 HTTPS 请求都已经被重定向到 HTTPS。
-                //AppHost.UseHsts();
-
-                //UseSwagger 方法在ASP.NET Core应用的请求处理管道中启用Swagger生成的JSON文档终结点。
-                //这个JSON文档描述了API的元数据，包括路由、参数、响应等信息，是Swagger UI和Swagger代码生成器的基础。
                 AppHost.UseSwagger();
-
-                //UseSwaggerUI 是 ASP.NET Core 中用于启用 Swagger UI 的中间件配置方法。
-                //Swagger UI 是一个基于 Web 的用户界面，用于显示 Swagger 生成的 API 文档
-                //并允许开发者进行 API 的交互式测试。当在 ASP.NET Core 应用中集成了 Swagger 后
-                //UseSwaggerUI 方法使得开发者可以通过浏览器访问 Swagger UI 页面从而方便地查看 API 的详细信息、进行请求和响应的测试等。
                 AppHost.UseSwaggerUI();
             }
 
@@ -282,7 +228,7 @@ namespace RS.HMIServer
             //在 ASP.NET Core 应用中，UseHttpsRedirection 中间件通常被添加到应用的请求处理管道中
             //以确保所有非安全的 HTTP 请求都被自动重定向到 HTTPS。
             //这样做可以防止敏感信息（如用户凭据、会话令牌等）在网络上以明文形式传输，从而被截获或篡改。
-            //AppHost.UseHttpsRedirection();
+            AppHost.UseHttpsRedirection();
 
             //UseAuthentication（认证）：
             //作用：UseAuthentication中间件用于验证用户身份。
@@ -293,31 +239,6 @@ namespace RS.HMIServer
             //重要性：UseAuthentication是授权（UseAuthorization）之前的基础步骤
             //因为授权过程需要知道用户的身份才能判断其是否有权访问特定资源。
             AppHost.UseAuthentication();
-
-            // MapControllers 的作用
-            //控制器路由：MapControllers 方法会自动扫描应用中的 MVC 控制器
-            //并根据控制器上的路由属性（如[Route]、[HttpGet]、[HttpPost] 等）来配置路由。
-            //这意味着开发者不需要在 Startup.cs 文件中显式地为每个控制器或操作定义路由模板。
-            //灵活性：通过使用属性路由，MapControllers 提供了极高的灵活性
-            //允许开发者以声明方式定义路由模板，并将它们直接应用于控制器或操作。
-            //简化配置：与在 Startup.cs 文件中手动定义路由相比，MapControllers 方法大大简化了 MVC 应用的路由配置过程。
-            AppHost.MapControllers();
-
-            //MapControllerRoute 的作用
-            //MapControllerRoute 方法允许开发者在应用的路由表中添加一个或多个路由规则
-            //这些规则指定了如何将传入的 URL 请求映射到特定的 MVC 控制器和操作。
-            //每个路由规则都包括一个名称、一个 URL 模式和一个默认值集合，用于指定当 URL 与模式匹配时应该调用的控制器和操作。
-            AppHost.MapControllerRoute(
-              name: "default",
-              pattern: "{controller=Login}/{action=Index}/{id?}");
-
-            // 配置区域路由
-            AppHost.MapAreaControllerRoute(
-                name: "SystemManageRoute",
-                areaName: "SystemManage",
-                pattern: "SystemManage/{controller=Login}/{action=Index}/{id?}"
-            );
-
 
             //UseStaticFiles 的作用
             //静态文件服务：UseStaticFiles 中间件能够处理对静态文件的请求
@@ -349,22 +270,10 @@ namespace RS.HMIServer
             //UseAuthorization（）必须介于两者之间。
             AppHost.UseAuthorization();
 
-            // UseEndpoints 的作用
-            //终结点配置：UseEndpoints 方法允许开发者在应用的请求处理管道中配置终结点。
-            //这通常涉及到指定哪些 URL 模式应该被映射到哪些处理器上。
-            //路由集成：与 UseRouting 中间件一起使用时，UseEndpoints 负责执行与路由匹配到的终结点相关联的委托或处理程序。
-            //UseRouting 负责将请求映射到终结点，而 UseEndpoints 则负责执行这些终结点。
-            //灵活性：UseEndpoints 提供了灵活的配置选项
-            //允许开发者为不同类型的处理器（如 MVC 控制器、Razor 页面、SignalR 集线器等）定义路由规则。
-            //AppHost.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllers();
-            //});
+            AppHost.MapControllers();
 
             //初始化RSA非对称秘钥
             InitRSASecurityKeyData(AppHost);
-
-
 
             //运行应用程序并阻止调用线程，直到主机关闭。
             AppHost.Run();
@@ -384,10 +293,12 @@ namespace RS.HMIServer
             var configuration = appHost.Services.GetRequiredService<IConfiguration>();
             var memoryCache = appHost.Services.GetRequiredService<IMemoryCache>();
 
+
             string globalRSASignPublicKeyFileName = configuration["GlobalRSASignPublicKeyFileName"];
             string globalRSASignPrivateKeyFileName = configuration["GlobalRSASignPrivateKeyFileName"];
             string globalRSAEncryptPublicKeyFileName = configuration["GlobalRSAEncryptPublicKeyFileName"];
             string globalRSAEncryptPrivateKeyFileName = configuration["GlobalRSAEncryptPrivateKeyFileName"];
+
 
             GlobalRSASignPublicKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSASignPublicKeyFileName);
             GlobalRSASignPrivateKeySavePath = Path.Combine(Directory.GetCurrentDirectory(), KeysRepository, globalRSASignPrivateKeyFileName);
@@ -396,16 +307,18 @@ namespace RS.HMIServer
 
             //创建签名密钥对
             cryptographyBLL.InitServerRSAKey(GlobalRSASignPublicKeySavePath, GlobalRSASignPrivateKeySavePath);
-            //创建加密密钥
+            //创建加密密钥对
             cryptographyBLL.InitServerRSAKey(GlobalRSAEncryptPublicKeySavePath, GlobalRSAEncryptPrivateKeySavePath);
 
-            //加载公钥和私钥
+            //加载签名公钥和私钥
             var rsaSigningPublicKey = cryptographyBLL.GetRSAPublicKey(GlobalRSASignPublicKeySavePath).Data;
             var rsaSigningPrivateKey = cryptographyBLL.GetRSAPrivateKey(GlobalRSASignPrivateKeySavePath).Data;
+           
+            //加载加解密公钥和私钥
             var rsaEncryptionPublicKey = cryptographyBLL.GetRSAPublicKey(GlobalRSAEncryptPublicKeySavePath).Data;
             var rsaEncryptionPrivateKey = cryptographyBLL.GetRSAPrivateKey(GlobalRSAEncryptPrivateKeySavePath).Data;
 
-
+            //将密钥存入缓存
             memoryCache.Set(MemoryCacheKey.GlobalRSASignPublicKey, rsaSigningPublicKey);
             memoryCache.Set(MemoryCacheKey.GlobalRSASignPrivateKey, rsaSigningPrivateKey);
             memoryCache.Set(MemoryCacheKey.GlobalRSAEncryptPublicKey, rsaEncryptionPublicKey);

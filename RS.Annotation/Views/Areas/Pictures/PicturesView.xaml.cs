@@ -1,5 +1,4 @@
-﻿using IdGen;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using OpenCvSharp;
@@ -25,10 +24,9 @@ using RS.Widgets.Commons;
 
 namespace RS.Annotation.Views.Areas
 {
-   
+
     public partial class PicturesView : RSDialog
     {
-        public IIdGenerator<long> IdGenerator { get; set; }
         public PicturesViewModel ViewModel { get; set; }
 
         private readonly int ImgBorderMarginTop = 3;
@@ -39,7 +37,6 @@ namespace RS.Annotation.Views.Areas
         public PicturesView()
         {
             InitializeComponent();
-            this.IdGenerator = App.ServiceProvider?.GetRequiredService<IIdGenerator<long>>();
             this.ViewModel = this.DataContext as PicturesViewModel;
             this.Loaded += PicturesView_Loaded;
         }
@@ -654,7 +651,7 @@ namespace RS.Annotation.Views.Areas
             try
             {
 
-              var image= ImgHelper.GetBitmapSource(this.ViewModel.ImgModelSelect.ImgPath);
+                var image = ImgHelper.GetBitmapSource(this.ViewModel.ImgModelSelect.ImgPath);
 
                 this.ViewModel.ImgModelSelect.Width = image.PixelWidth;
                 this.ViewModel.ImgModelSelect.Height = image.PixelHeight;
@@ -764,16 +761,16 @@ namespace RS.Annotation.Views.Areas
             ProjectModel projectModelSelect = null;
             this.Dispatcher.Invoke(() =>
             {
-                projectModelSelect = this.ProjectModelSelect; 
+                projectModelSelect = this.ProjectModelSelect;
                 imgModelList = projectModelSelect.ImgModelList.ToList();
             });
             for (int i = 0; i < fileNames.Count; i++)
             {
                 var fileName = fileNames[i];
-                var imgModel = new ImgModel(IdGenerator.CreateId(), projectModelSelect.Id);
+                var imgModel = new ImgModel(projectModelSelect.Id);
                 imgModel.ImgName = Path.GetFileName(fileName);
                 imgModel.ImgPath = fileName;
-  
+
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -896,7 +893,7 @@ namespace RS.Annotation.Views.Areas
             var imgModelSelect = this.ViewModel.ImgModelSelect;
             if (File.Exists(imgModelSelect.ImgPath))
             {
-              RS.Widgets.Commons.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
+                RS.Widgets.Commons.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
             }
         }
 
@@ -1666,12 +1663,12 @@ namespace RS.Annotation.Views.Areas
             var tagSumModelList = imgModel.RectModelList.GroupBy(t => t.TagModel)
                 .Select(group => new TagSumModel()
                 {
-                    TagModel=group.Key,
-                    Count=group.Count(),
+                    TagModel = group.Key,
+                    Count = group.Count(),
                 });
             imgModel.TagSumModelList = new ObservableCollection<TagSumModel>(tagSumModelList);
         }
 
-       
+
     }
 }

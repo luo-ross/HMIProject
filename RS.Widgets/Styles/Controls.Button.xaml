@@ -42,7 +42,7 @@
         x:Key="RSApp.Styles.IconButtonStyle"
         BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
         TargetType="{x:Type ButtonBase}">
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="5" />

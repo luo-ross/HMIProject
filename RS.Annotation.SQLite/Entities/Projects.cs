@@ -11,7 +11,7 @@ namespace RS.Annotation.SQLite.Entities
         /// <summary>
         /// 项目主键
         /// </summary>
-        public long Id { get; set; }
+        public string Id { get; set; }
 
 
         /// <summary>

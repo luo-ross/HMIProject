@@ -79,8 +79,6 @@ namespace RS.HMIServer.BLL
             }
             var pagination = getAESDecryptResult.Data;
 
-
-
             //这是获取角色数据
             var getRolessResult = await this.RoleDAL.GetRolesAsync(pagination);
             if (!getRolessResult.IsSuccess)

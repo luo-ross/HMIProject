@@ -39,10 +39,11 @@ namespace RS.HMIServer.BLL
 
         public async Task<OperateResult<ImgVerifyInitModel>> GetVerifyImgInitModelAsync()
         {
-            string verifyImgDir = this.Configuration["VerifyImgDir"];
+            string verifyImgDir = Directory.GetCurrentDirectory();
+            verifyImgDir = Path.Combine(verifyImgDir, "VerifyImgs");
             string iconsDir = Path.Combine(verifyImgDir, "Icons");
             var iconsList = Directory.GetFiles(iconsDir);
-            var iconPath = iconsList[Random.Shared.Next(iconsList.Length)];
+            var iconPath = iconsList[Random.Shared.Next(0, iconsList.Length)];
             var iconMat = Cv2.ImRead(iconPath);
 
             var iconMatGray = iconMat.CvtColor(ColorConversionCodes.BGR2GRAY);
@@ -90,7 +91,7 @@ namespace RS.HMIServer.BLL
             {
                 var position = positionList[i];
                 Rect roi = new Rect(position.left, position.top, iconWidth, iconHeight);
-                // 这里把颜色也随机 一定程度可以让人琢磨不清
+                // 这里把颜色也随机
 
                 using var colorMask = new Mat(iconMask.Size(), MatType.CV_8UC3, new Scalar(Random.Shared.Next(255), Random.Shared.Next(255), Random.Shared.Next(255)));
                 var subMat = imgMat.SubMat(roi);

@@ -39,7 +39,7 @@ namespace RS.Commons.Attributs
             ServiceType=serviceType;
             Lifetime=lifetime;
         }
-        public ServiceInjectConfig( ServiceLifetime lifetime)
+        public ServiceInjectConfig(ServiceLifetime lifetime)
         {
             Lifetime = lifetime;
         }

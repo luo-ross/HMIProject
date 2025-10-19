@@ -14,7 +14,7 @@ namespace RS.Annotation.SQLite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("RS.Annotation.SQLite.Entities.Pictures", b =>
                 {
@@ -34,8 +34,9 @@ namespace RS.Annotation.SQLite.Migrations
                     b.Property<bool>("IsWroking")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("ProjectId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ProjectId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -44,9 +45,8 @@ namespace RS.Annotation.SQLite.Migrations
 
             modelBuilder.Entity("RS.Annotation.SQLite.Entities.Projects", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("CreateTime")
                         .HasColumnType("INTEGER");
@@ -73,9 +73,8 @@ namespace RS.Annotation.SQLite.Migrations
 
             modelBuilder.Entity("RS.Annotation.SQLite.Entities.Rects", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Angle")
                         .HasColumnType("REAL");
@@ -92,11 +91,13 @@ namespace RS.Annotation.SQLite.Migrations
                     b.Property<long>("PictureId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("ProjectId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ProjectId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<long>("TagId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("TagId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Width")
                         .HasColumnType("REAL");
@@ -108,9 +109,8 @@ namespace RS.Annotation.SQLite.Migrations
 
             modelBuilder.Entity("RS.Annotation.SQLite.Entities.Tags", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClassName")
                         .HasColumnType("TEXT");
@@ -121,8 +121,9 @@ namespace RS.Annotation.SQLite.Migrations
                     b.Property<bool>("IsShortCutAuto")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("ProjectId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ProjectId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ShortCut")
                         .HasColumnType("TEXT");

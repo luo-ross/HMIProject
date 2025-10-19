@@ -1,13 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using RS.Widgets.Interfaces;
-using RS.Win32API;
-using System;
+﻿using RS.Widgets.Interfaces;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace RS.Widgets.Controls
 {

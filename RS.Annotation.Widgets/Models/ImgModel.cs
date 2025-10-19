@@ -14,11 +14,12 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 图像资源
     /// </summary>
-    public  class ImgModel : ViewModelBase
+    public class ImgModel : ViewModelBase
     {
-        public ImgModel(long id, long projectId)
+        private static long _id;
+        public ImgModel(string projectId)
         {
-            this.Id = id;
+            this.Id = _id++;
             this.ProjectId = projectId;
         }
 
@@ -41,11 +42,11 @@ namespace RS.Widgets.Models
 
 
 
-        private long projectId;
+        private string projectId;
         /// <summary>
         /// 所属项目
         /// </summary>
-        public long ProjectId
+        public string ProjectId
         {
             get
             {

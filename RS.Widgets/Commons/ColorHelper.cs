@@ -245,5 +245,7 @@ namespace RS.Widgets.Commons
         {
             return (int)(0.299 * color.R + 0.587 * color.G + 0.114 * color.B);
         }
+
+  
     }
 }

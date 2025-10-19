@@ -27,12 +27,12 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 绑定公司
         /// </summary>
-        public long? CompanyId { get; set; }
+        public string? CompanyId { get; set; }
 
         /// <summary>
         /// 绑定部门
         /// </summary>
-        public long? PartmentId { get; set; }
+        public string? PartmentId { get; set; }
 
 
 

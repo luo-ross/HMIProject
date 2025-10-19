@@ -8,9 +8,9 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
+   
     public class AcrylicHelper
     {
-
 
         public static readonly DependencyProperty AmountProperty =
             DependencyProperty.RegisterAttached(

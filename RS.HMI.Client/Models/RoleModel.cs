@@ -14,9 +14,6 @@ namespace RS.HMI.Client.Models
     public class RoleModel : ModelBase
     {
 
-      
-
-
         private string? name;
         /// <summary>
         /// 角色名称

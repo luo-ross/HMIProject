@@ -21,7 +21,12 @@ namespace RS.Widgets.Converters
             {
                 backgroundColor = color;
             }
+            else if (value is SolidColorBrush solidColorBrush)
+            {
+                backgroundColor = solidColorBrush.Color;
+            }
 
+            Console.WriteLine(backgroundColor.ToString());
             int luminance = ColorHelper.CalculateLuminance(backgroundColor);
             // 假设亮度阈值为128  
             if (luminance > 128)

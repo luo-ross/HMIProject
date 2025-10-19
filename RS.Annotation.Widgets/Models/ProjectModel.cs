@@ -20,17 +20,17 @@ namespace RS.Widgets.Models
         /// 默认构造函数
         /// </summary>
         /// <param name="id">必须初始化id值</param>
-        public ProjectModel(long id)
+        public ProjectModel(string id)
         {
             this.Id = id;
         }
 
 
-        private long id;
+        private string id;
         /// <summary>
         /// 项目主键
         /// </summary>
-        public long Id
+        public string Id
         {
             get
             {

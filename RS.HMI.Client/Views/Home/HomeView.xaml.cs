@@ -1,18 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OpenCvSharp.WpfExtensions;
 using RS.Commons.Attributs;
-using RS.Widgets;
-using RS.Widgets.Adorners;
+using RS.HMI.Client.Views.Areas;
 using RS.Widgets.Controls;
-using RS.Win32API;
-using RS.Win32API.Enums;
-using RS.Win32API.Structs;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Documents;
+
 
 namespace RS.HMI.Client.Views
 {
@@ -25,6 +19,17 @@ namespace RS.HMI.Client.Views
             InitializeComponent();
             this.DataContext = homeViewModel;
             this.ViewModel = homeViewModel;
+
+            // 检查是否启用了DPI Tier 2
+            //bool isTier2Enabled = !AppContext.TryGetSwitch("Switch.System.Windows.DoNotUsePresentationDpiCapabilityTier2OrGreater", out bool disabled) || !disabled;
+
+            this.Loaded += HomeView_Loaded;
         }
+
+        private void HomeView_Loaded(object sender, RoutedEventArgs e)
+        {
+           
+        }
+      
     }
 }

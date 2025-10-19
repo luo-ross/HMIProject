@@ -20,6 +20,7 @@
 		<None Remove="Assets\douyin2.png" />
 		<None Remove="Assets\icon.ico" />
 		<None Remove="Assets\logo.png" />
+		<None Remove="MyPublish.zip" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -41,6 +42,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="MyPublish.zip" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Costura.Fody" Version="6.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -56,21 +61,6 @@
 		<Resource Include="Assets\douyin1.png" />
 		<Resource Include="Assets\douyin2.png" />
 		<Resource Include="Assets\logo.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Resource.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resource.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="Resource.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>

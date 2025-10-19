@@ -14,6 +14,7 @@ using System.Collections;
 using System.Security.Claims;
 using System.Text;
 using RS.HMIServer.Models;
+using System.Security.Cryptography;
 
 namespace RS.HMIServer.BLL
 {
@@ -47,6 +48,8 @@ namespace RS.HMIServer.BLL
             }
             string tokenSecurityKey = Configuration["JWTConfig:SecurityKey"];
             string issuer = Configuration["JWTConfig:Issuer"];
+
+
             //这里实际上是就是添加了一堆Claim
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
@@ -58,7 +61,11 @@ namespace RS.HMIServer.BLL
             };
             string token = tokenHandler.CreateToken(tokenDescriptor);
 
+
             return OperateResult.CreateSuccessResult<string>(token);
+
+
+
         }
 
 
@@ -203,9 +210,9 @@ namespace RS.HMIServer.BLL
             string aesKeyEncrypt = rsaEncryptResult.Data;
 
             //创建AppId
-           
-               string appId = Guid.NewGuid().ToString();
-            
+
+            string appId = Guid.NewGuid().ToString();
+
 
             //RSA非对称加密
             rsaEncryptResult = CryptographyBLL.RSAEncrypt(appId, sessionRequestModel.RSAEncryptPublicKey);
@@ -220,7 +227,7 @@ namespace RS.HMIServer.BLL
             {
                 new Claim(ClaimTypes.Sid, sessionId)
             };
-          
+
 
             //通过JWT 生成Token  待处理
             var generateJWTTokenResult = this.GenerateJWTToken(claimList, sessionRequestModel.AudiencesType);
@@ -234,7 +241,9 @@ namespace RS.HMIServer.BLL
             //创建返回值
             SessionResultModel sessionResultModel = new SessionResultModel()
             {
+                //返回给客户端验证服务端签名的
                 RSASignPublicKey = globalRSASignPublicKey,
+                //返回给客户端用来加密数据给服务端的
                 RSAEncryptPublicKey = globalRSAEncryptPublicKey,
                 Nonce = CryptographyBLL.CreateRandCode(10),
                 TimeStamp = DateTime.UtcNow.ToTimeStampString(),
@@ -299,6 +308,6 @@ namespace RS.HMIServer.BLL
         }
 
 
-        
+
     }
 }

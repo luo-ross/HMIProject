@@ -23,7 +23,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 客人资料主键
         /// </summary>
-        public long? GuestId { get; set; }
+        public string? GuestId { get; set; }
 
         
 

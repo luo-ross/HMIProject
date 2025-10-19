@@ -1,0 +1,439 @@
+﻿<rs:RSWindow
+    x:Class="RS.HMI.Client.Views.Logoin.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:RS.HMI.Client"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.HMI.Client.Views.Logoin"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/HMIProject"
+    Title="LoginView"
+    Width="1000"
+    Height="495"
+    BorderCornerRadius="10"
+    IsFitSystem="True"
+    ResizeMode="NoResize"
+    WindowState="Maximized"
+    IsMaxsizedFullScreen="False"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <rs:RSWindow.DataContext>
+        <local:LoginViewModel />
+    </rs:RSWindow.DataContext>
+    <rs:RSWindow.Resources>
+        <ResourceDictionary>
+            <Style x:Key="RSApp.LoginView.HyperlinkStyle" TargetType="{x:Type Hyperlink}">
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="TextDecorations" Value="None" />
+                <Setter Property="Foreground" Value="#b3b3b3" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
+            <Style
+                x:Key="RSApp.LoginView.ButtonStyle"
+                BasedOn="{StaticResource RSApp.Styles.ButtonBase}"
+                TargetType="{x:Type Button}">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Background" Value="#198cff" />
+                <Setter Property="Foreground" Value="#fff" />
+                <Setter Property="Margin" Value="0,5,0,5" />
+                <Setter Property="Padding" Value="15,10,15,10" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                                <Grid>
+                                    <ContentControl
+                                        x:Name="PART_Content"
+                                        Grid.Column="1"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Content="{TemplateBinding Content}"
+                                        FontSize="{TemplateBinding FontSize}" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand" />
+                                    <Setter Property="Background" Value="#2d96ff" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#0072ef" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="#949494" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Storyboard x:Key="FadeInOutAnimation">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_ContentHost" Storyboard.TargetProperty="Visibility">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Hidden}" />
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Visible}" />
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+
+
+            <Style x:Key="RSApp.Styles.SwiperSlideStyle" TargetType="{x:Type Border}">
+                <Setter Property="Margin" Value="0,0,60,0" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="Width" Value="300" />
+                <Setter Property="Height" Value="400" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Effect" Value="{StaticResource RSApp.Styles.DefaultDropShadowEffect}" />
+            </Style>
+
+            <ControlTemplate x:Key="RSApp.ControlTemplate.SwiperSlideTemplate" TargetType="{x:Type ContentControl}">
+                <Border
+                    x:Name="SwiperSlide1"
+                    RenderTransformOrigin="0.5,0.5"
+                    Style="{StaticResource RSApp.Styles.SwiperSlideStyle}">
+                    <Border.Background>
+                        <ImageBrush ImageSource="/Assets/img1.jpg" Stretch="UniformToFill" />
+                    </Border.Background>
+                    <Border CornerRadius="0,0,15,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                <GradientStop Offset="1" Color="#002c5364" />
+                                <GradientStop Offset="0.5" Color="#00203a43" />
+                                <GradientStop Offset="0" Color="#0f2027" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <StackPanel VerticalAlignment="Bottom">
+                            <Border
+                                Padding="20,7,25,7"
+                                HorizontalAlignment="Left"
+                                Background="#62667f"
+                                CornerRadius="0,20,20,0">
+                                <TextBlock
+                                    FontSize="13"
+                                    Foreground="#fff"
+                                    Text="D O M E S T I C" />
+                            </Border>
+                            <Border Padding="20,25,40,25">
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="0,0,0,15"
+                                        FontFamily="Open Sans"
+                                        FontSize="22"
+                                        FontWeight="DemiBold"
+                                        Foreground="#fff"
+                                        Text="Enjoy the exotic of sunny Hawaii"
+                                        TextWrapping="WrapWithOverflow" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path
+                                            Width="25"
+                                            Height="25"
+                                            Data="{StaticResource RSApp.Icons.Location}"
+                                            Fill="#fff" />
+
+                                        <TextBlock
+                                            FontSize="16"
+                                            Foreground="#fff"
+                                            Text="Maui,Hawaii " />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <TranslateTransform X="0" Y="0" />
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                            <RotateTransform Angle="0" />
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                </Border>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </rs:RSWindow.Resources>
+    <Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            <!--<Border x:Name="AdvertisingPageHost" Grid.ColumnSpan="2">
+                <Border.Background>
+                    <ImageBrush ImageSource="https://img.tukuppt.com/bg_grid/00/45/55/G2iLF9SGJO.jpg!/fh/350" />
+                </Border.Background>
+            </Border>-->
+            <rs:RSCarousel
+                Grid.ColumnSpan="2"
+                Background="#2196f3"
+                CarouselSliderList="{Binding CarouselSliderList}" />
+
+
+            <rs:RSUserControl
+                x:Name="LoginForm"
+                Grid.Column="1"
+                Background="#fff"
+                Visibility="Collapsed">
+                <Grid>
+                    <Border x:Name="PART_PasswordLoginArea" Padding="28,30,28,50">
+                        <Grid VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <StackPanel
+                                Grid.Row="0"
+                                Margin="0,0,0,35"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                                <RadioButton
+                                    x:Name="RadBtnLogin"
+                                    Margin="0,3,14,3"
+                                    HorizontalAlignment="Left"
+                                    Content="登录"
+                                    IsChecked="True"
+                                    Style="{StaticResource RSApp.Styles.TabButtonStyle}">
+                                    <RadioButton.Triggers>
+                                        <EventTrigger RoutedEvent="RadioButton.Checked">
+                                            <BeginStoryboard Storyboard="{StaticResource FadeInOutAnimation}" />
+                                        </EventTrigger>
+                                    </RadioButton.Triggers>
+                                </RadioButton>
+                                <RadioButton
+                                    x:Name="RadBtnSignUp"
+                                    Margin="14,3,14,3"
+                                    Content="注册"
+                                    Style="{StaticResource RSApp.Styles.TabButtonStyle}">
+                                    <RadioButton.Triggers>
+                                        <EventTrigger RoutedEvent="RadioButton.Checked">
+                                            <BeginStoryboard Storyboard="{StaticResource FadeInOutAnimation}" />
+                                        </EventTrigger>
+                                    </RadioButton.Triggers>
+                                </RadioButton>
+                            </StackPanel>
+                            <Grid x:Name="PART_ContentHost" Grid.Row="1">
+                                <Grid x:Name="PART_LoginHost" Visibility="{Binding ElementName=RadBtnLogin, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <StackPanel Orientation="Vertical">
+                                        <Grid Margin="0,5,0,5">
+                                            <TextBox
+                                                Padding="3,5,3,5"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
+                                                rs:TextBoxHelper.IsShowClearButton="True"
+                                                rs:TextBoxHelper.Watermark="请输入用户名"
+                                                MaxLength="30"
+                                                Style="{StaticResource RSApp.Styles.IconTextBox}"
+                                                Text="{Binding LoginModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                                        </Grid>
+
+                                        <Grid Margin="0,5,0,5">
+                                            <PasswordBox
+                                                Padding="3,5,3,5"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
+                                                rs:PasswordBoxBindBehavior.Password="{Binding LoginModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                rs:TextBoxHelper.IsShowClearButton="True"
+                                                rs:TextBoxHelper.Watermark="请输入密码"
+                                                MaxLength="30"
+                                                Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
+                                        </Grid>
+
+                                        <Grid Margin="0,5,0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox
+                                                Grid.Column="0"
+                                                Padding="3,5,3,5"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Verify}"
+                                                rs:TextBoxHelper.IsShowClearButton="True"
+                                                rs:TextBoxHelper.Watermark="请输入验证码"
+                                                MaxLength="11"
+                                                Style="{StaticResource RSApp.Styles.IconTextBox}"
+                                                Text="{Binding LoginModel.Verify, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+
+                                            <Button
+                                                x:Name="BtnVerify"
+                                                Grid.Column="1"
+                                                Click="BtnVerify_Click">
+                                                <Button.Style>
+                                                    <Style TargetType="{x:Type Button}">
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="BorderBrush" Value="#eeeeee" />
+                                                        <Setter Property="Margin" Value="5,3,5,3" />
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate>
+                                                                    <Border
+                                                                        Padding="{TemplateBinding Padding}"
+                                                                        Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                                                                        <Image
+                                                                            Width="100"
+                                                                            Cursor="Hand"
+                                                                            Source="/Assets/verify.jpg"
+                                                                            Stretch="Uniform" />
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+
+                                            </Button>
+
+                                        </Grid>
+                                        <Grid Margin="0,10,0,20">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox
+                                                Grid.Column="0"
+                                                Content="记住密码"
+                                                IsChecked="{Binding LoginModel.IsRememberPassword}" />
+
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center">
+                                                <Hyperlink
+                                                    Foreground="#b3b3b3"
+                                                    NavigateUri="https://github.com/luo-ross/HMIProject"
+                                                    RequestNavigate="Hyperlink_RequestNavigate"
+                                                    Style="{StaticResource RSApp.LoginView.HyperlinkStyle}">
+                                                    忘记了密码?
+                                                </Hyperlink>
+                                            </TextBlock>
+                                        </Grid>
+
+                                        <Button
+                                            x:Name="BtnLogin"
+                                            Click="BtnLogin_Click"
+                                            Content="登录"
+                                            Style="{StaticResource RSApp.LoginView.ButtonStyle}" />
+
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid x:Name="PART_SignUpHost" Visibility="{Binding ElementName=RadBtnSignUp, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <StackPanel Orientation="Vertical">
+                                        <Grid>
+                                            <TextBox
+                                                Padding="3,5,3,5"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
+                                                rs:TextBoxHelper.IsShowClearButton="True"
+                                                rs:TextBoxHelper.Watermark="请输入用户名"
+                                                MaxLength="30"
+                                                Style="{StaticResource RSApp.Styles.IconTextBox}"
+                                                Text="{Binding SignUpModel.Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+                                        </Grid>
+                                        <Grid Margin="0,5,0,5">
+                                            <PasswordBox
+                                                Padding="3,5,3,5"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
+                                                rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                                                rs:TextBoxHelper.IsShowClearButton="True"
+                                                rs:TextBoxHelper.Watermark="请输入密码"
+                                                MaxLength="30"
+                                                Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
+                                        </Grid>
+                                        <Grid Margin="0,5,0,5">
+                                            <PasswordBox
+                                                Padding="3,5,3,5"
+                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
+                                                rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, ValidatesOnNotifyDataErrors=True}"
+                                                rs:TextBoxHelper.IsShowClearButton="True"
+                                                rs:TextBoxHelper.Watermark="请输入确认密码"
+                                                MaxLength="30"
+                                                Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
+                                        </Grid>
+                                        <Grid Margin="0,10,0,20">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox
+                                                Grid.Column="0"
+                                                Content="注册成功后立即登录"
+                                                IsChecked="{Binding SignUpModel.IsLoginNow}" />
+                                        </Grid>
+
+                                        <Button
+                                            x:Name="BtnSignUp"
+                                            Click="BtnSignUp_Click"
+                                            Content="注册"
+                                            Style="{StaticResource RSApp.LoginView.ButtonStyle}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=TogBtnQRCode, Path=IsChecked}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
+
+                    <Border
+                        x:Name="PART_QRCodeLoginArea"
+                        Padding="28,30,28,50"
+                        Background="#fff">
+                        <rs:RSQRCodeLogin
+                            x:Name="QRCodeLogin"
+                            Margin="0,25,0,0"
+                            IsQRCodeLogin="{Binding ElementName=TogBtnQRCode, Path=IsChecked}"
+                            OnCancelQRCodeLogin="QRCodeLogin_OnCancelQRCodeLogin"
+                            OnGetLoginQRCode="QRCodeLogin_OnGetLoginQRCode"
+                            OnQRCodeAuthLoginSuccess="QRCodeLogin_OnQRCodeAuthLoginSuccess"
+                            OnQueryQRCodeLoginStatus="QRCodeLogin_OnQueryQRCodeLoginStatus"
+                            QRCodeHeight="200"
+                            QRCodeWidth="200" />
+
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=TogBtnQRCode, Path=IsChecked}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
+
+                    <ToggleButton
+                        x:Name="TogBtnQRCode"
+                        Width="35"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource RSApp.Styles.QRCodeLoginSwitchStyle}"
+                        WindowChrome.IsHitTestVisibleInChrome="True">
+                        <ToggleButton.Foreground>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#198cff" />
+                                <GradientStop Offset="1" Color="#1afa29" />
+                            </LinearGradientBrush>
+                        </ToggleButton.Foreground>
+                    </ToggleButton>
+                </Grid>
+            </rs:RSUserControl>
+        </Grid>
+    </Grid>
+</rs:RSWindow>

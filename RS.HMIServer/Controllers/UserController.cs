@@ -13,6 +13,7 @@ namespace RS.HMIServer.Controllers
     [Authorize]
     public class UserController : BaseController
     {
+
         /// <summary>
         /// 用户服务接口
         /// </summary>
@@ -24,6 +25,7 @@ namespace RS.HMIServer.Controllers
             UserBLL = userBLL;
             LogBLL = logBLL;
         }
+
 
         /// <summary>
         /// 获取用户接口

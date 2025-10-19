@@ -21,18 +21,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="Commons\AnimatedTypeHelpercs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-		<PackageReference Include="ScottPlot" Version="5.0.54" />
-		<PackageReference Include="ScottPlot.WPF" Version="5.0.54" />
+		<PackageReference Include="System.Composition.Hosting" Version="7.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="9.0.2" />
-		<PackageReference Include="System.IO.Ports" Version="9.0.1" />
 		<PackageReference Include="ZXing.Net" Version="0.16.10" />
 	</ItemGroup>
 
@@ -66,6 +60,10 @@
 
 	<ItemGroup>
 	  <Folder Include="AutomationPeers\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Commons\AnimatedTypeHelper.cs" />
 	</ItemGroup>
 
 </Project>

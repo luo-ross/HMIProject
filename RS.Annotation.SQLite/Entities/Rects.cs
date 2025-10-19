@@ -11,13 +11,13 @@ namespace RS.Annotation.SQLite.Entities
         /// <summary>
         /// 矩形唯一主键
         /// </summary>
-        public long Id { get; set; }
+        public string Id { get; set; }
 
 
         /// <summary>
         /// 所属项目
         /// </summary>
-        public long ProjectId { get; set; }
+        public string ProjectId { get; set; }
 
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace RS.Annotation.SQLite.Entities
         /// <summary>
         /// 所属标签类别
         /// </summary>
-        public long TagId { get; set; }
+        public string TagId { get; set; }
 
         /// <summary>
         /// 矩形左上角X坐标

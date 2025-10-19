@@ -1,5 +1,8 @@
-﻿using NPOI.SS.Formula.Functions;
+﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using NPOI.SS.Formula.Functions;
 using RS.Commons;
+using RS.HMI.Client.Views;
 using RS.Models;
 using RS.Widgets.Controls;
 using System;
@@ -23,9 +26,9 @@ using static System.Windows.Forms.AxHost;
 
 namespace RS.HMI.Client.Controls
 {
-    /// <summary>
-    /// RSImgVerify.xaml 的交互逻辑
-    /// </summary>
+    
+
+  
     public partial class RSImgVerify : UserControl
     {
         private Thumb PART_BtnSlider { get; set; }
@@ -37,12 +40,43 @@ namespace RS.HMI.Client.Controls
         private double HeightScale = 1;
         private string VerifySessionId;
         private List<Point> MouseMovingTrack = new List<Point>();
-        public event Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsync;
+
+        public event Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsyncEvent;
+        public event Func<OperateResult> OnBtnSliderDragStartedEvent;
 
         public RSImgVerify()
         {
             InitializeComponent();
+
+          
         }
+
+       
+
+
+
+        public Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsync
+        {
+            get { return (Func<Task<OperateResult<ImgVerifyModel>>>)GetValue(InitVerifyControlAsyncProperty); }
+            set { SetValue(InitVerifyControlAsyncProperty, value); }
+        }
+
+        public static readonly DependencyProperty InitVerifyControlAsyncProperty =
+            DependencyProperty.Register("InitVerifyControlAsync", typeof(Func<Task<OperateResult<ImgVerifyModel>>>), typeof(RSImgVerify), new PropertyMetadata(null));
+
+
+
+
+        public Func<OperateResult> OnBtnSliderDragStarted
+        {
+            get { return (Func<OperateResult>)GetValue(OnBtnSliderDragStartedProperty); }
+            set { SetValue(OnBtnSliderDragStartedProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnBtnSliderDragStartedProperty =
+            DependencyProperty.Register("OnBtnSliderDragStarted", typeof(Func<OperateResult>), typeof(RSImgVerify), new PropertyMetadata(null));
+
+
 
 
         [Browsable(false)]
@@ -119,7 +153,6 @@ namespace RS.HMI.Client.Controls
 
 
 
-        public event Func<OperateResult> OnBtnSliderDragStarted;
 
         public OperateResult<ImgVerifyResultModel> GetImgVerifyResultAsync()
         {
@@ -189,13 +222,21 @@ namespace RS.HMI.Client.Controls
 
         private void PART_BtnSlider_DragStarted(object sender, DragStartedEventArgs e)
         {
-            var operateResult = OnBtnSliderDragStarted?.Invoke();
+            OperateResult? operateResult = null;
+            if (this.OnBtnSliderDragStarted != null)
+            {
+                operateResult = this.OnBtnSliderDragStarted.Invoke();
+            }
+            else
+            {
+                operateResult = OnBtnSliderDragStartedEvent?.Invoke();
+            }
+
             if (operateResult == null || !operateResult.IsSuccess)
             {
                 return;
             }
             this.IsCanDrag = true;
-
         }
 
 
@@ -283,8 +324,17 @@ namespace RS.HMI.Client.Controls
             if (movePercent > 0.9 && !this.IsShowVerifyImg)
             {
                 this.IsShowVerifyImg = true;
-                //这里让用户自己去实现获取验证码的逻辑，只需要告诉结果就可以
-                var initVerifyControlResult = await InitVerifyControlAsync?.Invoke();
+
+                OperateResult<ImgVerifyModel> initVerifyControlResult = null;
+                if (InitVerifyControlAsync != null)
+                {
+                    initVerifyControlResult = await InitVerifyControlAsync?.Invoke();
+                }
+                else
+                {
+                    initVerifyControlResult = await InitVerifyControlAsyncEvent?.Invoke();
+                }
+
                 if (initVerifyControlResult == null
                     || !initVerifyControlResult.IsSuccess)
                 {

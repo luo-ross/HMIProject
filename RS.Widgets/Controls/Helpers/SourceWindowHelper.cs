@@ -199,7 +199,7 @@ namespace RS.Widgets.Controls
         public POINT GetPointRelativeToWindow(int x, int y, FlowDirection flowDirection)
         {
             POINT windowScreenLocation = GetWindowScreenLocation(flowDirection);
-            return new POINT(x - windowScreenLocation.x, y - windowScreenLocation.y);
+            return new POINT(x - windowScreenLocation.X, y - windowScreenLocation.Y);
         }
 
 

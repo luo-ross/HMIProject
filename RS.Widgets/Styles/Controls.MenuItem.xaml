@@ -10,10 +10,6 @@
 
     <converters:ClipConverter x:Key="ClipConverter" />
     <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
-    <Geometry x:Key="DownArrow">M 0,0 L 3.5,4 L 7,0 Z</Geometry>
-    <Geometry x:Key="UpArrow">M 0,4 L 3.5,0 L 7,4 Z</Geometry>
-    <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
-    <Geometry x:Key="Checkmark">F1 M 10.0,1.2 L 4.7,9.1 L 4.5,9.1 L 0,5.2 L 1.3,3.5 L 4.3,6.1L 8.3,0 L 10.0,1.2 Z</Geometry>
 
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
@@ -101,7 +97,7 @@
                             </RepeatButton.Visibility>
                             <Path
                                 x:Name="PART_IconUpArrow"
-                                Data="{StaticResource UpArrow}"
+                                Data="{StaticResource RSApp.Icons.MenuItemDownArrow}"
                                 Fill="{TemplateBinding Foreground}" />
                         </RepeatButton>
 
@@ -126,7 +122,7 @@
                             </RepeatButton.Visibility>
                             <Path
                                 x:Name="PART_IconDownArrow"
-                                Data="{StaticResource DownArrow}"
+                                Data="{StaticResource RSApp.Icons.MenuItemDownArrow}"
                                 Fill="{TemplateBinding Foreground}" />
                         </RepeatButton>
                     </Grid>
@@ -381,7 +377,7 @@
                     Margin="10,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Data="{StaticResource RightArrow}"
+                    Data="{StaticResource RSApp.Icons.MenuItemRightArrow}"
                     Fill="{TemplateBinding Foreground}"
                     Opacity="0.6" />
                 <Popup

@@ -9,7 +9,7 @@ namespace RS.Widgets.Controls
         public RSWinModal(Window owner)
         {
             InitializeComponent();
-            this.BorderCornerRadius = new CornerRadius(5);
+            this.CornerRadius = new CornerRadius(5);
             this.Owner = owner;
             if (this.Owner == null)
             {

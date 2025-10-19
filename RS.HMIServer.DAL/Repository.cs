@@ -42,7 +42,7 @@ namespace RS.HMIServer.DAL
             }
 
             //确保主键创建
-            if (entity is BaseEntity baseEntity && baseEntity.Id == 0)
+            if (entity is BaseEntity baseEntity && string.IsNullOrEmpty(baseEntity.Id))
             {
                 baseEntity.Create();
             }
@@ -355,7 +355,7 @@ namespace RS.HMIServer.DAL
         /// <typeparam name="TEntity">数据库实体类</typeparam>
         /// <param name="dto">客户端传递过来的参数</param>
         /// <returns></returns>
-        public  Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>
+        public Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>
         CreateSetPropertiesExpression<TDto, TEntity>(TDto dto)
         {
             var settersParam = Expression.Parameter(typeof(SetPropertyCalls<TEntity>), "setters");

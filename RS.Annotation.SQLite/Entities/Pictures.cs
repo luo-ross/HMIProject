@@ -13,11 +13,10 @@ namespace RS.Annotation.SQLite.Entities
         /// </summary>
         public long Id { get; set; }
 
-
         /// <summary>
         /// 所属项目
         /// </summary>
-        public long ProjectId { get; set; }
+        public string ProjectId { get; set; }
 
         /// <summary>
         /// 图像名称

@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows;
-using System.Windows.Controls;
+﻿using NPOI.OpenXmlFormats.Wordprocessing;
 using RS.Widgets.Adorners;
+using RS.Widgets.Commons;
+using RS.Widgets.Enums;
+using RS.Widgets.Extensions;
+using RS.Widgets.Interfaces;
 using RS.Win32API;
 using RS.Win32API.Structs;
-using System.Windows.Input;
-using MathNet.Numerics;
-using RS.Win32API.Enums;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using NPOI.SS.UserModel;
-using RS.Widgets.Interfaces;
-using System.Windows.Data;
-using System.Windows.Controls.Primitives;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Collections;
-using RS.Widgets.Extensions;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
@@ -43,10 +37,6 @@ namespace RS.Widgets.Controls
             return (IDragDropStrategy)element.GetValue(DragDropStrategyProperty);
         }
 
-
-
-
-
         public static readonly DependencyProperty DragDropEffectsProperty =
            DependencyProperty.RegisterAttached(
                "DragDropEffects",
@@ -63,6 +53,7 @@ namespace RS.Widgets.Controls
         {
             obj.SetValue(DragDropEffectsProperty, value);
         }
+
 
 
         public static readonly DependencyProperty IsDragTargetProperty =
@@ -102,34 +93,57 @@ namespace RS.Widgets.Controls
 
 
         public static DependencyObject DragTargetParent;
-        public static UIElement DragSource;
-        private static Point DragStartPoint;
+        public static FrameworkElement DragSource;
+        private static Point? DragStartPoint;
         private static Point DragSourceTopLeftPoint;
         private static Vector DragSourceVector;
-        public static RSDragDropPreview DragDropPreview;
-        public static RSDragDropEffect DragDropEffect;
+        public static RSDragPreview DragPreview;
+        public static RSDragEffect DragDropEffect;
         public static bool IsDraging;
-        public static UIElement DropTarget;
+        public static FrameworkElement DropTarget;
+        public static bool IsDragTarget_PreviewMouseLeftButtonDown;
+        public static Window DragHostWindow;
         private static void DragTarget_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var dragTarget = sender as UIElement;
+            var dragTarget = sender as FrameworkElement;
+            DragHostWindow = dragTarget.TryFindParent<Window>();
             var point = e.GetPosition(dragTarget);
-            if (dragTarget is Button button)
+
+
+            if (dragTarget is RSDockGrid dockGrid)
+            {
+                (int index, UIElement? child) = dockGrid.GetMouseOverChildInfo();
+                if (index == -1 || child == null)
+                {
+                    return;
+                }
+                var frameworkElement = (FrameworkElement)child;
+                if (frameworkElement is RSDockPanel dockPanel && dockPanel.IsCanDragPanel)
+                {
+                    DragSource = frameworkElement;
+                }
+                else
+                {
+                    DragSource = null;
+                }
+            }
+            else if (dragTarget is Button button)
             {
                 DragSource = dragTarget;
             }
             else if (dragTarget is ItemsControl itemsControl)
             {
                 var itemType = GetItemType(itemsControl);
-                if (itemType==null)
+                if (itemType == null)
                 {
                     return;
                 }
-                var elementAtPoint = (UIElement)itemsControl.GetElementAtPointOfType(point, itemType);
-                if (elementAtPoint != null)
+                var elementAtPoint = (FrameworkElement)itemsControl.GetElementAtPointOfType(point, itemType);
+                if (elementAtPoint == null)
                 {
-                    DragSource = elementAtPoint;
+                    return;
                 }
+                DragSource = elementAtPoint;
             }
 
 
@@ -138,51 +152,50 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-
-            //POINT cursorPosition = new POINT();
-            //NativeMethods.GetCursorPos(cursorPosition);
-
-            //var point = e.GetPosition(dragTarget);
-
-            //var sdf = GetAllControlsAtPoint(dragTarget, point);
-
-
-
-
-            DragStartPoint = e.GetPosition(null);
+            DragStartPoint = e.GetPosition(DragHostWindow);
             DragSourceTopLeftPoint = DragSource.TranslatePoint(new Point(0, 0), null);
-            DragSourceVector = DragStartPoint - DragSourceTopLeftPoint;
-            dragTarget?.CaptureMouse();
+            DragSourceVector = DragStartPoint.Value - DragSourceTopLeftPoint;
+
+            IsDragTarget_PreviewMouseLeftButtonDown = true;
+
+            //dragTarget?.CaptureMouse();
         }
 
 
         private static Type GetItemType(ItemsControl itemsControl)
         {
-            if (itemsControl.Items.Count > 0)
+            foreach (var item in itemsControl.Items)
             {
-                var container = itemsControl.ItemContainerGenerator.ContainerFromIndex(0);
+                var container = itemsControl.ItemContainerGenerator.ContainerFromItem(item);
                 if (container != null)
                 {
                     return container.GetType();
                 }
             }
-
             return null;
         }
 
-
+        private static Dictionary<FrameworkElement, Window> DragDropDockWindowDic = new Dictionary<FrameworkElement, Window>();
+        private static bool IsDragPreviewShouldClose = true;
         private static void DragTarget_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (DragSource == null)
             {
                 return;
             }
+
+            var dragSourceActualWidth = DragSource.ActualWidth;
+            var dragSourceActualHeight = DragSource.ActualHeight;
+
+
             var dragTarget = sender as UIElement;
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed
+                && IsDragTarget_PreviewMouseLeftButtonDown
+                && DragStartPoint != null)
             {
-                Point currentPosition = e.GetPosition(null);
-                if (Math.Abs(currentPosition.X - DragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(currentPosition.Y - DragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                Point currentPosition = e.GetPosition(DragHostWindow);
+                if (Math.Abs(currentPosition.X - DragStartPoint.Value.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(currentPosition.Y - DragStartPoint.Value.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
                     if (IsDraging)
                     {
@@ -190,29 +203,74 @@ namespace RS.Widgets.Controls
                     }
                     IsDraging = true;
 
-                    if (DragDropPreview == null)
-                    {
-                        DragDropPreview = new RSDragDropPreview(DragSource);
-                        DragDropPreview.Show();
-                    }
-
                     var dependencyObject = (DependencyObject)sender;
-                    var dragDropEffects = DragDropHelper.GetDragDropEffects((DependencyObject)sender);
-                    if (DragDropEffect == null)
-                    {
-                        DragDropEffect = new RSDragDropEffect();
-                        DragDropEffect.DragDropEffects = dragDropEffects;
-                        DragDropEffect.Show();
-                    }
+                    var dragDropEffects = DragDropHelper.GetDragDropEffects(dependencyObject);
 
+                    IsDragPreviewShouldClose = true;
+
+                    if (dragTarget is RSDockGrid dockGrid && DragSource is RSDockPanel dockPanel)
+                    {
+
+                        IsDragPreviewShouldClose = false;
+                     
+                        var parentWin = DragSource.TryFindParent<Window>();
+
+                      
+                        //然后再宽带连接
+                        RemoveDragSource(DragSource);
+
+                        if (!DragDropDockWindowDic.ContainsKey(DragSource))
+                        {
+                            DragSource.Width = double.NaN;
+                            DragSource.Height = double.NaN;
+                            DragPreview = new RSDragPreview(dockPanel,
+                                dragSourceActualWidth,
+                                dragSourceActualHeight);
+                            DragPreview.Owner = parentWin;
+                            DragPreview.Show();
+                         
+
+                            DragPreview.Title = DragSource.Name;
+                            DragDropDockWindowDic[DragSource] = DragPreview;
+
+                            DragPreview.OnWindowDragStarted();
+                        }
+                    }
+                    else
+                    {
+                        if (DragPreview == null)
+                        {
+                            DragPreview = new RSDragPreview(DragSource,
+                                dragSourceActualWidth,
+                                dragSourceActualHeight);
+                            DragPreview.Show();
+                        }
+
+                        if (DragDropEffect == null)
+                        {
+                            DragDropEffect = new RSDragEffect();
+                            DragDropEffect.DragDropEffects = dragDropEffects;
+                            DragDropEffect.Show();
+                        }
+                    }
 
                     dragDropEffects = DragDrop.DoDragDrop(dependencyObject, DragSource, dragDropEffects);
 
 
-                    DragDropPreview?.Close();
+                    DragPreview.OnWindowDragCompleted();
+
+                    if (IsDragPreviewShouldClose)
+                    {
+                        DragPreview?.Close();
+                        DragPreview = null;
+                    }
+
+
                     DragDropEffect?.Close();
-                    DragDropPreview = null;
                     DragDropEffect = null;
+
+                    RemoveGuidAdorner();
+
                     DragSource = null;
                     IsDraging = false;
                 }
@@ -222,24 +280,26 @@ namespace RS.Widgets.Controls
 
         private static void DragTarget_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            Console.WriteLine("DragTarget_PreviewMouseLeftButtonUp");
             var dragTarget = sender as UIElement;
             dragTarget?.ReleaseMouseCapture();
+            IsDragTarget_PreviewMouseLeftButtonDown = false;
+            DragStartPoint = null;
         }
 
         private static void DragTarget_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
             e.UseDefaultCursors = false;
-            DragDropEffect.UpdateDragDropEffects(e.Effects);
+            DragDropEffect?.UpdateDragDropEffects(e.Effects);
             e.Handled = true;
         }
 
         private static void DragTarget_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.Arrow;
-            UpdateDragPosition();
+            UpdateDragPosition(e);
         }
 
-        private static void UpdateDragPosition()
+        private static void UpdateDragPosition(QueryContinueDragEventArgs e)
         {
             POINT cursorPosition = new POINT();
             NativeMethods.GetCursorPos(cursorPosition);
@@ -248,21 +308,66 @@ namespace RS.Widgets.Controls
             {
                 var dragDropEffectWidth = DragDropEffect.ActualWidth;
                 var dragDropEffectHeight = DragDropEffect.ActualHeight;
-                double dragDropEffectLeft = cursorPosition.x - dragDropEffectWidth / 2D;
-                double dragDropEffectTop = cursorPosition.y - dragDropEffectHeight;
+                double dragDropEffectLeft = cursorPosition.X - dragDropEffectWidth / 2D;
+                double dragDropEffectTop = cursorPosition.Y - dragDropEffectHeight;
                 DragDropEffect.Left = dragDropEffectLeft;
                 DragDropEffect.Top = dragDropEffectTop;
             }
 
-            if (DragDropPreview != null)
+            if (DragPreview != null)
             {
-                var dragDropPreviewWidth = DragDropPreview.ActualWidth;
-                var dragDropPreviewHeight = DragDropPreview.ActualHeight;
-                double dragDropPreviewLeft = cursorPosition.x - DragSourceVector.X;
-                double dragDropPreviewTop = cursorPosition.y - DragSourceVector.Y;
-                DragDropPreview.Left = dragDropPreviewLeft;
-                DragDropPreview.Top = dragDropPreviewTop;
+                var dragPreviewWidth = DragPreview.ActualWidth;
+                var dragPreviewHeight = DragPreview.ActualHeight;
+
+                double dragPreviewLeft = cursorPosition.X - DragSourceVector.X;
+                double dragPreviewTop = cursorPosition.Y - DragSourceVector.Y;
+                DragPreview.Left = dragPreviewLeft;
+                DragPreview.Top = dragPreviewTop;
+
+                DragPreview.OnWindowDragMoving();
             }
+        }
+
+        /// <summary>
+        /// 切换到目标窗口并在不松开鼠标的情况下触发其标题栏拖拽
+        /// </summary>
+        /// <param name="targetWindow">目标窗口</param>
+        public static void TransferDragToWindow(Window targetWindow)
+        {
+            if (targetWindow == null)
+            {
+                return;
+            }
+
+            // 获取目标窗口句柄
+            var hwndSource = PresentationSource.FromVisual(targetWindow) as HwndSource;
+            if (hwndSource == null)
+            {
+                return;
+            }
+
+            IntPtr hWnd = hwndSource.Handle;
+            var handleRef = new HandleRef(null, hWnd);
+            // 将目标窗口置于前台并激活
+            NativeMethods.SetForegroundWindow(handleRef);
+
+            // 获取当前鼠标位置
+            POINT cursorPosition = new POINT();
+            NativeMethods.GetCursorPos(cursorPosition);
+
+            // 计算相对于目标窗口的客户区坐标
+            NativeMethods.ScreenToClient(handleRef, cursorPosition);
+
+            //// 释放当前窗口的鼠标捕获
+            NativeMethods.ReleaseCapture();
+
+            //// 1. 发送非客户区鼠标按下消息（模拟在标题栏按下）
+            //// wParam = HTCAPTION（标题栏），lParam = 鼠标坐标
+            IntPtr lParam = (IntPtr)((cursorPosition.Y << 16) | (cursorPosition.X & 0xFFFF));
+           NativeMethods.SendMessage(hWnd, NativeMethods.WM_NCLBUTTONDOWN, NativeMethods.HTCAPTION, lParam);
+
+            // 2. 立即发送鼠标移动消息（触发拖拽）
+            NativeMethods.SendMessage(hWnd, NativeMethods.WM_MOUSEMOVE, NativeMethods.HTCAPTION, lParam);
         }
 
 
@@ -292,6 +397,7 @@ namespace RS.Widgets.Controls
             {
                 return;
             }
+
             dropTarget.AllowDrop = (bool)e.NewValue;
             dropTarget.DragEnter -= DropTarget_DragEnter;
             dropTarget.DragLeave -= DropTarget_DragLeave;
@@ -307,42 +413,31 @@ namespace RS.Widgets.Controls
 
         }
 
+        private static RSGuidAdorner GuidAdorner;
+
         private static void DropTarget_DragEnter(object sender, DragEventArgs e)
         {
-
-        }
-
-        private static void DropTarget_DragOver(object sender, DragEventArgs e)
-        {
-
-        }
-
-        private static void DropTarget_DragLeave(object sender, DragEventArgs e)
-        {
-
-        }
-
-
-        private static void DropTarget_Drop(object sender, DragEventArgs e)
-        {
+            var dropTarget = sender as UIElement;
             if (DragSource == null)
             {
                 return;
             }
-            var dropTarget = sender as UIElement;
-            DependencyObject directlyOver = Mouse.DirectlyOver as DependencyObject;
-            //POINT cursorPosition = new POINT();
-            //NativeMethods.GetCursorPos(cursorPosition);
-            //var point = e.GetPosition(dragTarget);
-            //var sdf = GetAllControlsAtPoint(dragTarget, point);
-            //RSAdorner.GetUIElementUnderMouse<Button>(dragTarget, point);
-            //var elementUnderMouse = GetElementUnderMouse(dropTarget);
-            RemoveDragSource(DragSource);
+
             if (dropTarget is Panel dropPanel)
             {
-             var sdf=   dropPanel.GetMouseOverChildInfo();
-             
-                dropPanel.Children.Insert(0, DragSource);
+                (int index, UIElement? child) = dropPanel.GetMouseOverChildInfo();
+                if (index == -1 || child == null)
+                {
+                    return;
+                }
+                Window activeWindow = Window.GetWindow(dropTarget);
+                var adornerDecorator = activeWindow.FindChild<AdornerDecorator>();
+                var adornerLayer = adornerDecorator.AdornerLayer;
+                if (GuidAdorner == null)
+                {
+                    GuidAdorner = new RSGuidAdorner(dropTarget);
+                    adornerLayer.Add(GuidAdorner);
+                }
             }
             else if (dropTarget is Decorator dropDecorator)
             {
@@ -385,6 +480,415 @@ namespace RS.Widgets.Controls
             }
         }
 
+        private static void DropTarget_DragOver(object sender, DragEventArgs e)
+        {
+            var dropTarget = sender as UIElement;
+            if (DragSource == null)
+            {
+                return;
+            }
+            var mousePositionCurrent = e.GetPosition(dropTarget);
+            if (dropTarget is StackPanel dropStackPanel)
+            {
+                PanelGuidStrategy(dropStackPanel, dropStackPanel.Orientation, mousePositionCurrent, false);
+            }
+            else if (dropTarget is VirtualizingStackPanel dropVirtualizingStackPanel)
+            {
+                PanelGuidStrategy(dropVirtualizingStackPanel, dropVirtualizingStackPanel.Orientation, mousePositionCurrent, false);
+            }
+            else if (dropTarget is WrapPanel dropWrapPanel)
+            {
+                PanelGuidStrategy(dropWrapPanel, dropWrapPanel.Orientation, mousePositionCurrent, true);
+            }
+            else if (dropTarget is DockPanel dropDockPanel)
+            {
+                DockPanelGuidStrategy(dropDockPanel, mousePositionCurrent);
+            }
+            else if (dropTarget is Grid dropGrid)
+            {
+                GridGuidStrategy(dropGrid, mousePositionCurrent);
+            }
+            else if (dropTarget is Decorator dropDecorator)
+            {
+                dropDecorator.Child = dropTarget;
+            }
+            else if (dropTarget is ListBox selector)
+            {
+                if (DragSource is not ListBoxItem)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is TreeView treeView)
+            {
+                if (DragSource is not TreeViewItem)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is ListView listView)
+            {
+                if (DragSource is not ListBoxItem)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is DataGrid dataGrid)
+            {
+                if (DragSource is not DataGridRow)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is ComboBox comboBox)
+            {
+                if (DragSource is not ComboBoxItem)
+                {
+                    return;
+                }
+            }
+        }
+
+
+        private static void DockPanelGuidStrategy(DockPanel dropDockPanel, Point mousePositionCurrent)
+        {
+            (int index, UIElement? child) = dropDockPanel.GetMouseOverChildInfo();
+            if (index == -1 || child == null)
+            {
+                return;
+            }
+            var elementRelative = child as FrameworkElement;
+            if (elementRelative == null)
+            {
+                return;
+            }
+        }
+
+        private static void GridGuidStrategy(Grid dropGrid, Point mousePositionCurrent)
+        {
+            (int index, UIElement? child) = dropGrid.GetMouseOverChildInfo();
+            if (index == -1 || child == null)
+            {
+                return;
+            }
+
+            var elementRelative = child as FrameworkElement;
+            if (elementRelative == null)
+            {
+                return;
+            }
+
+            var dropPanelActualWidth = dropGrid.ActualWidth;
+            var elementRelativePosition = elementRelative.TransformToVisual(dropGrid).Transform(new Point(0, 0));
+            var rectArea = GetRelativeRectArea(dropGrid, elementRelative, elementRelativePosition, mousePositionCurrent);
+
+            Point startPoint;
+            Point endPoint;
+            switch (rectArea)
+            {
+                case RectArea.TopLeft:
+                case RectArea.TopCenter:
+                case RectArea.TopRight:
+                    startPoint = new Point(0, (int)elementRelativePosition.Y);
+                    endPoint = startPoint + new Vector((int)dropPanelActualWidth, 0);
+                    break;
+                case RectArea.MiddleLeft:
+                case RectArea.MiddleCenter:
+                case RectArea.MiddleRight:
+                    break;
+                case RectArea.BottomLeft:
+                case RectArea.BottomCenter:
+                case RectArea.BottomRight:
+                    startPoint = new Point(0, (int)elementRelativePosition.Y + elementRelative.ActualHeight);
+                    endPoint = startPoint + new Vector((int)dropPanelActualWidth, 0);
+                    break;
+            }
+
+            GuidAdorner.UpdateGuideLine(startPoint, endPoint);
+        }
+
+        private static void PanelGuidStrategy(Panel dropPanel, Orientation orientation, Point mousePositionCurrent, bool isWrapPanel)
+        {
+            (int index, UIElement? child) = dropPanel.GetMouseOverChildInfo();
+            if (index == -1 || child == null)
+            {
+                return;
+            }
+            var elementRelative = child as FrameworkElement;
+            if (elementRelative == null)
+            {
+                return;
+            }
+
+            var elementRelativePosition = elementRelative.TransformToVisual(dropPanel).Transform(new Point(0, 0));
+
+            var rectArea = GetRelativeRectArea(dropPanel, elementRelative, elementRelativePosition, mousePositionCurrent);
+
+            Point startPoint;
+            Point endPoint;
+            if (orientation == Orientation.Horizontal)
+            {
+                switch (rectArea)
+                {
+                    case RectArea.TopLeft:
+                    case RectArea.MiddleLeft:
+                    case RectArea.BottomLeft:
+                        if (isWrapPanel)
+                        {
+                            startPoint = new Point((int)elementRelativePosition.X, elementRelativePosition.Y);
+                            endPoint = startPoint + new Vector(0, elementRelative.ActualHeight);
+                        }
+                        else
+                        {
+                            startPoint = new Point((int)elementRelativePosition.X, 0);
+                            endPoint = startPoint + new Vector(0, dropPanel.ActualHeight);
+                        }
+                        break;
+                    case RectArea.TopCenter:
+                    case RectArea.MiddleCenter:
+                    case RectArea.BottomCenter:
+                        break;
+                    case RectArea.TopRight:
+                    case RectArea.MiddleRight:
+                    case RectArea.BottomRight:
+                        if (isWrapPanel)
+                        {
+                            startPoint = new Point((int)(elementRelativePosition.X + elementRelative.ActualWidth), elementRelativePosition.Y);
+                            endPoint = startPoint + new Vector(0, elementRelative.ActualHeight);
+                        }
+                        else
+                        {
+                            startPoint = new Point((int)(elementRelativePosition.X + elementRelative.ActualWidth), 0);
+                            endPoint = startPoint + new Vector(0, dropPanel.ActualHeight);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                switch (rectArea)
+                {
+                    case RectArea.TopLeft:
+                    case RectArea.TopCenter:
+                    case RectArea.TopRight:
+                        if (isWrapPanel)
+                        {
+                            startPoint = new Point(elementRelativePosition.X, (int)elementRelativePosition.Y);
+                            endPoint = startPoint + new Vector((int)elementRelative.ActualWidth, 0);
+                        }
+                        else
+                        {
+                            startPoint = new Point(0, (int)elementRelativePosition.Y);
+                            endPoint = startPoint + new Vector((int)dropPanel.ActualWidth, 0);
+                        }
+                        break;
+                    case RectArea.MiddleLeft:
+                    case RectArea.MiddleCenter:
+                    case RectArea.MiddleRight:
+                        break;
+                    case RectArea.BottomLeft:
+                    case RectArea.BottomCenter:
+                    case RectArea.BottomRight:
+                        if (isWrapPanel)
+                        {
+                            startPoint = new Point(elementRelativePosition.X, (int)elementRelativePosition.Y + elementRelative.ActualHeight);
+                            endPoint = startPoint + new Vector((int)elementRelative.ActualWidth, 0);
+                        }
+                        else
+                        {
+                            startPoint = new Point(0, (int)elementRelativePosition.Y + elementRelative.ActualHeight);
+                            endPoint = startPoint + new Vector((int)dropPanel.ActualWidth, 0);
+                        }
+                        break;
+                }
+            }
+
+            GuidAdorner.UpdateGuideLine(startPoint, endPoint);
+        }
+
+
+
+        private static void DropTarget_DragLeave(object sender, DragEventArgs e)
+        {
+            RemoveGuidAdorner();
+        }
+
+        private static void RemoveGuidAdorner()
+        {
+            if (GuidAdorner != null)
+            {
+                var parent = GuidAdorner.Parent;
+                var adornerLayer = GuidAdorner.Parent as AdornerLayer;
+                adornerLayer?.Remove(GuidAdorner);
+                GuidAdorner = null;
+            }
+        }
+
+        private static RectArea GetRelativeRectArea(FrameworkElement visual,
+            FrameworkElement elementRelative,
+            Point elementRelativePosition,
+            Point mousePositionCurrent)
+        {
+            var elementRelativeRect = new Rect(
+                elementRelativePosition.X,
+                elementRelativePosition.Y,
+                elementRelative.ActualWidth,
+                elementRelative.ActualHeight);
+            var rectArea = PointHelper.GetRectArea(elementRelativeRect, mousePositionCurrent);
+            return rectArea;
+        }
+
+
+        private static void DropTarget_Drop(object sender, DragEventArgs e)
+        {
+            var dropTarget = sender as UIElement;
+            if (DragSource == null)
+            {
+                return;
+            }
+            var mousePositionCurrent = e.GetPosition(dropTarget);
+
+            if (dropTarget is StackPanel dropStackPanel)
+            {
+                PanelDropStrategy(dropStackPanel, mousePositionCurrent);
+            }
+            else if (dropTarget is VirtualizingStackPanel dropVirtualizingStackPanel)
+            {
+                PanelDropStrategy(dropVirtualizingStackPanel, mousePositionCurrent);
+            }
+            else if (dropTarget is WrapPanel dropWrapPanel)
+            {
+                PanelDropStrategy(dropWrapPanel, mousePositionCurrent);
+            }
+            else if (dropTarget is Grid dropGrid)
+            {
+                PanelDropStrategy(dropGrid, mousePositionCurrent);
+            }
+            else if (dropTarget is DockPanel dropDockPanel)
+            {
+                DockPanelDropStrategy(dropDockPanel, mousePositionCurrent);
+            }
+            else if (dropTarget is Decorator dropDecorator)
+            {
+                dropDecorator.Child = dropTarget;
+            }
+            else if (dropTarget is ListBox selector)
+            {
+                if (DragSource is not ListBoxItem)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is TreeView treeView)
+            {
+                if (DragSource is not TreeViewItem)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is ListView listView)
+            {
+                if (DragSource is not ListBoxItem)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is DataGrid dataGrid)
+            {
+                if (DragSource is not DataGridRow)
+                {
+                    return;
+                }
+            }
+            else if (dropTarget is ComboBox comboBox)
+            {
+                if (DragSource is not ComboBoxItem)
+                {
+                    return;
+                }
+            }
+        }
+
+        private static void DockPanelDropStrategy(DockPanel dropDockPanel, Point mousePositionCurrent)
+        {
+
+        }
+
+        private static void PanelDropStrategy(Panel dropPanel, Point mousePositionCurrent)
+        {
+            (int index, UIElement? child) = dropPanel.GetMouseOverChildInfo();
+            int insertIndex = -1;
+            if (child != null)
+            {
+                var elementRelative = child as FrameworkElement;
+                if (elementRelative == null)
+                {
+                    return;
+                }
+                var elementRelativePosition = elementRelative.TransformToVisual(dropPanel).Transform(new Point(0, 0));
+
+                var rectArea = GetRelativeRectArea(dropPanel, elementRelative, elementRelativePosition, mousePositionCurrent);
+
+                Orientation? orientation = (Orientation?)dropPanel.ReflectionGetProperty("Orientation");
+                if (orientation.HasValue && orientation.Value == Orientation.Horizontal)
+                {
+                    switch (rectArea)
+                    {
+                        case RectArea.TopLeft:
+                        case RectArea.MiddleLeft:
+                        case RectArea.BottomLeft:
+                            insertIndex = index;
+                            break;
+                        case RectArea.TopCenter:
+                        case RectArea.MiddleCenter:
+                        case RectArea.BottomCenter:
+                            break;
+                        case RectArea.TopRight:
+                        case RectArea.MiddleRight:
+                        case RectArea.BottomRight:
+                            insertIndex = index + 1;
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (rectArea)
+                    {
+                        case RectArea.TopLeft:
+                        case RectArea.TopCenter:
+                        case RectArea.TopRight:
+                            insertIndex = index;
+                            break;
+                        case RectArea.MiddleLeft:
+                        case RectArea.MiddleCenter:
+                        case RectArea.MiddleRight:
+                            break;
+                        case RectArea.BottomLeft:
+                        case RectArea.BottomCenter:
+                        case RectArea.BottomRight:
+                            insertIndex = index + 1;
+                            break;
+                    }
+                }
+            }
+
+            RemoveDragSource(DragSource);
+
+            if (insertIndex > -1)
+            {
+                insertIndex = Math.Min(insertIndex, dropPanel.Children.Count);
+                insertIndex = Math.Max(insertIndex, 0);
+                dropPanel.Children.Insert(insertIndex, DragSource);
+            }
+            else
+            {
+                dropPanel.Children.Add(DragSource);
+            }
+
+            DragPreview?.Close();
+            DragPreview = null;
+        }
+
         private static void RemoveDragSource(UIElement dragSource)
         {
             if (dragSource == null)
@@ -392,7 +896,7 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            if (dragSource is ListBoxItem 
+            if (dragSource is ListBoxItem
                 || dragSource is ListViewItem
                 || dragSource is TreeViewItem
                 || dragSource is DataGridRow)
@@ -403,10 +907,10 @@ namespace RS.Widgets.Controls
                     var item = itemsControl.ItemContainerGenerator.ItemFromContainer(dragSource);
                     if (item != DependencyProperty.UnsetValue)
                     {
-                        var itemsSource = itemsControl.ItemsSource??itemsControl.Items;
-                        if (itemsSource is IList list 
-                            && item != null 
-                            && list.IsFixedSize == false 
+                        var itemsSource = itemsControl.ItemsSource ?? itemsControl.Items;
+                        if (itemsSource is IList list
+                            && item != null
+                            && list.IsFixedSize == false
                             && list.IsReadOnly == false)
                         {
                             list.Remove(item);
@@ -421,6 +925,7 @@ namespace RS.Widgets.Controls
             {
                 return;
             }
+
             if (parent is Panel panel)
             {
                 panel.Children.Remove(dragSource);

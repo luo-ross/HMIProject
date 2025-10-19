@@ -27,7 +27,9 @@ namespace RS.Widgets.Controls
         {
             this.Width = 350;
             this.Height = 250;
-            this.BorderCornerRadius = new CornerRadius(5);
+            this.WindowStyle = WindowStyle.None;
+            this.AllowsTransparency = true;
+            this.CornerRadius = new CornerRadius(5);
             this.Owner = owner;
             if (this.Owner == null)
             {
@@ -138,7 +140,10 @@ namespace RS.Widgets.Controls
         {
             this.Dispatcher.Invoke(() =>
             {
-                this.Owner = window;
+                if (window != null)
+                {
+                    this.Owner = window;
+                }
                 this.ShowDialog();
             });
         }
@@ -194,13 +199,13 @@ namespace RS.Widgets.Controls
         }
 
 
-       public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText = null,
-         string caption = null,
-         MessageBoxButton button = MessageBoxButton.OK,
-         MessageBoxImage icon = MessageBoxImage.None,
-         MessageBoxResult defaultResult = MessageBoxResult.None,
-         MessageBoxOptions options = MessageBoxOptions.None
-         )
+        public async Task<MessageBoxResult> ShowMessageAsync(Window window, string messageBoxText = null,
+          string caption = null,
+          MessageBoxButton button = MessageBoxButton.OK,
+          MessageBoxImage icon = MessageBoxImage.None,
+          MessageBoxResult defaultResult = MessageBoxResult.None,
+          MessageBoxOptions options = MessageBoxOptions.None
+          )
         {
             this.MessageBoxResultTCS = new TaskCompletionSource<MessageBoxResult>();
             if (string.IsNullOrWhiteSpace(caption))

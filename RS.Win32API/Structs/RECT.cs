@@ -1,6 +1,7 @@
 ﻿using RS.Win32API.Standard;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -98,13 +99,13 @@ namespace RS.Win32API.Structs
 
         public POINT Position
         {
-            get { return new POINT { x = Left, y = Top }; }
+            get { return new POINT { X = Left, Y = Top }; }
         }
 
 
         public SIZE Size
         {
-            get { return new SIZE { cx = Width, cy = Height }; }
+            get { return new SIZE { Width = Width, Height = Height }; }
         }
 
         public static RECT Union(RECT rect1, RECT rect2)
@@ -137,6 +138,20 @@ namespace RS.Win32API.Structs
         public override int GetHashCode()
         {
             return (left << 16 | SystemUtility.LOWORD(right)) ^ (top << 16 | SystemUtility.LOWORD(bottom));
+        }
+
+
+        public bool IsPointInRect(POINT point)
+        {
+            return point.X >= this.Left &&
+                   point.X <= this.Right &&
+                   point.Y >= this.Top &&
+                   point.Y <= this.Bottom;
+        }
+
+        public override string ToString()
+        {
+            return $"Left:{Left} Top:{Top} Width:{Width} Height:{Height}";
         }
     }
 }

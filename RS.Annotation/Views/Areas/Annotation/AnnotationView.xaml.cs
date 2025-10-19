@@ -1,5 +1,4 @@
-﻿using IdGen;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OpenCvSharp.WpfExtensions;
 using RS.Commons;
 using RS.Commons.Enums;
@@ -33,10 +32,6 @@ namespace RS.Annotation.Views.Areas
         /// </summary>
         public AnnotationViewModel ViewModel { get; set; }
 
-        /// <summary>
-        /// 依赖注入雪花算法Id生成器
-        /// </summary>
-        public IIdGenerator<long> IdGenerator { get; set; }
 
         /// <summary>
         /// 自定义画笔
@@ -154,9 +149,6 @@ namespace RS.Annotation.Views.Areas
         public AnnotationView()
         {
             InitializeComponent();
-
-            //初始化雪花算法Id自动生成器
-            this.IdGenerator = App.ServiceProvider.GetRequiredService<IIdGenerator<long>>();
 
             //加载绘制画笔鼠标样式
             StreamResourceInfo drawCur = Application.GetResourceStream(new Uri("pack://application:,,,/RS.Annotation;component/Assets/BlueDraw.cur", UriKind.RelativeOrAbsolute));
@@ -556,13 +548,13 @@ namespace RS.Annotation.Views.Areas
                 this.RefreshRectModelStyle();
 
                 string tagColor = "#1296db";
-                this.MultiSelectRectModelDraw = new RectModel(IdGenerator.CreateId(), this.ImgModelSelect.Id, this.ProjectsView.ViewModel.ProjectModelSelect.Id)
+                this.MultiSelectRectModelDraw = new RectModel(Guid.NewGuid().ToString(),this.ImgModelSelect.Id, this.ProjectsView.ViewModel.ProjectModelSelect.Id)
                 {
                     Width = xDistanceAbs,
                     Height = yDistanceAbs,
                     CanvasLeft = canvasLeft,
                     CanvasTop = canvasTop,
-                    TagModel = new TagModel(IdGenerator.CreateId(), this.ProjectsView.ViewModel.ProjectModelSelect.Id)
+                    TagModel = new TagModel(Guid.NewGuid().ToString(), this.ProjectsView.ViewModel.ProjectModelSelect.Id)
                     {
                         TagColor = tagColor
                     },
@@ -845,7 +837,7 @@ namespace RS.Annotation.Views.Areas
             {
                 this.ClearAllRectModelSelect();
 
-                this.RectModelDraw = new RectModel(IdGenerator.CreateId(), this.ImgModelSelect.Id, this.ProjectsView.ViewModel.ProjectModelSelect.Id)
+                this.RectModelDraw = new RectModel(Guid.NewGuid().ToString(), this.ImgModelSelect.Id, this.ProjectsView.ViewModel.ProjectModelSelect.Id)
                 {
                     Width = xDistanceAbs,
                     Height = yDistanceAbs,
@@ -2044,7 +2036,7 @@ namespace RS.Annotation.Views.Areas
         /// <returns></returns>
         private RectModel RectModelClone(RectModel rectModel)
         {
-            RectModel rectModelClone = new RectModel(IdGenerator.CreateId(), rectModel.PictureId, this.ProjectsView.ViewModel.ProjectModelSelect.Id)
+            RectModel rectModelClone = new RectModel(Guid.NewGuid().ToString(), rectModel.PictureId, this.ProjectsView.ViewModel.ProjectModelSelect.Id)
             {
                 Width = rectModel.Width,
                 Height = rectModel.Height,
@@ -2687,7 +2679,7 @@ namespace RS.Annotation.Views.Areas
         /// <param name="horizontalOffset">水平偏移位置</param>
         public void ShowTagEditPopView(UIElement placementTarget, int horizontalOffset = 5)
         {
-            this.ViewModel.TagModelEdit = new TagModel(IdGenerator.CreateId(), this.ProjectsView.ViewModel.ProjectModelSelect.Id);
+            this.ViewModel.TagModelEdit = new TagModel(Guid.NewGuid().ToString(), this.ProjectsView.ViewModel.ProjectModelSelect.Id);
             switch (this.ViewModel.CRUD)
             {
                 case CRUD.Add:
@@ -2729,7 +2721,7 @@ namespace RS.Annotation.Views.Areas
         /// <returns></returns>
         public TagModel InitTagModel()
         {
-            var tagModel = new TagModel(IdGenerator.CreateId(), this.ProjectsView.ViewModel.ProjectModelSelect.Id);
+            var tagModel = new TagModel(Guid.NewGuid().ToString(), this.ProjectsView.ViewModel.ProjectModelSelect.Id);
             tagModel.IsShortCutAuto = true;
             //获取所有标注类
             var tagModelList = this.GetTagModelList();

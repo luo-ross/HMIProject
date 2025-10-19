@@ -32,6 +32,9 @@ namespace RS.Widgets.Controls
 
 
 
+        #region Icon配置
+
+       
         /// <summary>
         /// 这是自定义Pata 路径
         /// </summary>
@@ -95,6 +98,27 @@ namespace RS.Widgets.Controls
         }
 
 
+        /// <summary>
+        /// 这是Icon旋转角度
+        /// </summary>
+        public static readonly DependencyProperty IconRotateAngleProperty =
+          DependencyProperty.RegisterAttached(
+              "IconRotateAngle",
+              typeof(double),
+              typeof(ControlsHelper),
+              new PropertyMetadata(0D));
+
+        public static double GetIconRotateAngle(DependencyObject obj)
+        {
+            return (double)obj.GetValue(IconRotateAngleProperty);
+        }
+
+        public static void SetIconRotateAngle(DependencyObject obj, double value)
+        {
+            obj.SetValue(IconRotateAngleProperty, value);
+        }
+
+        #endregion
         /// <summary>
         /// 设置控件圆角
         /// </summary>

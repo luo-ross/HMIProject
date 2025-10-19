@@ -1,7 +1,6 @@
 ﻿using RS.Win32API;
 using RS.Win32API.Enums;
 using RS.Win32API.Structs;
-using ScottPlot.Interactivity.UserActions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -126,8 +125,8 @@ namespace RS.Widgets.Controls
 
         private static void TriggerMouseEvents(IntPtr wParam, MSLLHOOKSTRUCT mouseStruct)
         {
-            int x = mouseStruct.pt.x;
-            int y = mouseStruct.pt.y;
+            int x = mouseStruct.pt.X;
+            int y = mouseStruct.pt.Y;
 
             switch ((int)wParam)
             {

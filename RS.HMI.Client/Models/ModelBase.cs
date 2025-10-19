@@ -16,7 +16,7 @@ namespace RS.HMI.Client.Models
         /// <summary>
         /// 主键 
         /// </summary>
-        public long? Id { get; set; }
+        public string? Id { get; set; }
 
 
         private bool? isDelete;
@@ -36,7 +36,7 @@ namespace RS.HMI.Client.Models
         /// <summary>
         /// 创建人主键
         /// </summary>
-        public long? CreateId { get; set; }
+        public string? CreateId { get; set; }
 
 
         private string? createBy;
@@ -69,7 +69,7 @@ namespace RS.HMI.Client.Models
         /// <summary>
         /// 最后一次更新人主键
         /// </summary>
-        public long? UpdateId { get; set; }
+        public string? UpdateId { get; set; }
 
 
         private string? updateBy;
@@ -102,7 +102,7 @@ namespace RS.HMI.Client.Models
         /// <summary>
         /// 删除人主键
         /// </summary>
-        public long? DeleteId { get; set; }
+        public string? DeleteId { get; set; }
 
 
         private string? deleteBy;
@@ -131,7 +131,6 @@ namespace RS.HMI.Client.Models
                 this.SetProperty(ref deleteTime, value);
             }
         }
-
 
     }
 }

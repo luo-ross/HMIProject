@@ -2,33 +2,40 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
-using OpenCvSharp;
+using NPOI.SS.Formula.Functions;
 using RS.Commons.Attributs;
 using RS.HMI.Client.Models;
 using RS.HMI.Client.Views.Areas;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
+using RS.Win32API.Structs;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.IO.Ports;
+using System.Security.Policy;
+using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace RS.HMI.Client.Views
 {
-
     [ServiceInjectConfig(ServiceLifetime.Scoped)]
-    public class HomeViewModel : NotifyBase
+    public class HomeViewModel : ViewModelBase
     {
         private readonly IViewModelManager ViewModelManager;
         /// <summary>
         /// 获取或设置搜索按钮点击时执行的命令
         /// </summary>
         public ICommand NavClickCommand { get; }
+
 
         private DispatcherTimer DispatcherTimer;
 
@@ -45,7 +52,30 @@ namespace RS.HMI.Client.Views
                 {
                     this.DateTimeNow = DateTime.Now;
                 }, Application.Current.Dispatcher);
+
+
+            PersonModelList = new ObservableCollection<PersonModel>();
+            this.GenerateTestData(100000);
+            this.ChangeSource(PersonModelList);
         }
+
+
+
+
+
+        public void GenerateTestData(int n)
+        {
+            var groupNames = new[] { "A组", "B组", "C组", "D组", "E组" };
+            for (int i = 1; i <= n; i++)
+            {
+                PersonModelList.Add(new PersonModel
+                {
+                    Name = $"测试用户{i}",
+                    Group = groupNames[i % groupNames.Length]
+                });
+            }
+        }
+
 
         private void NavClick(NavigateModel? model)
         {
@@ -121,7 +151,27 @@ namespace RS.HMI.Client.Views
             return result;
         }
 
+        public void ChangeSource(ObservableCollection<PersonModel> newSource)
+        {
+            GroupedPersonsView = CollectionViewSource.GetDefaultView(newSource);
+            GroupedPersonsView.GroupDescriptions.Clear();
+            GroupedPersonsView.GroupDescriptions.Add(new PropertyGroupDescription("Group"));
+            OnPropertyChanged(nameof(GroupedPersonsView));
+        }
 
+        private ICollectionView groupedPersonsView;
+
+        public ICollectionView GroupedPersonsView
+        {
+            get
+            {
+                return groupedPersonsView;
+            }
+            set
+            {
+                this.SetProperty(ref groupedPersonsView, value);
+            }
+        }
 
 
         private List<NavigateModel> navigateModelList;
@@ -142,10 +192,27 @@ namespace RS.HMI.Client.Views
             }
         }
 
+        private ObservableCollection<PersonModel> personModelList;
+
+        public ObservableCollection<PersonModel> PersonModelList
+        {
+            get
+            {
+                if (personModelList == null)
+                {
+                    personModelList = new ObservableCollection<PersonModel>();
+                }
+                return personModelList;
+            }
+            set
+            {
+                this.SetProperty(ref personModelList, value);
+            }
+        }
+
 
 
         private ObservableCollection<NavigateModel> test1List;
-
         public ObservableCollection<NavigateModel> Test1List
         {
             get
@@ -383,6 +450,25 @@ namespace RS.HMI.Client.Views
             }
             set { treeModelList = value; }
         }
+
+
+        private FrameworkElement testView;
+        public FrameworkElement TestView
+        {
+            get
+            {
+                if (testView == null)
+                {
+                    testView = new RoleView();
+                }
+                return testView;
+            }
+            set
+            {
+                this.SetProperty(ref testView, value);
+            }
+        }
+
 
     }
 }

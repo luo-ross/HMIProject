@@ -16,7 +16,7 @@ namespace RS.Models
         /// <summary>
         /// 主键 
         /// </summary>
-        public long? Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// 是否删除
@@ -26,7 +26,7 @@ namespace RS.Models
         /// <summary>
         /// 创建人主键
         /// </summary>
-        public long? CreateId { get; set; }
+        public string? CreateId { get; set; }
 
         /// <summary>
         /// 创建人名称
@@ -41,7 +41,7 @@ namespace RS.Models
         /// <summary>
         /// 最后一次更新人主键
         /// </summary>
-        public long? UpdateId { get; set; }
+        public string? UpdateId { get; set; }
 
         /// <summary>
         /// 更新人名称
@@ -56,7 +56,7 @@ namespace RS.Models
         /// <summary>
         /// 删除人主键
         /// </summary>
-        public long? DeleteId { get; set; }
+        public string? DeleteId { get; set; }
 
         /// <summary>
         /// 删除人
