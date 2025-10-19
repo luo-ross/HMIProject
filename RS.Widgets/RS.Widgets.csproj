@@ -10,9 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="AutomationPeers\**" />
 	  <Compile Remove="EvetentArgs\**" />
+	  <EmbeddedResource Remove="AutomationPeers\**" />
 	  <EmbeddedResource Remove="EvetentArgs\**" />
+	  <None Remove="AutomationPeers\**" />
 	  <None Remove="EvetentArgs\**" />
+	  <Page Remove="AutomationPeers\**" />
 	  <Page Remove="EvetentArgs\**" />
 	</ItemGroup>
 
@@ -56,10 +60,6 @@
 		<Page Update="Styles\Controls.Border.xaml">
 			<SubType>Designer</SubType>
 		</Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="AutomationPeers\" />
 	</ItemGroup>
 
 	<ItemGroup>

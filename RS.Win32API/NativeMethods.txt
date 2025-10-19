@@ -1,9 +1,0 @@
-﻿User32.*
-Gdi32.*
-DwmAPI.*
-Kernel32.*
-WM_*
-SC_*
-S_*
-CW_*
-MSGFLTINFO_*
