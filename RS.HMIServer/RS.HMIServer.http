@@ -1,6 +1,6 @@
 @RS.HMIServer_HostAddress = http://localhost:5171
 
-GET {{RS.HMIServer_HostAddress}}/weatherforecast/
+GET {{RS.HMIServer_HostAddress}}/swagger
 Accept: application/json
 
 ###

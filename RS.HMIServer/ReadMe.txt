@@ -9,13 +9,14 @@
       "http://localhost:54293"
     ]
   },
+
   "ApplicationDiscriminator": "145164B9-11BA-4127-A678-17764D582031",
   "EmailService": {
     "Server": "Tencent",
     "Host": "smtp.qq.com",
     "Port": "587",
     "UserName": "1845960295@qq.com",
-    "Password": "eyimt123laagdjci",
+    "Password": "eyimt123laagdjci"
   },
   "GlobalRSAEncryptPrivateKeyFileName": "key-FFD06E4F-0219-4C2F-AABC-0F97BAFF4792.bin",
   "GlobalRSAEncryptPublicKeyFileName": "key-C84193C7-CE9C-4898-86A5-F6B624440E88.bin",
@@ -43,5 +44,5 @@
     ],
     "Issuer": "http://wpf.mycompany.com/authapi",
     "SecurityKey": "http://localhost:7001"
-  },
+  }
 }

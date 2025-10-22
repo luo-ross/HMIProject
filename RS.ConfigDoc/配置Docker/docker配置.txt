@@ -21,6 +21,9 @@
   ]
 }
 
+解决docker engine stopped
+在服务里找到Docker Desktop Service 将手动配置为自动
+
 
 查询镜像
 docker search 镜像名称

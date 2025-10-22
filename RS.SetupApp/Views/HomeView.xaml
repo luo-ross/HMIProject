@@ -6,9 +6,8 @@
     xmlns:local="clr-namespace:RS.SetupApp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rs="https://github.com/luo-ross/Widgets"
-    Title="HomeView"
     Width="640"
-    Height="460"
+    Height="410"
     Background="#ffffff"
     CornerRadius="8"
     Foreground="#333333"
@@ -269,16 +268,13 @@
             </ControlTemplate>
 
 
-            <Grid x:Key="ReadAndAgreementConfirmMessage" VerticalAlignment="Center">
+            <Grid Margin="0,-30,0,0" x:Key="ReadAndAgreementConfirmMessage" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <StackPanel
-                    Grid.Row="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+                <StackPanel Grid.Row="0" HorizontalAlignment="Center">
                     <TextBlock FontSize="18" Text="请阅读并同意" />
                 </StackPanel>
                 <StackPanel
@@ -398,13 +394,16 @@
                 Grid.Row="0"
                 BorderBrush="#35ffffff"
                 BorderThickness="0,0,0,1">
-                <Grid VerticalAlignment="Center">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" HorizontalAlignment="Center">
-                        <Grid Margin="0,0,0,30" HorizontalAlignment="Center">
+                    <StackPanel
+                        Grid.Row="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <Grid HorizontalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition />
@@ -429,7 +428,7 @@
                         </Grid>
                         <StackPanel
                             Width="210"
-                            Margin="0,30,0,0"
+                            Margin="0,70,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center">
                             <Button
@@ -459,19 +458,15 @@
                             </Button>
                         </StackPanel>
                     </StackPanel>
-                    <StackPanel
-                        Grid.Row="1"
-                        Margin="50,15,50,0"
-                        HorizontalAlignment="Center">
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center">
                         <TextBlock
                             Foreground="Red"
                             Text="{Binding ErrorTooltip}"
                             TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </Grid>
-
             </Border>
-            <Border Grid.Row="1" Padding="15">
+            <Border Grid.Row="1" Padding="15,0,15,0">
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />

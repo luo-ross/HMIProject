@@ -25,6 +25,8 @@ namespace RS.SetupApp.Views
     public partial class HomeView : RSWindow
     {
         private const string resourcePath = "MyPublish.zip";
+        private double? HeightHistory { get; set; }
+
         public HomeViewModel ViewModel { get; set; }
 
         /// <summary>
@@ -62,6 +64,11 @@ namespace RS.SetupApp.Views
 
         private void HomeView_Loaded(object sender, RoutedEventArgs e)
         {
+            if (this.HeightHistory == null)
+            {
+                this.HeightHistory = this.ActualHeight;
+            }
+
             //获取安装包实际大小
             this.ViewModel.DiskSizeNeed = GetProgramSize();
             //检查安装路径是否可用
@@ -85,6 +92,8 @@ namespace RS.SetupApp.Views
             e.Handled = true;
         }
 
+
+
         /// <summary>
         /// 自定义安装路径
         /// </summary>
@@ -92,11 +101,11 @@ namespace RS.SetupApp.Views
         {
             if (this.CkCustomInstall.IsChecked == true)
             {
-                this.Height = 460 + 100;
+                this.Height = this.HeightHistory.Value + 80;
             }
             else
             {
-                this.Height = 460;
+                this.Height = this.HeightHistory.Value;
             }
         }
 
@@ -244,7 +253,7 @@ namespace RS.SetupApp.Views
         }
 
 
-       
+
         private long GetProgramSize()
         {
             long totalSize = 0;

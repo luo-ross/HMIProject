@@ -173,4 +173,8 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Keys-Repository\" />
+	</ItemGroup>
 </Project>
