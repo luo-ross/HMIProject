@@ -1,34 +1,16 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using NPOI.SS.Formula.Functions;
-using RS.Commons;
-using RS.HMI.Client.Views;
+﻿using RS.Commons;
 using RS.Models;
-using RS.Widgets.Controls;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Windows.Forms.AxHost;
 
 namespace RS.HMI.Client.Controls
 {
-    
-
-  
     public partial class RSImgVerify : UserControl
     {
         private Thumb PART_BtnSlider { get; set; }
@@ -41,41 +23,43 @@ namespace RS.HMI.Client.Controls
         private string VerifySessionId;
         private List<Point> MouseMovingTrack = new List<Point>();
 
+        /// <summary>
+        /// 初始化验证码事件
+        /// </summary>
         public event Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsyncEvent;
-        public event Func<OperateResult> OnBtnSliderDragStartedEvent;
+
+        /// <summary>
+        /// 验证码拖拽开始事件
+        /// </summary>
+        public event Func<OperateResult> BtnSliderDragStartedEvent;
+
 
         public RSImgVerify()
         {
             InitializeComponent();
-
-          
         }
 
-       
 
 
-
-        public Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsync
+        public Func<Task<OperateResult<ImgVerifyModel>>> InitVerifyControlAsyncCommand
         {
-            get { return (Func<Task<OperateResult<ImgVerifyModel>>>)GetValue(InitVerifyControlAsyncProperty); }
-            set { SetValue(InitVerifyControlAsyncProperty, value); }
+            get { return (Func<Task<OperateResult<ImgVerifyModel>>>)GetValue(InitVerifyControlAsyncCommandProperty); }
+            set { SetValue(InitVerifyControlAsyncCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty InitVerifyControlAsyncProperty =
-            DependencyProperty.Register("InitVerifyControlAsync", typeof(Func<Task<OperateResult<ImgVerifyModel>>>), typeof(RSImgVerify), new PropertyMetadata(null));
+        public static readonly DependencyProperty InitVerifyControlAsyncCommandProperty =
+            DependencyProperty.Register("InitVerifyControlAsyncCommand", typeof(Func<Task<OperateResult<ImgVerifyModel>>>), typeof(RSImgVerify), new PropertyMetadata(null));
 
 
 
-
-        public Func<OperateResult> OnBtnSliderDragStarted
+        public Func<OperateResult> BtnSliderDragStartedCommand
         {
-            get { return (Func<OperateResult>)GetValue(OnBtnSliderDragStartedProperty); }
-            set { SetValue(OnBtnSliderDragStartedProperty, value); }
+            get { return (Func<OperateResult>)GetValue(BtnSliderDragStartedCommandProperty); }
+            set { SetValue(BtnSliderDragStartedCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnBtnSliderDragStartedProperty =
-            DependencyProperty.Register("OnBtnSliderDragStarted", typeof(Func<OperateResult>), typeof(RSImgVerify), new PropertyMetadata(null));
-
+        public static readonly DependencyProperty BtnSliderDragStartedCommandProperty =
+            DependencyProperty.Register("BtnSliderDragStartedCommand", typeof(Func<OperateResult>), typeof(RSImgVerify), new PropertyMetadata(null));
 
 
 
@@ -115,8 +99,6 @@ namespace RS.HMI.Client.Controls
             DependencyProperty.Register("BtnImgSource", typeof(ImageSource), typeof(RSImgVerify), new PropertyMetadata(null));
 
 
-
-
         [Description("图像按钮宽度")]
         public double BtnImgWidth
         {
@@ -126,7 +108,6 @@ namespace RS.HMI.Client.Controls
 
         public static readonly DependencyProperty BtnImgWidthProperty =
             DependencyProperty.Register("BtnImgWidth", typeof(double), typeof(RSImgVerify), new PropertyMetadata(20D));
-
 
 
         [Description("图像按钮高度")]
@@ -140,7 +121,6 @@ namespace RS.HMI.Client.Controls
             DependencyProperty.Register("BtnImgHeight", typeof(double), typeof(RSImgVerify), new PropertyMetadata(20D));
 
 
-
         [Description("是否显示验证码图像")]
         public bool IsShowVerifyImg
         {
@@ -152,27 +132,60 @@ namespace RS.HMI.Client.Controls
             DependencyProperty.Register("IsShowVerifyImg", typeof(bool), typeof(RSImgVerify), new PropertyMetadata(false));
 
 
+        public double SliderHostHeight
+        {
+            get { return (double)GetValue(SliderHostHeightProperty); }
+            set { SetValue(SliderHostHeightProperty, value); }
+        }
 
+        public static readonly DependencyProperty SliderHostHeightProperty =
+            DependencyProperty.Register("SliderHostHeight", typeof(double), typeof(RSImgVerify), new PropertyMetadata(150D, OnSliderHostHeightPropertyChanged));
+
+        private static void OnSliderHostHeightPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var imgVerify = d as RSImgVerify;
+            imgVerify.SliderHostCanvasTop = -(imgVerify.SliderHostHeight + 3);
+        }
+
+        public double SliderHostCanvasTop
+        {
+            get { return (double)GetValue(SliderHostCanvasTopProperty); }
+            private set { SetValue(SliderHostCanvasTopProperty, value); }
+        }
+
+        public static readonly DependencyProperty SliderHostCanvasTopProperty =
+            DependencyProperty.Register("SliderHostCanvasTop", typeof(double), typeof(RSImgVerify), new PropertyMetadata(150D));
 
         public OperateResult<ImgVerifyResultModel> GetImgVerifyResultAsync()
         {
             if (string.IsNullOrEmpty(this.VerifySessionId)
                 || string.IsNullOrWhiteSpace(this.VerifySessionId))
             {
+                this.ResetImgVerify();
                 return OperateResult.CreateFailResult<ImgVerifyResultModel>("获取验证码失败");
             }
+            double imgBtnWidth = 0D;
+            double imgBtnHeight = 0D;
+            double hostCanvasLeft = 0D;
+            double hostCanvasTop = 0D;
+            double imgBtnCanvasLeft = 0D;
+            double imgBtnCanvasTop = 0D;
 
-            //获取图像拖拽thumb的left 和top
-            var imgBtnWidth = this.PART_BtnImgSlider.ActualWidth;
-            var imgBtnHeight = this.PART_BtnImgSlider.ActualHeight;
+            this.Dispatcher.Invoke(() =>
+            {
+                //获取图像拖拽thumb的left 和top
+                imgBtnWidth = this.PART_BtnImgSlider.ActualWidth;
+                imgBtnHeight = this.PART_BtnImgSlider.ActualHeight;
 
-            //获取容器的CanvasLeft和Top
-            var hostCanvasLeft = Canvas.GetLeft(this.PART_BtnImgSliderHost);
-            var hostCanvasTop = Canvas.GetTop(this.PART_BtnImgSliderHost);
+                //获取容器的CanvasLeft和Top
+                hostCanvasLeft = Canvas.GetLeft(this.PART_BtnImgSliderHost);
+                hostCanvasTop = Canvas.GetTop(this.PART_BtnImgSliderHost);
 
-            //计算拖拽按钮在Canvas容器里左上角横坐标Left值
-            var imgBtnCanvasLeft = Canvas.GetLeft(this.PART_BtnImgSlider);
-            var imgBtnCanvasTop = Canvas.GetTop(this.PART_BtnImgSlider);
+                //计算拖拽按钮在Canvas容器里左上角横坐标Left值
+                imgBtnCanvasLeft = Canvas.GetLeft(this.PART_BtnImgSlider);
+                imgBtnCanvasTop = Canvas.GetTop(this.PART_BtnImgSlider);
+            });
+
 
 
             ImgVerifyResultModel imgVerifyResultModel = new ImgVerifyResultModel();
@@ -205,8 +218,6 @@ namespace RS.HMI.Client.Controls
             {
                 this.PART_BtnImgSlider.DragDelta += PART_BtnImgSlider_DragDelta;
                 this.PART_BtnImgSlider.DragStarted += PART_BtnImgSlider_DragStarted;
-
-
             }
         }
 
@@ -222,16 +233,7 @@ namespace RS.HMI.Client.Controls
 
         private void PART_BtnSlider_DragStarted(object sender, DragStartedEventArgs e)
         {
-            OperateResult? operateResult = null;
-            if (this.OnBtnSliderDragStarted != null)
-            {
-                operateResult = this.OnBtnSliderDragStarted.Invoke();
-            }
-            else
-            {
-                operateResult = OnBtnSliderDragStartedEvent?.Invoke();
-            }
-
+            OperateResult? operateResult = (BtnSliderDragStartedCommand ?? BtnSliderDragStartedEvent)?.Invoke();
             if (operateResult == null || !operateResult.IsSuccess)
             {
                 return;
@@ -239,11 +241,8 @@ namespace RS.HMI.Client.Controls
             this.IsCanDrag = true;
         }
 
-
-
         private void PART_BtnImgSlider_DragDelta(object sender, DragDeltaEventArgs e)
         {
-
             //获取拖拽按钮的容器的宽度和高度
             var imgHostWidth = this.PART_BtnImgSliderHost.ActualWidth;
             var imgHostHeight = this.PART_BtnImgSliderHost.ActualHeight;
@@ -282,7 +281,6 @@ namespace RS.HMI.Client.Controls
             }
         }
 
-
         private async void PART_BtnSlider_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (!this.IsCanDrag)
@@ -312,6 +310,7 @@ namespace RS.HMI.Client.Controls
             var moveMaxWidth = hostWidth - btnWidth;
             canvasLeft = Math.Max(0, canvasLeft);
             canvasLeft = Math.Min(moveMaxWidth, canvasLeft);
+
             //这里设置值
             Canvas.SetLeft(this.PART_BtnSlider, canvasLeft);
 
@@ -319,22 +318,12 @@ namespace RS.HMI.Client.Controls
             this.SliderMaskWidth = canvasLeft;
 
             //计算拖拽百分比
-
             var movePercent = (canvasLeft + btnWidth) / hostWidth;
             if (movePercent > 0.9 && !this.IsShowVerifyImg)
             {
                 this.IsShowVerifyImg = true;
 
-                OperateResult<ImgVerifyModel> initVerifyControlResult = null;
-                if (InitVerifyControlAsync != null)
-                {
-                    initVerifyControlResult = await InitVerifyControlAsync?.Invoke();
-                }
-                else
-                {
-                    initVerifyControlResult = await InitVerifyControlAsyncEvent?.Invoke();
-                }
-
+                OperateResult<ImgVerifyModel> initVerifyControlResult = await (InitVerifyControlAsyncCommand ?? InitVerifyControlAsyncEvent)?.Invoke();
                 if (initVerifyControlResult == null
                     || !initVerifyControlResult.IsSuccess)
                 {
@@ -381,7 +370,6 @@ namespace RS.HMI.Client.Controls
         /// </summary>
         public void ParsingImgBuffer(byte[] buffer)
         {
-
             // 读取前4个字节（小端）作为第一张图片的长度
             int image1Length = BitConverter.ToInt32(buffer, 0);
 
@@ -396,7 +384,13 @@ namespace RS.HMI.Client.Controls
             // 转换为 ImageSource
             this.ImgVerifyBackground = ByteArrayToImageSource(image1Data);
             this.BtnImgSource = ByteArrayToImageSource(image2Data);
+        }
 
+        public void ResetImgVerify()
+        {
+            this.MouseMovingTrack.Clear();
+            Canvas.SetLeft(this.PART_BtnImgSlider, 0);
+            Canvas.SetTop(this.PART_BtnImgSlider, 0);
         }
 
         private ImageSource ByteArrayToImageSource(byte[] imageData)

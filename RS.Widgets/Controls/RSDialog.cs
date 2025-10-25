@@ -51,8 +51,6 @@ namespace RS.Widgets.Controls
             DialogHelper.UnregisterDialog(this.DataContext);
         }
 
-
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();

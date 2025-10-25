@@ -9,7 +9,6 @@ namespace RS.HMIServer.Entity
     /// </summary>
     public sealed class LogOnEntity : BaseEntity
     {
-        
 
         /// <summary>
         /// 密码
@@ -24,7 +23,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 是否禁用
         /// </summary>
-        public bool IsEnable { get; set; }
+        public bool? IsDisabled { get; set; }
 
         /// <summary>
         /// 用户主键

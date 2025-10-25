@@ -10,10 +10,12 @@ namespace RS.Commons.Extend
         /// 转换为整型 
         /// </summary>
         /// <param name="data">数据</param>
-        public static int ToInt(this object data)
+        public static int ToInt(this object? data)
         {
             if (data == null)
+            {
                 return 0;
+            }
             int result;
             var success = int.TryParse(data.ToString(), out result);
             if (success)
@@ -30,14 +32,18 @@ namespace RS.Commons.Extend
 
 
 
-        public static long ToLong(this object data)
+        public static long ToLong(this object? data)
         {
             if (data == null)
+            {
                 return 0;
+            }
             long result;
             var success = long.TryParse(data.ToString(), out result);
             if (success)
+            {
                 return result;
+            }
             try
             {
                 return Convert.ToInt64(ToDouble(data, 0));
@@ -52,14 +58,18 @@ namespace RS.Commons.Extend
         /// 转换为Byte
         /// </summary>
         /// <param name="data">数据</param>
-        public static byte ToByte(this object data)
+        public static byte ToByte(this object? data)
         {
             if (data == null)
+            {
                 return 0;
+            }
             byte result;
             var success = byte.TryParse(data.ToString(), out result);
             if (success)
+            {
                 return result;
+            }
             try
             {
                 return Convert.ToByte(ToDouble(data, 0));
@@ -74,10 +84,12 @@ namespace RS.Commons.Extend
         /// 转换为双精度浮点数 
         /// </summary>
         /// <param name="data">数据</param>
-        public static double ToDouble(this object data)
+        public static double ToDouble(this object? data)
         {
             if (data == null)
+            {
                 return 0;
+            }
             double result;
             return double.TryParse(data.ToString(), out result) ? result : 0;
         }
@@ -85,9 +97,13 @@ namespace RS.Commons.Extend
         public static float ToFloat(this double data)
         {
             if (data > float.MaxValue)
+            {
                 return float.MaxValue;
+            }
             if (data < float.MinValue)
+            {
                 return float.MinValue;
+            }
             return (float)data;
         }
 
@@ -96,7 +112,7 @@ namespace RS.Commons.Extend
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="digits">小数位数</param>
-        public static double ToDouble(this object data, int digits)
+        public static double ToDouble(this object? data, int digits)
         {
             return Math.Round(ToDouble(data), digits);
         }
@@ -109,7 +125,9 @@ namespace RS.Commons.Extend
         public static decimal ToDecimal(this object data)
         {
             if (data == null)
+            {
                 return 0;
+            }
             decimal result;
             return decimal.TryParse(data.ToString(), out result) ? result : 0;
         }
@@ -123,7 +141,9 @@ namespace RS.Commons.Extend
         public static DateTime ToDate(this object data)
         {
             if (data == null)
+            {
                 return DateTime.MinValue;
+            }
             DateTime result;
             return DateTime.TryParse(data.ToString(), out result) ? result : DateTime.MinValue;
         }
@@ -202,13 +222,17 @@ namespace RS.Commons.Extend
         /// 转换为布尔值 
         /// </summary>
         /// <param name="data">数据</param>
-        public static bool ToBool(this object data)
+        public static bool ToBool(this object? data)
         {
             if (data == null)
+            {
                 return false;
+            }
             bool? value = GetBool(data);
             if (value != null)
+            {
                 return value.Value;
+            }
             bool result;
             return bool.TryParse(data.ToString(), out result) && result;
         }
@@ -218,7 +242,12 @@ namespace RS.Commons.Extend
         /// </summary>
         private static bool? GetBool(this object data)
         {
-            switch (data.ToString().Trim().ToLower())
+            if (data == null)
+            {
+                return null;
+            }
+
+            switch (data.ToString()?.Trim().ToLower())
             {
                 case "0":
                     return false;
@@ -252,14 +281,21 @@ namespace RS.Commons.Extend
         public static bool? ToBoolOrNull(this object data)
         {
             if (data == null)
+            {
                 return null;
+            }
+
             bool? value = GetBool(data);
             if (value != null)
+            {
                 return value.Value;
+            }
             bool result;
             bool isValid = bool.TryParse(data.ToString(), out result);
             if (isValid)
+            {
                 return result;
+            }
             return null;
         }
 
@@ -356,9 +392,13 @@ namespace RS.Commons.Extend
         {
             string reservedChars = "$-_.+!*'(),@=&";
             if (chr > 127)
+            {
                 return true;
+            }
             if (char.IsLetterOrDigit(chr) || reservedChars.IndexOf(chr) >= 0)
+            {
                 return false;
+            }
             return true;
         }
 
@@ -378,9 +418,6 @@ namespace RS.Commons.Extend
             }
             return builder.ToString();
         }
-
-
-
     }
 }
 

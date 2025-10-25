@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using RS.Commons;
 using RS.Commons.Attributs;
 using RS.Commons.Extensions;
@@ -11,7 +9,6 @@ using RS.Widgets.Controls;
 using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace RS.HMI.Client.Views
@@ -20,30 +17,42 @@ namespace RS.HMI.Client.Views
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class LoginView : RSWindow
     {
-        private const string TOKEN = "MainViewModel";
-        public LoginViewModel ViewModel { get; set; }
+        /// <summary>
+        /// 数据实体
+        /// </summary>
+        private readonly LoginViewModel ViewModel;
+
+
         /// <summary>
         /// 默认构造方法
         /// </summary>
-        public LoginView(LoginViewModel loginViewModel)
+        public LoginView(LoginViewModel viewModel)
         {
             InitializeComponent();
-            this.DataContext = loginViewModel;
-            this.ViewModel = loginViewModel;
-            // 注册异步消息处理器
-            WeakReferenceMessenger.Default.Register<DataRequestMessage, string>(this, "LoginView", OnDataRequestedAsync);
-
+            this.DataContext = viewModel;
+            this.ViewModel = viewModel;
+            this.ViewModel.GetImgVerifyResultAsyncCallBack = ViewModel_GetImgVerifyResultAsyncCallBack;
+            this.ViewModel.CloseWindowCallBack = ViewModel_CloseWindowCallBack;
         }
 
-        private void OnDataRequestedAsync(object recipient, DataRequestMessage message)
+        private OperateResult ViewModel_CloseWindowCallBack()
         {
-            message.Reply(GetCurrentUserAsync());
+            this.Close();
+            return OperateResult.CreateSuccessResult();
         }
 
-        private async Task<string> GetCurrentUserAsync()
+        private Task<OperateResult<ImgVerifyResultModel>> ViewModel_GetImgVerifyResultAsyncCallBack()
         {
-            await Task.Delay(1000);
-            return "123123";
+            return Task.FromResult(this.ImgVerify.GetImgVerifyResultAsync());
         }
+
+        /// <summary>
+        /// 超级连接跳转
+        /// </summary>
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start("explorer.exe", e.Uri.ToString());
+        }
+
     }
 }

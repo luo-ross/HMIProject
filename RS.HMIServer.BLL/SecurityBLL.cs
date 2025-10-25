@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NPOI.SS.Formula.Functions;
 using RS.Commons;
 using RS.Commons.Attributs;
+using RS.Commons.Extend;
 using RS.Commons.Helper;
 using RS.HMIServer.Entity;
 using RS.HMIServer.IBLL;
@@ -267,6 +268,10 @@ namespace RS.HMIServer.BLL
                 return OperateResult.CreateFailResult<AESEncryptModel>("用户名或者密码错误！");
             }
             var userEntity = userEntityResult.Data;
+            if (userEntity.IsDisabled == true)
+            {
+                return OperateResult.CreateFailResult<AESEncryptModel>("用户已禁用");
+            }
 
             //获取登录信息
             var logOnEntityResult = await this.SecurityDAL.FirstOrDefaultAsync<LogOnEntity>(t => t.UserId == userEntity.Id);
@@ -276,10 +281,11 @@ namespace RS.HMIServer.BLL
             }
             var logOnEntity = logOnEntityResult.Data;
 
+
             //是否禁用
-            if (!logOnEntity.IsEnable)
+            if (logOnEntity.IsDisabled.ToBool())
             {
-                return OperateResult.CreateFailResult<AESEncryptModel>("当前用户已禁用！");
+                return OperateResult.CreateFailResult<AESEncryptModel>("当前用户已被禁止登录！");
             }
 
             //通过用户输入的密码 结合注册时使用Salt 再生成一遍密码进行比对
@@ -339,7 +345,7 @@ namespace RS.HMIServer.BLL
                 var UserImgDefaultDir = Directory.GetCurrentDirectory();
                 UserImgDefaultDir = Path.Combine(UserImgDefaultDir, "UserDefaultImg");
                 var useImgDefaultList = Directory.GetFiles(UserImgDefaultDir);
-                var userPic = useImgDefaultList[Random.Shared.Next(0,useImgDefaultList.Length)];
+                var userPic = useImgDefaultList[Random.Shared.Next(0, useImgDefaultList.Length)];
                 userEntity.UserPic = userPic;
             }
 
@@ -399,7 +405,12 @@ namespace RS.HMIServer.BLL
         }
 
 
-        // 计算两个矩形框 IOU 的方法
+        /// <summary>
+        /// 计算两个矩形框 IOU 的方法
+        /// </summary>
+        /// <param name="rect1"></param>
+        /// <param name="rect2"></param>
+        /// <returns></returns>
         public double CalculateIOU(RectModel rect1, RectModel rect2)
         {
             // 参数校验

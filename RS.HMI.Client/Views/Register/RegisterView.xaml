@@ -57,20 +57,26 @@
                         Margin="0,5,0,5"
                         Padding="3,5,3,5"
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
-                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
+                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}"
                         rs:TextBoxHelper.IsShowClearButton="True"
                         rs:TextBoxHelper.Watermark="请输入密码"
                         MaxLength="30"
                         Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
+
+
                     <PasswordBox
                         Margin="0,5,0,5"
                         Padding="3,5,3,5"
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
-                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, ValidatesOnNotifyDataErrors=True}"
+                        rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                         rs:TextBoxHelper.IsShowClearButton="True"
                         rs:TextBoxHelper.Watermark="请输入确认密码"
                         MaxLength="30"
                         Style="{StaticResource RSApp.Styles.PasswordBoxTextBox}" />
+
+
+
+
                     <Button
                         x:Name="BtnSignUpNext"
                         Margin="0,30,0,0"
@@ -174,7 +180,7 @@
             x:Name="PART_RegisterSuccess"
             Background="#fff"
             Visibility="Collapsed">
-            <StackPanel Margin="28,70,28,100">
+            <StackPanel Margin="28,100,28,100">
                 <Path
                     x:Name="PART_Icon"
                     Width="45"

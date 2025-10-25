@@ -102,9 +102,10 @@ export class LoginViewModel extends ViewModelBase {
 
     if (loginResult!=null&&!loginResult.IsSuccess) {
       this.MessageEvents.value?.ShowDangerMsg(loginResult.Message);
+      // 登录失败，重置验证码
+      this.ImgVerifyEvents.value?.ResetImgVerify();
       return;
     }
-
     this.RouterUtil.Push("/Home");
   }
 

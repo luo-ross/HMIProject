@@ -383,10 +383,10 @@
                                     <rs:RSQRCodeLogin
                                         x:Name="QRCodeLogin"
                                         IsQRCodeLogin="{Binding ElementName=TogBtnQRCode, Path=IsChecked}"
-                                        OnCancelQRCodeLogin="QRCodeLogin_OnCancelQRCodeLogin"
-                                        OnGetLoginQRCode="QRCodeLogin_OnGetLoginQRCode"
-                                        OnQRCodeAuthLoginSuccess="QRCodeLogin_OnQRCodeAuthLoginSuccess"
-                                        OnQueryQRCodeLoginStatus="QRCodeLogin_OnQueryQRCodeLoginStatus"
+                                        OnCancelQRCodeLoginEvent="QRCodeLogin_OnCancelQRCodeLogin"
+                                        OnGetLoginQRCodeEvent="QRCodeLogin_OnGetLoginQRCode"
+                                        OnQRCodeAuthLoginSuccessEvent="QRCodeLogin_OnQRCodeAuthLoginSuccess"
+                                        OnQueryQRCodeLoginStatusEvent="QRCodeLogin_OnQueryQRCodeLoginStatus"
                                         QRCodeHeight="200"
                                         QRCodeWidth="200" />
                                 </Border>

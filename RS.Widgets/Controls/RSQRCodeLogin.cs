@@ -21,141 +21,62 @@ using ZXing.QrCode;
 
 namespace RS.Widgets.Controls
 {
-    public class QRCodeLoginTask : IDisposable
+    [TemplatePart(Name = nameof(PART_BtnReGetQRCode), Type = typeof(Button))]
+    public class RSQRCodeLogin : ContentControl
     {
-        private DispatcherTimer QueryQRCodeLoginStatusDispatcherTimer;
-        private QRCodeLoginResultModel LoginQRCodeResult;
-        private RSQRCodeLogin RSQRCodeLogin;
-        public Action<QRCodeLoginResultModel> OnCancelQRCodeLoginEvent;
-        public Func<Task<QRCodeLoginResultModel>> OnGetLoginQRCodeEvent;
-        public Action<QRCodeLoginResultModel> OnQRCodeAuthLoginSuccessEvent;
-        public Func<Task<QRCodeLoginStatusModel>> OnQueryQRCodeLoginStatusEvent;
-        private bool IsEndQRCodeLogin = false;
-
-
-        public QRCodeLoginTask(RSQRCodeLogin rSQRCodeLogin)
+        private class QRCodeLoginTask : IDisposable
         {
-            RSQRCodeLogin = rSQRCodeLogin;
-        }
+            private DispatcherTimer QueryQRCodeLoginStatusDispatcherTimer;
+            private QRCodeLoginResultModel LoginQRCodeResult;
+            private RSQRCodeLogin RSQRCodeLogin;
+            public Action<QRCodeLoginResultModel> CancelQRCodeLoginCallBack;
+            public Func<Task<QRCodeLoginResultModel>> GetLoginQRCodeCallBack;
+            public Action<QRCodeLoginResultModel> QRCodeAuthLoginSuccessCallBack;
+            public Func<Task<QRCodeLoginStatusModel>> QueryQRCodeLoginStatusCallBack;
+            private bool IsEndQRCodeLogin = false;
 
-        ~QRCodeLoginTask()
-        {
-            Dispose();
-        }
 
-        public async void BeginQRCodeLogin()
-        {
-
-            RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.BeginGetQRCode;
-            this.GenerateQRCodeImgSource(" ", RSQRCodeLogin.QRCodeWidth, RSQRCodeLogin.QRCodeHeight);
-
-            if (OnGetLoginQRCodeEvent == null)
+            public QRCodeLoginTask(RSQRCodeLogin rSQRCodeLogin)
             {
-                return;
+                RSQRCodeLogin = rSQRCodeLogin;
             }
 
-            this.LoginQRCodeResult = await OnGetLoginQRCodeEvent?.Invoke();
-            if (IsEndQRCodeLogin)
+            ~QRCodeLoginTask()
             {
-                return;
+                Dispose();
             }
 
-            if (this.LoginQRCodeResult != null && this.LoginQRCodeResult.IsSuccess)
+            public async void BeginQRCodeLogin()
             {
 
-                this.GenerateQRCodeImgSource(this.LoginQRCodeResult.QRCodeContent, RSQRCodeLogin.QRCodeWidth, RSQRCodeLogin.QRCodeHeight);
-                if (!IsEndQRCodeLogin)
+                RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.BeginGetQRCode;
+                this.GenerateQRCodeImgSource(" ", RSQRCodeLogin.QRCodeWidth, RSQRCodeLogin.QRCodeHeight);
+
+                if (GetLoginQRCodeCallBack == null)
                 {
-                    this.QueryQRCodeLoginStatusDispatcherTimer = new DispatcherTimer();
-                    this.QueryQRCodeLoginStatusDispatcherTimer.Tick += QueryQRCodeLoginStatusDispatcherTimer_Tick; ;
-                    this.QueryQRCodeLoginStatusDispatcherTimer.Interval = TimeSpan.FromMilliseconds(1000);
-                    this.QueryQRCodeLoginStatusDispatcherTimer.Start();
+                    return;
                 }
-                if (!IsEndQRCodeLogin)
+
+                this.LoginQRCodeResult = await GetLoginQRCodeCallBack?.Invoke();
+                if (IsEndQRCodeLogin)
                 {
-                    QueryQRCodeLoginStatusDispatcherTimer_Tick(null, new EventArgs());
+                    return;
                 }
-            }
-            else
-            {
-                if (!IsEndQRCodeLogin)
+
+                if (this.LoginQRCodeResult != null && this.LoginQRCodeResult.IsSuccess)
                 {
-                    RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.QRCodeLoginTimeOut;
-                }
-            }
-        }
 
-
-        public async void EndQRCodeLogin()
-        {
-            IsEndQRCodeLogin = true;
-            QueryQRCodeLoginStatusDispatcherTimer?.Stop();
-            QueryQRCodeLoginStatusDispatcherTimer = null;
-        }
-
-
-        private async void QueryQRCodeLoginStatusDispatcherTimer_Tick(object? sender, EventArgs e)
-        {
-            if (this.QueryQRCodeLoginStatusDispatcherTimer == null)
-            {
-                return;
-            }
-            if (this.LoginQRCodeResult == null)
-            {
-                this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
-                return;
-            }
-
-            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(this.LoginQRCodeResult.ExpireTime);
-            var expireTime = dateTimeOffset.LocalDateTime;
-
-            if (DateTime.Now >= expireTime.AddSeconds(-1))
-            {
-                this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
-                if (!IsEndQRCodeLogin)
-                {
-                    RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.QRCodeLoginTimeOut;
-                }
-                return;
-            }
-
-            if (!IsEndQRCodeLogin)
-            {
-                var qRCodeLoginStatusModel = await OnQueryQRCodeLoginStatusEvent?.Invoke();
-                if (qRCodeLoginStatusModel != null && qRCodeLoginStatusModel.IsSuccess)
-                {
+                    this.GenerateQRCodeImgSource(this.LoginQRCodeResult.QRCodeContent, RSQRCodeLogin.QRCodeWidth, RSQRCodeLogin.QRCodeHeight);
                     if (!IsEndQRCodeLogin)
                     {
-                        RSQRCodeLogin.QRCodeLoginStatus = qRCodeLoginStatusModel.QRCodeLoginStatus;
+                        this.QueryQRCodeLoginStatusDispatcherTimer = new DispatcherTimer();
+                        this.QueryQRCodeLoginStatusDispatcherTimer.Tick += QueryQRCodeLoginStatusDispatcherTimer_Tick; ;
+                        this.QueryQRCodeLoginStatusDispatcherTimer.Interval = TimeSpan.FromMilliseconds(1000);
+                        this.QueryQRCodeLoginStatusDispatcherTimer.Start();
                     }
-
-                    switch (RSQRCodeLogin.QRCodeLoginStatus)
+                    if (!IsEndQRCodeLogin)
                     {
-                        case QRCodeLoginStatusEnum.BeginGetQRCode:
-                            break;
-                        case QRCodeLoginStatusEnum.WaitScanQRCode:
-                            break;
-                        case QRCodeLoginStatusEnum.ScanQRCodeSuccess:
-                            break;
-                        case QRCodeLoginStatusEnum.QRCodeAuthLogin:
-                            this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
-                            if (!IsEndQRCodeLogin)
-                            {
-                                OnQRCodeAuthLoginSuccessEvent?.Invoke(this.LoginQRCodeResult);
-                            }
-
-                            break;
-                        case QRCodeLoginStatusEnum.CancelQRCodeLogin:
-                            this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
-                            if (!IsEndQRCodeLogin)
-                            {
-                                OnCancelQRCodeLoginEvent?.Invoke(this.LoginQRCodeResult);
-                            }
-                            break;
-                        case QRCodeLoginStatusEnum.QRCodeLoginTimeOut:
-                            break;
-                        default:
-                            break;
+                        QueryQRCodeLoginStatusDispatcherTimer_Tick(null, new EventArgs());
                     }
                 }
                 else
@@ -165,62 +86,158 @@ namespace RS.Widgets.Controls
                         RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.QRCodeLoginTimeOut;
                     }
                 }
-                if (IsEndQRCodeLogin)
+            }
+
+
+            public async void EndQRCodeLogin()
+            {
+                IsEndQRCodeLogin = true;
+                QueryQRCodeLoginStatusDispatcherTimer?.Stop();
+                QueryQRCodeLoginStatusDispatcherTimer = null;
+            }
+
+
+            private async void QueryQRCodeLoginStatusDispatcherTimer_Tick(object? sender, EventArgs e)
+            {
+                if (this.QueryQRCodeLoginStatusDispatcherTimer == null)
+                {
+                    return;
+                }
+                if (this.LoginQRCodeResult == null)
                 {
                     this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
+                    return;
                 }
-            }
-        }
 
+                DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(this.LoginQRCodeResult.ExpireTime);
+                var expireTime = dateTimeOffset.LocalDateTime;
 
-
-
-        private void GenerateQRCodeImgSource(string qRCodeContent, double qRCodeWidth, double qRCodeHeight)
-        {
-            BarcodeWriterPixelData barcodeWriterPixelData = new BarcodeWriterPixelData()
-            {
-                Format = BarcodeFormat.QR_CODE,
-                Options = new ZXing.Common.EncodingOptions()
+                if (DateTime.Now >= expireTime.AddSeconds(-1))
                 {
-                    Height = (int)qRCodeHeight,
-                    Width = (int)qRCodeWidth,
-                    Margin = 0
+                    this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
+                    if (!IsEndQRCodeLogin)
+                    {
+                        RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.QRCodeLoginTimeOut;
+                    }
+                    return;
                 }
-            };
 
-            var pixelData = barcodeWriterPixelData.Write(qRCodeContent);
+                if (!IsEndQRCodeLogin)
+                {
+                    var qRCodeLoginStatusModel = await QueryQRCodeLoginStatusCallBack?.Invoke();
+                    if (qRCodeLoginStatusModel != null && qRCodeLoginStatusModel.IsSuccess)
+                    {
+                        if (!IsEndQRCodeLogin)
+                        {
+                            RSQRCodeLogin.QRCodeLoginStatus = qRCodeLoginStatusModel.QRCodeLoginStatus;
+                        }
 
-            double dpiX = 96D; double dpiY = 96D;
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                dpiX = graphics.DpiX;
-                dpiY = graphics.DpiY;
+                        switch (RSQRCodeLogin.QRCodeLoginStatus)
+                        {
+                            case QRCodeLoginStatusEnum.BeginGetQRCode:
+                                break;
+                            case QRCodeLoginStatusEnum.WaitScanQRCode:
+                                break;
+                            case QRCodeLoginStatusEnum.ScanQRCodeSuccess:
+                                break;
+                            case QRCodeLoginStatusEnum.QRCodeAuthLogin:
+                                this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
+                                if (!IsEndQRCodeLogin)
+                                {
+                                    QRCodeAuthLoginSuccessCallBack?.Invoke(this.LoginQRCodeResult);
+                                }
+
+                                break;
+                            case QRCodeLoginStatusEnum.CancelQRCodeLogin:
+                                this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
+                                if (!IsEndQRCodeLogin)
+                                {
+                                    CancelQRCodeLoginCallBack?.Invoke(this.LoginQRCodeResult);
+                                }
+                                break;
+                            case QRCodeLoginStatusEnum.QRCodeLoginTimeOut:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (!IsEndQRCodeLogin)
+                        {
+                            RSQRCodeLogin.QRCodeLoginStatus = QRCodeLoginStatusEnum.QRCodeLoginTimeOut;
+                        }
+                    }
+                    if (IsEndQRCodeLogin)
+                    {
+                        this.QueryQRCodeLoginStatusDispatcherTimer.Stop();
+                    }
+                }
             }
-            WriteableBitmap writeableBitmap = new WriteableBitmap(pixelData.Width, pixelData.Height, dpiX, dpiY, PixelFormats.Bgra32, null);
-            writeableBitmap.WritePixels(new Int32Rect(0, 0, pixelData.Width, pixelData.Height), pixelData.Pixels, pixelData.Width * sizeof(int), 0);
 
-            if (!this.IsEndQRCodeLogin)
+            private void GenerateQRCodeImgSource(string qRCodeContent, double qRCodeWidth, double qRCodeHeight)
             {
-                RSQRCodeLogin.QRCodeImgSource = writeableBitmap;
+                BarcodeWriterPixelData barcodeWriterPixelData = new BarcodeWriterPixelData()
+                {
+                    Format = BarcodeFormat.QR_CODE,
+                    Options = new ZXing.Common.EncodingOptions()
+                    {
+                        Height = (int)qRCodeHeight,
+                        Width = (int)qRCodeWidth,
+                        Margin = 0
+                    }
+                };
+
+                var pixelData = barcodeWriterPixelData.Write(qRCodeContent);
+
+                double dpiX = 96D; double dpiY = 96D;
+                using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+                {
+                    dpiX = graphics.DpiX;
+                    dpiY = graphics.DpiY;
+                }
+                WriteableBitmap writeableBitmap = new WriteableBitmap(pixelData.Width, pixelData.Height, dpiX, dpiY, PixelFormats.Bgra32, null);
+                writeableBitmap.WritePixels(new Int32Rect(0, 0, pixelData.Width, pixelData.Height), pixelData.Pixels, pixelData.Width * sizeof(int), 0);
+
+                if (!this.IsEndQRCodeLogin)
+                {
+                    RSQRCodeLogin.QRCodeImgSource = writeableBitmap;
+                }
+            }
+
+            public void Dispose()
+            {
+                QueryQRCodeLoginStatusDispatcherTimer?.Stop();
+                //QueryQRCodeLoginStatusDispatcherTimer = null;
+                //LoginQRCodeResult = null;
+                GC.SuppressFinalize(this);
             }
         }
 
-        public void Dispose()
-        {
-            QueryQRCodeLoginStatusDispatcherTimer?.Stop();
-            //QueryQRCodeLoginStatusDispatcherTimer = null;
-            //LoginQRCodeResult = null;
-            GC.SuppressFinalize(this);
-        }
-    }
-
-
-    [TemplatePart(Name = nameof(PART_BtnReGetQRCode), Type = typeof(Button))]
-    public class RSQRCodeLogin : ContentControl
-    {
 
         private Button PART_BtnReGetQRCode;
         private QRCodeLoginTask CurrentQRCodeLoginTask;
+
+        /// <summary>
+        /// 获取登录二维码
+        /// </summary>
+        public Func<Task<QRCodeLoginResultModel>> GetLoginQRCodeCallBack;
+
+        /// <summary>
+        /// 查询二维码登录状态
+        /// </summary>
+        public Func<Task<QRCodeLoginStatusModel>> QueryQRCodeLoginStatusCallBack;
+
+        /// <summary>
+        /// 二维码授权登录成功
+        /// </summary>
+        public Action<QRCodeLoginResultModel> QRCodeAuthLoginSuccessCallBack;
+
+        /// <summary>
+        /// 取消二维码登录
+        /// </summary>
+        public Action<QRCodeLoginResultModel> CancelQRCodeLoginCallBack;
+
         static RSQRCodeLogin()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSQRCodeLogin), new FrameworkPropertyMetadata(typeof(RSQRCodeLogin)));
@@ -231,73 +248,50 @@ namespace RS.Widgets.Controls
 
         }
 
-        /// <summary>
-        /// 获取登录二维码
-        /// </summary>
-        public Func<Task<QRCodeLoginResultModel>> OnGetLoginQRCodeEvent;
 
-        /// <summary>
-        /// 查询二维码登录状态
-        /// </summary>
-        public Func<Task<QRCodeLoginStatusModel>> OnQueryQRCodeLoginStatusEvent;
-
-        /// <summary>
-        /// 二维码授权登录成功
-        /// </summary>
-        public Action<QRCodeLoginResultModel> OnQRCodeAuthLoginSuccessEvent;
-
-        /// <summary>
-        /// 取消二维码登录
-        /// </summary>
-        public Action<QRCodeLoginResultModel> OnCancelQRCodeLoginEvent;
-
-
-
-
-        public Func<Task<QRCodeLoginResultModel>> OnGetLoginQRCode
+        public Action<QRCodeLoginResultModel> CancelQRCodeLoginCommand
         {
-            get { return (Func<Task<QRCodeLoginResultModel>>)GetValue(OnGetLoginQRCodeProperty); }
-            set { SetValue(OnGetLoginQRCodeProperty, value); }
+            get { return (Action<QRCodeLoginResultModel>)GetValue(CancelQRCodeLoginCommandProperty); }
+            set { SetValue(CancelQRCodeLoginCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnGetLoginQRCodeProperty =
-            DependencyProperty.Register("OnGetLoginQRCode", typeof(Func<Task<QRCodeLoginResultModel>>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+        public static readonly DependencyProperty CancelQRCodeLoginCommandProperty =
+            DependencyProperty.Register("CancelQRCodeLoginCommand", typeof(Action<QRCodeLoginResultModel>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
 
 
 
 
-        public Func<Task<QRCodeLoginStatusModel>> OnQueryQRCodeLoginStatus
+        public Action<QRCodeLoginResultModel> QRCodeAuthLoginSuccessCommand
         {
-            get { return (Func<Task<QRCodeLoginStatusModel>>)GetValue(OnQueryQRCodeLoginStatusProperty); }
-            set { SetValue(OnQueryQRCodeLoginStatusProperty, value); }
+            get { return (Action<QRCodeLoginResultModel>)GetValue(QRCodeAuthLoginSuccessCommandProperty); }
+            set { SetValue(QRCodeAuthLoginSuccessCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnQueryQRCodeLoginStatusProperty =
-            DependencyProperty.Register("OnQueryQRCodeLoginStatus", typeof(Func<Task<QRCodeLoginStatusModel>>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+        public static readonly DependencyProperty QRCodeAuthLoginSuccessCommandProperty =
+            DependencyProperty.Register("QRCodeAuthLoginSuccessCommand", typeof(Action<QRCodeLoginResultModel>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
 
 
-
-
-        public Action<QRCodeLoginResultModel> OnQRCodeAuthLoginSuccess
+        public Func<Task<QRCodeLoginStatusModel>> QueryQRCodeLoginStatusCommand
         {
-            get { return (Action<QRCodeLoginResultModel>)GetValue(OnQRCodeAuthLoginSuccessProperty); }
-            set { SetValue(OnQRCodeAuthLoginSuccessProperty, value); }
+            get { return (Func<Task<QRCodeLoginStatusModel>>)GetValue(QueryQRCodeLoginStatusCommandProperty); }
+            set { SetValue(QueryQRCodeLoginStatusCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnQRCodeAuthLoginSuccessProperty =
-            DependencyProperty.Register("OnQRCodeAuthLoginSuccess", typeof(Action<QRCodeLoginResultModel>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+        public static readonly DependencyProperty QueryQRCodeLoginStatusCommandProperty =
+            DependencyProperty.Register("QueryQRCodeLoginStatusCommand", typeof(Func<Task<QRCodeLoginStatusModel>>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
 
 
 
-
-        public Action<QRCodeLoginResultModel> OnCancelQRCodeLogin
+        public Func<Task<QRCodeLoginResultModel>> GetLoginQRCodeCommand
         {
-            get { return (Action<QRCodeLoginResultModel>)GetValue(OnCancelQRCodeLoginProperty); }
-            set { SetValue(OnCancelQRCodeLoginProperty, value); }
+            get { return (Func<Task<QRCodeLoginResultModel>>)GetValue(GetLoginQRCodeCommandProperty); }
+            set { SetValue(GetLoginQRCodeCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnCancelQRCodeLoginProperty =
-            DependencyProperty.Register("OnCancelQRCodeLogin", typeof(Action<QRCodeLoginResultModel>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+        public static readonly DependencyProperty GetLoginQRCodeCommandProperty =
+            DependencyProperty.Register("GetLoginQRCodeCommand", typeof(Func<Task<QRCodeLoginResultModel>>), typeof(RSQRCodeLogin), new PropertyMetadata(null));
+
+
 
 
 
@@ -309,10 +303,10 @@ namespace RS.Widgets.Controls
             }
             using (QRCodeLoginTask qRCodeLoginTask = new QRCodeLoginTask(this))
             {
-                qRCodeLoginTask.OnCancelQRCodeLoginEvent = this.OnCancelQRCodeLoginEvent;
-                qRCodeLoginTask.OnGetLoginQRCodeEvent = this.OnGetLoginQRCodeEvent;
-                qRCodeLoginTask.OnQRCodeAuthLoginSuccessEvent = this.OnQRCodeAuthLoginSuccessEvent;
-                qRCodeLoginTask.OnQueryQRCodeLoginStatusEvent = this.OnQueryQRCodeLoginStatusEvent;
+                qRCodeLoginTask.CancelQRCodeLoginCallBack = this.CancelQRCodeLoginCommand ?? this.CancelQRCodeLoginCallBack;
+                qRCodeLoginTask.GetLoginQRCodeCallBack = this.GetLoginQRCodeCommand ?? this.GetLoginQRCodeCallBack;
+                qRCodeLoginTask.QRCodeAuthLoginSuccessCallBack = this.QRCodeAuthLoginSuccessCommand ?? this.QRCodeAuthLoginSuccessCallBack;
+                qRCodeLoginTask.QueryQRCodeLoginStatusCallBack = this.QueryQRCodeLoginStatusCommand ?? this.QueryQRCodeLoginStatusCallBack;
                 CurrentQRCodeLoginTask = qRCodeLoginTask;
                 qRCodeLoginTask.BeginQRCodeLogin();
             }
@@ -427,4 +421,6 @@ namespace RS.Widgets.Controls
             this.CurrentQRCodeLoginTask?.BeginQRCodeLogin();
         }
     }
+
+  
 }

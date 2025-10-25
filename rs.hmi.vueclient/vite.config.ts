@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
     env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:7109';
 
   return {
+  
     // 插件配置
     plugins: [plugin()],  // 使用Vue插件
 
@@ -24,6 +25,13 @@ export default defineConfig(({ mode }) => {
       // 设置开发服务器端口
       // 优先使用环境变量中的端口，如果没有则使用默认值54293
       port: parseInt(env.DEV_SERVER_PORT || '54293'),
+      
+      // 禁用缓存，避免开发时的缓存问题
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      },
       
       // 代理配置，用于解决开发环境的跨域问题
       proxy: {
@@ -43,6 +51,12 @@ export default defineConfig(({ mode }) => {
         input: {
           main: resolve(__dirname, 'index.html'),  // 入口文件
         },
+        output: {
+          // 为静态资源添加hash，避免缓存问题
+          assetFileNames: 'assets/[name]-[hash][extname]',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js'
+        }
       },
       outDir: 'dist',        // 输出目录
       assetsDir: 'assets',   // 静态资源目录

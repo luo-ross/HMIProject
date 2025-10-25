@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenCvSharp;
 using RS.Commons;
 using RS.Commons.Attributs;
+using RS.Commons.Helper;
 using RS.HMIServer.IBLL;
 using RS.HMIServer.Models;
 using RS.Models;
@@ -42,25 +43,25 @@ namespace RS.HMIServer.BLL
             string verifyImgDir = Directory.GetCurrentDirectory();
             verifyImgDir = Path.Combine(verifyImgDir, "VerifyImgs");
             string iconsDir = Path.Combine(verifyImgDir, "Icons");
-            var iconsList = Directory.GetFiles(iconsDir);
-            var iconPath = iconsList[Random.Shared.Next(0, iconsList.Length)];
+
+            var iconsList = FileHelper.GetImageFiles(iconsDir, ["*.png", "*.jpg", "*.jpeg"]);
+            var iconPath = iconsList[Random.Shared.Next(0, iconsList.Count)];
             var iconMat = Cv2.ImRead(iconPath);
 
             var iconMatGray = iconMat.CvtColor(ColorConversionCodes.BGR2GRAY);
             var iconMask = iconMatGray.Threshold(127, 255, ThresholdTypes.Binary);
 
-            var fileList = Directory.GetFiles(verifyImgDir);
-            var verifyImgPath = fileList[Random.Shared.Next(fileList.Length)];
+      
+
+            var fileList = FileHelper.GetImageFiles(verifyImgDir, ["*.png", "*.jpg", "*.jpeg"]);
+            var verifyImgPath = fileList[Random.Shared.Next(0, fileList.Count)];
             var imgMat = Cv2.ImRead(verifyImgPath);
 
-            //var sliderBtnWidth = 50;
-            //var sliderBtnHeight = 50;
             var iconWidth = iconMat.Width;
             var iconHeight = iconMat.Height;
             var imgWidth = imgMat.Width;
             var imgHeight = imgMat.Height;
 
-            //iconMask = iconMask.Resize(new Size(sliderBtnWidth, sliderBtnHeight));
 
             //然后随机获取另外2个坐标点
             var positionList = this.GetRandomPosition(imgMat.Width, imgMat.Height, iconWidth, iconHeight, 4);
@@ -215,8 +216,8 @@ namespace RS.HMIServer.BLL
         private (int left, int top) GetRandomPoint(int xMin, int xMax, int yMin, int yMax)
         {
             return (
-                Random.Shared.Next(xMin, xMax + 1),
-                Random.Shared.Next(yMin, yMax + 1)
+                Random.Shared.Next(xMin, xMax),
+                Random.Shared.Next(yMin, yMax)
             );
         }
 

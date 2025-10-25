@@ -35,7 +35,7 @@
                                         Width="{TemplateBinding SliderMaskWidth}"
                                         HorizontalAlignment="Left"
                                         Background="#33198CFF" />
-                                    <Canvas x:Name="PART_BtnSliderHost" Height="{TemplateBinding Height}">
+                                    <Canvas x:Name="PART_BtnSliderHost" Background="Transparent">
                                         <Thumb
                                             x:Name="PART_BtnSlider"
                                             Canvas.Left="0"
@@ -46,13 +46,12 @@
                                             Foreground="#fff"
                                             Style="{StaticResource RSApp.Styles.IconThumb}" />
 
-
                                         <Border
                                             x:Name="PART_BtnImgSliderHost"
                                             Canvas.Left="0"
-                                            Canvas.Top="-153"
+                                            Canvas.Top="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=SliderHostCanvasTop}"
                                             Width="{Binding ElementName=PART_BtnSliderHost, Path=ActualWidth}"
-                                            Height="150"
+                                            Height="{TemplateBinding SliderHostHeight}"
                                             CornerRadius="5"
                                             Visibility="Collapsed">
                                             <Border.Background>
@@ -63,7 +62,7 @@
                                         <Thumb
                                             x:Name="PART_BtnImgSlider"
                                             Canvas.Left="0"
-                                            Canvas.Top="-153"
+                                            Canvas.Top="0"
                                             Width="{TemplateBinding BtnImgWidth}"
                                             Height="{TemplateBinding BtnImgHeight}"
                                             rs:ControlsHelper.ImageData="{TemplateBinding BtnImgSource}"

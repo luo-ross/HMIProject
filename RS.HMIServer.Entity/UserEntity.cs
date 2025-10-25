@@ -34,6 +34,5 @@ namespace RS.HMIServer.Entity
         /// 是否禁用
         /// </summary>
         public bool? IsDisabled { get; set; }
-
     }
 }

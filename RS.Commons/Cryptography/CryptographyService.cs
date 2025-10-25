@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using NPOI.POIFS.Crypt;
 using RS.Commons.Attributs;
 using RS.Commons.Cryptography;
 using RS.Commons.Enums;
@@ -74,6 +76,12 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult<TResult> AESDecrypt<TResult>(AESEncryptModel aesEncryptModel)
         {
+            if (aesEncryptModel == null)
+            {
+                throw new ArgumentNullException(nameof(aesEncryptModel));
+            }
+
+
             //获取 aesKey,  appId,  token
             var getSessionModelResult = GetSessionModel();
             if (!getSessionModelResult.IsSuccess)
@@ -95,6 +103,18 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult<TResult> AESDecrypt<TResult>(AESEncryptModel aesEncryptModel, SessionModel sessionModel)
         {
+            if (aesEncryptModel == null)
+            {
+                throw new ArgumentNullException(nameof(aesEncryptModel));
+            }
+
+            if (sessionModel == null)
+            {
+                throw new ArgumentNullException(nameof(sessionModel));
+            }
+
+           
+
             //验证签名
             var verifySignatureResult = this.VerifySignature(sessionModel.Token, aesEncryptModel.TimeStamp, aesEncryptModel.Nonce, aesEncryptModel.Encrypt, aesEncryptModel.MsgSignature);
             if (!verifySignatureResult.IsSuccess)
@@ -146,6 +166,12 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult<AESEncryptModel> AESEncrypt<T>(T encryptModelShould)
         {
+            if (encryptModelShould == null)
+            {
+                throw new ArgumentNullException(nameof(encryptModelShould));
+            }
+
+          
             //获取 aesKey,  appId,  token
             var getSessionModelResult = GetSessionModel();
             if (!getSessionModelResult.IsSuccess)
@@ -167,11 +193,16 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult<AESEncryptModel> AESEncrypt<T>(T encryptModelShould, SessionModel sessionModel)
         {
-
             if (encryptModelShould == null)
             {
-                return OperateResult.CreateFailResult<AESEncryptModel>("加密实体不能为空");
+                throw new ArgumentNullException(nameof(encryptModelShould));
             }
+            if (sessionModel == null)
+            {
+                throw new ArgumentNullException(nameof(sessionModel));
+            }
+
+          
 
             string replyMsg = encryptModelShould.ToJson();
             string timeStamp = DateTime.UtcNow.ToTimeStampString();
@@ -228,8 +259,17 @@ namespace RS.Commons
         /// <param name="encryptContent"></param>
         /// <param name="rsaPublicKey"></param>
         /// <returns></returns>
-        public OperateResult<string> RSAEncrypt(string encryptContent, string rsaPublicKey)
+        public OperateResult<string> RSAEncrypt(string? encryptContent, string? rsaPublicKey)
         {
+            if (string.IsNullOrEmpty(encryptContent))
+            {
+                throw new ArgumentNullException(nameof(encryptContent));
+            }
+            if (string.IsNullOrEmpty(rsaPublicKey))
+            {
+                throw new ArgumentNullException(nameof(rsaPublicKey));
+            }
+
             using (RSACryptoServiceProvider rsaEncrypt = new RSACryptoServiceProvider())
             {
                 if (string.IsNullOrEmpty(encryptContent))
@@ -257,8 +297,18 @@ namespace RS.Commons
         /// <param name="encryptContent">加密内容</param>
         /// <param name="rsaPrivateKey">RSA私钥</param>
         /// <returns></returns>
-        public OperateResult<string> RSADecrypt(string encryptContent, byte[] rsaPrivateKey)
+        public OperateResult<string> RSADecrypt(string? encryptContent, byte[] rsaPrivateKey)
         {
+            if (string.IsNullOrEmpty(encryptContent))
+            {
+                throw new ArgumentNullException(nameof(encryptContent));
+            }
+
+            if (rsaPrivateKey==null)
+            {
+                throw new ArgumentNullException(nameof(rsaPrivateKey));
+            }
+
             using (RSACryptoServiceProvider rsaDecrypt = new RSACryptoServiceProvider())
             {
                 rsaDecrypt.ImportRSAPrivateKey(rsaPrivateKey, out int bytesRead);
@@ -272,8 +322,19 @@ namespace RS.Commons
         /// </summary>
         /// <param name="rsaPublicKeySavePath">公钥保存路径</param>
         /// <param name="rsaPrivateKeySavePath">私钥保存路径</param>
-        public void InitServerRSAKey(string rsaPublicKeySavePath, string rsaPrivateKeySavePath)
+        public void InitServerRSAKey(string? rsaPublicKeySavePath, string? rsaPrivateKeySavePath)
         {
+            if (string.IsNullOrEmpty(rsaPublicKeySavePath))
+            {
+                throw new ArgumentNullException(nameof(rsaPublicKeySavePath));
+            }
+            if (string.IsNullOrEmpty(rsaPrivateKeySavePath))
+            {
+                throw new ArgumentNullException(nameof(rsaPrivateKeySavePath));
+            }
+
+
+
             if (File.Exists(rsaPublicKeySavePath) && File.Exists(rsaPrivateKeySavePath))
             {
                 return;
@@ -290,8 +351,13 @@ namespace RS.Commons
         /// </summary>
         /// <param name="rsaPublicKeySavePath">公钥存储路径</param>
         /// <returns></returns>
-        public OperateResult<string> GetRSAPublicKey(string rsaPublicKeySavePath)
+        public OperateResult<string> GetRSAPublicKey(string? rsaPublicKeySavePath)
         {
+            if (string.IsNullOrEmpty(rsaPublicKeySavePath))
+            {
+                throw new ArgumentNullException(nameof(rsaPublicKeySavePath));
+            }
+           
             if (!File.Exists(rsaPublicKeySavePath))
             {
                 return OperateResult.CreateFailResult<string>("获取公钥失败！");
@@ -308,8 +374,12 @@ namespace RS.Commons
         /// </summary>
         /// <param name="rsaPrivateKeySavePath">私钥保存路径</param>
         /// <returns></returns>
-        public OperateResult<byte[]> GetRSAPrivateKey(string rsaPrivateKeySavePath)
+        public OperateResult<byte[]> GetRSAPrivateKey(string? rsaPrivateKeySavePath)
         {
+            if (string.IsNullOrEmpty(rsaPrivateKeySavePath))
+            {
+                throw new ArgumentNullException(nameof(rsaPrivateKeySavePath));
+            }
             if (!File.Exists(rsaPrivateKeySavePath))
             {
                 return OperateResult.CreateFailResult<byte[]>("获取私钥失败！");
@@ -327,6 +397,14 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult<string> RSASignData(byte[] hash, byte[] rsaPrivateKey)
         {
+            if (hash==null)
+            {
+                throw new ArgumentNullException(nameof(hash));
+            }
+            if (rsaPrivateKey == null)
+            {
+                throw new ArgumentNullException(nameof(rsaPrivateKey));
+            }
             using (RSACryptoServiceProvider rsaSign = new RSACryptoServiceProvider())
             {
                 rsaSign.ImportRSAPrivateKey(rsaPrivateKey, out int bytesRead);
@@ -342,6 +420,11 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult<byte[]> GetRSAHash(ArrayList arrayList)
         {
+            if (arrayList == null)
+            {
+                throw new ArgumentNullException(nameof(arrayList));
+            }
+           
             arrayList.Sort(new DictionarySort());
             string raw = "";
             for (int i = 0; i < arrayList.Count; ++i)
@@ -374,6 +457,20 @@ namespace RS.Commons
         /// <returns></returns>
         public OperateResult RSAVerifyData(byte[] hash, byte[] signature, string rsaPublicKey)
         {
+            if (hash == null)
+            {
+                throw new ArgumentNullException(nameof(hash));
+            }
+
+            if (signature == null)
+            {
+                throw new ArgumentNullException(nameof(signature));
+            }
+
+            if (string.IsNullOrEmpty(rsaPublicKey))
+            {
+                throw new ArgumentNullException(nameof(rsaPublicKey));
+            }
             using (RSACryptoServiceProvider rsaVerify = new RSACryptoServiceProvider())
             {
                 rsaVerify.ImportRSAPublicKey(Convert.FromBase64String(rsaPublicKey), out int bytesRead);
@@ -394,8 +491,12 @@ namespace RS.Commons
         /// </summary>
         /// <param name="data">待加密数据</param>
         /// <returns></returns>
-        public string ProtectData(string data)
+        public string ProtectData(string? data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
             return DataProtector.Protect(data);
         }
 
@@ -404,8 +505,12 @@ namespace RS.Commons
         /// </summary>
         /// <param name="protectData">加密数据</param>
         /// <returns></returns>
-        public string UnprotectData(string protectData)
+        public string UnprotectData(string? protectData)
         {
+            if (string.IsNullOrEmpty(protectData))
+            {
+                throw new ArgumentNullException(nameof(protectData));
+            }
             return DataProtector.Unprotect(protectData);
         }
         #endregion
@@ -432,8 +537,18 @@ namespace RS.Commons
         /// <param name="input">密文</param>
         /// <param name="encodingAESKey">AES对称密钥</param>
         /// <returns></returns>
-        public string AESDecrypt(string input, string encodingAESKey, ref string appid)
+        public string AESDecrypt(string? input, string? encodingAESKey, ref string appid)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (string.IsNullOrEmpty(encodingAESKey))
+            {
+                throw new ArgumentNullException(nameof(encodingAESKey));
+            }
+
             byte[] Key;
             Key = Convert.FromBase64String(encodingAESKey + "=");
             byte[] Iv = new byte[16];
@@ -459,8 +574,22 @@ namespace RS.Commons
         /// <param name="encodingAESKey">AES对称密钥</param>
         /// <param name="appid">应用主键</param>
         /// <returns></returns>
-        public string AESEncrypt(string input, string encodingAESKey, string appid)
+        public string AESEncrypt(string? input, string? encodingAESKey, string? appid)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (string.IsNullOrEmpty(encodingAESKey))
+            {
+                throw new ArgumentNullException(nameof(encodingAESKey));
+            }
+
+            if (string.IsNullOrEmpty(appid))
+            {
+                throw new ArgumentNullException(nameof(appid));
+            }
             byte[] Key;
             Key = Convert.FromBase64String(encodingAESKey + "=");
             byte[] Iv = new byte[16];
@@ -514,8 +643,34 @@ namespace RS.Commons
         /// <param name="msgEncrypt">加密消息</param>
         /// <param name="sigture">签名</param>
         /// <returns></returns>
-        public OperateResult VerifySignature(string token, string timeStamp, string nonce, string msgEncrypt, string sigture)
+        public OperateResult VerifySignature(string? token, string? timeStamp, string? nonce, string? msgEncrypt, string? sigture)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (string.IsNullOrEmpty(timeStamp))
+            {
+                throw new ArgumentNullException(nameof(timeStamp));
+            }
+
+            if (string.IsNullOrEmpty(nonce))
+            {
+                throw new ArgumentNullException(nameof(nonce));
+            }
+
+            if (string.IsNullOrEmpty(msgEncrypt))
+            {
+                throw new ArgumentNullException(nameof(msgEncrypt));
+            }
+
+            if (string.IsNullOrEmpty(sigture))
+            {
+                throw new ArgumentNullException(nameof(sigture));
+            }
+
+
             //生成签名
             var genarateSinatureResult = GenarateSinature(token, timeStamp, nonce, msgEncrypt);
             if (!genarateSinatureResult.IsSuccess)
@@ -544,8 +699,31 @@ namespace RS.Commons
         /// <param name="nonce">随机数</param>
         /// <param name="msgEncrypt">消息加密</param>
         /// <returns></returns>
-        public OperateResult<string> GenarateSinature(string token, string timeStamp, string nonce, string msgEncrypt)
+        public OperateResult<string> GenarateSinature(string? token, string? timeStamp, string? nonce, string? msgEncrypt)
         {
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (string.IsNullOrEmpty(timeStamp))
+            {
+                throw new ArgumentNullException(nameof(timeStamp));
+            }
+
+            if (string.IsNullOrEmpty(nonce))
+            {
+                throw new ArgumentNullException(nameof(nonce));
+            }
+
+            if (string.IsNullOrEmpty(msgEncrypt))
+            {
+                throw new ArgumentNullException(nameof(msgEncrypt));
+            }
+
+            
+
             ArrayList AL = new ArrayList
             {
                 token,
@@ -592,8 +770,43 @@ namespace RS.Commons
         /// <param name="nonce">随机数</param>
         /// <param name="postData">密文，对应POST请求的数据</param>
         /// <returns></returns>
-        public OperateResult<string> AESDecrypt(string appId, string encodingAESKey, string token, string msgSignature, string timeStamp, string nonce, string postData)
+        public OperateResult<string> AESDecrypt(string? appId, string? encodingAESKey, string? token, string? msgSignature, string? timeStamp, string? nonce, string? postData)
         {
+            if (string.IsNullOrEmpty(appId))
+            {
+                throw new ArgumentNullException(nameof(appId));
+            }
+            if (string.IsNullOrEmpty(encodingAESKey))
+            {
+                throw new ArgumentNullException(nameof(encodingAESKey));
+            }
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (string.IsNullOrEmpty(msgSignature))
+            {
+                throw new ArgumentNullException(nameof(msgSignature));
+            }
+
+            if (string.IsNullOrEmpty(timeStamp))
+            {
+                throw new ArgumentNullException(nameof(timeStamp));
+            }
+
+            if (string.IsNullOrEmpty(nonce))
+            {
+                throw new ArgumentNullException(nameof(nonce));
+            }
+
+            if (string.IsNullOrEmpty(postData))
+            {
+                throw new ArgumentNullException(nameof(postData));
+            }
+
+
             if (encodingAESKey.Length != 43)
             {
                 return OperateResult.CreateFailResult<string>("对称密钥不合法");
@@ -651,8 +864,41 @@ namespace RS.Commons
         /// <param name="timeStamp">时间戳</param>
         /// <param name="nonce">随机数</param>
         /// <returns></returns>
-        public OperateResult<string> AESEncrypt(string appId, string encodingAESKey, string token, string replyMsg, string timeStamp, string nonce)
+        public OperateResult<string> AESEncrypt(string? appId, string? encodingAESKey, string? token, string? replyMsg, string? timeStamp, string? nonce)
         {
+            if (string.IsNullOrEmpty(appId))
+            {
+                throw new ArgumentNullException(nameof(appId));
+            }
+
+            if (string.IsNullOrEmpty(encodingAESKey))
+            {
+                throw new ArgumentNullException(nameof(encodingAESKey));
+            }
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (string.IsNullOrEmpty(replyMsg))
+            {
+                throw new ArgumentNullException(nameof(replyMsg));
+            }
+
+            if (string.IsNullOrEmpty(timeStamp))
+            {
+                throw new ArgumentNullException(nameof(timeStamp));
+            }
+
+            if (string.IsNullOrEmpty(nonce))
+            {
+                throw new ArgumentNullException(nameof(nonce));
+            }
+
+
+
+
             if (encodingAESKey.Length != 43)
             {
                 return OperateResult.CreateFailResult<string>("对称密钥不合法");
@@ -697,8 +943,12 @@ namespace RS.Commons
         /// </summary>
         /// <param name="hashString">哈希内容</param>
         /// <returns></returns>
-        public string GetMD5HashCode(string hashContent)
+        public string GetMD5HashCode(string? hashContent)
         {
+            if (string.IsNullOrEmpty(hashContent))
+            {
+                throw new ArgumentNullException(nameof(hashContent));
+            }
             using (MD5 md5 = MD5.Create())
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(hashContent);
@@ -712,8 +962,12 @@ namespace RS.Commons
         /// </summary>
         /// <param name="hashString">哈希内容</param>
         /// <returns></returns>
-        public string GetSHA256HashCode(string hashContent)
+        public string GetSHA256HashCode(string? hashContent)
         {
+            if (string.IsNullOrEmpty(hashContent))
+            {
+                throw new ArgumentNullException(nameof(hashContent));
+            }
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(hashContent);
@@ -731,8 +985,23 @@ namespace RS.Commons
         /// <param name="iv">设置要用于对称算法的初始化向量（IV）</param>
         /// <param name="key">设置用于对称算法的密钥</param>
         /// <returns></returns>
-        private string AESEncrypt(string input, byte[] iv, byte[] key)
+        private string AESEncrypt(string? input, byte[] iv, byte[] key)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (iv==null)
+            {
+                throw new ArgumentNullException(nameof(iv));
+            }
+
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var aes = new RijndaelManaged();
             //秘钥的大小，以位为单位
             aes.KeySize = 256;
@@ -768,6 +1037,20 @@ namespace RS.Commons
         /// <returns></returns>
         private string AESEncrypt(byte[] input, byte[] iv, byte[] key)
         {
+            if (input==null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+            if (iv == null)
+            {
+                throw new ArgumentNullException(nameof(iv));
+            }
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+
             var aes = new RijndaelManaged();
             //秘钥的大小，以位为单位
             aes.KeySize = 256;
@@ -850,6 +1133,19 @@ namespace RS.Commons
         /// <param name="key">设置用于对称算法的密钥</param>
         private byte[] AESDecrypt(string input, byte[] iv, byte[] key)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+            if (iv == null)
+            {
+                throw new ArgumentNullException(nameof(iv));
+            }
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             RijndaelManaged aes = new RijndaelManaged();
             aes.KeySize = 256;
             aes.BlockSize = 128;
@@ -881,6 +1177,11 @@ namespace RS.Commons
         /// <returns></returns>
         private byte[] Decode2(byte[] decrypted)
         {
+            if (decrypted == null)
+            {
+                throw new ArgumentNullException(nameof(decrypted));
+            }
+         
             int pad = (int)decrypted[decrypted.Length - 1];
             if (pad < 1 || pad > 32)
             {

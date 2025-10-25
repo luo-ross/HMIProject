@@ -110,30 +110,21 @@ namespace RS.HMIServer.BLL
 
         private async Task<OperateResult> SendEmailAsync(string host, int port, string userName, string password, MimeMessage mimeMessage)
         {
+
+            if (this.SmtpClient == null || (this.SmtpClient != null && !this.SmtpClient.IsConnected))
+            {
+                this.SmtpClient = new SmtpClient { ServerCertificateValidationCallback = (s, c, h, e) => true };
+                await this.SmtpClient.ConnectAsync(host, port);
+                await this.SmtpClient.AuthenticateAsync(userName, password);
+            }
+            string? sendResult = null;
             int tryTime = 0;
         ILResend:
             try
             {
-                if (this.SmtpClient == null || (this.SmtpClient != null && !this.SmtpClient.IsConnected))
-                {
-                    this.SmtpClient = new SmtpClient { ServerCertificateValidationCallback = (s, c, h, e) => true };
-                    await this.SmtpClient.ConnectAsync(host, port);
-                    await this.SmtpClient.AuthenticateAsync(userName, password);
-                }
-                var sendResult = await this.SmtpClient.SendAsync(mimeMessage);
-                if (sendResult != null && sendResult.StartsWith("OK"))
-                {
-                    return OperateResult.CreateSuccessResult();
-                }
-                else
-                {
-                    return new OperateResult()
-                    {
-                        Message = sendResult
-                    };
-                }
+                sendResult = await this.SmtpClient.SendAsync(mimeMessage);
             }
-            catch (SmtpProtocolException)
+            catch (Exception)
             {
                 //尝试3次 如果还是失败
                 if (tryTime < 3)
@@ -141,17 +132,14 @@ namespace RS.HMIServer.BLL
                     tryTime++;
                     goto ILResend;
                 }
-
-                return new OperateResult()
-                {
-                    Message = "服务繁忙，请稍后再试"
-                };
             }
-            catch (Exception)
+
+            if (string.IsNullOrEmpty(sendResult) || sendResult.StartsWith("OK"))
             {
-                throw;
+                return OperateResult.CreateFailResult("邮件发送失败，请稍后再试");
             }
 
+            return OperateResult.CreateSuccessResult();
         }
 
     }

@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="div-main">
     <Message :ref="ViewModel.MessageEvents"></Message>

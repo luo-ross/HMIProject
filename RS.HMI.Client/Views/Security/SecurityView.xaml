@@ -18,7 +18,7 @@
     </rs:RSDialog.Resources>
     <Grid Background="#fff">
         <Grid>
-            <StackPanel Margin="28,80,28,50">
+            <StackPanel Margin="28,100,28,50">
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="25"

@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "clear-cache": "node clear-cache.js",
+    "dev:clean": "npm run clear-cache && npm run dev"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

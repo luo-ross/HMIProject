@@ -13,7 +13,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 名称
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// 描述

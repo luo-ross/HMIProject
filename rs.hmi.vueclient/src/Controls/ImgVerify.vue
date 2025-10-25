@@ -240,7 +240,6 @@
     //获取最大移动距离
     BtnSliderMaxPositionX = BtnSliderContainerWidth - BtnSliderWidth;
 
-
   }
 
   async function InitVerifyControlAsync(): Promise<SimpleOperateResult> {
@@ -422,7 +421,6 @@
   window.addEventListener('mouseleave', handleGlobalMouseleave);
 
 
-
   // 初始化ResizeObserver
   const initResizeObserver = () => {
     if (resizeObserver.value) {
@@ -473,16 +471,46 @@
     });
   }
 
+  /**
+   * 重置验证码组件到初始状态
+   */
+  function ResetImgVerify(): void {
+    // 重置状态数据
+    state.BtnSliderPositionX = 0;
+    state.BackgroundFillPercent = 0;
+    state.BtnImgSliderWidth = 0;
+    state.BtnImgSliderHeight = 0;
+    state.IsShowVerifyImg = false;
+    state.BtnImgSliderPositionX = 0;
+    state.BtnImgSliderPositionY = 0;
+    state.ImgSliderUrl = null;
+    state.VerifyImgUrl = null;
+    state.Verify = null;
+    state.VerifySessionId = null;
+
+    // 重置拖拽状态
+    IsBtnSliderDragging = false;
+    IsBtnImgSliderDragging = false;
+    BtnSliderStartX = 0;
+    BtnImgSliderStartX = 0;
+    BtnImgSliderStartY = 0;
+    BtnSliderHistoryPositionX = 0;
+    BtnImgSliderHistoryPositionX = 0;
+    BtnImgSliderHistoryPositionY = 0;
+
+    // 清空鼠标轨迹
+    MouseMovingTrack = [];
+
+    // 重新初始化滑块控件
+    InitBtnSliderControl();
+  }
+
   // 导出方法供父组件调用
   defineExpose<IImgVerifyEvents>({
-    GetImgVerifyResultAsync
+    GetImgVerifyResultAsync,
+    ResetImgVerify
   });
-
-  //// 定义要触发的事件
-  //const emits = defineEmits<{
-  //  (e: 'OnBtnSliderMousedown');
-  //}>();
-
+  
 </script>
 
 

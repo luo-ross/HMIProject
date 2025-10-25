@@ -25,6 +25,41 @@ namespace RS.Widgets.Controls
 {
     public class ApplicationBase : Application
     {
+
+        #region 依赖注入服务
+        /// <summary>
+        /// 日志服务
+        /// </summary>
+        private ILogBLL LogBLL;
+
+        /// <summary>
+        /// 缓存服务
+        /// </summary>
+        private IMemoryCache MemoryCache;
+
+        /// <summary>
+        /// 加密服务
+        /// </summary>
+        private ICryptographyBLL CryptographyBLL;
+        #endregion
+
+        #region 心跳检测
+        /// <summary>
+        /// 心跳检测间隔（毫秒）
+        /// </summary>
+        private int HeartbeatInterval = 1000 * 100;
+
+        /// <summary>
+        /// 心跳检测线程
+        /// </summary>
+        private Thread heartbeatThread;
+
+        /// <summary>
+        /// 心跳检测取消标记
+        /// </summary>
+        private CancellationTokenSource HeartbeatCancellation = new CancellationTokenSource();
+        #endregion
+     
         /// <summary>
         /// 服务宿主
         /// </summary>
@@ -64,41 +99,10 @@ namespace RS.Widgets.Controls
         public event Action OnServerConnect;
         #endregion
 
-        #region 依赖注入服务
-        /// <summary>
-        /// 日志服务
-        /// </summary>
-        private ILogBLL LogBLL;
-        /// <summary>
-        /// 缓存服务
-        /// </summary>
-        private IMemoryCache MemoryCache;
-        /// <summary>
-        /// 加密服务
-        /// </summary>
-        private ICryptographyBLL CryptographyBLL;
-        #endregion
-
-        #region 心跳检测
-        /// <summary>
-        /// 心跳检测间隔（毫秒）
-        /// </summary>
-        private int HeartbeatInterval = 1000;
-
-        /// <summary>
-        /// 心跳检测线程
-        /// </summary>
-        private Thread heartbeatThread;
-
-        /// <summary>
-        /// 心跳检测取消标记
-        /// </summary>
-        private CancellationTokenSource heartbeatCancellation = new CancellationTokenSource();
-        #endregion
+       
 
         static ApplicationBase()
         {
-            //GlobalHookHelper.Start();
         }
 
         /// <summary>
@@ -113,7 +117,6 @@ namespace RS.Widgets.Controls
 
         private void ApplicationBase_Exit(object sender, ExitEventArgs e)
         {
-            //GlobalHookHelper.Stop();
         }
 
 
@@ -131,13 +134,9 @@ namespace RS.Widgets.Controls
                 if (!getSessionModelResult.IsSuccess)
                 {
                     ViewModel.IsGetSessionModelSuccess = false;
-                    RSWinInfoBar.ShowInfoAsync(getSessionModelResult.Message, InfoType.Error);
                     return;
                 }
                 ViewModel.IsGetSessionModelSuccess = true;
-#if DEBUG
-                RSWinInfoBar.ShowInfoAsync("成功创建会话", InfoType.Information);
-#endif
             }
         }
 
@@ -149,7 +148,7 @@ namespace RS.Widgets.Controls
         {
             heartbeatThread = new Thread(async () =>
             {
-                while (!heartbeatCancellation.Token.IsCancellationRequested)
+                while (!HeartbeatCancellation.Token.IsCancellationRequested)
                 {
                     if (!NetworkInterface.GetIsNetworkAvailable())
                     {
@@ -176,7 +175,7 @@ namespace RS.Widgets.Controls
 
                     try
                     {
-                        await Task.Delay(this.HeartbeatInterval, heartbeatCancellation.Token);
+                        await Task.Delay(this.HeartbeatInterval, HeartbeatCancellation.Token);
                     }
                     catch (TaskCanceledException)
                     {
@@ -459,7 +458,7 @@ namespace RS.Widgets.Controls
         protected override void OnExit(ExitEventArgs e)
         {
             // 停止心跳检测线程
-            heartbeatCancellation?.Cancel();
+            HeartbeatCancellation?.Cancel();
             //主动关闭消息提示窗，不然程序无法正常退出
             RSWinInfoBar?.Close();
         }

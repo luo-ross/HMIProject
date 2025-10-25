@@ -15,7 +15,7 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 平台唯一标识
         /// </summary>
-        public string OpenId { get; set; }
+        public string? OpenId { get; set; }
 
         /// <summary>
         /// 第三方平台昵称

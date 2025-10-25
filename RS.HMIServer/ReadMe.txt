@@ -43,6 +43,8 @@
       "Web"
     ],
     "Issuer": "http://wpf.mycompany.com/authapi",
-    "SecurityKey": "http://localhost:7001"
+    //推荐使用至少 256 位（32 字节）的密钥 字符是十六进制编码的字符串 每个字符4位
+    //该密钥由 64 个十六进制字符组成（每个十六进制字符对应 4 位二进制，64×4=256 位 = 32 字节)
+    "SecurityKey": "5f4dcc3b5aa765d61d8327deb882cf99a65d504230b754655b6437808d955ad"
   }
 }

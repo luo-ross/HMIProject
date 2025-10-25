@@ -232,6 +232,6 @@ namespace RS.Commons
         /// </summary>
         /// <param name="hashString">哈希内容</param>
         /// <returns></returns>
-        string GetSHA256HashCode(string hashContent);
+        string GetSHA256HashCode(string? hashContent);
     }
 }

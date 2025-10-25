@@ -29,10 +29,9 @@
   <ItemGroup>
     <None Remove="dist\**" />
     <None Remove="src\services\**" />
+    <None Remove="src\Views\Areas\**" />
     <TypeScriptConfiguration Remove="dist\**" />
     <TypeScriptConfiguration Remove="src\services\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Views\Areas\" />
+    <TypeScriptConfiguration Remove="src\Views\Areas\**" />
   </ItemGroup>
 </Project>

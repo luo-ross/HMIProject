@@ -15,4 +15,4 @@
 //如果要初始化数据库或者更新数据库 请使用以下命令 比如：
 //Add-Migration AnnotationSQLite0  创建
 //Update-Database AnnotationSQLite0 更新
-//Remove-Migration AnnotationSQLite0 撤销
+//Remove-Migration 撤销

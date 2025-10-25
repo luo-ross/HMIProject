@@ -105,7 +105,6 @@ namespace RS.Commons.Helper
             }
         }
         #endregion
-
        
         public static void DeleteFileWithAbsolutPath(string file)
         {
@@ -311,6 +310,51 @@ namespace RS.Commons.Helper
             return System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
         }
         #endregion
+
+        /// <summary>
+        /// 获取目录下指定扩展名的图像文件
+        /// </summary>
+        /// <param name="directoryPath">目录路径</param>
+        /// <param name="imageExtensions">需要匹配的图像扩展名（如 ["*.jpg", "*.png"]）</param>
+        /// <param name="searchOption">搜索选项（是否包含子目录）</param>
+        /// <returns>图像文件路径列表</returns>
+        /// <exception cref="DirectoryNotFoundException">目录不存在时抛出</exception>
+        /// <exception cref="ArgumentNullException">扩展名参数为空时抛出</exception>
+        public static List<string> GetImageFiles(
+           string directoryPath,
+            IEnumerable<string> imageExtensions,
+            SearchOption searchOption = SearchOption.TopDirectoryOnly
+        )
+        {
+            // 验证目录是否存在
+            if (!Directory.Exists(directoryPath))
+            {
+                throw new DirectoryNotFoundException($"Directory not exist：{directoryPath}");
+            }
+
+            // 验证扩展名参数不为空
+            if (imageExtensions == null || !imageExtensions.Any())
+            {
+                throw new ArgumentNullException(nameof(imageExtensions), "Please provide at least one image file extension.");
+            }
+
+            var imageFiles = new List<string>();
+
+            // 遍历传入的扩展名，获取匹配的文件
+            foreach (var ext in imageExtensions)
+            {
+                // 过滤无效的扩展名（如空字符串或不含通配符的格式）
+                if (!string.IsNullOrWhiteSpace(ext) && ext.Contains("*"))
+                {
+                    imageFiles.AddRange(Directory.GetFiles(directoryPath, ext, searchOption));
+                }
+            }
+
+            // 去重并返回
+            return imageFiles.Distinct().ToList();
+        }
+    
+     
 
         public static byte[] GetBytesByBase64String(string base64Str)
         {

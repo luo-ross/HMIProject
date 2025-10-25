@@ -1,5 +1,4 @@
-﻿using IWshRuntimeLibrary;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Ookii.Dialogs.Wpf;
 using RS.SetupApp.Controls;
 using RS.SetupApp.Models;
@@ -14,7 +13,6 @@ using System.Resources;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
-using File = System.IO.File;
 
 
 namespace RS.SetupApp.Views
@@ -555,10 +553,10 @@ namespace RS.SetupApp.Views
         private const string SoftwareName = "标注软件";
         private void CreateShortCut(string shorCutPath, string targetPath, string workingDirectory)
         {
-            WshShell shell = new WshShell();
+            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
 
             //通过该对象的 CreateShortcut 方法来创建 IWshShortcut 接口的实例对象
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shorCutPath);
+            IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shorCutPath);
 
             //设置快捷方式的目标所在的位置(源程序完整路径)
             shortcut.TargetPath = targetPath;

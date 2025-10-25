@@ -31,7 +31,6 @@ namespace RS.HMIServer.DAL.SqlServer
         /// </summary>
         public virtual DbSet<AreaEntity> Area { get; set; }
 
-
         /// <summary>
         /// 数据列表权限
         /// </summary>
@@ -134,8 +133,5 @@ namespace RS.HMIServer.DAL.SqlServer
             }
             base.OnModelCreating(modelBuilder);
         }
-
-
-
     }
 }

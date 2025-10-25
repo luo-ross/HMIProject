@@ -37,6 +37,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\RS.Commons\RS.Commons.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
 	</ItemGroup>
 

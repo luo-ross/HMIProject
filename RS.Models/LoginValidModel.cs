@@ -15,22 +15,22 @@ namespace RS.Models
         /// <summary>
         /// 用户
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// 密码
         /// </summary>
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         /// <summary>
         /// 验证会话Id
         /// </summary>
-        public string VerifySessionId { get; set; }
+        public string? VerifySessionId { get; set; }
 
         /// <summary>
         /// 验证码结果 一个矩形框
         /// </summary>
-        public RectModel Verify { get; set; }
+        public RectModel? Verify { get; set; }
 
     }
 }

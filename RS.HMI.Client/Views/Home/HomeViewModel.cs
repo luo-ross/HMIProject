@@ -60,9 +60,6 @@ namespace RS.HMI.Client.Views
         }
 
 
-
-
-
         public void GenerateTestData(int n)
         {
             var groupNames = new[] { "A组", "B组", "C组", "D组", "E组" };

@@ -17,7 +17,7 @@
 //常用命令如
 //Add-Migration  RSAppMigration0  创建
 //Update-Database RSAppMigration0  更新
-//Remove-Migration RSAppMigration0  撤销
+//Remove-Migration 撤销
 
 //常见问题
 问题1：

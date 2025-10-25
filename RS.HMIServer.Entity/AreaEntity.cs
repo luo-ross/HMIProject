@@ -21,12 +21,6 @@ namespace RS.HMIServer.Entity
         /// <summary>
         /// 级别
         /// </summary>
-        public byte Level { get; set; }
-
-
-       
-
-      
-
+        public byte? Level { get; set; }
     }
 }

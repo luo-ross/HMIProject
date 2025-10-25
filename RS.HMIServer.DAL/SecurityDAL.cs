@@ -215,7 +215,6 @@ namespace RS.HMIServer.DAL
                 return OperateResult.CreateFailResult("密码更新失败");
             }
 
-
             //更新成功后清除会话
             var emailHashCode = await this.PasswordResetRedis.StringGetAsync(emailPasswordConfirmModel.Token);
             if (emailHashCode.HasValue)
@@ -257,7 +256,7 @@ namespace RS.HMIServer.DAL
             //如果在2分钟内连续20次请求 则返回失败
             if (model.CreateCount > 20)
             {
-                return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧");
+                return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧！");
             }
 
             //将会话提示转为字符串存储到Redis数据库
@@ -296,7 +295,7 @@ namespace RS.HMIServer.DAL
             }
             if (verifySessionModelExist != null && verifySessionModelExist.CreateCount > 20)
             {
-                return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧");
+                return OperateResult.CreateFailResult<string>("请求太频繁了，先歇一会吧！");
             }
             return OperateResult.CreateSuccessResult();
         }

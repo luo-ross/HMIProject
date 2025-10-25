@@ -116,18 +116,13 @@ namespace RS.Widgets.Models
         public void AddErrors(string? propertyName, ICollection<ValidationResult> validationResults)
         {
             //获取已有错误
-            List<string> validErrorModels = new List<string>();
-            if (ErrorsDic.ContainsKey(propertyName))
-            {
-                validErrorModels = ErrorsDic[propertyName].ToList();
-            }
+            
+            RemoveErrors(propertyName);
 
             //创建新错误
             var newValidErrors = validationResults.Select(t => t.ErrorMessage);
-            //合并新错误
-            validErrorModels = validErrorModels.Concat(newValidErrors).ToList();
             //添加错误
-            ErrorsDic.TryAdd(propertyName, validErrorModels);
+            ErrorsDic.TryAdd(propertyName, newValidErrors);
             //触发错误通知
             OnErrorsChanged(propertyName);
         }

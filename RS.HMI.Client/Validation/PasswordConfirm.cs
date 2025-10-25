@@ -15,6 +15,14 @@ namespace RS.HMI.Client.Validation
             //如果是邮箱注册实体
             if (validationContext.ObjectInstance is SignUpModel signUpModel)
             {
+                if (!signUpModel.IsPasswordChanged)
+                {
+                    return null;
+                }
+                if (!signUpModel.IsPasswordConfirmChanged)
+                {
+                    return null;
+                }
                 if (!signUpModel.PasswordConfirm.Equals(signUpModel.Password))
                 {
                     return new ValidationResult("确认密码与输入密码不一致！");

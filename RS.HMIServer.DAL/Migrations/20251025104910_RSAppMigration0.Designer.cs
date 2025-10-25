@@ -12,7 +12,7 @@ using RS.HMIServer.DAL.SqlServer;
 namespace RS.HMIServer.DAL.Migrations
 {
     [DbContext(typeof(RSAppDbContext))]
-    [Migration("20251015163729_RSAppMigration0")]
+    [Migration("20251025104910_RSAppMigration0")]
     partial class RSAppMigration0
     {
         /// <inheritdoc />
@@ -45,7 +45,7 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("Level")
+                    b.Property<byte?>("Level")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
@@ -90,7 +90,6 @@ namespace RS.HMIServer.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Sort")
@@ -131,7 +130,6 @@ namespace RS.HMIServer.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ParentId")
@@ -160,7 +158,6 @@ namespace RS.HMIServer.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ChName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Code")
@@ -402,7 +399,7 @@ namespace RS.HMIServer.DAL.Migrations
                     b.Property<bool?>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsEnable")
+                    b.Property<bool?>("IsDisabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("Password")
@@ -611,7 +608,6 @@ namespace RS.HMIServer.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UpdateId")
@@ -768,7 +764,6 @@ namespace RS.HMIServer.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OpenId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Pic")

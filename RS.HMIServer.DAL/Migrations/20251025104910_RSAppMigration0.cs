@@ -18,7 +18,7 @@ namespace RS.HMIServer.DAL.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ParentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Level = table.Column<byte>(type: "tinyint", nullable: false),
+                    Level = table.Column<byte>(type: "tinyint", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true),
                     CreateId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -37,7 +37,7 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sort = table.Column<int>(type: "int", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true),
@@ -58,7 +58,7 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RealCompanyId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ParentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -80,7 +80,7 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ChName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EnName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LegalPerson = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -197,7 +197,7 @@ namespace RS.HMIServer.DAL.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsEnable = table.Column<bool>(type: "bit", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true),
                     CreateId = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -293,7 +293,7 @@ namespace RS.HMIServer.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanyId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDelete = table.Column<bool>(type: "bit", nullable: true),
@@ -377,7 +377,7 @@ namespace RS.HMIServer.DAL.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PlatformType = table.Column<int>(type: "int", nullable: true),
-                    OpenId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OpenId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NickName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Pic = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsEnable = table.Column<bool>(type: "bit", nullable: true),

@@ -190,7 +190,7 @@ namespace RS.HMIServer.DAL
             //创建用户登录数据
             var logOnEntity = new LogOnEntity()
             {
-                IsEnable = true,
+                IsDisabled = false,
                 Password = password,
                 Salt = salt,
                 UserId = userEntity.Id
@@ -215,10 +215,10 @@ namespace RS.HMIServer.DAL
                     }
                     await transaction.CommitAsync();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     await transaction.RollbackAsync();
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -279,7 +279,7 @@ namespace RS.HMIServer.DAL
             }
             var first = Upper[Random.Shared.Next(Upper.Length)];
             var rest = new string(Enumerable.Range(1, length - 1)
-                .Select(_ => Letters[Random.Shared.Next(Letters.Length)])
+                .Select(t => Letters[Random.Shared.Next(Letters.Length)])
                 .ToArray());
             return first + rest;
         }

@@ -10,7 +10,7 @@ using System.Windows.Documents;
 
 namespace RS.HMI.Client.Views
 {
-    [ServiceInjectConfig(ServiceLifetime.Transient)]
+    [ServiceInjectConfig(ServiceLifetime.Singleton)]
     public partial class HomeView : RSWindow
     {
         private readonly HomeViewModel ViewModel;
