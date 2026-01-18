@@ -24,7 +24,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
-                <RowDefinition />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="10">
                 <Grid.ColumnDefinitions>
@@ -244,11 +244,10 @@
             </Grid>
             <!--<DataGrid Grid.Row="1" />-->
 
-            <StackPanel Grid.Row="1">
+            <StackPanel>
                 <rs:RSDateTimePicker VerticalAlignment="Top" />
-
-                <rs:RSCalendarDatePicker />
             </StackPanel>
+            <rs:RSCalendarDatePicker Grid.Row="1" />
         </Grid>
     </Border>
 

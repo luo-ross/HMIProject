@@ -1,28 +1,117 @@
-﻿using RS.Widgets.Enums;
-using RS.Widgets.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Input;
+using RS.Widgets.Enums;
+using RS.Widgets.Models;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace RS.Widgets.Controls
 {
     public class RSCalendarDatePicker : ContentControl
     {
 
-        private bool IsCanUpdateDateTimeSelected = true;
-        private bool IsCanUpdateFormattedDateTime = true;
-        private int MinYear = DateTime.MinValue.Year;
-        private int MaxYear = DateTime.MaxValue.Year;
-        private Button PART_Title;
-        private Canvas PART_Canvas;
+        #region Fields
+
+        private Border PART_TitleHost;
+        private Grid PART_DayOfWeekHost;
+        private ScrollViewer PART_ScrollViewer;
+        private Canvas? PART_Canvas;
+        private Button? PART_BtnTitle;
+        private Button? PART_PageUp;
+        private Button? PART_PageDown;
+
+
+        private const int DayCols = 7;
+        private const int DayRows = 6;
+        private const int YearOrMonthCols = 4;
+        private const int YearOrMonthRows = 4;
+        private const double MinItenSize = 45D;
+
+
+        private double CalendarItemSizeShould;
+        /// <summary>
+        /// 标题栏高度
+        /// </summary>
+        private double HeaderHeight;
+        /// <summary>
+        /// 日历宽度
+        /// </summary>
+        private double CalendarWidth;
+        /// <summary>
+        /// 日历高度
+        /// </summary>
+        private double CalendarHeight;
+
+        /// <summary>
+        /// 初始化历史
+        /// </summary>
+        private DateTime? DateTimeInitHistory;
+
+        private bool IsShouldScrollToVerticalOffSet = true;
+
+        private List<CalendarBaseModel> CalendarItemModelList = new List<CalendarBaseModel>();
+
+        private CalendarBaseModel CalendarItemModelSelected;
+
+        /// <summary>
+        /// 当前年月的日期
+        /// </summary>
+        private DateTime? CurrentYearMonthDate;
+
+        /// <summary>
+        /// 当前年的日期
+        /// </summary>
+        private DateTime? CurrentYearDate;
+
+        private bool IsScrollViewerScrollShouldChanged = true;
+        #endregion
+
+
+
+        #region 路由事件
+
+        /// <summary>
+        /// 日期选中路由事件
+        /// </summary>
+        public static readonly RoutedEvent DateSelectedEvent = EventManager.RegisterRoutedEvent(
+            nameof(DateSelected),
+            RoutingStrategy.Bubble,
+            typeof(EventHandler<CalendarDateSelectedEventArgs>),
+            typeof(RSCalendarDatePicker));
+
+        /// <summary>
+        /// 日期选中事件
+        /// </summary>
+        public event EventHandler<CalendarDateSelectedEventArgs> DateSelected
+        {
+            add { AddHandler(DateSelectedEvent, value); }
+            remove { RemoveHandler(DateSelectedEvent, value); }
+        }
+
+        #endregion
+
+        #region 依赖属性
+
+        /// <summary>
+        /// 日期选中命令（用于MVVM绑定）
+        /// </summary>
+        public ICommand DateSelectedCommand
+        {
+            get { return (ICommand)GetValue(DateSelectedCommandProperty); }
+            set { SetValue(DateSelectedCommandProperty, value); }
+        }
+
+        /// <summary>
+        /// 日期选中命令依赖属性
+        /// </summary>
+        public static readonly DependencyProperty DateSelectedCommandProperty =
+            DependencyProperty.Register(nameof(DateSelectedCommand), typeof(ICommand), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
+
+        #endregion
+
         static RSCalendarDatePicker()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSCalendarDatePicker), new FrameworkPropertyMetadata(typeof(RSCalendarDatePicker)));
@@ -30,10 +119,64 @@ namespace RS.Widgets.Controls
 
         public RSCalendarDatePicker()
         {
-            this.RefreshYearPicker();
-          
+
+            this.InitializeWeekdays();
+            //设计模式下不执行事件订阅
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                this.Loaded += RSCalendarDatePicker_Loaded;
+                //this.SizeChanged += RSCalendarDatePicker_SizeChanged;
+            }
         }
 
+        private void RSCalendarDatePicker_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Console.WriteLine("RSCalendarDatePicker_SizeChanged");
+
+            UpdateCalendarView();
+        }
+
+        private DateTime GetDateTimeInitHistory()
+        {
+            if (!DateTimeInitHistory.HasValue)
+            {
+                DateTimeInitHistory = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            }
+
+            return DateTimeInitHistory.Value;
+        }
+
+        private void RSCalendarDatePicker_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateCalendarView();
+        }
+
+        private void InitializeWeekdays()
+        {
+            var culture = CultureInfo.CurrentCulture;
+            this.WeekdayList = culture.DateTimeFormat.ShortestDayNames.ToList();
+        }
+
+        public double ItemSize
+        {
+            get { return (double)GetValue(ItemSizeProperty); }
+            set { SetValue(ItemSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ItemSizeProperty =
+            DependencyProperty.Register(nameof(ItemSize), typeof(double), typeof(RSCalendarDatePicker), new PropertyMetadata(MinItenSize));
+
+
+
+
+        public double DayOfWeekHeight
+        {
+            get { return (double)GetValue(DayOfWeekHeightProperty); }
+            private set { SetValue(DayOfWeekHeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty DayOfWeekHeightProperty =
+            DependencyProperty.Register(nameof(DayOfWeekHeight), typeof(double), typeof(RSCalendarDatePicker), new PropertyMetadata(MinItenSize));
 
 
 
@@ -48,116 +191,27 @@ namespace RS.Widgets.Controls
 
         private static void OnCalendarViewTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var clendarDatePicker = d as RSCalendarDatePicker;
-            clendarDatePicker.UpateCalendarView();
-        }
-
-        private void UpateCalendarView()
-        {
-            switch (this.CalendarViewType)
+            var calendarDatePicker = d as RSCalendarDatePicker;
+            if (calendarDatePicker != null)
             {
-                case CalendarViewType.Day:
-                    this.UpdateUpateCalendarDayView();
-                    break;
-                case CalendarViewType.Month:
-                    this.UpdateUpateCalendarMonthView();
-                    break;
-                case CalendarViewType.Year:
-                    this.UpdateUpateCalendarYearView();
-                    break;
+                //calendarDatePicker.UpdateCalendarView();
             }
         }
 
-        private void UpdateUpateCalendarYearView()
+
+
+        public List<string> WeekdayList
         {
-            this.PART_Canvas.Children.Clear();
-            var yearList = this.YearList;
-            var monthList = this.MonthList;
-            var dayList = this.DayList;
-
-
+            get { return (List<string>)GetValue(WeekdayListProperty); }
+            set { SetValue(WeekdayListProperty, value); }
         }
 
-        private void UpdateUpateCalendarMonthView()
-        {
-            
-        }
-
-        private void UpdateUpateCalendarDayView()
-        {
-            
-        }
-
-        public DateTime MinDateTime
-        {
-            get { return (DateTime)GetValue(MinDateTimeProperty); }
-            set { SetValue(MinDateTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty MinDateTimeProperty =
-            DependencyProperty.Register("MinDateTime", typeof(DateTime), typeof(RSCalendarDatePicker), new PropertyMetadata(DateTime.MinValue, OnMinDateTimePropertyChanged));
-
-        private static void OnMinDateTimePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //这里第一次不会触发
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.MinYear = rsCalendarDatePicker.MinDateTime.Year;
-            rsCalendarDatePicker.RefreshYearPicker();
-        }
-
-        public DateTime MaxDateTime
-        {
-            get { return (DateTime)GetValue(MaxDateTimeProperty); }
-            set { SetValue(MaxDateTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty MaxDateTimeProperty =
-            DependencyProperty.Register("MaxDateTime", typeof(DateTime), typeof(RSCalendarDatePicker), new PropertyMetadata(DateTime.MaxValue, OnMaxDateTimePropertyChanged));
-
-        private static void OnMaxDateTimePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //这里第一次不会触发
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.MaxYear = rsCalendarDatePicker.MaxDateTime.Year;
-            rsCalendarDatePicker.RefreshYearPicker();
-        }
-
-        private void RefreshYearPicker()
-        {
-            List<int> yearList = new List<int>();
-            for (int i = this.MinYear; i <= this.MaxYear; i++)
-            {
-                yearList.Add(i);
-            }
-            this.YearList = new ObservableCollection<int>(yearList);
-
-            var defaultYear = this.YearSelected;
-            //首相尝试使用默认值
-            if (defaultYear == null)
-            {
-                if (this.DateTimeSelected.HasValue)
-                {
-                    defaultYear = this.DateTimeSelected.Value.Year;
-                }
-            }
-            //确保有默认值
-            if (defaultYear == null)
-            {
-                defaultYear = DateTime.Now.Year;
-            }
-
-            if (!this.YearList.Contains(defaultYear.Value))
-            {
-                //这里将日期清空
-                this.DateTimeSelected = null;
-                defaultYear = this.YearList.FirstOrDefault();
-            }
-            this.ForcePropertyChanged(YearSelectedProperty, this.YearSelected, defaultYear);
-        }
+        public static readonly DependencyProperty WeekdayListProperty =
+            DependencyProperty.Register(nameof(WeekdayList), typeof(List<string>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
 
 
 
-        [Description("圆角大小")]
+
         public CornerRadius CornerRadius
         {
             get { return (CornerRadius)GetValue(CornerRadiusProperty); }
@@ -165,666 +219,55 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(RSCalendarDatePicker), new PropertyMetadata(new CornerRadius(5)));
+            DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(RSCalendarDatePicker), new PropertyMetadata(default));
 
 
-        [Description("年")]
-        public ObservableCollection<int> YearList
+
+        public DateTime? DateTimeSelect
         {
-            get { return (ObservableCollection<int>)GetValue(YearListProperty); }
-            set { SetValue(YearListProperty, value); }
+            get { return (DateTime?)GetValue(DateTimeSelectProperty); }
+            set { SetValue(DateTimeSelectProperty, value); }
         }
 
-        public static readonly DependencyProperty YearListProperty =
-            DependencyProperty.Register("YearList", typeof(ObservableCollection<int>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
+        public static readonly DependencyProperty DateTimeSelectProperty =
+            DependencyProperty.Register(nameof(DateTimeSelect), typeof(DateTime?), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
 
 
-        [Description("年选择")]
-        public int? YearSelected
+
+
+
+        public DateTime MinDate
         {
-            get { return (int?)GetValue(YearSelectedProperty); }
-            set { SetValue(YearSelectedProperty, value); }
+            get { return (DateTime)GetValue(MinDateProperty); }
+            set { SetValue(MinDateProperty, value); }
         }
 
-        public static readonly DependencyProperty YearSelectedProperty =
-            DependencyProperty.Register("YearSelected", typeof(int?), typeof(RSCalendarDatePicker), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnYearSelectedPropertyChanged));
+        public static readonly DependencyProperty MinDateProperty =
+            DependencyProperty.Register(nameof(MinDate), typeof(DateTime), typeof(RSCalendarDatePicker), new PropertyMetadata(DateTime.MinValue));
 
-        private static void OnYearSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+
+
+
+        public DateTime MaxDate
         {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.RefreshMonthPicker();
+            get { return (DateTime)GetValue(MaxDateProperty); }
+            set { SetValue(MaxDateProperty, value); }
         }
 
-        private void RefreshMonthPicker()
-        {
-            //判断年是否是最小值或者最大值
-            List<int> monthList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year)
-            {
-                for (int i = this.MinDateTime.Month; i <= 12; i++)
-                {
-                    monthList.Add(i);
-                }
-            }
-            else if (this.YearSelected == this.MaxDateTime.Year)
-            {
-                for (int i = 1; i <= this.MaxDateTime.Month; i++)
-                {
-                    monthList.Add(i);
-                }
-            }
-            else
-            {
-                for (int i = 1; i <= 12; i++)
-                {
-                    monthList.Add(i);
-                }
-            }
-
-            this.MonthList = new ObservableCollection<int>(monthList);
-
-            var defaultMonth = this.MonthSelected;
-            //首相尝试使用默认值
-            if (defaultMonth == null)
-            {
-                if (this.DateTimeSelected.HasValue)
-                {
-                    defaultMonth = this.DateTimeSelected.Value.Month;
-                }
-            }
-            //确保有默认值
-            if (defaultMonth == null)
-            {
-                defaultMonth = DateTime.Now.Month;
-            }
-
-            if (!this.MonthList.Contains(defaultMonth.Value))
-            {
-                //这里将日期清空
-                this.DateTimeSelected = null;
-                defaultMonth = this.MonthList.FirstOrDefault();
-            }
-
-            //主动通知
-            this.ForcePropertyChanged(MonthSelectedProperty, this.MonthSelected, defaultMonth);
-        }
-
-
-        [Description("月")]
-        public ObservableCollection<int> MonthList
-        {
-            get { return (ObservableCollection<int>)GetValue(MonthListProperty); }
-            set { SetValue(MonthListProperty, value); }
-        }
-
-        public static readonly DependencyProperty MonthListProperty =
-            DependencyProperty.Register("MonthList", typeof(ObservableCollection<int>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
-
-        [Description("月选择")]
-        public int? MonthSelected
-        {
-            get { return (int?)GetValue(MonthSelectedProperty); }
-            set { SetValue(MonthSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty MonthSelectedProperty =
-            DependencyProperty.Register("MonthSelected", typeof(int?), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnMonthSelectedPropertyChanged));
-
-        private static void OnMonthSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.RefreshDayPicker();
-        }
-
-        private void RefreshDayPicker()
-        {
-            if (this.YearSelected == null || this.MonthSelected == null)
-            {
-                return;
-            }
-            var days = DateTime.DaysInMonth(this.YearSelected.Value, this.MonthSelected.Value);
-            List<int> dayList = new List<int>();
-
-
-            //如果用户选择的刚好是最小日期
-
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month)
-            {
-                for (int i = this.MinDateTime.Day; i <= days; i++)
-                {
-                    dayList.Add(i);
-                }
-            }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month)
-            {
-                for (int i = 1; i <= this.MaxDateTime.Day; i++)
-                {
-                    dayList.Add(i);
-                }
-            }
-            else
-            {
-                for (int i = 1; i <= days; i++)
-                {
-                    dayList.Add(i);
-                }
-            }
-            this.DayList = new ObservableCollection<int>(dayList);
-
-
-            var defaultDay = this.DaySelected;
-            //首相尝试使用默认值
-            if (defaultDay == null)
-            {
-                if (this.DateTimeSelected.HasValue)
-                {
-                    defaultDay = this.DateTimeSelected.Value.Day;
-                }
-            }
-            //确保有默认值
-            if (defaultDay == null)
-            {
-                defaultDay = DateTime.Now.Day;
-            }
-
-            if (!this.DayList.Contains(defaultDay.Value))
-            {
-                //这里将日期清空
-                this.DateTimeSelected = null;
-                defaultDay = this.DayList.FirstOrDefault();
-            }
-
-            //主动通知
-            this.ForcePropertyChanged(DaySelectedProperty, this.DaySelected, defaultDay);
-        }
-
-        [Description("日")]
-        public ObservableCollection<int> DayList
-        {
-            get { return (ObservableCollection<int>)GetValue(DayListProperty); }
-            set { SetValue(DayListProperty, value); }
-        }
-
-        public static readonly DependencyProperty DayListProperty =
-            DependencyProperty.Register("DayList", typeof(ObservableCollection<int>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
-
-        [Description("日选择")]
-        public int? DaySelected
-        {
-            get { return (int?)GetValue(DaySelectedProperty); }
-            set { SetValue(DaySelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty DaySelectedProperty =
-            DependencyProperty.Register("DaySelected", typeof(int?), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnDaySelectedPropertyChanged));
-
-        private static void OnDaySelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.RefreshHourPicker();
-        }
-
-        private void RefreshHourPicker()
-        {
-            List<int> hourList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month
-                && this.DaySelected == this.MinDateTime.Day)
-            {
-                for (int i = this.MinDateTime.Hour; i < 24; i++)
-                {
-                    hourList.Add(i);
-                }
-            }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month
-                && this.DaySelected == this.MaxDateTime.Day)
-            {
-                for (int i = 1; i <= this.MaxDateTime.Hour; i++)
-                {
-                    hourList.Add(i);
-                }
-            }
-            else
-            {
-                for (int i = 1; i < 24; i++)
-                {
-                    hourList.Add(i);
-                }
-            }
-
-            this.HourList = new ObservableCollection<int>(hourList);
-
-
-            var defaultHour = this.HourSelected;
-            //首相尝试使用默认值
-            if (defaultHour == null)
-            {
-                if (this.DateTimeSelected.HasValue)
-                {
-                    defaultHour = this.DateTimeSelected.Value.Hour;
-                }
-            }
-            //确保有默认值
-            if (defaultHour == null)
-            {
-                defaultHour = DateTime.Now.Hour;
-            }
-
-            if (!this.HourList.Contains(defaultHour.Value))
-            {
-                //这里将日期清空
-                this.DateTimeSelected = null;
-                defaultHour = this.HourList.FirstOrDefault();
-            }
-
-            //主动通知
-            this.ForcePropertyChanged(HourSelectedProperty, this.HourSelected, defaultHour);
-        }
-
-        [Description("时")]
-        public ObservableCollection<int> HourList
-        {
-            get { return (ObservableCollection<int>)GetValue(HourListProperty); }
-            set { SetValue(HourListProperty, value); }
-        }
-
-        public static readonly DependencyProperty HourListProperty =
-            DependencyProperty.Register("HourList", typeof(ObservableCollection<int>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
-
-        [Description("时选择")]
-        public int? HourSelected
-        {
-            get { return (int?)GetValue(HourSelectedProperty); }
-            set { SetValue(HourSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty HourSelectedProperty =
-            DependencyProperty.Register("HourSelected", typeof(int?), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnHourSelectedPropertyChanged));
-
-        private static void OnHourSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.RefreshMinutePicker();
-        }
-
-        private void RefreshMinutePicker()
-        {
-            List<int> minuteList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month
-                && this.DaySelected == this.MinDateTime.Day
-                && this.HourSelected == this.MinDateTime.Hour)
-            {
-                for (int i = this.MinDateTime.Hour; i < 60; i++)
-                {
-                    minuteList.Add(i);
-                }
-            }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month
-                && this.DaySelected == this.MaxDateTime.Day
-                && this.HourSelected == this.MaxDateTime.Hour)
-            {
-                for (int i = 1; i <= this.MaxDateTime.Minute; i++)
-                {
-                    minuteList.Add(i);
-                }
-            }
-            else
-            {
-                for (int i = 1; i < 60; i++)
-                {
-                    minuteList.Add(i);
-                }
-            }
-
-            this.MinuteList = new ObservableCollection<int>(minuteList);
-
-            var defaultMinute = this.MinuteSelected;
-            //首相尝试使用默认值
-            if (defaultMinute == null)
-            {
-                if (this.DateTimeSelected.HasValue)
-                {
-                    defaultMinute = this.DateTimeSelected.Value.Minute;
-                }
-            }
-            //确保有默认值
-            if (defaultMinute == null)
-            {
-                defaultMinute = DateTime.Now.Minute;
-            }
-
-            if (!this.MinuteList.Contains(defaultMinute.Value))
-            {
-                //这里将日期清空
-                this.DateTimeSelected = null;
-                defaultMinute = this.MinuteList.FirstOrDefault();
-            }
-
-            //主动通知
-            this.ForcePropertyChanged(MinuteSelectedProperty, this.MinuteSelected, defaultMinute);
-        }
-
-
-        [Description("分")]
-        public ObservableCollection<int> MinuteList
-        {
-            get { return (ObservableCollection<int>)GetValue(MinuteListProperty); }
-            set { SetValue(MinuteListProperty, value); }
-        }
-
-        public static readonly DependencyProperty MinuteListProperty =
-            DependencyProperty.Register("MinuteList", typeof(ObservableCollection<int>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
-
-        [Description("分选择")]
-        public int? MinuteSelected
-        {
-            get { return (int?)GetValue(MinuteSelectedProperty); }
-            set { SetValue(MinuteSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty MinuteSelectedProperty =
-            DependencyProperty.Register("MinuteSelected", typeof(int?), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnMinuteSelectedPropertyChanged));
-
-        private static void OnMinuteSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.RefreshSecondPicker();
-        }
-
-        private void RefreshSecondPicker()
-        {
-            List<int> secondList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month
-                && this.DaySelected == this.MinDateTime.Day
-                && this.HourSelected == this.MinDateTime.Hour
-                && this.MinuteSelected == this.MinDateTime.Minute)
-            {
-                for (int i = this.MinDateTime.Minute; i < 60; i++)
-                {
-                    secondList.Add(i);
-                }
-            }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month
-                && this.DaySelected == this.MaxDateTime.Day
-                && this.HourSelected == this.MaxDateTime.Hour
-                && this.MinuteSelected == this.MaxDateTime.Minute)
-            {
-                for (int i = 1; i <= this.MaxDateTime.Minute; i++)
-                {
-                    secondList.Add(i);
-                }
-            }
-            else
-            {
-                for (int i = 1; i < 60; i++)
-                {
-                    secondList.Add(i);
-                }
-            }
-
-            this.SecondList = new ObservableCollection<int>(secondList);
-
-            var defaultSecond = this.SecondSelected;
-            //首相尝试使用默认值
-            if (defaultSecond == null)
-            {
-                if (this.DateTimeSelected.HasValue)
-                {
-                    defaultSecond = this.DateTimeSelected.Value.Second;
-                }
-            }
-            //确保有默认值
-            if (defaultSecond == null)
-            {
-                defaultSecond = DateTime.Now.Second;
-            }
-
-            if (!this.SecondList.Contains(defaultSecond.Value))
-            {
-                //这里将日期清空
-                this.DateTimeSelected = null;
-                defaultSecond = this.SecondList.FirstOrDefault();
-            }
-
-            //主动通知
-            this.ForcePropertyChanged(SecondSelectedProperty, this.SecondSelected, defaultSecond);
-        }
+        public static readonly DependencyProperty MaxDateProperty =
+            DependencyProperty.Register(nameof(MaxDate), typeof(DateTime), typeof(RSCalendarDatePicker), new PropertyMetadata(DateTime.MaxValue));
 
 
 
-        [Description("秒")]
-        public ObservableCollection<int> SecondList
-        {
-            get { return (ObservableCollection<int>)GetValue(SecondListProperty); }
-            set { SetValue(SecondListProperty, value); }
-        }
 
-        public static readonly DependencyProperty SecondListProperty =
-            DependencyProperty.Register("SecondList", typeof(ObservableCollection<int>), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
-
-
-        [Description("秒选择")]
-        public int? SecondSelected
-        {
-            get { return (int?)GetValue(SecondSelectedProperty); }
-            set { SetValue(SecondSelectedProperty, value); }
-        }
-
-        public static readonly DependencyProperty SecondSelectedProperty =
-            DependencyProperty.Register("SecondSelected", typeof(int?), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnSecondSelectedPropertyChanged));
-
-        private static void OnSecondSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-        }
-
-        [Description("日期选择")]
         public DateTime? DateTimeSelected
         {
             get { return (DateTime?)GetValue(DateTimeSelectedProperty); }
             set { SetValue(DateTimeSelectedProperty, value); }
         }
+
         public static readonly DependencyProperty DateTimeSelectedProperty =
-            DependencyProperty.Register("DateTimeSelected", typeof(DateTime?), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnDateTimeSelectedPropertyChanged, OnDateTimeSelectedCoerceValueCallback));
-
-        private static object OnDateTimeSelectedCoerceValueCallback(DependencyObject d, object baseValue)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            var dateTime = baseValue as DateTime?;
-            if (dateTime.HasValue)
-            {
-                if (dateTime.Value < rsCalendarDatePicker.MinDateTime
-                    || dateTime.Value > rsCalendarDatePicker.MaxDateTime)
-                {
-                    IWindow window = rsCalendarDatePicker.TryFindParent<RSWindow>();
-                    window?.ShowWarningInfoAsync("数据范围越界");
-                    return null;
-                }
-            }
-            return baseValue;
-        }
-
-        private static void OnDateTimeSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.ChcekYearMonthDayHourMinuteSecondSelect();
-            rsCalendarDatePicker.UpdateFormattedDateTime();
-        }
-
-        private void ChcekYearMonthDayHourMinuteSecondSelect()
-        {
-            //这里检查一下 
-            if (this.DateTimeSelected.HasValue)
-            {
-                var dateTime = this.DateTimeSelected.Value;
-                if (dateTime.Year != this.YearSelected)
-                {
-                    this.YearSelected = dateTime.Year;
-                }
-                if (dateTime.Month != this.MonthSelected)
-                {
-                    this.MonthSelected = dateTime.Month;
-                }
-                if (dateTime.Day != this.DaySelected)
-                {
-                    this.DaySelected = dateTime.Day;
-                }
-                if (dateTime.Hour != this.HourSelected)
-                {
-                    this.HourSelected = dateTime.Hour;
-                }
-                if (dateTime.Minute != this.MinuteSelected)
-                {
-                    this.MinuteSelected = dateTime.Minute;
-                }
-                if (dateTime.Second != this.SecondSelected)
-                {
-                    this.SecondSelected = dateTime.Second;
-                }
-            }
-        }
-
-        [Description("日期格式化")]
-        public string DateTimeFormat
-        {
-            get { return (string)GetValue(DateTimeFormatProperty); }
-            set { SetValue(DateTimeFormatProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateTimeFormatProperty =
-            DependencyProperty.Register("DateTimeFormat", typeof(string), typeof(RSCalendarDatePicker), new PropertyMetadata(null, OnDateTimeFormatPropertyChanged));
-
-        private static void OnDateTimeFormatPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            rsCalendarDatePicker.UpdateFormattedDateTime();
-        }
-
-
-        [Description("格式化后的文本")]
-        public string FormattedDateTime
-        {
-            get { return (string)GetValue(FormattedDateTimeProperty); }
-            set { SetValue(FormattedDateTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty FormattedDateTimeProperty =
-            DependencyProperty.Register("FormattedDateTime", typeof(string), typeof(RSCalendarDatePicker),
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFormattedDateTimeChanged));
-
-
-        private static void OnFormattedDateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsCalendarDatePicker = d as RSCalendarDatePicker;
-            if (rsCalendarDatePicker.IsCanUpdateDateTimeSelected)
-            {
-                rsCalendarDatePicker.IsCanUpdateFormattedDateTime = false;
-                try
-                {
-                    if (!string.IsNullOrEmpty(rsCalendarDatePicker.FormattedDateTime))
-                    {
-                        if (DateTime.TryParse(rsCalendarDatePicker.FormattedDateTime, out DateTime dt))
-                        {
-                            rsCalendarDatePicker.DateTimeSelected = dt;
-                        }
-                        else
-                        {
-                            throw new Exception("日期格式不正确");
-                        }
-                    }
-                    else
-                    {
-                        rsCalendarDatePicker.DateTimeSelected = null;
-                    }
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    rsCalendarDatePicker.IsCanUpdateFormattedDateTime = true;
-                }
-            }
-        }
-
-
-        [Description("是否可以搜索")]
-        public bool IsCanSearch
-        {
-            get { return (bool)GetValue(IsCanSearchProperty); }
-            set { SetValue(IsCanSearchProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsCanSearchProperty =
-            DependencyProperty.Register("IsCanSearch", typeof(bool), typeof(RSCalendarDatePicker), new PropertyMetadata(true));
-
-
-
-        [Description("日期格式")]
-        public DateTimeParts DisplayParts
-        {
-            get { return (DateTimeParts)GetValue(DisplayPartsProperty); }
-            set { SetValue(DisplayPartsProperty, value); }
-        }
-
-        public static readonly DependencyProperty DisplayPartsProperty =
-            DependencyProperty.Register("DisplayParts", typeof(DateTimeParts), typeof(RSCalendarDatePicker), new PropertyMetadata(DateTimeParts.None));
-
-
-
-        [Description("分隔符配置")]
-
-        public string DateSeparator
-        {
-            get { return (string)GetValue(DateSeparatorProperty); }
-            set { SetValue(DateSeparatorProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateSeparatorProperty =
-            DependencyProperty.Register("DateSeparator", typeof(string), typeof(RSCalendarDatePicker), new PropertyMetadata("-"));
-
-
-
-        [Description("分隔符配置")]
-        public string TimeSeparator
-        {
-            get { return (string)GetValue(TimeSeparatorProperty); }
-            set { SetValue(TimeSeparatorProperty, value); }
-        }
-
-        public static readonly DependencyProperty TimeSeparatorProperty =
-            DependencyProperty.Register("TimeSeparator", typeof(string), typeof(RSCalendarDatePicker), new PropertyMetadata(":"));
-
-
-
-        [Description("分隔符配置")]
-        public string DateTimeSeparator
-        {
-            get { return (string)GetValue(DateTimeSeparatorProperty); }
-            set { SetValue(DateTimeSeparatorProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateTimeSeparatorProperty =
-            DependencyProperty.Register("DateTimeSeparator", typeof(string), typeof(RSCalendarDatePicker), new PropertyMetadata(" "));
-
-
-        [Description("是否只读")]
-        public bool IsReadOnly
-        {
-            get { return (bool)GetValue(IsReadOnlyProperty); }
-            set { SetValue(IsReadOnlyProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsReadOnlyProperty =
-            DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(RSCalendarDatePicker), new PropertyMetadata(true));
+            DependencyProperty.Register(nameof(DateTimeSelected), typeof(DateTime?), typeof(RSCalendarDatePicker), new PropertyMetadata(null));
 
 
 
@@ -832,168 +275,901 @@ namespace RS.Widgets.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.PART_Title=this.GetTemplateChild(nameof(this.PART_Title)) as Button;
-            this.PART_Canvas= this.GetTemplateChild(nameof(this.PART_Canvas)) as Canvas;
-            if (this.PART_Title!=null)
+
+            this.PART_TitleHost = this.GetTemplateChild(nameof(this.PART_TitleHost)) as Border;
+            this.PART_BtnTitle = this.GetTemplateChild(nameof(this.PART_BtnTitle)) as Button;
+            this.PART_PageUp = this.GetTemplateChild(nameof(this.PART_PageUp)) as Button;
+            this.PART_PageDown = this.GetTemplateChild(nameof(this.PART_PageDown)) as Button;
+            this.PART_DayOfWeekHost = this.GetTemplateChild(nameof(this.PART_DayOfWeekHost)) as Grid;
+            this.PART_ScrollViewer = this.GetTemplateChild(nameof(this.PART_ScrollViewer)) as ScrollViewer;
+            this.PART_Canvas = this.GetTemplateChild(nameof(this.PART_Canvas)) as Canvas;
+
+            if (this.PART_ScrollViewer != null)
             {
-                this.PART_Title.Click -= PART_Title_Click;
-                this.PART_Title.Click += PART_Title_Click;
+                this.PART_ScrollViewer.ScrollChanged -= PART_ScrollViewer_ScrollChanged;
+                this.PART_ScrollViewer.ScrollChanged += PART_ScrollViewer_ScrollChanged;
+            }
+
+
+            if (this.PART_BtnTitle != null)
+            {
+                this.PART_BtnTitle.Click += PART_BtnTitle_Click;
+            }
+
+            if (this.PART_PageUp != null)
+            {
+                this.PART_PageUp.Click += PART_PageUp_Click;
+            }
+
+            if (this.PART_PageDown != null)
+            {
+                this.PART_PageDown.Click += PART_PageDown_Click;
             }
         }
 
-        private void PART_Title_Click(object sender, RoutedEventArgs e)
+        private void PART_BtnTitle_Click(object sender, RoutedEventArgs e)
         {
-            var calendarViewType = (int)this.CalendarViewType;
-            calendarViewType = Math.Max(0, calendarViewType - 1);
-            this.CalendarViewType = (CalendarViewType)calendarViewType;
-        }
-
-        private void RefreshDefaultDateTimeSelect()
-        {
-            var dateTimeDefault = DateTime.Now;
-            if (this.DateTimeSelected.HasValue)
+            if (this.PART_BtnTitle == null)
             {
-                dateTimeDefault = this.DateTimeSelected.Value;
-            }
-            this.YearSelected = dateTimeDefault.Year;
-            this.MonthSelected = dateTimeDefault.Month;
-            this.DaySelected = dateTimeDefault.Day;
-            this.HourSelected = dateTimeDefault.Hour;
-            this.MinuteSelected = dateTimeDefault.Minute;
-            this.SecondSelected = dateTimeDefault.Second;
-        }
-
-
-        private void UpdateDateTimeSelect()
-        {
-            if (this.YearSelected == null
-                || this.MonthSelected == null
-                || this.DaySelected == null
-                || this.HourSelected == null
-                || this.MinuteSelected == null
-                || this.SecondSelected == null)
-            {
-                this.DateTimeSelected = null;
                 return;
             }
-            this.DateTimeSelected = new DateTime(this.YearSelected.Value,
-                         this.MonthSelected.Value,
-                         this.DaySelected.Value,
-                         this.HourSelected.Value,
-                         this.MinuteSelected.Value,
-                         this.SecondSelected.Value);
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    this.CalendarViewType = CalendarViewType.Month;
+                    break;
+                case CalendarViewType.Month:
+                    this.CalendarViewType = CalendarViewType.Year;
+                    break;
+                case CalendarViewType.Year:
+                   break;
+            }
+
+            this.UpdateCalendarView();
         }
 
-        private void UpdateFormattedDateTime()
+        private void PART_PageUp_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IsCanUpdateFormattedDateTime)
+            switch (this.CalendarViewType)
             {
-                this.IsCanUpdateDateTimeSelected = false;
-                if (this.DateTimeSelected.HasValue)
-                {
-                    this.FormattedDateTime = this.FormatDateTime(this.DateTimeSelected.Value);
-                }
-                else
-                {
-                    this.FormattedDateTime = null;
-                }
-                this.IsCanUpdateDateTimeSelected = true;
+                case CalendarViewType.Day:
+
+                    var dateTimeInitHistory = this.GetDateTimeInitHistory();
+                    this.DateTimeInitHistory = new DateTime(dateTimeInitHistory.Year, dateTimeInitHistory.Month, 1).AddMonths(-1);
+                    break;
+                case CalendarViewType.Month:
+                    this.CurrentYearMonthDate = this.GetCurrentYearMonthDate().AddYears(-1);
+                    break;
+                case CalendarViewType.Year:
+                    this.CurrentYearDate = this.GetCurrentYearDate().AddYears(-10);
+                    break;
+                default:
+                    break;
             }
+
+            UpdateCalendarView();
         }
 
-
-        // 根据所选部分格式化日期时间
-        public string FormatDateTime(DateTime dateTime)
+        private void PART_PageDown_Click(object sender, RoutedEventArgs e)
         {
-
-            string format = "";
-
-            // 年
-            if ((DisplayParts & DateTimeParts.Year) != 0)
+            switch (this.CalendarViewType)
             {
-                format += "yyyy";
+                case CalendarViewType.Day:
+                    var dateTimeInitHistory = this.GetDateTimeInitHistory();
+                    this.DateTimeInitHistory = new DateTime(dateTimeInitHistory.Year, dateTimeInitHistory.Month, 1).AddMonths(1);
+                    break;
+                case CalendarViewType.Month:
+                    this.CurrentYearMonthDate = this.GetCurrentYearMonthDate().AddYears(1);
+                    break;
+                case CalendarViewType.Year:
+                    this.CurrentYearDate = this.GetCurrentYearDate().AddYears(10);
+                    break;
+                default:
+                    break;
             }
 
-            // 月
-            if ((DisplayParts & DateTimeParts.Month) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += DateSeparator;
-                format += "MM";
-            }
-
-            // 日
-            if ((DisplayParts & DateTimeParts.Day) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += DateSeparator;
-                format += "dd";
-            }
-
-            // 如果同时包含日期和时间部分，添加分隔符
-            if ((DisplayParts & DateTimeParts.Date) != 0 &&
-                (DisplayParts & DateTimeParts.Time) != 0)
-            {
-                format += DateTimeSeparator;
-            }
-
-            // 时
-            if ((DisplayParts & DateTimeParts.Hour) != 0)
-            {
-                format += "HH";
-            }
-
-            // 分
-            if ((DisplayParts & DateTimeParts.Minute) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += TimeSeparator;
-                format += "mm";
-            }
-
-            // 秒
-            if ((DisplayParts & DateTimeParts.Second) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += TimeSeparator;
-                format += "ss";
-            }
-
-            // 如果没有选择任何部分，返回默认格式
-            if (string.IsNullOrEmpty(format))
-            {
-                if (!string.IsNullOrEmpty(this.DateTimeFormat))
-                {
-                    return dateTime.ToString(this.DateTimeFormat);
-                }
-                else
-                {
-                    format = "yyyy-MM-dd HH:mm:ss";
-                }
-            }
-
-            return dateTime.ToString(format);
+            UpdateCalendarView();
         }
 
 
-
-        /// <summary>
-        /// 强制触发属性变化通知
-        /// </summary>
-        /// <param name="dependencyProperty">依赖属性</param>
-        /// <param name="oldValue">旧值</param>
-        /// <param name="newValue">新值</param>
-        public void ForcePropertyChanged(DependencyProperty dependencyProperty, object oldValue, object newValue)
+        private DateTime GetCurrentYearDate()
         {
-            if (oldValue == null || !oldValue.Equals(newValue))
+            if (!this.CurrentYearDate.HasValue)
             {
-                this.SetValue(dependencyProperty, newValue);
+                var dateTimeInitHistory = this.GetDateTimeInitHistory();
+                return new DateTime(dateTimeInitHistory.Year, 1, 1);
+            }
+
+            return this.CurrentYearDate.Value;
+        }
+
+
+        private DateTime GetCurrentYearMonthDate()
+        {
+            if (!this.CurrentYearMonthDate.HasValue)
+            {
+                var dateTimeInitHistory = this.GetDateTimeInitHistory();
+                return new DateTime(dateTimeInitHistory.Year, dateTimeInitHistory.Month, 1);
+            }
+
+            return this.CurrentYearMonthDate.Value;
+        }
+
+
+        private void PART_ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (!this.IsScrollViewerScrollShouldChanged)
+            {
+                return;
+            }
+
+            if (!this.PART_ScrollViewer.IsMouseOver)
+            {
+                return;
+            }
+
+
+            this.IsShouldScrollToVerticalOffSet = false;
+
+            var verticalOffset = e.VerticalOffset;
+
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    if (!this.DateTimeInitHistory.HasValue)
+                    {
+                        this.DateTimeInitHistory = DateTime.Now;
+                    }
+                    else
+                    {
+                        //计算得到在第几行
+                        var row = (int)(verticalOffset / this.CalendarItemSizeShould);
+                        //计算得到日期的索引
+                        var dayIndex = row * DayCols;
+                        dayIndex = GetActualDayIndex(dayIndex);
+                        this.DateTimeInitHistory = GetDateFromDayIndex(dayIndex);
+                    }
+                    break;
+                case CalendarViewType.Month:
+
+                    if (!this.CurrentYearMonthDate.HasValue)
+                    {
+                        var dateTimeNow = DateTime.Now;
+                        this.CurrentYearMonthDate = new DateTime(dateTimeNow.Year, dateTimeNow.Month, 1);
+                    }
+                    else
+                    {
+                        //计算得到在第几行
+                        var row = (int)(verticalOffset / this.CalendarItemSizeShould);
+                        //计算得到日期的索引
+                        var monthIndex = row * YearOrMonthCols;
+                        this.CurrentYearMonthDate = GetDateFromMonthIndex(monthIndex);
+                    }
+
+                    break;
+                case CalendarViewType.Year:
+                    if (!this.CurrentYearDate.HasValue)
+                    {
+                        var dateTimeNow = DateTime.Now;
+                        this.CurrentYearDate = new DateTime(dateTimeNow.Year, 1, 1);
+                    }
+                    else
+                    {
+                        //计算得到在第几行
+                        var row = (int)(verticalOffset / this.CalendarItemSizeShould);
+                        //计算得到日期的索引
+                        var yearIndex = row * YearOrMonthCols;
+                        this.CurrentYearDate = GetDateFromYearIndex(yearIndex);
+                    }
+                    break;
+            }
+
+
+
+            this.UpdateCalendarView();
+        }
+
+
+
+
+
+        private void UpdateCalendarView()
+        {
+            
+            if (this.PART_Canvas == null)
+            {
+                return;
+            }
+            Console.WriteLine("UpdateCalendarView");
+
+            var itemSize = Math.Max(MinItenSize, this.ItemSize);
+
+
+
+            this.CalendarWidth = this.ActualWidth;
+            this.CalendarHeight = this.ActualHeight;
+
+
+            var scrollViewerWidth = this.PART_ScrollViewer.ActualWidth;
+            var scrollViewerHeight = this.PART_ScrollViewer.ActualHeight;
+
+
+
+            var dayOfWeekHostActualWidth = this.PART_DayOfWeekHost.ActualWidth;
+            var dayOfWeekHostActualHeight = this.PART_DayOfWeekHost.ActualHeight;
+
+
+            this.HeaderHeight = this.PART_TitleHost.ActualHeight;
+
+            //如果用户设置HorizontalAlignment为Stretch 则说明需要宽自适应
+            if (this.HorizontalAlignment != HorizontalAlignment.Stretch)
+            {
+                var calendarWidth = itemSize * DayCols;
+                //必须保证最小尺寸
+                if (this.CalendarWidth < calendarWidth)
+                {
+                    this.Width = calendarWidth;
+                    this.CalendarWidth = calendarWidth;
+                }
+            }
+
+            itemSize = Math.Max(itemSize, this.CalendarWidth / DayCols);
+
+
+            //如果用户设置VerticalAlignment为Stretch 则说明需要高自适应
+            if (this.VerticalAlignment != VerticalAlignment.Stretch)
+            {
+                var calendarHeight = itemSize * DayRows + this.DayOfWeekHeight + this.HeaderHeight;
+                if (this.CalendarHeight < calendarHeight)
+                {
+                    this.Height = calendarHeight;
+                    this.CalendarHeight = calendarHeight;
+                }
             }
             else
             {
-                //只有相同才强制刷新
-                var metadata = dependencyProperty.GetMetadata(this);
-                metadata.PropertyChangedCallback(this,
-                    new DependencyPropertyChangedEventArgs(dependencyProperty, oldValue, newValue));
+                DependencyObject parent = VisualTreeHelper.GetParent(this);
+                //如果父元素是ScrollViewer 则说明需要计算滚动条宽度
+                if (parent is ScrollViewer && scrollViewerHeight > 0)
+                {
+                    this.Height = this.CalendarHeight;
+                }
+            }
+
+
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Month:
+                case CalendarViewType.Year:
+                    //根据日控件的尺寸得到月和年的尺寸
+                    itemSize = itemSize * DayCols / YearOrMonthCols;
+                    break;
+            }
+            CalendarItemSizeShould = itemSize;
+
+
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    this.UpdateCalendarDayView(this.GetDateTimeInitHistory());
+                    break;
+                case CalendarViewType.Month:
+                    this.UpdateCalendarMonthView(this.GetCurrentYearMonthDate());
+                    break;
+                case CalendarViewType.Year:
+                    this.UpdateCalendarYearView(this.GetCurrentYearDate());
+                    break;
+            }
+
+
+            this.IsScrollViewerScrollShouldChanged = true;
+            this.IsShouldScrollToVerticalOffSet = true;
+        }
+
+        private void UpdateCalendarYearView(DateTime dateTimeInit)
+        {
+
+            if (this.PART_Canvas == null)
+            {
+                return;
+            }
+
+            //获得总年数 总月数 总天数
+            var totalYears = this.MaxDate.Year - this.MinDate.Year + 1;
+            var totalMonths = totalYears * 12;
+            var totalDays = (this.MaxDate - this.MinDate).TotalDays;
+
+
+            //获取天的总行数 
+            var totalRows = (int)Math.Ceiling((double)totalYears / YearOrMonthCols);
+
+            //得到总高度
+            var totalItemHeightShould = totalRows * CalendarItemSizeShould;
+
+            this.PART_Canvas.Height = totalItemHeightShould;
+
+
+            //计算得出视窗要显示多少行
+            int rowDisplayShould = (int)Math.Ceiling((this.CalendarHeight - this.HeaderHeight) / this.CalendarItemSizeShould);
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    rowDisplayShould = (int)Math.Ceiling((this.CalendarHeight - this.HeaderHeight - this.CalendarItemSizeShould) / this.CalendarItemSizeShould);
+                    break;
+            }
+
+            rowDisplayShould = Math.Max(rowDisplayShould, YearOrMonthRows);
+
+
+
+            //计算当前日期在总天数的索引
+            int dataIndex = GetYearIndex(dateTimeInit);
+
+            //日在第几行
+            int dataRowIndex = dataIndex / YearOrMonthCols;
+
+            if (this.IsShouldScrollToVerticalOffSet)
+            {
+                //滚动到对应位置
+                this.PART_ScrollViewer.ScrollToVerticalOffset(dataRowIndex * CalendarItemSizeShould);
+            }
+          
+
+            int firstRow = Math.Max(dataRowIndex - 1, 0);
+            int lastRow = Math.Min(dataRowIndex + rowDisplayShould + 1, totalRows);
+
+            //这里要对最后一行做处理 我们必须保证1个视窗至少显示rowDisplayShould
+            var actualRows = lastRow - firstRow;
+            if (actualRows < rowDisplayShould + 2)
+            {
+                firstRow = Math.Max(dataRowIndex - (rowDisplayShould + 2 - actualRows), 0);
+            }
+
+            var dateTimeNow = DateTime.Now;
+            var currenDay = dateTimeNow.Day;
+            var currentMonth = dateTimeNow.Month;
+            var currentYear = dateTimeNow.Year;
+
+            CalendarItemModelList.Clear();
+
+
+
+            for (int row = firstRow; row < lastRow; row++)
+            {
+                for (int col = 0; col < YearOrMonthCols; col++)
+                {
+                    dataIndex = row * YearOrMonthCols + col;
+                    var date = this.GetDateFromYearIndex(dataIndex);
+                    CalendarItemModelList.Add(new CalendarYearModel()
+                    {
+                        Date = date,
+                        DisplayContent = $"{date.Year}",
+                        IsCurrentYear = date.Year == currentYear,
+                        IsSelected = false,
+                        IsBlackout = false,
+                        CalendarViewType = this.CalendarViewType,
+                        CalendarItemClickCommand = new RelayCommand<CalendarBaseModel?>(CalendarItemClick)
+                    });
+                }
+            }
+
+
+            //this.SetCalendarItemModelSelected(CalendarItemModelList);
+
+            ////设置IsBlackout属性
+            //this.SetIsBlackoutByYearCount(CalendarItemModelList);
+
+
+
+            //这里我们不应该一下清除所有 而应该按需添加
+
+            this.PART_Canvas.Children.Clear();
+
+            foreach (var calendarItemModel in CalendarItemModelList)
+            {
+                var date = calendarItemModel.Date;
+                dataIndex = GetYearIndex(date);
+
+                //日在第几行
+                dataRowIndex = dataIndex / YearOrMonthCols;
+
+                //在第几列
+                var dataColIndex = dataIndex % YearOrMonthCols;
+
+                ContentControl contentControl = new ContentControl()
+                {
+                    Content = calendarItemModel,
+                    Width = CalendarItemSizeShould,
+                    Height = CalendarItemSizeShould,
+                };
+                Canvas.SetLeft(contentControl, dataColIndex * CalendarItemSizeShould);
+                Canvas.SetTop(contentControl, dataRowIndex * CalendarItemSizeShould);
+                this.PART_Canvas.Children.Add(contentControl);
+            }
+
+            //更新标题
+            this.UpdateCalendarTitle();
+        }
+
+
+        private void UpdateCalendarMonthView(DateTime dateTimeInit)
+        {
+
+            if (this.PART_Canvas == null)
+            {
+                return;
+            }
+
+            //获得总年数 总月数 总天数
+            var totalYears = this.MaxDate.Year - this.MinDate.Year + 1;
+            var totalMonths = totalYears * 12;
+            var totalDays = (this.MaxDate - this.MinDate).TotalDays;
+
+
+            //获取天的总行数 
+            var totalRows = (int)Math.Ceiling((double)totalMonths / YearOrMonthCols);
+
+            //得到总高度
+            var totalItemHeightShould = totalRows * CalendarItemSizeShould;
+
+            this.PART_Canvas.Height = totalItemHeightShould;
+
+
+            //计算得出视窗要显示多少行
+            int rowDisplayShould = (int)Math.Ceiling((this.CalendarHeight - this.HeaderHeight) / this.CalendarItemSizeShould);
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    rowDisplayShould = (int)Math.Ceiling((this.CalendarHeight - this.HeaderHeight - this.CalendarItemSizeShould) / this.CalendarItemSizeShould);
+                    break;
+            }
+
+            rowDisplayShould = Math.Max(rowDisplayShould, YearOrMonthRows);
+
+
+
+            //计算当前日期在总天数的索引
+            int dataIndex = GetMonthIndex(dateTimeInit);
+
+            //日在第几行
+            int dataRowIndex = dataIndex / YearOrMonthCols;
+
+            if (this.IsShouldScrollToVerticalOffSet)
+            {
+                //滚动到对应位置
+                this.PART_ScrollViewer.ScrollToVerticalOffset(dataRowIndex * CalendarItemSizeShould);
+            }
+
+
+            int firstRow = Math.Max(dataRowIndex - 1, 0);
+            int lastRow = Math.Min(dataRowIndex + rowDisplayShould + 1, totalRows);
+
+            //这里要对最后一行做处理 我们必须保证1个视窗至少显示rowDisplayShould
+            var actualRows = lastRow - firstRow;
+            if (actualRows < rowDisplayShould + 2)
+            {
+                firstRow = Math.Max(dataRowIndex - (rowDisplayShould + 2 - actualRows), 0);
+            }
+
+            var dateTimeNow = DateTime.Now;
+            var currenDay = dateTimeNow.Day;
+            var currentMonth = dateTimeNow.Month;
+            var currentYear = dateTimeNow.Year;
+
+            CalendarItemModelList.Clear();
+
+
+
+            for (int row = firstRow; row < lastRow; row++)
+            {
+                for (int col = 0; col < YearOrMonthCols; col++)
+                {
+                    dataIndex = row * YearOrMonthCols + col;
+                    var date = this.GetDateFromMonthIndex(dataIndex);
+                    CalendarItemModelList.Add(new CalendarMonthModel()
+                    {
+                        Date = date,
+                        DisplayContent = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(date.Month),
+                        IsCurrentMonth = date.Month == currentMonth && date.Year == currentYear,
+                        IsFirstMonthOfYear = date.Month == 1,
+                        Year = date.Year,
+                        IsSelected = false,
+                        IsBlackout = false,
+                        CalendarViewType = this.CalendarViewType,
+                        CalendarItemClickCommand = new RelayCommand<CalendarBaseModel?>(CalendarItemClick)
+                    });
+                }
+            }
+
+
+            //this.SetCalendarItemModelSelected(CalendarItemModelList);
+
+            //设置IsBlackout属性
+            this.SetIsBlackoutByYearCount(CalendarItemModelList);
+
+
+            //这里我们不应该一下清除所有 而应该按需添加
+            this.PART_Canvas.Children.Clear();
+
+            foreach (var calendarItemModel in CalendarItemModelList)
+            {
+                var date = calendarItemModel.Date;
+                dataIndex = GetMonthIndex(date);
+
+                //日在第几行
+                dataRowIndex = dataIndex / YearOrMonthCols;
+
+                //在第几列
+                var dataColIndex = (date.Month - 1) % YearOrMonthCols;
+
+                ContentControl contentControl = new ContentControl()
+                {
+                    Content = calendarItemModel,
+                    Width = CalendarItemSizeShould,
+                    Height = CalendarItemSizeShould,
+                };
+                Canvas.SetLeft(contentControl, dataColIndex * CalendarItemSizeShould);
+                Canvas.SetTop(contentControl, dataRowIndex * CalendarItemSizeShould);
+                this.PART_Canvas.Children.Add(contentControl);
+            }
+
+            //更新标题
+            this.UpdateCalendarTitle();
+        }
+
+
+
+        private void UpdateCalendarDayView(DateTime dateTimeInit)
+        {
+
+            //获得总年数 总月数 总天数
+            var totalYears = this.MaxDate.Year - this.MinDate.Year + 1;
+            var totalMonths = totalYears * 12;
+            var totalDays = (this.MaxDate - this.MinDate).TotalDays;
+
+            //获取天的总行数 
+            var totalRows = (int)Math.Ceiling((double)totalDays / DayCols);
+
+            //得到总高度
+            var totalItemHeightShould = totalRows * CalendarItemSizeShould;
+
+            this.PART_Canvas.Height = totalItemHeightShould;
+
+
+            //计算得出视窗要显示多少行
+            int rowDisplayShould = (int)Math.Ceiling((this.CalendarHeight - this.HeaderHeight) / this.CalendarItemSizeShould);
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    rowDisplayShould = (int)Math.Ceiling((this.CalendarHeight - this.HeaderHeight - this.CalendarItemSizeShould) / this.CalendarItemSizeShould);
+                    break;
+            }
+
+            rowDisplayShould = Math.Max(rowDisplayShould, DayRows);
+
+
+
+
+            //计算当前日期在总天数的索引
+            int dataIndex = GetDayIndex(dateTimeInit);
+
+            //日在第几行
+            int dataRowIndex = dataIndex / DayCols;
+
+            if (this.IsShouldScrollToVerticalOffSet)
+            {
+                //滚动到对应位置
+                this.PART_ScrollViewer.ScrollToVerticalOffset(dataRowIndex * CalendarItemSizeShould);
+            }
+
+
+            int firstRow = Math.Max(dataRowIndex - 1, 0);
+            int lastRow = Math.Min(dataRowIndex + rowDisplayShould + 1, totalRows);
+
+            //这里要对最后一行做处理 我们必须保证1个视窗至少显示rowDisplayShould
+            var actualRows = lastRow - firstRow;
+            if (actualRows < rowDisplayShould + 2)
+            {
+                firstRow = Math.Max(dataRowIndex - (rowDisplayShould + 2 - actualRows), 0);
+            }
+
+
+            var dateTimeNow = DateTime.Now;
+            var currenDay = dateTimeNow.Day;
+            var currentMonth = dateTimeNow.Month;
+            var currentYear = dateTimeNow.Year;
+
+            CalendarItemModelList.Clear();
+
+
+            for (int row = firstRow; row < lastRow; row++)
+            {
+                for (int col = 0; col < DayCols; col++)
+                {
+                    dataIndex = row * DayCols + col;
+                    var dayOfWeek = (int)this.MinDate.DayOfWeek;
+                    if (dataIndex < dayOfWeek)
+                    {
+                        continue;
+                    }
+                    if (dataIndex > totalDays)
+                    {
+                        continue;
+                    }
+
+                    var date = this.GetDateFromDayIndex(dataIndex);
+                    CalendarItemModelList.Add(new CalendarDayModel()
+                    {
+                        Date = date,
+                        DisplayContent = date.Day.ToString(),
+                        IsCurrentMonth = date.Month == currentMonth && date.Year == currentYear,
+                        IsToday = date.Month == currentMonth && date.Year == currentYear && date.Day == currenDay,
+                        IsFirstDayOfMonth = date.Day == 1,
+                        //IsCurrentYear = date.Year == currentYear,
+                        MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(date.Month),
+                        IsSelected = false,
+                        IsBlackout = false,
+                        CalendarViewType = this.CalendarViewType,
+                        CalendarItemClickCommand = new RelayCommand<CalendarBaseModel?>(CalendarItemClick)
+                    });
+                }
+            }
+
+
+            this.SetCalendarItemModelSelected(CalendarItemModelList);
+
+            //设置IsBlackout属性
+            this.SetIsBlackoutByMonthCount(CalendarItemModelList);
+
+
+            //这里我们不应该一下清除所有 而应该按需添加
+
+            this.PART_Canvas.Children.Clear();
+            foreach (var calendarItemModel in CalendarItemModelList)
+            {
+                var date = calendarItemModel.Date;
+                dataIndex = GetDayIndex(date);
+
+                //日在第几行
+                dataRowIndex = dataIndex / DayCols;
+
+                //在第几列
+                var dataColIndex = (int)date.DayOfWeek;
+
+                ContentControl contentControl = new ContentControl()
+                {
+                    Content = calendarItemModel,
+                    Width = CalendarItemSizeShould,
+                    Height = CalendarItemSizeShould,
+                };
+                Canvas.SetLeft(contentControl, dataColIndex * CalendarItemSizeShould);
+                Canvas.SetTop(contentControl, dataRowIndex * CalendarItemSizeShould);
+                this.PART_Canvas.Children.Add(contentControl);
+            }
+
+            //更新标题
+
+            this.UpdateCalendarTitle();
+        }
+
+
+
+        private void UpdateCalendarTitle()
+        {
+            var calendarItemModel = this.CalendarItemModelList.FirstOrDefault(t => !t.IsBlackout);
+            if (calendarItemModel == null)
+            {
+                return;
+            }
+            string title = string.Empty;
+            CultureInfo currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    if (currentCulture.Name.StartsWith("zh"))
+                    {
+                        title = calendarItemModel.Date.ToString("yyyy年M月", currentCulture);
+                    }
+                    else
+                    {
+                        title = calendarItemModel.Date.ToString("MMMM yyyy", currentCulture);
+                    }
+                    CurrentYearMonthDate = new DateTime(calendarItemModel.Date.Year, calendarItemModel.Date.Month, 1);
+                    break;
+                case CalendarViewType.Month:
+                    title = calendarItemModel.Date.ToString("yyyy");
+                    break;
+                case CalendarViewType.Year:
+                    var firstOrDefault = this.CalendarItemModelList.FirstOrDefault();
+                    var lastOrDefault = this.CalendarItemModelList.LastOrDefault();
+                    title = $"{firstOrDefault.Date.Year}-{lastOrDefault.Date.Year}";
+                    break;
+            }
+            if (this.PART_BtnTitle != null)
+            {
+                this.PART_BtnTitle.Content = title;
             }
         }
 
-     
+        private void SetCalendarItemModelSelected(List<CalendarBaseModel> calendarItemModelList)
+        {
+            if (CalendarItemModelSelected == null)
+            {
+                return;
+            }
+
+            var calendarItemModelSelectedHitory = calendarItemModelList.FirstOrDefault(item => item.Date == CalendarItemModelSelected.Date);
+
+            if (calendarItemModelSelectedHitory == null)
+            {
+                return;
+            }
+
+            calendarItemModelSelectedHitory.IsSelected = true;
+        }
+
+
+        private int GetYearIndex(DateTime dateTime)
+        {
+            return dateTime.Year - this.MinDate.Year;
+        }
+
+        private int GetMonthIndex(DateTime dateTime)
+        {
+            var yearDif = dateTime.Year - this.MinDate.Year;
+            var monthIndex = yearDif * 12 + dateTime.Month - 1;
+            return monthIndex;
+        }
+
+
+        private int GetDayIndex(DateTime dateTime)
+        {
+            var dayIndex = (int)(dateTime - this.MinDate).TotalDays;
+            return GetActualDayIndex(dayIndex);
+        }
+
+        private int GetActualDayIndex(int dayIndex)
+        {
+            //因为1行7天，根据最小年第一天是星期几，日期的索引需要加上偏移
+            dayIndex = dayIndex + (int)this.MinDate.DayOfWeek;
+            return dayIndex;
+        }
+
+
+        public DateTime GetDateFromYearIndex(int yearIndex)
+        {
+            DateTime resultDate = this.MinDate.AddYears(yearIndex);
+            return resultDate;
+        }
+
+        public DateTime GetDateFromMonthIndex(int monthIndex)
+        {
+            DateTime resultDate = this.MinDate.AddMonths(monthIndex);
+            return resultDate;
+        }
+
+        public DateTime GetDateFromDayIndex(int dayIndex)
+        {
+            //这里需要减去偏移
+            int originalDayIndex = dayIndex - (int)this.MinDate.DayOfWeek;
+
+            if (originalDayIndex < 0 || originalDayIndex > (this.MaxDate - this.MinDate).TotalDays)
+            {
+                throw new ArgumentOutOfRangeException(nameof(dayIndex), "dayIndex is out of DateTime valid range");
+            }
+            DateTime resultDate = this.MinDate.AddDays(originalDayIndex);
+            return resultDate;
+        }
+
+
+        /// <summary>
+        /// 根据年份出现次数设置IsBlackout属性
+        /// 出现次数最多的年份设置为false，其他年份设置为true
+        /// </summary>
+        /// <param name="calendarItemModelList">日历项列表</param>
+        private void SetIsBlackoutByYearCount(List<CalendarBaseModel> calendarItemModelList)
+        {
+            if (calendarItemModelList == null || calendarItemModelList.Count == 0)
+            {
+                return;
+            }
+
+            var yearCountList = calendarItemModelList.Select(t => t.Date.Year).GroupBy(t => t).Select(t => new { Year = t.Key, Count = t.Count() }).ToList();
+
+            int maxCount = yearCountList.Max(t => t.Count);
+            var maxCountYears = yearCountList.Where(t => t.Count == maxCount).ToList();
+            int maxYear = maxCountYears.First().Year;
+
+            //设置IsBlackout：出现次数最多的年份为false，其他为true
+            foreach (var item in calendarItemModelList)
+            {
+                item.IsBlackout = item.Date.Year != maxYear;
+            }
+        }
+
+
+        /// <summary>
+        /// 根据月份出现次数设置IsBlackout属性
+        /// 出现次数最多的月份设置为false，其他月份设置为true
+        /// </summary>
+        /// <param name="calendarItemModelList">日历项列表</param>
+        private void SetIsBlackoutByMonthCount(List<CalendarBaseModel> calendarItemModelList)
+        {
+            if (calendarItemModelList == null || calendarItemModelList.Count == 0)
+            {
+                return;
+            }
+
+            //创建12个元素的数组，每个索引对应月份（索引0对应1月，索引11对应12月）
+            int[] monthCountArray = new int[12];
+
+            //遍历日期，统计每个月份的出现次数
+            foreach (var item in calendarItemModelList)
+            {
+                int monthIndex = item.Date.Month - 1;
+                monthCountArray[monthIndex]++;
+            }
+            var month = Array.IndexOf(monthCountArray, monthCountArray.Max()) + 1;
+
+            //设置IsBlackout：出现次数最多的月份为false，其他为true
+            foreach (var item in calendarItemModelList)
+            {
+                item.IsBlackout = item.Date.Month != month;
+            }
+        }
+
+        private void CalendarItemClick(CalendarBaseModel? calendarItemModel)
+        {
+            if (calendarItemModel == null)
+            {
+                return;
+            }
+
+            //清除之前的选中状态
+            this.ClearSelectedState();
+            calendarItemModel.IsSelected = true;
+
+
+            switch (this.CalendarViewType)
+            {
+                case CalendarViewType.Day:
+                    CalendarItemModelSelected = calendarItemModel;
+                    DateTimeSelected= calendarItemModel.Date;
+                    //触发路由事件
+                    CalendarDateSelectedEventArgs eventArgs = new CalendarDateSelectedEventArgs(
+                        DateSelectedEvent,
+                        calendarItemModel.Date,
+                        calendarItemModel);
+                    RaiseEvent(eventArgs);
+                    //执行Command（如果设置了）
+                    if (DateSelectedCommand != null && DateSelectedCommand.CanExecute(calendarItemModel))
+                    {
+                        DateSelectedCommand.Execute(calendarItemModel);
+                    }
+                    break;
+                case CalendarViewType.Month:
+                    this.IsScrollViewerScrollShouldChanged = false;
+                    this.DateTimeInitHistory = new DateTime(calendarItemModel.Date.Year, calendarItemModel.Date.Month, 1);
+                    this.CalendarViewType = CalendarViewType.Day;
+                    this.UpdateCalendarView();
+                    this.IsScrollViewerScrollShouldChanged = true;
+                    break;
+                case CalendarViewType.Year:
+                    this.IsScrollViewerScrollShouldChanged = false;
+                    this.CurrentYearMonthDate = new DateTime(calendarItemModel.Date.Year, 1, 1);
+                    this.CalendarViewType = CalendarViewType.Month;
+                    this.UpdateCalendarView();
+                   
+                    break;
+            }
+        }
+
+        private void ClearSelectedState()
+        {
+            foreach (var item in CalendarItemModelList)
+            {
+                item.IsSelected = false;
+            }
+        }
     }
 }
