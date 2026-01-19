@@ -72,7 +72,7 @@
                         Foreground="#D8000000"
                         Text="{Binding Description}" />
 
-                    <rs:RSDateTimePicker Grid.Column="1" />
+                    <rs:RSDatePicker Grid.Column="1" />
                 </Grid>
             </DataTemplate>
 

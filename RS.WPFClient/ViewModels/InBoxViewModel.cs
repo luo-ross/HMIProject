@@ -125,5 +125,28 @@ namespace RS.WPFClient.ViewModels
         {
             /* 新建文件夹逻辑待实现 */
         }
+
+
+
+
+        private DateTime? dateTimeSelected;
+        /// <summary>
+        /// 日期选择
+        /// </summary>
+        public DateTime? DateTimeSelected
+        {
+            get
+            {
+                return dateTimeSelected;
+            }
+            set
+            {
+                SetProperty(ref dateTimeSelected, value);
+            }
+        }
+
+
+
+
     }
 }

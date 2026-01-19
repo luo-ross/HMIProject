@@ -417,7 +417,6 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-
     <DataTemplate x:Key="NavPopupGrouplDataTemplate" DataType="{x:Type model:NavigateModel}">
         <Border
             x:Name="PART_Border"

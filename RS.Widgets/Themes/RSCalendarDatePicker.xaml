@@ -14,211 +14,23 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <DataTemplate DataType="{x:Type models:CalendarDayModel}">
-        <Grid x:Name="PART_Grid" Background="Transparent">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{Binding CalendarItemClickCommand}" CommandParameter="{Binding}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <Ellipse x:Name="PART_Ellipse" Margin="3" />
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock
-                    x:Name="PART_MonthName"
-                    Margin="0,-9,0,0"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    FontSize="9"
-                    Text="{Binding MonthName}"
-                    Visibility="Collapsed" />
-                <TextBlock
-                    x:Name="PART_Day"
-                    Margin="0"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="{Binding DisplayContent}" />
-            </Grid>
-
-        </Grid>
-        <DataTemplate.Triggers>
-            <Trigger SourceName="PART_Grid" Property="IsMouseOver" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#F6F6F6" />
-            </Trigger>
-            <DataTrigger Binding="{Binding IsToday}" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#0067C6" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsBlackout}" Value="True">
-                <Setter TargetName="PART_Day" Property="Foreground" Value="#949494" />
-                <Setter TargetName="PART_MonthName" Property="Foreground" Value="#949494" />
-            </DataTrigger>
-
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsToday}" Value="True" />
-                    <Condition Binding="{Binding ElementName=PART_Grid, Path=IsMouseOver}" Value="True" />
-                </MultiDataTrigger.Conditions>
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#1A76C6" />
-            </MultiDataTrigger>
-
-            <DataTrigger Binding="{Binding IsToday}" Value="True">
-                <Setter TargetName="PART_Day" Property="Foreground" Value="#FFFFFF" />
-                <Setter TargetName="PART_MonthName" Property="Foreground" Value="#FFFFFF" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsFirstDayOfMonth}" Value="True">
-                <Setter TargetName="PART_MonthName" Property="Visibility" Value="Visible" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Stroke" Value="#1A76C6" />
-                <Setter TargetName="PART_Ellipse" Property="StrokeThickness" Value="1" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding IsSelected}" Value="False">
-                <Setter TargetName="PART_Ellipse" Property="Stroke" Value="Transparent" />
-                <Setter TargetName="PART_Ellipse" Property="StrokeThickness" Value="1" />
-            </DataTrigger>
-        </DataTemplate.Triggers>
-    </DataTemplate>
-
-
-    <DataTemplate DataType="{x:Type models:CalendarMonthModel}">
-        <Grid x:Name="PART_Grid" Background="Transparent">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{Binding CalendarItemClickCommand}" CommandParameter="{Binding}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <Ellipse x:Name="PART_Ellipse" Margin="3" />
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock
-                    x:Name="PART_Month"
-                    Margin="0"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="{Binding DisplayContent}" />
-
-                <TextBlock
-                    x:Name="PART_Year"
-                    Margin="0,-12,0,0"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    FontSize="9"
-                    Text="{Binding Year}"
-                    Visibility="Collapsed" />
-            </Grid>
-
-        </Grid>
-        <DataTemplate.Triggers>
-            <Trigger SourceName="PART_Grid" Property="IsMouseOver" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#F6F6F6" />
-            </Trigger>
-            <DataTrigger Binding="{Binding IsCurrentMonth}" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#0067C6" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsBlackout}" Value="True">
-                <Setter TargetName="PART_Month" Property="Foreground" Value="#949494" />
-                <Setter TargetName="PART_Year" Property="Foreground" Value="#949494" />
-            </DataTrigger>
-
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsCurrentMonth}" Value="True" />
-                    <Condition Binding="{Binding ElementName=PART_Grid, Path=IsMouseOver}" Value="True" />
-                </MultiDataTrigger.Conditions>
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#1A76C6" />
-            </MultiDataTrigger>
-
-            <DataTrigger Binding="{Binding IsCurrentMonth}" Value="True">
-                <Setter TargetName="PART_Month" Property="Foreground" Value="#FFFFFF" />
-                <Setter TargetName="PART_Year" Property="Foreground" Value="#FFFFFF" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsFirstMonthOfYear}" Value="True">
-                <Setter TargetName="PART_Year" Property="Visibility" Value="Visible" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Stroke" Value="#1A76C6" />
-                <Setter TargetName="PART_Ellipse" Property="StrokeThickness" Value="1" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding IsSelected}" Value="False">
-                <Setter TargetName="PART_Ellipse" Property="Stroke" Value="Transparent" />
-                <Setter TargetName="PART_Ellipse" Property="StrokeThickness" Value="1" />
-            </DataTrigger>
-        </DataTemplate.Triggers>
-    </DataTemplate>
-
-
-
-    <DataTemplate DataType="{x:Type models:CalendarYearModel}">
-        <Grid x:Name="PART_Grid" Background="Transparent">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{Binding CalendarItemClickCommand}" CommandParameter="{Binding}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <Ellipse x:Name="PART_Ellipse" Margin="3" />
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock
-                    x:Name="PART_Year"
-                    Margin="0"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="{Binding DisplayContent}" />
-            </Grid>
-        </Grid>
-        <DataTemplate.Triggers>
-            <Trigger SourceName="PART_Grid" Property="IsMouseOver" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#F6F6F6" />
-            </Trigger>
-            <DataTrigger Binding="{Binding IsCurrentYear}" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#0067C6" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsBlackout}" Value="True">
-                <Setter TargetName="PART_Year" Property="Foreground" Value="#949494" />
-            </DataTrigger>
-
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsCurrentYear}" Value="True" />
-                    <Condition Binding="{Binding ElementName=PART_Grid, Path=IsMouseOver}" Value="True" />
-                </MultiDataTrigger.Conditions>
-                <Setter TargetName="PART_Ellipse" Property="Fill" Value="#1A76C6" />
-            </MultiDataTrigger>
-
-            <DataTrigger Binding="{Binding IsCurrentYear}" Value="True">
-                <Setter TargetName="PART_Year" Property="Foreground" Value="#FFFFFF" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                <Setter TargetName="PART_Ellipse" Property="Stroke" Value="#1A76C6" />
-                <Setter TargetName="PART_Ellipse" Property="StrokeThickness" Value="1" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding IsSelected}" Value="False">
-                <Setter TargetName="PART_Ellipse" Property="Stroke" Value="Transparent" />
-                <Setter TargetName="PART_Ellipse" Property="StrokeThickness" Value="1" />
-            </DataTrigger>
-        </DataTemplate.Triggers>
-    </DataTemplate>
 
     <Style TargetType="{x:Type rs:RSCalendarDatePicker}">
-        <Setter Property="Background" Value="White" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="#E5E5E5" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="BorderBrush" Value="#eee" />
+        <Setter Property="Margin" Value="5,2,5,2" />
+        <Setter Property="MinWidth" Value="70" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="CornerRadius" Value="3" />
+        <Setter Property="DateTimeFormat" Value="yyyy-MM-dd" />
+        <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="True" />
+        <Setter Property="rs:TextBoxHelper.Watermark" Value="请选择日期" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSCalendarDatePicker}">
@@ -228,107 +40,55 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Border
-                                x:Name="PART_TitleHost"
-                                Padding="5"
-                                BorderBrush="#EEEEEE"
-                                BorderThickness="0,0,0,1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Button x:Name="PART_BtnTitle" HorizontalContentAlignment="Left">
-                                        <Button.Style>
-                                            <Style BasedOn="{StaticResource RSApp.Styles.ButtonBaseStyle}" TargetType="{x:Type ButtonBase}">
-                                                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                                <Setter Property="VerticalAlignment" Value="Stretch" />
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsEnabled" Value="False">
-                                                        <Setter Property="Background" Value="#fff" />
-                                                        <Setter Property="Foreground" Value="#949494" />
-                                                    </Trigger>
-                                                    <!--<Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Cursor" Value="Hand" />
-                                                        <Setter Property="Background" Value="#EEE" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsPressed" Value="True">
-                                                        <Setter Property="Background" Value="#F1F1F1" />
-                                                    </Trigger>-->
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Button
-                                            x:Name="PART_PageUp"
-                                            Padding="8"
-                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.MenuItemUpArrow}"
-                                            rs:ControlsHelper.IconHeight="8"
-                                            rs:ControlsHelper.IconWidth="8"
-                                            Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
-                                        <Button
-                                            x:Name="PART_PageDown"
-                                            Padding="8"
-                                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.MenuItemDownArrow}"
-                                            rs:ControlsHelper.IconHeight="8"
-                                            rs:ControlsHelper.IconWidth="8"
-                                            Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
 
-                            <Grid
-                                x:Name="PART_DayOfWeekHost"
-                                Grid.Row="1"
-                                Visibility="Collapsed">
-                                <ItemsControl x:Name="PART_DayOfWeek" ItemsSource="{TemplateBinding WeekdayList}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid
-                                                Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type rs:RSCalendarDatePicker}}, Path=DayOfWeekHeight}"
-                                                Columns="7"
-                                                Rows="1" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border>
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{Binding}" />
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Grid>
-                            <ScrollViewer
-                                x:Name="PART_ScrollViewer"
-                                Grid.Row="2"
-                                HorizontalScrollBarVisibility="Hidden"
-                                VerticalScrollBarVisibility="Hidden">
-                                <Canvas
-                                    x:Name="PART_Canvas"
-                                    Background="Transparent"
-                                    ClipToBounds="True" />
-                            </ScrollViewer>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                x:Name="PART_TxtDate"
+                                Margin="0,0,-5,0"
+                                Padding="2,3,3,3"
+                                rs:TextBoxHelper.IsShowClearButton="{TemplateBinding rs:TextBoxHelper.IsShowClearButton}"
+                                rs:TextBoxHelper.Watermark="{TemplateBinding rs:TextBoxHelper.Watermark}"
+                                BorderThickness="0"
+                                IsEnabled="{TemplateBinding IsEnabled}"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=FormattedDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, ValidatesOnDataErrors=True}" />
+                            <ToggleButton
+                                x:Name="PART_BtnDatePicker"
+                                Grid.Column="1"
+                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Date}"
+                                Foreground="#707070"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                            <rs:RSPopup
+                                x:Name="PART_Popup"
+                                Height="380"
+                                AllowsTransparency="True"
+                                HorizontalOffset="2"
+                                IsOpen="{Binding ElementName=PART_BtnDatePicker, Path=IsChecked, Mode=TwoWay}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                RelativeElement="{Binding ElementName=PART_BtnDatePicker}">
+                                <Border
+                                    Margin="15,0,15,15"
+                                    Background="#fff"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                    <Grid x:Name="PART_PopupHost">
+                                        <rs:RSCalendar
+                                            x:Name="PART_Calendar"
+                                            BorderThickness="0"
+                                            CalendarSelectType="{TemplateBinding CalendarSelectType}"
+                                            MaxDate="{TemplateBinding MaxDate}"
+                                            MinDate="{TemplateBinding MinDate}" />
+                                    </Grid>
+                                </Border>
+                            </rs:RSPopup>
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="CalendarViewType" Value="Day">
-                            <Setter TargetName="PART_DayOfWeekHost" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger Property="CalendarViewType" Value="Year">
-                            <Setter TargetName="PART_BtnTitle" Property="IsEnabled" Value="False" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+                    <ControlTemplate.Triggers />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

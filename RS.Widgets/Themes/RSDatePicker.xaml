@@ -14,7 +14,7 @@
     </ResourceDictionary.MergedDictionaries>
     <converters:ClipConverter x:Key="ClipConverter" />
     <converters:BackgroundToForegroundConverter x:Key="BackgroundToForegroundConverter" />
-    <Style TargetType="{x:Type rs:RSDateTimePicker}">
+    <Style TargetType="{x:Type rs:RSDatePicker}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="BorderThickness" Value="1" />
@@ -33,7 +33,7 @@
         <Setter Property="Foreground" Value="{DynamicResource RSApp.Styles.Button.Foreground}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type rs:RSDateTimePicker}">
+                <ControlTemplate TargetType="{x:Type rs:RSDatePicker}">
                     <Border
                         x:Name="PART_Border"
                         Padding="{TemplateBinding Padding}"
@@ -66,6 +66,7 @@
                                 x:Name="PART_Popup"
                                 Height="380"
                                 AllowsTransparency="True"
+                                HorizontalOffset="2"
                                 IsOpen="{Binding ElementName=PART_BtnDatePicker, Path=IsChecked, Mode=TwoWay}"
                                 Placement="Bottom"
                                 PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"

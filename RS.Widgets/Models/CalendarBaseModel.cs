@@ -11,19 +11,9 @@ namespace RS.Widgets.Models
     /// <summary>
     /// 日历项模型
     /// </summary>
-    public class CalendarBaseModel : NotifyBase
+    public abstract class CalendarBaseModel : NotifyBase
     {
-
-        private CalendarViewType calendarViewType;
-        /// <summary>
-        /// 日历类型
-        /// </summary>
-        public CalendarViewType CalendarViewType
-        {
-            get { return calendarViewType; }
-            set { SetProperty(ref calendarViewType, value); }
-        }
-
+    
         private string displayContent = string.Empty;
         /// <summary>
         /// 显示内容

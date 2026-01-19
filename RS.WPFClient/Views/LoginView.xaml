@@ -40,7 +40,6 @@
                 </ObjectAnimationUsingKeyFrames>
             </Storyboard>
 
-
             <Style x:Key="RSApp.Styles.SwiperSlideStyle" TargetType="{x:Type Border}">
                 <Setter Property="Margin" Value="0,0,60,0" />
                 <Setter Property="CornerRadius" Value="15" />

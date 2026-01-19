@@ -12,7 +12,7 @@ namespace RS.Widgets
         /// <summary>
         /// 选中的日期
         /// </summary>
-        public DateTime SelectedDate { get; }
+        public DateTime DateSelected { get; }
 
         /// <summary>
         /// 选中的日历项模型
@@ -25,10 +25,10 @@ namespace RS.Widgets
         /// <param name="routedEvent">路由事件</param>
         /// <param name="selectedDate">选中的日期</param>
         /// <param name="calendarItem">选中的日历项模型</param>
-        public CalendarDateSelectedEventArgs(RoutedEvent routedEvent, DateTime selectedDate, CalendarBaseModel calendarItem)
+        public CalendarDateSelectedEventArgs(RoutedEvent routedEvent, DateTime dateSelected, CalendarBaseModel calendarItem)
             : base(routedEvent)
         {
-            SelectedDate = selectedDate;
+            DateSelected = dateSelected;
             CalendarItem = calendarItem;
         }
     }

@@ -4,11 +4,12 @@
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSCalendar.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSCalendarDatePicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSCarousel.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSColorPicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDataGrid.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDateTimePicker.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDatePicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDialog.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDockPanel.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDockPositionWindow.xaml" />

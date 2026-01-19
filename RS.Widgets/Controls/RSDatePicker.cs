@@ -17,40 +17,73 @@ using System.Windows.Controls.Primitives;
 
 namespace RS.Widgets.Controls
 {
-    public class RSDateTimePicker : ContentControl
+    public class RSDatePicker : RSDatePickerBase
     {
-
-        private RSPopup PART_Popup;
         private Border PART_Border;
         private ToggleButton PART_BtnDatePicker;
-        private Grid PART_PopupHost;
         private Button PART_BtnConfirm;
         private Button PART_BtnCancel;
 
-        private bool IsCanUpdateDateTimeSelected = true;
-        private bool IsCanUpdateFormattedDateTime = true;
-
         private int MinYear = DateTime.MinValue.Year;
         private int MaxYear = DateTime.MaxValue.Year;
-        static RSDateTimePicker()
+        static RSDatePicker()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDateTimePicker), new FrameworkPropertyMetadata(typeof(RSDateTimePicker)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDatePicker), new FrameworkPropertyMetadata(typeof(RSDatePicker)));
+
+            MinDateProperty.OverrideMetadata(typeof(RSDatePicker), new FrameworkPropertyMetadata(OnMinDatePropertyChanged));
+            MaxDateProperty.OverrideMetadata(typeof(RSDatePicker), new FrameworkPropertyMetadata(OnMaxDatePropertyChanged));
+            DateTimeSelectedProperty.OverrideMetadata(typeof(RSDatePicker), new FrameworkPropertyMetadata(null,OnDateTimeSelectedPropertyChanged,OnDateTimeSelectedCoerceValueCallback));
         }
 
-        public RSDateTimePicker()
+
+        private static void OnDateTimeSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var datePicker = d as RSDatePicker;
+
+            datePicker?.ChcekYearMonthDayHourMinuteSecondSelect();
+            datePicker?.UpdateFormattedDateTime();
+        }
+
+        private static void OnMinDatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //这里第一次不会触发
+            var datePicker = d as RSDatePicker;
+            if (datePicker == null)
+            {
+                return;
+            }
+
+            datePicker.MinYear = datePicker.MinDate.Year;
+            datePicker.RefreshYearPicker();
+        }
+
+        private static void OnMaxDatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //这里第一次不会触发
+            var datePicker = d as RSDatePicker;
+            if (datePicker == null)
+            {
+                return;
+            }
+            datePicker.MaxYear = datePicker.MaxDate.Year;
+            datePicker.RefreshYearPicker();
+        }
+        public RSDatePicker()
         {
             this.RefreshYearPicker();
-            this.Loaded += RSDateTimePicker_Loaded;
-            this.SizeChanged += RSDateTimePicker_SizeChanged;
+            this.Loaded += RSDatePicker_Loaded;
+            this.SizeChanged += RSDatePicker_SizeChanged;
+
+         
         }
 
 
-        private void RSDateTimePicker_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void RSDatePicker_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.UpdatePopupSize();
         }
 
-        private void RSDateTimePicker_Loaded(object sender, RoutedEventArgs e)
+        private void RSDatePicker_Loaded(object sender, RoutedEventArgs e)
         {
 
         }
@@ -59,40 +92,9 @@ namespace RS.Widgets.Controls
         {
             this.UpdatePopupSize();
         }
+     
 
-        public DateTime MinDateTime
-        {
-            get { return (DateTime)GetValue(MinDateTimeProperty); }
-            set { SetValue(MinDateTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty MinDateTimeProperty =
-            DependencyProperty.Register("MinDateTime", typeof(DateTime), typeof(RSDateTimePicker), new PropertyMetadata(DateTime.MinValue, OnMinDateTimePropertyChanged));
-
-        private static void OnMinDateTimePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //这里第一次不会触发
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.MinYear = rsDateTimePicker.MinDateTime.Year;
-            rsDateTimePicker.RefreshYearPicker();
-        }
-
-        public DateTime MaxDateTime
-        {
-            get { return (DateTime)GetValue(MaxDateTimeProperty); }
-            set { SetValue(MaxDateTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty MaxDateTimeProperty =
-            DependencyProperty.Register("MaxDateTime", typeof(DateTime), typeof(RSDateTimePicker), new PropertyMetadata(DateTime.MaxValue, OnMaxDateTimePropertyChanged));
-
-        private static void OnMaxDateTimePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //这里第一次不会触发
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.MaxYear = rsDateTimePicker.MaxDateTime.Year;
-            rsDateTimePicker.RefreshYearPicker();
-        }
+       
 
         private void RefreshYearPicker()
         {
@@ -127,18 +129,7 @@ namespace RS.Widgets.Controls
             this.ForcePropertyChanged(YearSelectedProperty, this.YearSelected, defaultYear);
         }
 
-
-
-        [Description("圆角大小")]
-        public CornerRadius CornerRadius
-        {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
-        }
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(RSDateTimePicker), new PropertyMetadata(new CornerRadius(5)));
-
+     
 
         [Description("年")]
         public ObservableCollection<int> YearList
@@ -148,7 +139,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty YearListProperty =
-            DependencyProperty.Register("YearList", typeof(ObservableCollection<int>), typeof(RSDateTimePicker), new PropertyMetadata(null));
+            DependencyProperty.Register("YearList", typeof(ObservableCollection<int>), typeof(RSDatePicker), new PropertyMetadata(null));
 
 
         [Description("年选择")]
@@ -159,12 +150,12 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty YearSelectedProperty =
-            DependencyProperty.Register("YearSelected", typeof(int?), typeof(RSDateTimePicker), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnYearSelectedPropertyChanged));
+            DependencyProperty.Register("YearSelected", typeof(int?), typeof(RSDatePicker), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnYearSelectedPropertyChanged));
 
         private static void OnYearSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.RefreshMonthPicker();
+            var datePicker = d as RSDatePicker;
+            datePicker?.RefreshMonthPicker();
         }
 
 
@@ -172,16 +163,16 @@ namespace RS.Widgets.Controls
         {
             //判断年是否是最小值或者最大值
             List<int> monthList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year)
+            if (this.YearSelected == this.MinDate.Year)
             {
-                for (int i = this.MinDateTime.Month; i <= 12; i++)
+                for (int i = this.MinDate.Month; i <= 12; i++)
                 {
                     monthList.Add(i);
                 }
             }
-            else if (this.YearSelected == this.MaxDateTime.Year)
+            else if (this.YearSelected == this.MaxDate.Year)
             {
-                for (int i = 1; i <= this.MaxDateTime.Month; i++)
+                for (int i = 1; i <= this.MaxDate.Month; i++)
                 {
                     monthList.Add(i);
                 }
@@ -231,7 +222,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MonthListProperty =
-            DependencyProperty.Register("MonthList", typeof(ObservableCollection<int>), typeof(RSDateTimePicker), new PropertyMetadata(null));
+            DependencyProperty.Register("MonthList", typeof(ObservableCollection<int>), typeof(RSDatePicker), new PropertyMetadata(null));
 
         [Description("月选择")]
         public int? MonthSelected
@@ -241,12 +232,12 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MonthSelectedProperty =
-            DependencyProperty.Register("MonthSelected", typeof(int?), typeof(RSDateTimePicker), new PropertyMetadata(null, OnMonthSelectedPropertyChanged));
+            DependencyProperty.Register("MonthSelected", typeof(int?), typeof(RSDatePicker), new PropertyMetadata(null, OnMonthSelectedPropertyChanged));
 
         private static void OnMonthSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.RefreshDayPicker();
+            var datePicker = d as RSDatePicker;
+            datePicker?.RefreshDayPicker();
         }
 
         private void RefreshDayPicker()
@@ -261,18 +252,18 @@ namespace RS.Widgets.Controls
 
             //如果用户选择的刚好是最小日期
 
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month)
+            if (this.YearSelected == this.MinDate.Year
+                && this.MonthSelected == this.MinDate.Month)
             {
-                for (int i = this.MinDateTime.Day; i <= days; i++)
+                for (int i = this.MinDate.Day; i <= days; i++)
                 {
                     dayList.Add(i);
                 }
             }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month)
+            else if (this.YearSelected == this.MaxDate.Year
+                && this.MonthSelected == this.MaxDate.Month)
             {
-                for (int i = 1; i <= this.MaxDateTime.Day; i++)
+                for (int i = 1; i <= this.MaxDate.Day; i++)
                 {
                     dayList.Add(i);
                 }
@@ -321,7 +312,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DayListProperty =
-            DependencyProperty.Register("DayList", typeof(ObservableCollection<int>), typeof(RSDateTimePicker), new PropertyMetadata(null));
+            DependencyProperty.Register("DayList", typeof(ObservableCollection<int>), typeof(RSDatePicker), new PropertyMetadata(null));
 
         [Description("日选择")]
         public int? DaySelected
@@ -331,31 +322,31 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DaySelectedProperty =
-            DependencyProperty.Register("DaySelected", typeof(int?), typeof(RSDateTimePicker), new PropertyMetadata(null, OnDaySelectedPropertyChanged));
+            DependencyProperty.Register("DaySelected", typeof(int?), typeof(RSDatePicker), new PropertyMetadata(null, OnDaySelectedPropertyChanged));
 
         private static void OnDaySelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.RefreshHourPicker();
+            var datePicker = d as RSDatePicker;
+            datePicker?.RefreshHourPicker();
         }
 
         private void RefreshHourPicker()
         {
             List<int> hourList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month
-                && this.DaySelected == this.MinDateTime.Day)
+            if (this.YearSelected == this.MinDate.Year
+                && this.MonthSelected == this.MinDate.Month
+                && this.DaySelected == this.MinDate.Day)
             {
-                for (int i = this.MinDateTime.Hour; i < 24; i++)
+                for (int i = this.MinDate.Hour; i < 24; i++)
                 {
                     hourList.Add(i);
                 }
             }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month
-                && this.DaySelected == this.MaxDateTime.Day)
+            else if (this.YearSelected == this.MaxDate.Year
+                && this.MonthSelected == this.MaxDate.Month
+                && this.DaySelected == this.MaxDate.Day)
             {
-                for (int i = 1; i <= this.MaxDateTime.Hour; i++)
+                for (int i = 1; i <= this.MaxDate.Hour; i++)
                 {
                     hourList.Add(i);
                 }
@@ -405,7 +396,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty HourListProperty =
-            DependencyProperty.Register("HourList", typeof(ObservableCollection<int>), typeof(RSDateTimePicker), new PropertyMetadata(null));
+            DependencyProperty.Register("HourList", typeof(ObservableCollection<int>), typeof(RSDatePicker), new PropertyMetadata(null));
 
         [Description("时选择")]
         public int? HourSelected
@@ -415,33 +406,33 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty HourSelectedProperty =
-            DependencyProperty.Register("HourSelected", typeof(int?), typeof(RSDateTimePicker), new PropertyMetadata(null, OnHourSelectedPropertyChanged));
+            DependencyProperty.Register("HourSelected", typeof(int?), typeof(RSDatePicker), new PropertyMetadata(null, OnHourSelectedPropertyChanged));
 
         private static void OnHourSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.RefreshMinutePicker();
+            var datePicker = d as RSDatePicker;
+            datePicker?.RefreshMinutePicker();
         }
 
         private void RefreshMinutePicker()
         {
             List<int> minuteList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month
-                && this.DaySelected == this.MinDateTime.Day
-                && this.HourSelected == this.MinDateTime.Hour)
+            if (this.YearSelected == this.MinDate.Year
+                && this.MonthSelected == this.MinDate.Month
+                && this.DaySelected == this.MinDate.Day
+                && this.HourSelected == this.MinDate.Hour)
             {
-                for (int i = this.MinDateTime.Hour; i < 60; i++)
+                for (int i = this.MinDate.Hour; i < 60; i++)
                 {
                     minuteList.Add(i);
                 }
             }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month
-                && this.DaySelected == this.MaxDateTime.Day
-                && this.HourSelected == this.MaxDateTime.Hour)
+            else if (this.YearSelected == this.MaxDate.Year
+                && this.MonthSelected == this.MaxDate.Month
+                && this.DaySelected == this.MaxDate.Day
+                && this.HourSelected == this.MaxDate.Hour)
             {
-                for (int i = 1; i <= this.MaxDateTime.Minute; i++)
+                for (int i = 1; i <= this.MaxDate.Minute; i++)
                 {
                     minuteList.Add(i);
                 }
@@ -491,7 +482,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MinuteListProperty =
-            DependencyProperty.Register("MinuteList", typeof(ObservableCollection<int>), typeof(RSDateTimePicker), new PropertyMetadata(null));
+            DependencyProperty.Register("MinuteList", typeof(ObservableCollection<int>), typeof(RSDatePicker), new PropertyMetadata(null));
 
         [Description("分选择")]
         public int? MinuteSelected
@@ -501,35 +492,35 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty MinuteSelectedProperty =
-            DependencyProperty.Register("MinuteSelected", typeof(int?), typeof(RSDateTimePicker), new PropertyMetadata(null, OnMinuteSelectedPropertyChanged));
+            DependencyProperty.Register("MinuteSelected", typeof(int?), typeof(RSDatePicker), new PropertyMetadata(null, OnMinuteSelectedPropertyChanged));
 
         private static void OnMinuteSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.RefreshSecondPicker();
+            var datePicker = d as RSDatePicker;
+            datePicker?.RefreshSecondPicker();
         }
 
         private void RefreshSecondPicker()
         {
             List<int> secondList = new List<int>();
-            if (this.YearSelected == this.MinDateTime.Year
-                && this.MonthSelected == this.MinDateTime.Month
-                && this.DaySelected == this.MinDateTime.Day
-                && this.HourSelected == this.MinDateTime.Hour
-                && this.MinuteSelected == this.MinDateTime.Minute)
+            if (this.YearSelected == this.MinDate.Year
+                && this.MonthSelected == this.MinDate.Month
+                && this.DaySelected == this.MinDate.Day
+                && this.HourSelected == this.MinDate.Hour
+                && this.MinuteSelected == this.MinDate.Minute)
             {
-                for (int i = this.MinDateTime.Minute; i < 60; i++)
+                for (int i = this.MinDate.Minute; i < 60; i++)
                 {
                     secondList.Add(i);
                 }
             }
-            else if (this.YearSelected == this.MaxDateTime.Year
-                && this.MonthSelected == this.MaxDateTime.Month
-                && this.DaySelected == this.MaxDateTime.Day
-                && this.HourSelected == this.MaxDateTime.Hour
-                && this.MinuteSelected == this.MaxDateTime.Minute)
+            else if (this.YearSelected == this.MaxDate.Year
+                && this.MonthSelected == this.MaxDate.Month
+                && this.DaySelected == this.MaxDate.Day
+                && this.HourSelected == this.MaxDate.Hour
+                && this.MinuteSelected == this.MaxDate.Minute)
             {
-                for (int i = 1; i <= this.MaxDateTime.Minute; i++)
+                for (int i = 1; i <= this.MaxDate.Minute; i++)
                 {
                     secondList.Add(i);
                 }
@@ -580,7 +571,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty SecondListProperty =
-            DependencyProperty.Register("SecondList", typeof(ObservableCollection<int>), typeof(RSDateTimePicker), new PropertyMetadata(null));
+            DependencyProperty.Register("SecondList", typeof(ObservableCollection<int>), typeof(RSDatePicker), new PropertyMetadata(null));
 
 
         [Description("秒选择")]
@@ -591,45 +582,14 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty SecondSelectedProperty =
-            DependencyProperty.Register("SecondSelected", typeof(int?), typeof(RSDateTimePicker), new PropertyMetadata(null, OnSecondSelectedPropertyChanged));
+            DependencyProperty.Register("SecondSelected", typeof(int?), typeof(RSDatePicker), new PropertyMetadata(null, OnSecondSelectedPropertyChanged));
 
         private static void OnSecondSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rsDateTimePicker = d as RSDateTimePicker;
+            var datePicker = d as RSDatePicker;
         }
+   
 
-        [Description("日期选择")]
-        public DateTime? DateTimeSelected
-        {
-            get { return (DateTime?)GetValue(DateTimeSelectedProperty); }
-            set { SetValue(DateTimeSelectedProperty, value); }
-        }
-        public static readonly DependencyProperty DateTimeSelectedProperty =
-            DependencyProperty.Register("DateTimeSelected", typeof(DateTime?), typeof(RSDateTimePicker), new PropertyMetadata(null, OnDateTimeSelectedPropertyChanged, OnDateTimeSelectedCoerceValueCallback));
-
-        private static object OnDateTimeSelectedCoerceValueCallback(DependencyObject d, object baseValue)
-        {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            var dateTime = baseValue as DateTime?;
-            if (dateTime.HasValue)
-            {
-                if (dateTime.Value < rsDateTimePicker.MinDateTime
-                    || dateTime.Value > rsDateTimePicker.MaxDateTime)
-                {
-                    IWindow window = rsDateTimePicker.TryFindParent<RSWindow>();
-                    window?.ShowWarningInfoAsync("数据范围越界");
-                    return null;
-                }
-            }
-            return baseValue;
-        }
-
-        private static void OnDateTimeSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.ChcekYearMonthDayHourMinuteSecondSelect();
-            rsDateTimePicker.UpdateFormattedDateTime();
-        }
 
         private void ChcekYearMonthDayHourMinuteSecondSelect()
         {
@@ -664,70 +624,6 @@ namespace RS.Widgets.Controls
             }
         }
 
-        [Description("日期格式化")]
-        public string DateTimeFormat
-        {
-            get { return (string)GetValue(DateTimeFormatProperty); }
-            set { SetValue(DateTimeFormatProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateTimeFormatProperty =
-            DependencyProperty.Register("DateTimeFormat", typeof(string), typeof(RSDateTimePicker), new PropertyMetadata(null, OnDateTimeFormatPropertyChanged));
-
-        private static void OnDateTimeFormatPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            rsDateTimePicker.UpdateFormattedDateTime();
-        }
-
-
-        [Description("格式化后的文本")]
-        public string FormattedDateTime
-        {
-            get { return (string)GetValue(FormattedDateTimeProperty); }
-            set { SetValue(FormattedDateTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty FormattedDateTimeProperty =
-            DependencyProperty.Register("FormattedDateTime", typeof(string), typeof(RSDateTimePicker),
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFormattedDateTimeChanged));
-
-
-        private static void OnFormattedDateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rsDateTimePicker = d as RSDateTimePicker;
-            if (rsDateTimePicker.IsCanUpdateDateTimeSelected)
-            {
-                rsDateTimePicker.IsCanUpdateFormattedDateTime = false;
-                try
-                {
-                    if (!string.IsNullOrEmpty(rsDateTimePicker.FormattedDateTime))
-                    {
-                        if (DateTime.TryParse(rsDateTimePicker.FormattedDateTime, out DateTime dt))
-                        {
-                            rsDateTimePicker.DateTimeSelected = dt;
-                        }
-                        else
-                        {
-                            throw new Exception("日期格式不正确");
-                        }
-                    }
-                    else
-                    {
-                        rsDateTimePicker.DateTimeSelected = null;
-                    }
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    rsDateTimePicker.IsCanUpdateFormattedDateTime = true;
-                }
-            }
-        }
-
 
         [Description("是否可以搜索")]
         public bool IsCanSearch
@@ -737,67 +633,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty IsCanSearchProperty =
-            DependencyProperty.Register("IsCanSearch", typeof(bool), typeof(RSDateTimePicker), new PropertyMetadata(true));
-
-
-
-        [Description("日期格式")]
-        public DateTimeParts DisplayParts
-        {
-            get { return (DateTimeParts)GetValue(DisplayPartsProperty); }
-            set { SetValue(DisplayPartsProperty, value); }
-        }
-
-        public static readonly DependencyProperty DisplayPartsProperty =
-            DependencyProperty.Register("DisplayParts", typeof(DateTimeParts), typeof(RSDateTimePicker), new PropertyMetadata(DateTimeParts.None));
-
-
-
-        [Description("分隔符配置")]
-
-        public string DateSeparator
-        {
-            get { return (string)GetValue(DateSeparatorProperty); }
-            set { SetValue(DateSeparatorProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateSeparatorProperty =
-            DependencyProperty.Register("DateSeparator", typeof(string), typeof(RSDateTimePicker), new PropertyMetadata("-"));
-
-
-
-        [Description("分隔符配置")]
-        public string TimeSeparator
-        {
-            get { return (string)GetValue(TimeSeparatorProperty); }
-            set { SetValue(TimeSeparatorProperty, value); }
-        }
-
-        public static readonly DependencyProperty TimeSeparatorProperty =
-            DependencyProperty.Register("TimeSeparator", typeof(string), typeof(RSDateTimePicker), new PropertyMetadata(":"));
-
-
-
-        [Description("分隔符配置")]
-        public string DateTimeSeparator
-        {
-            get { return (string)GetValue(DateTimeSeparatorProperty); }
-            set { SetValue(DateTimeSeparatorProperty, value); }
-        }
-
-        public static readonly DependencyProperty DateTimeSeparatorProperty =
-            DependencyProperty.Register("DateTimeSeparator", typeof(string), typeof(RSDateTimePicker), new PropertyMetadata(" "));
-
-
-        [Description("是否只读")]
-        public bool IsReadOnly
-        {
-            get { return (bool)GetValue(IsReadOnlyProperty); }
-            set { SetValue(IsReadOnlyProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsReadOnlyProperty =
-            DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(RSDateTimePicker), new PropertyMetadata(true));
+            DependencyProperty.Register("IsCanSearch", typeof(bool), typeof(RSDatePicker), new PropertyMetadata(false));
 
 
 
@@ -839,10 +675,6 @@ namespace RS.Widgets.Controls
             this.HiddenPopup();
         }
 
-        private void HiddenPopup()
-        {
-            this.PART_Popup.IsOpen = false;
-        }
 
         private void RefreshDefaultDateTimeSelect()
         {
@@ -893,116 +725,6 @@ namespace RS.Widgets.Controls
                          this.HourSelected.Value,
                          this.MinuteSelected.Value,
                          this.SecondSelected.Value);
-        }
-
-        private void UpdateFormattedDateTime()
-        {
-            if (this.IsCanUpdateFormattedDateTime)
-            {
-                this.IsCanUpdateDateTimeSelected = false;
-                if (this.DateTimeSelected.HasValue)
-                {
-                    this.FormattedDateTime = this.FormatDateTime(this.DateTimeSelected.Value);
-                }
-                else
-                {
-                    this.FormattedDateTime = null;
-                }
-                this.IsCanUpdateDateTimeSelected = true;
-            }
-        }
-
-
-        // 根据所选部分格式化日期时间
-        public string FormatDateTime(DateTime dateTime)
-        {
-
-            string format = "";
-
-            // 年
-            if ((DisplayParts & DateTimeParts.Year) != 0)
-            {
-                format += "yyyy";
-            }
-
-            // 月
-            if ((DisplayParts & DateTimeParts.Month) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += DateSeparator;
-                format += "MM";
-            }
-
-            // 日
-            if ((DisplayParts & DateTimeParts.Day) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += DateSeparator;
-                format += "dd";
-            }
-
-            // 如果同时包含日期和时间部分，添加分隔符
-            if ((DisplayParts & DateTimeParts.Date) != 0 &&
-                (DisplayParts & DateTimeParts.Time) != 0)
-            {
-                format += DateTimeSeparator;
-            }
-
-            // 时
-            if ((DisplayParts & DateTimeParts.Hour) != 0)
-            {
-                format += "HH";
-            }
-
-            // 分
-            if ((DisplayParts & DateTimeParts.Minute) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += TimeSeparator;
-                format += "mm";
-            }
-
-            // 秒
-            if ((DisplayParts & DateTimeParts.Second) != 0)
-            {
-                if (!string.IsNullOrEmpty(format)) format += TimeSeparator;
-                format += "ss";
-            }
-
-            // 如果没有选择任何部分，返回默认格式
-            if (string.IsNullOrEmpty(format))
-            {
-                if (!string.IsNullOrEmpty(this.DateTimeFormat))
-                {
-                    return dateTime.ToString(this.DateTimeFormat);
-                }
-                else
-                {
-                    format = "yyyy-MM-dd HH:mm:ss";
-                }
-            }
-
-            return dateTime.ToString(format);
-        }
-
-
-
-        /// <summary>
-        /// 强制触发属性变化通知
-        /// </summary>
-        /// <param name="dependencyProperty">依赖属性</param>
-        /// <param name="oldValue">旧值</param>
-        /// <param name="newValue">新值</param>
-        public  void ForcePropertyChanged(DependencyProperty dependencyProperty, object oldValue, object newValue)
-        {
-            if (oldValue == null || !oldValue.Equals(newValue))
-            {
-                this.SetValue(dependencyProperty, newValue);
-            }
-            else
-            {
-                //只有相同才强制刷新
-                var metadata = dependencyProperty.GetMetadata(this);
-                metadata.PropertyChangedCallback(this,
-                    new DependencyPropertyChangedEventArgs(dependencyProperty, oldValue, newValue));
-            }
         }
     }
 }

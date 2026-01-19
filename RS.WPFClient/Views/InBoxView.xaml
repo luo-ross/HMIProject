@@ -219,10 +219,14 @@
                         BorderBrush="#eee"
                         BorderThickness="1"
                         Content="共144封"
-                        DropdownWidth="200"
-                        IsShowDropDownIcon="True">
+                        DropdownWidth="315"
+                        FlowDirection="RightToLeft"
+                        IsShowDropDownIcon="True"
+                        Placement="Bottom">
                         <rs:RSDropdown.DropdownContent>
-                            <Grid />
+                            <Grid>
+                                <rs:RSCalendar BorderThickness="0" CalendarSelectType="Month" />
+                            </Grid>
                         </rs:RSDropdown.DropdownContent>
                     </rs:RSDropdown>
                     <CheckBox Padding="5">
@@ -244,10 +248,11 @@
             </Grid>
             <!--<DataGrid Grid.Row="1" />-->
 
-            <StackPanel>
-                <rs:RSDateTimePicker VerticalAlignment="Top" />
+            <StackPanel Grid.Row="1">
+                <rs:RSDatePicker VerticalAlignment="Top" />
+                <rs:RSCalendarDatePicker DateTimeSelected="{Binding DateTimeSelected}" />
             </StackPanel>
-            <rs:RSCalendarDatePicker Grid.Row="1" />
+
         </Grid>
     </Border>
 

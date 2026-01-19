@@ -31,7 +31,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                        <Grid>
+                        <Grid FlowDirection="LeftToRight">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="*" />
@@ -72,7 +72,7 @@
                                 AllowsTransparency="True"
                                 Focusable="False"
                                 IsOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Placement="Bottom"
+                                Placement="{TemplateBinding Placement}"
                                 PlacementTarget="{TemplateBinding PlacementTarget}"
                                 PopupAnimation="None"
                                 RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">

@@ -79,5 +79,17 @@ namespace RS.Widgets.Controls
 
 
 
+
+
+        public PlacementMode Placement
+        {
+            get { return (PlacementMode)GetValue(PlacementProperty); }
+            set { SetValue(PlacementProperty, value); }
+        }
+
+        public static readonly DependencyProperty PlacementProperty =
+            DependencyProperty.Register(nameof(Placement), typeof(PlacementMode), typeof(RSDropdown), new PropertyMetadata(PlacementMode.Bottom));
+
+
     }
 }
