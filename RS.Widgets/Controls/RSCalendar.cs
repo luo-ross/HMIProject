@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -22,7 +23,7 @@ namespace RS.Widgets.Controls
         private Button? PART_BtnTitle;
         private Button? PART_PageUp;
         private Button? PART_PageDown;
-
+        private Popup? Popup;
 
         private const int DayCols = 7;
         private const int DayRows = 6;
@@ -134,6 +135,7 @@ namespace RS.Widgets.Controls
         {
             //加载完成后更新视图
             this.UpdateCalendarView();
+            this.Popup = this.TryFindParent<Popup>();
         }
 
 
@@ -232,7 +234,7 @@ namespace RS.Widgets.Controls
         private static void OnCalendarSelectTypePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var calendar = d as RSCalendar;
-            if (calendar==null)
+            if (calendar == null)
             {
                 return;
             }
@@ -1130,6 +1132,11 @@ namespace RS.Widgets.Controls
 
         private void RaiseDateTimeSelectEvent(CalendarBaseModel calendarItemModel)
         {
+            if (this.Popup != null)
+            {
+                this.Popup.SetCurrentValue(Popup.IsOpenProperty, false);
+            }
+
             DateTimeSelected = calendarItemModel.Date;
             //触发路由事件
             CalendarDateSelectedEventArgs eventArgs = new CalendarDateSelectedEventArgs(
