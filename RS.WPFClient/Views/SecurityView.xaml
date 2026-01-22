@@ -32,7 +32,7 @@
 
                 <TextBox
                     Margin="0,60,0,5"
-                    Padding="3,5,3,5"
+                    Padding="5,3,5,3"
                     rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Email}"
                     rs:TextBoxHelper.IsShowClearButton="True"
                     rs:TextBoxHelper.Watermark="请输入邮箱"

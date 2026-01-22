@@ -257,7 +257,7 @@
                         <Setter Property="Cursor" Value="IBeam" />
                     </MultiDataTrigger>
                     <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                        <Setter Property="Background" Value="#DBE3ED" />
+                        <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="True">
                         <Setter Property="Background" Value="#FFFFFF" />
@@ -282,7 +282,7 @@
                 Margin="10,6,0,6"
                 HorizontalAlignment="Left"
                 Data="{StaticResource RSApp.Icons.Search}"
-                Fill="#707070"
+                Fill="{StaticResource RSApp.Styles.BaseWhite100}"
                 Stretch="Fill">
                 <Path.Style>
                     <Style TargetType="{x:Type Path}">
@@ -314,6 +314,7 @@
                 VerticalAlignment="Center"
                 rs:TextBoxHelper.IsShowClearButton="True"
                 rs:TextBoxHelper.Watermark="搜索"
+                rs:TextBoxHelper.WatermarkForground="{StaticResource RSApp.Styles.BaseWhite040}"
                 Background="Transparent"
                 BorderThickness="0"
                 HasContent="{Binding IsSearchHasContent}"

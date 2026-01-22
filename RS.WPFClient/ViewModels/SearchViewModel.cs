@@ -576,10 +576,5 @@ namespace RS.WPFClient.ViewModels
         }
         #endregion
 
-        private List<T> GetDataList<T>()
-        {
-            return Enum.GetValues(typeof(T))
-               .Cast<T>().Order().ToList();
-        }
     }
 }

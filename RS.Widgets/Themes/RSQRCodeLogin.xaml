@@ -6,13 +6,14 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.BootStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Thickness.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSQRCodeLogin}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMarginStyle}" />
+        <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMargin}" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconData" Value="M951.182222 629.76a454.030222 454.030222 0 0 0-556.942222-556.942222l-45.511111-45.511111a511.260444 511.260444 0 0 1 647.964444 647.964444zM72.817778 394.24a453.859556 453.859556 0 0 0 556.373333 556.942222l46.08 45.511111A511.260444 511.260444 0 0 1 27.306667 348.728889z" />
         <Setter Property="Template">
@@ -39,7 +40,7 @@
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <rs:RSLoading x:Name="PART_Loading" />
                                             <TextBlock
-                                                Margin="{DynamicResource RSApp.Styles.DefautMarginStyle}"
+                                                Margin="{DynamicResource RSApp.Styles.DefautMargin}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 FontSize="12"
@@ -110,7 +111,7 @@
                                 </Grid>
                             </Border>
                             <TextBlock
-                                Margin="{DynamicResource RSApp.Styles.DefautMarginStyle}"
+                                Margin="{DynamicResource RSApp.Styles.DefautMargin}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="12"

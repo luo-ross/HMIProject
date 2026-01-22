@@ -10,6 +10,8 @@ using RS.Widgets.Enums;
 using RS.Widgets.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
+using RS.WPFClient.Models;
+using System.Collections.ObjectModel;
 
 namespace RS.WPFClient.ViewModels
 {
@@ -49,7 +51,11 @@ namespace RS.WPFClient.ViewModels
             MoveToSentCommand = new RelayCommand(MoveToSent);
             MoveToSubscriptionCommand = new RelayCommand(MoveToSubscription);
             CreateFolderCommand = new RelayCommand(CreateFolder);
+
+            InitSearchTypeList();
         }
+
+       
 
         private void Delete()
         {
@@ -113,6 +119,7 @@ namespace RS.WPFClient.ViewModels
 
         private void MoveToSent()
         {
+            Console.WriteLine("MoveToSent");
             /* 移动到已发送逻辑待实现 */
         }
 
@@ -125,6 +132,8 @@ namespace RS.WPFClient.ViewModels
         {
             /* 新建文件夹逻辑待实现 */
         }
+
+
 
 
 
@@ -146,7 +155,47 @@ namespace RS.WPFClient.ViewModels
         }
 
 
+        private MailFilterType mailFilterTypeSelect;
+        /// <summary>
+        /// 邮件筛选类型
+        /// </summary>
+        public MailFilterType MailFilterTypeSelect
+        {
+            get { return mailFilterTypeSelect; }
+            set
+            {
+                this.SetProperty(ref mailFilterTypeSelect, value);
+            }
+        }
 
+
+
+        private ObservableCollection<MailFilterType>? mailFilterTypeList;
+        /// <summary>
+        /// 邮件筛选类型
+        /// </summary>
+        public ObservableCollection<MailFilterType> MailFilterTypeList
+        {
+            get
+            {
+                return mailFilterTypeList;
+            }
+            set
+            {
+                SetProperty(ref mailFilterTypeList, value);
+            }
+        }
+
+
+        /// <summary>
+        /// 初始化搜索类型
+        /// </summary>
+        private void InitSearchTypeList()
+        {
+            var dataList = GetDataList<MailFilterType>();
+            this.MailFilterTypeList = new ObservableCollection<MailFilterType>(dataList);
+            this.MailFilterTypeSelect = this.MailFilterTypeList.FirstOrDefault(t => t == MailFilterType.AllRead);
+        }
 
     }
 }

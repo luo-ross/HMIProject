@@ -8,17 +8,17 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToggleButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBox.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.BootStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Path.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.TextBlock.xaml" />
-
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Thickness.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <Style TargetType="{x:Type rs:RSPhoneTextBox}">
         <Setter Property="Background" Value="#FFF" />
         <Setter Property="BorderBrush" Value="#eeeeee" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMarginStyle}" />
+        <Setter Property="Margin" Value="{DynamicResource RSApp.Styles.DefautMargin}" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:TextBoxHelper.Watermark" Value="请输入手机号" />
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />

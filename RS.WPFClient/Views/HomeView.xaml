@@ -39,21 +39,20 @@
             <rs:EnumConverter x:Key="EnumConverter" />
             <SolidColorBrush x:Key="RSApp.SolidColorBrush.EBEBEB">#EBEBEB</SolidColorBrush>
 
-
-
-
-
-
         </ResourceDictionary>
     </rs:RSWindow.Resources>
-
-
-
-    <Grid Background="#E6EDF5">
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0.927,0.375" EndPoint="-0.375,0.927">
+            <GradientStop Offset="0" Color="#B8C2E0" />
+            <GradientStop Offset="0.7212" Color="#305BD2" />
+        </LinearGradientBrush>
+    </Window.Background>
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
             <RowDefinition />
         </Grid.RowDefinitions>
+
         <Border
             Grid.Row="0"
             Padding="0,0,15,0"
@@ -75,11 +74,11 @@
                     <TextBlock
                         FontSize="18"
                         FontWeight="Black"
-                        Foreground="#0A72EB"
+                        Foreground="{StaticResource RSApp.Styles.BaseWhite100}"
                         Text="MultiVerseKit" />
                 </StackPanel>
 
-                <Grid Grid.Column="1">
+                <Grid Grid.Column="1" Margin="15,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />
@@ -109,21 +108,18 @@
                     </Grid>
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <rs:RSDropdown
-                            Height="40"
-                            Padding="5,0,5,0"
-                            VerticalAlignment="Stretch">
+                        <rs:RSDropdown Padding="5,3,5,3" VerticalAlignment="Center">
                             <rs:RSDropdown.Style>
                                 <Style TargetType="{x:Type rs:RSDropdown}">
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#DBE3ED" />
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
                                         </Trigger>
                                         <Trigger Property="IsChecked" Value="True">
-                                            <Setter Property="Background" Value="#D1DAE4" />
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
-                                            <Setter Property="Background" Value="#D1DAE4" />
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -141,7 +137,7 @@
 
                                     <TextBlock
                                         Margin="3,0,0,0"
-                                        Foreground="#707070"
+                                        Foreground="{StaticResource RSApp.Styles.BaseWhite080}"
                                         Text="">
                                         <Run FontSize="14" Text="行云游者" />
                                         <Run FontSize="12" Text="•" />
@@ -153,6 +149,7 @@
                                         rs:ControlsHelper.CornerRadius="3"
                                         Background="#e1e2e3"
                                         Content="普通用户"
+                                        Foreground="{StaticResource RSApp.Styles.BaseWhite080}"
                                         Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
                                 </StackPanel>
                             </rs:RSDropdown.Content>
@@ -289,31 +286,28 @@
 
 
                         <Button
-                            Height="40"
-                            Padding="12,0,12,0"
-                            VerticalAlignment="Stretch"
+                            Padding="8,6,8,6"
+                            VerticalAlignment="Center"
                             rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
                             rs:ControlsHelper.IconHeight="20"
                             rs:ControlsHelper.IconWidth="20"
                             Content="设置"
                             FontSize="14"
-                            Foreground="#707070">
+                            Foreground="#CCFFFFFF">
                             <Button.Style>
                                 <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type Button}">
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#DBE3ED" />
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
-                                            <Setter Property="Background" Value="#D1DAE4" />
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
                         </Button>
                     </StackPanel>
-
-
                 </Grid>
             </Grid>
         </Border>

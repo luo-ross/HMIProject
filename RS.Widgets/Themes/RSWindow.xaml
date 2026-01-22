@@ -12,7 +12,6 @@
     <converters:ClipConverter x:Key="ClipConverter" />
     <converters:ForegroundColorConverter x:Key="ForegroundColorConverter" />
     <Style x:Key="RSApp.Styles.RSWindowBaseStyle" TargetType="{x:Type rs:RSWindowBase}">
-
         <Setter Property="ResizeMode" Value="CanResize" />
         <Setter Property="Background" Value="#F3F3F3" />
         <Setter Property="BorderThickness" Value="0" />
@@ -103,6 +102,7 @@
                                             <Button
                                                 x:Name="PART_Minimize"
                                                 Margin="8,3,8,3"
+                                                VerticalAlignment="Stretch"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Minus}"
                                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
@@ -112,12 +112,14 @@
                                             <Button
                                                 x:Name="PART_BtnMaxRestore"
                                                 Margin="8,3,8,3"
+                                                VerticalAlignment="Stretch"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"
                                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                                 WindowChrome.IsHitTestVisibleInChrome="True" />
                                             <Button
                                                 x:Name="PART_BtnClose"
                                                 Margin="8,3,5,3"
+                                                VerticalAlignment="Stretch"
                                                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
                                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                                 Foreground="{Binding ElementName=PART_Caption, Path=Background, Converter={StaticResource ForegroundColorConverter}}"

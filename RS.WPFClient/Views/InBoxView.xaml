@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behavior="clr-namespace:RS.WPFClient.Behaviors"
+    xmlns:controls="clr-namespace:RS.WPFClient.Controls"
     xmlns:converter="clr-namespace:RS.WPFClient.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enums="clr-namespace:RS.WPFClient.Enums"
@@ -16,7 +17,9 @@
     d:DataContext="{d:DesignInstance Type=viewModel:InBoxViewModel}"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <UserControl.Resources />
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
     <Border
         x:Name="PART_Border"
         Grid.Column="0"
@@ -36,13 +39,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <CheckBox />
                     <TextBlock FontSize="14" Text="收件箱" />
-                    <CheckBox
-                        Padding="5"
-                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Filter}"
-                        rs:ControlsHelper.IconHeight="12"
-                        rs:ControlsHelper.IconWidth="12"
-                        Style="{StaticResource RSApp.Styles.IconButtonStyle}"
-                        ToolTip="邮件筛选" />
+                    <controls:RSMailFilter />
                 </StackPanel>
 
                 <StackPanel
@@ -212,6 +209,35 @@
                             </StackPanel>
                         </rs:RSDropdown.DropdownContent>
                     </rs:RSDropdown>
+
+                    <rs:RSDropdown
+                        rs:ControlsHelper.IconData="M512 64C265 64 64 265 64 512s201 448 448 448 448-201 448-448S759 64 512 64z m0 826.6c-208.8 0-378.6-169.8-378.6-378.6S303.2 133.4 512 133.4 890.6 303.2 890.6 512 720.8 890.6 512 890.6zM305.7 436.1c-41.9 0-75.9 34.1-75.9 75.9 0 20.3 7.9 39.4 22.2 53.7 14.3 14.3 33.4 22.3 53.7 22.3 41.8 0 75.9-34 75.9-75.9 0-42-34.1-76-75.9-76z m206.3 0c-41.9 0-75.9 34.1-75.9 75.9 0 41.9 34.1 75.9 75.9 75.9 41.9 0 75.9-34.1 75.9-75.9 0-41.9-34-75.9-75.9-75.9z m206.3 0c-41.9 0-75.9 34.1-75.9 75.9 0 41.9 34.1 75.9 75.9 75.9s75.9-34.1 75.9-75.9c0-41.9-34-75.9-75.9-75.9z"
+                        BorderBrush="#eee"
+                        BorderThickness="1"
+                        Content="更多"
+                        DropdownWidth="200"
+                        IsShowDropDownIcon="True">
+                        <rs:RSDropdown.DropdownContent>
+                            <StackPanel Margin="0,2,0,10">
+                                <MenuItem
+                                    rs:ControlsHelper.IconData="M767.886222 967.054222c-141.425778 0-256.056889-117.987556-256.056889-263.509333s114.631111-263.509333 256.056889-263.509333c141.312 0 256 117.987556 256 263.509333s-114.688 263.509333-256 263.509333z m151.665778-326.371555a25.429333 25.429333 0 0 0-41.927111-8.476445l-135.623111 139.548445-83.968-86.528a25.144889 25.144889 0 0 0-35.953778 0.170666 26.965333 26.965333 0 0 0-0.341333 36.977778l102.172444 105.244445a25.031111 25.031111 0 0 0 36.295111 0l153.713778-158.208a26.737778 26.737778 0 0 0 5.632-28.728889z m-180.167111-298.496c-183.125333 0-331.377778 144.384-339.797333 325.176889l-85.504-28.842667 392.704-449.479111-476.558223 438.954666-230.4-137.500444L837.688889 56.832 750.364444 343.267556c-3.697778-0.113778-7.224889-1.080889-10.979555-1.080889z m-332.344889 416.312889l-92.956444 112.753777v-179.825777l89.315555 45.169777c1.137778 7.338667 1.991111 14.734222 3.640889 21.902223z"
+                                    rs:ControlsHelper.IconHeight="15"
+                                    rs:ControlsHelper.IconWidth="15"
+                                    Command="{Binding MoveToSentCommand}"
+                                    Header="已发送">
+                                    <!--<MenuItem.Icon>
+                                        <Path
+                                            Width="15"
+                                            Height="15"
+                                            Data="M767.886222 967.054222c-141.425778 0-256.056889-117.987556-256.056889-263.509333s114.631111-263.509333 256.056889-263.509333c141.312 0 256 117.987556 256 263.509333s-114.688 263.509333-256 263.509333z m151.665778-326.371555a25.429333 25.429333 0 0 0-41.927111-8.476445l-135.623111 139.548445-83.968-86.528a25.144889 25.144889 0 0 0-35.953778 0.170666 26.965333 26.965333 0 0 0-0.341333 36.977778l102.172444 105.244445a25.031111 25.031111 0 0 0 36.295111 0l153.713778-158.208a26.737778 26.737778 0 0 0 5.632-28.728889z m-180.167111-298.496c-183.125333 0-331.377778 144.384-339.797333 325.176889l-85.504-28.842667 392.704-449.479111-476.558223 438.954666-230.4-137.500444L837.688889 56.832 750.364444 343.267556c-3.697778-0.113778-7.224889-1.080889-10.979555-1.080889z m-332.344889 416.312889l-92.956444 112.753777v-179.825777l89.315555 45.169777c1.137778 7.338667 1.991111 14.734222 3.640889 21.902223z"
+                                            Fill="Red"
+                                            Stretch="Fill" />
+                                    </MenuItem.Icon>-->
+                                </MenuItem>
+                            </StackPanel>
+                        </rs:RSDropdown.DropdownContent>
+                    </rs:RSDropdown>
+
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -224,20 +250,20 @@
                         IsShowDropDownIcon="True"
                         Placement="Bottom">
                         <rs:RSDropdown.DropdownContent>
-                            <Grid>
-                                <rs:RSCalendar BorderThickness="0" CalendarSelectType="Month" />
-                            </Grid>
+                            <rs:RSCalendar BorderThickness="0" CalendarSelectType="Month" />
                         </rs:RSDropdown.DropdownContent>
                     </rs:RSDropdown>
-                    <CheckBox Padding="5">
+                    <CheckBox Padding="6">
                         <CheckBox.Style>
                             <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type CheckBox}">
                                 <Style.Triggers>
                                     <Trigger Property="IsChecked" Value="False">
                                         <Setter Property="rs:ControlsHelper.IconData" Value="M4 6.625C4 6.28 4.28 6 4.625 6h1.75a.625.625 0 1 1 0 1.25h-1.75A.625.625 0 0 1 4 6.625M4.625 8.875a.625.625 0 1 0 0 1.25h1.75a.625.625 0 1 0 0-1.25zM4 12.375c0-.345.28-.625.625-.625h1.75a.625.625 0 1 1 0 1.25h-1.75A.625.625 0 0 1 4 12.375 M3 3a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm.25 1.25v10.5h4.625V4.25zm5.875 0v10.5h7.625V4.25z" />
+                                        <Setter Property="ToolTip" Value="切换到预览模式" />
                                     </Trigger>
                                     <Trigger Property="IsChecked" Value="True">
                                         <Setter Property="rs:ControlsHelper.IconData" Value="M5.625 6a.625.625 0 1 0 0 1.25h8.75a.625.625 0 1 0 0-1.25zM5 9.5c0-.345.28-.625.625-.625h8.75a.625.625 0 1 1 0 1.25h-8.75A.625.625 0 0 1 5 9.5M5.625 11.75a.625.625 0 1 0 0 1.25h8.75a.625.625 0 1 0 0-1.25z M2 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm1.25 10.75V4.25h13.5v10.5z" />
+                                        <Setter Property="ToolTip" Value="切换到列表模式" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -246,13 +272,19 @@
                 </StackPanel>
 
             </Grid>
-            <!--<DataGrid Grid.Row="1" />-->
-
-            <StackPanel Grid.Row="1">
-                <rs:RSDatePicker VerticalAlignment="Top" />
-                <rs:RSCalendarDatePicker DateTimeSelected="{Binding DateTimeSelected}" />
-            </StackPanel>
-
+            <DataGrid Grid.Row="1">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border>
+                                    <Grid />
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
     </Border>
 

@@ -1,0 +1,339 @@
+﻿<ToggleButton
+    x:Class="RS.WPFClient.Controls.RSMailFilter"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RS.WPFClient.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="https://github.com/luo-ross/MultiVerseKit"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <ToggleButton.Resources>
+        <ResourceDictionary>
+            <Style x:Key="RSApp.Styles.DropdownItemStyle" TargetType="{x:Type RadioButton}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="5,3,5,3" />
+                <Setter Property="Margin" Value="5,1,5,1" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="MinHeight" Value="32" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray100}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type RadioButton}">
+                            <Border
+                                x:Name="PART_Border"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                FocusVisualStyle="{x:Null}"
+                                Focusable="True">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Content="{TemplateBinding Content}" />
+                                    <Path
+                                        x:Name="PART_CheckIcon"
+                                        Grid.Column="2"
+                                        Width="15"
+                                        Height="10"
+                                        Margin="5,0,5,0"
+                                        Data="{StaticResource RSApp.Icons.CheckMark}"
+                                        Fill="{TemplateBinding Foreground}"
+                                        Stretch="Fill"
+                                        Visibility="Collapsed" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="PART_CheckIcon" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="{x:Type local:RSMailFilter}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                <Setter Property="Margin" Value="3" />
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="#333" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Padding" Value="5,3,5,3" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Foreground" Value="#305BD2" />
+                <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten5}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type local:RSMailFilter}">
+                            <Border
+                                x:Name="PART_Border"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                                <Grid FlowDirection="LeftToRight">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Path
+                                        x:Name="PART_Icon"
+                                        Width="12"
+                                        Height="12"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="{StaticResource RSApp.Icons.Filter}"
+                                        Fill="{TemplateBinding Foreground}"
+                                        Stretch="Fill" />
+
+                                    <ContentControl
+                                        x:Name="PART_Content"
+                                        Grid.Column="1"
+                                        Margin="5,0,0,0"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Content="{TemplateBinding Content}"
+                                        FontSize="{TemplateBinding FontSize}" />
+                                    <Button
+                                        x:Name="PART_BtnClear"
+                                        Grid.Column="2"
+                                        Margin="3,0,0,0"
+                                        HorizontalAlignment="Right"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
+                                        rs:ControlsHelper.IconHeight="10"
+                                        rs:ControlsHelper.IconWidth="10"
+                                        Click="PART_BtnClear_Click"
+                                        Focusable="False"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ToolTip="清除筛选">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type Button}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Cursor" Value="Hand" />
+                                                        <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten4L}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten4}" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <rs:RSPopup
+                                        x:Name="PART_Popup"
+                                        AllowsTransparency="True"
+                                        Focusable="False"
+                                        IsOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Placement="Bottom"
+                                        PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                        PopupAnimation="None"
+                                        RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                                        <Border
+                                            Width="200"
+                                            Margin="15,0,15,15"
+                                            Background="#fff"
+                                            BorderBrush="#EEEEEE"
+                                            BorderThickness="1"
+                                            CornerRadius="5"
+                                            Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                            <StackPanel Margin="0,5,0,5">
+                                                <TextBlock
+                                                    Margin="5,0,5,0"
+                                                    Foreground="{StaticResource RSApp.Styles.BaseGray060}"
+                                                    Text="筛选" />
+
+                                                <RadioButton
+                                                    x:Name="BtnAllRead"
+                                                    Content="全部"
+                                                    IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsAllRead, Mode=TwoWay}"
+                                                    Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                <RadioButton
+                                                    x:Name="BtnUnread"
+                                                    Content="未读"
+                                                    IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsUnread, Mode=TwoWay}"
+                                                    Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                <RadioButton
+                                                    x:Name="BtnWithAttachment"
+                                                    Content="包含附件"
+                                                    IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsWithAttachment, Mode=TwoWay}"
+                                                    Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                <RadioButton
+                                                    x:Name="BtnFromContact"
+                                                    Content="来自联系人"
+                                                    IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsFromContact, Mode=TwoWay}"
+                                                    Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+
+                                                <Separator
+                                                    Height="1"
+                                                    Margin="0,2,0,2"
+                                                    Background="#eee" />
+
+                                                <TextBlock
+                                                    Margin="5,0,5,0"
+                                                    Foreground="{StaticResource RSApp.Styles.BaseGray060}"
+                                                    Text="排序方式" />
+
+                                                <rs:RSDropdown
+                                                    x:Name="PART_MailDatePopup"
+                                                    Margin="5,0,5,0"
+                                                    Padding="6"
+                                                    ArrowAngle="0"
+                                                    BorderThickness="0"
+                                                    DropdownWidth="200"
+                                                    IsShowDropDownIcon="True"
+                                                    Placement="Right">
+                                                    <rs:RSDropdown.Content>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontSize="{TemplateBinding FontSize}"
+                                                                Foreground="{StaticResource RSApp.Styles.BaseGray100}"
+                                                                Text="按日期" />
+
+                                                            <TextBlock
+                                                                Grid.Column="2"
+                                                                VerticalAlignment="Center"
+                                                                Foreground="{StaticResource RSApp.Styles.BaseGray040}"
+                                                                Text="{TemplateBinding DateSortDes}" />
+                                                        </Grid>
+                                                    </rs:RSDropdown.Content>
+                                                    <rs:RSDropdown.DropdownContent>
+                                                        <StackPanel Margin="0,5,0,5">
+                                                            <RadioButton
+                                                                x:Name="FromNewToOld"
+                                                                Content="由新到旧"
+                                                                GroupName="SortGroup"
+                                                                IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsNewestToOldest, Mode=TwoWay}"
+                                                                Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                            <RadioButton
+                                                                x:Name="FromOldToNew"
+                                                                Content="由旧到新"
+                                                                GroupName="SortGroup"
+                                                                IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsOldestToNewest, Mode=TwoWay}"
+                                                                Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                        </StackPanel>
+                                                    </rs:RSDropdown.DropdownContent>
+                                                </rs:RSDropdown>
+
+
+                                                <rs:RSDropdown
+                                                    x:Name="PART_MailSizePopup"
+                                                    Margin="5,0,5,0"
+                                                    Padding="6"
+                                                    ArrowAngle="0"
+                                                    BorderThickness="0"
+                                                    DropdownWidth="200"
+                                                    IsShowDropDownIcon="True"
+                                                    Placement="Right">
+                                                    <rs:RSDropdown.Content>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontSize="{TemplateBinding FontSize}"
+                                                                Foreground="{StaticResource RSApp.Styles.BaseGray100}"
+                                                                Text="按大小" />
+                                                            <TextBlock
+                                                                Grid.Column="2"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="{TemplateBinding FontSize}"
+                                                                Foreground="{StaticResource RSApp.Styles.BaseGray040}"
+                                                                Text="{TemplateBinding SizeSortDes}" />
+                                                        </Grid>
+                                                    </rs:RSDropdown.Content>
+                                                    <rs:RSDropdown.DropdownContent>
+                                                        <StackPanel Margin="0,5,0,5">
+                                                            <RadioButton
+                                                                x:Name="BtnFromLargeToSmall"
+                                                                Content="由大到小"
+                                                                GroupName="SortGroup"
+                                                                IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsLargeToSmall, Mode=TwoWay}"
+                                                                Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                            <RadioButton
+                                                                x:Name="BtnFromSmallToLarge"
+                                                                Content="由小到大"
+                                                                GroupName="SortGroup"
+                                                                IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsSmallToLarge, Mode=TwoWay}"
+                                                                Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
+                                                        </StackPanel>
+                                                    </rs:RSDropdown.DropdownContent>
+                                                </rs:RSDropdown>
+                                            </StackPanel>
+                                        </Border>
+                                    </rs:RSPopup>
+                                </Grid>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger SourceName="PART_Icon" Property="Data" Value="{x:Null}">
+                                    <Setter TargetName="PART_Content" Property="Margin" Value="0,0,0,0" />
+                                    <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten4L}" />
+                                </Trigger>
+
+                                <Trigger Property="Content" Value="{x:Null}">
+                                    <Setter Property="Padding" Value="6" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray100}" />
+                                    <Setter TargetName="PART_Content" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PART_BtnClear" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+
+
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True" />
+                                        <Condition Property="Content" Value="{x:Null}" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
+                                </MultiTrigger>
+
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ToggleButton.Resources>
+
+</ToggleButton>

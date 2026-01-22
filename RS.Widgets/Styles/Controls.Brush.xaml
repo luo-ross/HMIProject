@@ -1,0 +1,549 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="RSApp.Styles.WatermarkColorStyle">#757575</SolidColorBrush>
+    <!--  这是bootcss基本样式  -->
+    <SolidColorBrush x:Key="RSApp.Styles.Blue">#206bc4</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Azure">#4299e1</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Indigo">#4263eb</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Purple">#ae3ec9</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Pink">#d6336c</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Red">#d63939</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Orange">#f76707</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Yellow">#f59f00</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Lime">#74b816</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Green">#06b025</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Teal">#0ca678</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Cyan">#17a2b8</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Primary">#206bc4</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Secondary">#656d77</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Success">#06b025</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Info">#4299e1</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Warning">#f76707</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Danger">#d63939</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Light">#f4f6fa</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Dark">#232e3c</SolidColorBrush>
+
+
+    <!--  这是按钮文字颜色  -->
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Foreground">#f4f6fa</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.LightForeground">
+        #232e3c
+    </SolidColorBrush>
+
+    <!--  这是按钮默认颜色  -->
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Primary">
+        #206bc4
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Secondary">
+        #656d77
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Success">
+        #2fb344
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Info">
+        #4299e1
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Warning">
+        #f76707
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Danger">
+        #d63939
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Light">
+        #f4f6fa
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Dark">
+        #232e3c
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Blue">
+        #206bc4
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Azure">
+        #4299e1
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Indigo">
+        #4263eb
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Purple">
+        #ae3ec9
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Pink">
+        #d6336c
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Red">
+        #d63939
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Orange">
+        #f76707
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Yellow">
+        #f59f00
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Lime">
+        #74b816
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Green">
+        #2fb344
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Teal">
+        #0ca678
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Cyan">
+        #17a2b8
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Facebook">
+        #3b5998
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Twitter">
+        #1da1f2
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Linkedin">
+        #0a66c2
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Google">
+        #dc4e41
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Youtube">
+        #ff0000
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Vimeo">
+        #1ab7ea
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Dribbble">
+        #ea4c89
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Github">
+        #181717
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Instagram">
+        #e4405f
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Pinterest">
+        #bd081c
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Vk">
+        #6383a8
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Rss">
+        #ffa500
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Flickr">
+        #0063dc
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Bitbucket">
+        #0052cc
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Tabler">
+        #206bc4
+    </SolidColorBrush>
+
+
+
+    <!--  这是按钮MouseOver|Hover颜色  -->
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Primary.Darker">
+        #1d60b0
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Secondary.Darker">
+        #5b626b
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Success.Darker">
+        #2aa13d
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Info.Darker">
+        #3b8acb
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Warning.Darker">
+        #de5d06
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Danger.Darker">
+        #c13333
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Light.Darker">
+        #dcdde1
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Dark.Darker">
+        #202936
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Blue.Darker">
+        #1d60b0
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Azure.Darker">
+        #3b8acb
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Indigo.Darker">
+        #3b59d4
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Purple.Darker">
+        #9d38b5
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Pink.Darker">
+        #c12e61
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Red.Darker">
+        #c13333
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Orange.Darker">
+        #de5d06
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Yellow.Darker">
+        #dd8f00
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Lime.Darker">
+        #68a614
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Green.Darker">
+        #2aa13d
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Teal.Darker">
+        #0b956c
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Cyan.Darker">
+        #1592a6
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Facebook.Darker">
+        #355089
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Twitter.Darker">
+        #1a91da
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Linkedin.Darker">
+        #095caf
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Google.Darker">
+        #c6463b
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Youtube.Darker">
+        #e60000
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Vimeo.Darker">
+        #17a5d3
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Dribbble.Darker">
+        #d3447b
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Github.Darker">
+        #161515
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Instagram.Darker">
+        #cd3a56
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Pinterest.Darker">
+        #aa0719
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Vk.Darker">
+        #597697
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Rss.Darker">
+        #e69500
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Flickr.Darker">
+        #0059c6
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Outline.Bitbucket.Darker">
+        #004ab8
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.Button.Tabler.Darker">
+        #1d60b0
+    </SolidColorBrush>
+
+    <!--  主色调  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemePrimary">#305BD2</SolidColorBrush>
+
+    <!--  加深系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeDarken1">#2C54C0</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeDarken2">#284DAF</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeDarken3">#26479D</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeDarken4">#23408B</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeDarken5">#20397A</SolidColorBrush>
+
+    <!--  减淡/提亮系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten1">#4E73D9</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten2">#6E8CDF</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten3">#8EA6E6</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten3L">#A1B4EB</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten4">#B4C4EF</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten4L">#C9D4F3</SolidColorBrush>
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeLighten5">#DFE6F8</SolidColorBrush>
+
+    <!--  透明/半透明系列（注意：SolidColorBrush 支持 Alpha 通道，直接用 ARGB 格式）  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha005">#0D305BD2</SolidColorBrush>
+    <!--  0.05 透明度 = 128*0.05≈6 → 十六进制 0D  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha010">#1A305BD2</SolidColorBrush>
+    <!--  0.1 透明度 = 128*0.1≈13 → 十六进制 1A  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha015">#26305BD2</SolidColorBrush>
+    <!--  0.15 透明度 = 128*0.15≈19 → 十六进制 26  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha020">#33305BD2</SolidColorBrush>
+    <!--  0.2 透明度 = 128*0.2≈26 → 十六进制 33  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha025">#40305BD2</SolidColorBrush>
+    <!--  0.25 透明度 = 128*0.25=32 → 十六进制 40  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha030">#4D305BD2</SolidColorBrush>
+    <!--  0.3 透明度 = 128*0.3≈38 → 十六进制 4D  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha040">#66305BD2</SolidColorBrush>
+    <!--  0.4 透明度 = 128*0.4=51 → 十六进制 66  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha050">#80305BD2</SolidColorBrush>
+    <!--  0.5 透明度 = 128*0.5=64 → 十六进制 80  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha060">#99305BD2</SolidColorBrush>
+    <!--  0.6 透明度 = 128*0.6≈77 → 十六进制 99  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha070">#B3305BD2</SolidColorBrush>
+    <!--  0.7 透明度 = 128*0.7≈90 → 十六进制 B3  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha080">#CC305BD2</SolidColorBrush>
+    <!--  0.8 透明度 = 128*0.8=102 → 十六进制 CC  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ThemeAlpha090">#E6305BD2</SolidColorBrush>
+    <!--  0.9 透明度 = 128*0.9≈115 → 十六进制 E6  -->
+
+
+    <!--  基础黑白灰系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseBlack" Color="#000000" />
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray003" Color="#08132E40" />
+    <!--  rgba(19,46,64,0.03) → A=8, R=19, G=46, B=64  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray005" Color="#0D142E4D" />
+    <!--  rgba(20,46,77,0.05) → A=13, R=20, G=46, B=77  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray007" Color="#12152E4A" />
+    <!--  rgba(21,46,74,0.07) → A=18, R=21, G=46, B=74  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray010" Color="#1A162E4A" />
+    <!--  rgba(22,46,74,0.1) → A=26, R=22, G=46, B=74  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray015" Color="#26172E47" />
+    <!--  rgba(23,46,71,0.15) → A=38, R=23, G=46, B=71  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray020" Color="#33172D45" />
+    <!--  rgba(23,45,69,0.2) → A=51, R=23, G=45, B=69  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray025" Color="#40182C42" />
+    <!--  rgba(24,44,66,0.25) → A=64, R=24, G=44, B=66  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray030" Color="#4D182B40" />
+    <!--  rgba(24,43,64,0.3) → A=77, R=24, G=43, B=64  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray040" Color="#6619293B" />
+    <!--  rgba(25,41,59,0.4) → A=102, R=25, G=41, B=59  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray050" Color="#80192636" />
+    <!--  rgba(25,38,54,0.5) → A=128, R=25, G=38, B=54  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray060" Color="#99182430" />
+    <!--  rgba(24,36,48,0.6) → A=153, R=24, G=36, B=48  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray070" Color="#B317212B" />
+    <!--  rgba(23,33,43,0.7) → A=179, R=23, G=33, B=43  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray080" Color="#CC161E26" />
+    <!--  rgba(22,30,38,0.8) → A=204, R=22, G=30, B=38  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray090" Color="#E6151A21" />
+    <!--  rgba(21,26,33,0.9) → A=230, R=21, G=26, B=33  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseGray100" Color="#13181D" />
+
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite003" Color="#08FFFFFF" />
+    <!--  rgba(255,255,255,0.03) → A=8  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite005" Color="#0DFFFFFF" />
+    <!--  rgba(255,255,255,0.05) → A=13  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite007" Color="#12FFFFFF" />
+    <!--  rgba(255,255,255,0.07) → A=18  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite010" Color="#1AFFFFFF" />
+    <!--  rgba(255,255,255,0.1) → A=26  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite015" Color="#26FFFFFF" />
+    <!--  rgba(255,255,255,0.15) → A=38  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite020" Color="#33FFFFFF" />
+    <!--  rgba(255,255,255,0.2) → A=51  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite025" Color="#40FFFFFF" />
+    <!--  rgba(255,255,255,0.25) → A=64  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite030" Color="#4DFFFFFF" />
+    <!--  rgba(255,255,255,0.3) → A=77  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite040" Color="#66FFFFFF" />
+    <!--  rgba(255,255,255,0.4) → A=102  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite050" Color="#80FFFFFF" />
+    <!--  rgba(255,255,255,0.5) → A=128  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite060" Color="#99FFFFFF" />
+    <!--  rgba(255,255,255,0.6) → A=153  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite070" Color="#B3FFFFFF" />
+    <!--  rgba(255,255,255,0.7) → A=179  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite080" Color="#CCFFFFFF" />
+    <!--  rgba(255,255,255,0.8) → A=204  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite090" Color="#E6FFFFFF" />
+    <!--  rgba(255,255,255,0.9) → A=230  -->
+    <SolidColorBrush x:Key="RSApp.Styles.BaseWhite100" Color="#FFFFFF" />
+
+    <!--  强调色-蓝色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlue" Color="#0F7AF5" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueDarken1" Color="#0E70DF" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueDarken2" Color="#0E66CB" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueDarken3" Color="#0E5CB5" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueDarken4" Color="#0F52A0" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueDarken5" Color="#0F498B" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten1" Color="#328DF6" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten2" Color="#57A2F8" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten3" Color="#7CB7FA" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten3l" Color="#92C2FA" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten4" Color="#A8CFFB" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten4l" Color="#C0DCFC" />
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueLighten5" Color="#DAEBFD" />
+
+    <!--  Chrome红色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRed" Color="#F73116" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedDarken1" Color="#DF2E16" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedDarken2" Color="#C82B16" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedDarken3" Color="#B02916" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedDarken4" Color="#9A2616" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedDarken5" Color="#832416" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten1" Color="#F84F38" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten2" Color="#F96E5B" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten3" Color="#FB8F80" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten3l" Color="#FBA195" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten4" Color="#FCB5AB" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten4l" Color="#FDC9C2" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeRedLighten5" Color="#FEDFDB" />
+
+    <!--  Chrome橙色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrange" Color="#FF8800" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeDarken1" Color="#E67C00" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeDarken2" Color="#CE7100" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeDarken3" Color="#B66600" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeDarken4" Color="#9F5B00" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeDarken5" Color="#875000" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten1" Color="#FF9925" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten2" Color="#FFAB4C" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten3" Color="#FFBE74" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten3l" Color="#FFC98B" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten4" Color="#FFD4A3" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten4l" Color="#FFE0BC" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeOrangeLighten5" Color="#FFEDD8" />
+
+    <!--  Chrome黄色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellow" Color="#F7C200" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowDarken1" Color="#DFB000" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowDarken2" Color="#C89F00" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowDarken3" Color="#B08E00" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowDarken4" Color="#9A7D00" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowDarken5" Color="#836D00" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten1" Color="#F8CB25" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten2" Color="#F9D44C" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten3" Color="#FBDE74" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten3l" Color="#FBE38B" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten4" Color="#FCE9A3" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten4l" Color="#FDEFBC" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeYellowLighten5" Color="#FEF6D8" />
+
+    <!--  Chrome绿色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreen" Color="#07AB28" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenDarken1" Color="#079C27" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenDarken2" Color="#078D27" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenDarken3" Color="#077E26" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenDarken4" Color="#077025" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenDarken5" Color="#076125" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten1" Color="#2BB747" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten2" Color="#51C468" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten3" Color="#78D18A" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten3l" Color="#8ED99D" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten4" Color="#A6E1B1" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten4l" Color="#BEE9C7" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeGreenLighten5" Color="#D9F2DE" />
+
+    <!--  Chrome青色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyan" Color="#00B1F7" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanDarken1" Color="#00A1E1" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanDarken2" Color="#0092CD" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanDarken3" Color="#0083B6" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanDarken4" Color="#0073A1" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanDarken5" Color="#00648C" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten1" Color="#25BCF8" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten2" Color="#4CC8F9" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten3" Color="#74D4FB" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten3l" Color="#8BDCFB" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten4" Color="#A3E3FC" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten4l" Color="#BCEBFD" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromeCyanLighten5" Color="#D8F3FE" />
+
+    <!--  Chrome紫色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurple" Color="#7C16F7" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleDarken1" Color="#7016E1" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleDarken2" Color="#6516CD" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleDarken3" Color="#5B16B6" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleDarken4" Color="#5016A1" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleDarken5" Color="#46168C" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten1" Color="#8F38F8" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten2" Color="#A35BF9" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten3" Color="#B880FB" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten3l" Color="#C395FB" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten4" Color="#D0ABFC" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten4l" Color="#DDC2FD" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePurpleLighten5" Color="#EBDBFE" />
+
+    <!--  Chrome粉色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePink" Color="#EB387D" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkDarken1" Color="#D43473" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkDarken2" Color="#BE316B" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkDarken3" Color="#A82E61" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkDarken4" Color="#932B58" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkDarken5" Color="#7D284F" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten1" Color="#EE5590" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten2" Color="#F173A4" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten3" Color="#F493B8" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten3l" Color="#F6A4C4" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten4" Color="#F8B7D0" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten4l" Color="#FACBDD" />
+    <SolidColorBrush x:Key="RSApp.Styles.ChromePinkLighten5" Color="#FCE1EB" />
+
+    <!--  强调蓝透明系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha005" Color="#0D0F7AF5" />
+    <!--  rgba(15,122,245,0.05) → A=13  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha010" Color="#1A0F7AF5" />
+    <!--  rgba(15,122,245,0.1) → A=26  -->
+    <SolidColorBrush x:Key="AccentBlueAlpha015" Color="#260F7AF5" />
+    <!--  rgba(15,122,245,0.15) → A=38  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha020" Color="#330F7AF5" />
+    <!--  rgba(15,122,245,0.2) → A=51  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha025" Color="#400F7AF5" />
+    <!--  rgba(15,122,245,0.25) → A=64  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha030" Color="#4D0F7AF5" />
+    <!--  rgba(15,122,245,0.3) → A=77  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha040" Color="#660F7AF5" />
+    <!--  rgba(15,122,245,0.4) → A=102  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha050" Color="#800F7AF5" />
+    <!--  rgba(15,122,245,0.5) → A=128  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha060" Color="#990F7AF5" />
+    <!--  rgba(15,122,245,0.6) → A=153  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha070" Color="#B30F7AF5" />
+    <!--  rgba(15,122,245,0.7) → A=179  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha080" Color="#CC0F7AF5" />
+    <!--  rgba(15,122,245,0.8) → A=204  -->
+    <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha090" Color="#E60F7AF5" />
+    <!--  rgba(15,122,245,0.9) → A=230  -->
+
+    <!--  VIP紫色系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipPrimary" Color="#8072F3" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipDarken1" Color="#7468DD" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipDarken2" Color="#685FC9" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipDarken3" Color="#5D57B4" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipDarken4" Color="#534D9F" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipDarken5" Color="#48458A" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten1" Color="#9286F5" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten2" Color="#A69CF7" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten3" Color="#BAB2F8" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten3l" Color="#C5BFFA" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten4" Color="#D1CCFB" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten4l" Color="#DEDAFC" />
+    <SolidColorBrush x:Key="RSApp.Styles.VipLighten5" Color="#ECE9FD" />
+
+    <!--  VIP紫色透明系列  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha005" Color="#0D8072F3" />
+    <!--  rgba(128,114,243,0.05) → A=13  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha010" Color="#1A8072F3" />
+    <!--  rgba(128,114,243,0.1) → A=26  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha015" Color="#268072F3" />
+    <!--  rgba(128,114,243,0.15) → A=38  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha020" Color="#338072F3" />
+    <!--  rgba(128,114,243,0.2) → A=51  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha025" Color="#408072F3" />
+    <!--  rgba(128,114,243,0.25) → A=64  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha030" Color="#4D8072F3" />
+    <!--  rgba(128,114,243,0.3) → A=77  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha040" Color="#668072F3" />
+    <!--  rgba(128,114,243,0.4) → A=102  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha050" Color="#808072F3" />
+    <!--  rgba(128,114,243,0.5) → A=128  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha060" Color="#998072F3" />
+    <!--  rgba(128,114,243,0.6) → A=153  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha070" Color="#B38072F3" />
+    <!--  rgba(128,114,243,0.7) → A=179  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha080" Color="#CC8072F3" />
+    <!--  rgba(128,114,243,0.8) → A=204  -->
+    <SolidColorBrush x:Key="RSApp.Styles.VipAlpha090" Color="#E68072F3" />
+    <!--  rgba(128,114,243,0.9) → A=230  -->
+
+
+
+
+
+
+</ResourceDictionary>

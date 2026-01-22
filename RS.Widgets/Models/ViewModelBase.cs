@@ -249,6 +249,14 @@ namespace RS.Widgets.Models
         }
 
         #endregion
+
+
+
+        public List<T> GetDataList<T>()
+        {
+            return Enum.GetValues(typeof(T))
+               .Cast<T>().Order().ToList();
+        }
     }
 
 }

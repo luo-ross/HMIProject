@@ -1,4 +1,5 @@
-﻿using RS.Win32API;
+﻿using RS.Widgets.Commons;
+using RS.Win32API;
 using RS.Win32API.Structs;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -15,17 +16,18 @@ namespace RS.Widgets.Controls
     {
         private HwndSource HwndSource;
         private Window ParentWindow;
+
+
         /// <summary> 
         /// 加载窗口随动事件 
         /// </summary> 
         public RSPopup()
         {
             this.Loaded += RSPopup_Loaded;
-            this.Opened += RSPopup_Opened;
-            this.Closed += RSPopup_Closed;
             this.Unloaded += RSPopup_Unloaded;
             this.StaysOpen = true;
         }
+
 
         private void RSPopup_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -37,25 +39,15 @@ namespace RS.Widgets.Controls
             }
         }
 
-        public UIElement RelativeElement
+        public FrameworkElement RelativeElement
         {
-            get { return (UIElement)GetValue(RelativeElementProperty); }
+            get { return (FrameworkElement)GetValue(RelativeElementProperty); }
             set { SetValue(RelativeElementProperty, value); }
         }
 
         public static readonly DependencyProperty RelativeElementProperty =
-            DependencyProperty.Register("RelativeElement", typeof(UIElement), typeof(RSPopup), new PropertyMetadata(null));
+            DependencyProperty.Register("RelativeElement", typeof(FrameworkElement), typeof(RSPopup), new PropertyMetadata(null));
 
-
-
-        private void RSPopup_Closed(object? sender, EventArgs e)
-        {
-        }
-
-        private void RSPopup_Opened(object? sender, EventArgs e)
-        {
-
-        }
 
         private void RSPopup_Loaded(object sender, RoutedEventArgs e)
         {
@@ -72,18 +64,27 @@ namespace RS.Widgets.Controls
         }
 
 
-
         private void ParentWindow_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var directlyOver = Mouse.DirectlyOver as UIElement;
-            if (this.IsMouseOver || directlyOver == this.RelativeElement)
+            if (this.IsMouseOver)
             {
                 return;
             }
 
+
+            if (this.RelativeElement != null)
+            {
+                Point mousePointRelative = Mouse.GetPosition(this.RelativeElement);
+                Rect elementBounds = new Rect(0, 0, this.RelativeElement.ActualWidth, this.RelativeElement.ActualHeight);
+                if (elementBounds.Contains(mousePointRelative))
+                {
+                    return;
+                }
+            }
+
+
             if (this.IsOpen)
             {
-                Console.WriteLine("ParentWindow_PreviewMouseLeftButtonUp-PopClose");
                 this.SetCurrentValue(IsOpenProperty, false);
             }
         }

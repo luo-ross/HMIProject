@@ -144,43 +144,52 @@
                     FlowDirection="LeftToRight"
                     Stretch="Fill"
                     Visibility="Collapsed" />
-                <ContentPresenter
+                <!--<ContentPresenter
                     x:Name="Icon"
                     Grid.Column="1"
                     Margin="3,0,3,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    ContentSource="Icon" />
+                    ContentSource="Icon" />-->
+
+                <Path
+                    x:Name="PART_Icon"
+                    Grid.Column="1"
+                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                    Margin="3,0,3,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                    Fill="{TemplateBinding Foreground}"
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                    </Path.RenderTransform>
+                </Path>
 
                 <ContentPresenter
                     Grid.Column="2"
                     Margin="3,0,3,0"
                     ContentSource="Header"
                     RecognizesAccessKey="True" />
-                <Popup
+                <rs:RSPopup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
-                    Focusable="false"
-                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                     Placement="Bottom"
                     PlacementTarget="{Binding ElementName=templateRoot}"
-                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                    RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
                     <Border Margin="15,0,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Border
                             x:Name="SubMenuBorder"
-                            Margin="5"
                             Background="#fff"
-                            CornerRadius="3">
-                            <Border.Clip>
-                                <MultiBinding Converter="{StaticResource ClipConverter}">
-                                    <Binding ElementName="SubMenuBorder" Path="CornerRadius" />
-                                    <Binding ElementName="SubMenuBorder" Path="ActualWidth" />
-                                    <Binding ElementName="SubMenuBorder" Path="ActualHeight" />
-                                    <Binding ElementName="SubMenuBorder" Path="BorderThickness" />
-                                </MultiBinding>
-                            </Border.Clip>
+                            CornerRadius="5">
                             <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                <Grid RenderOptions.ClearTypeHint="Enabled">
+                                <Grid Margin="3" RenderOptions.ClearTypeHint="Enabled">
                                     <ItemsPresenter
                                         x:Name="ItemsPresenter"
                                         Grid.IsSharedSizeScope="true"
@@ -191,16 +200,16 @@
                         </Border>
                     </Border>
 
-                </Popup>
+                </rs:RSPopup>
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                 <Setter TargetName="PART_Popup" Property="PopupAnimation" Value="None" />
             </Trigger>
-            <Trigger Property="Icon" Value="{x:Null}">
-                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
-            </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
+                <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
             <Trigger Property="IsChecked" Value="true">
                 <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible" />
             </Trigger>
@@ -242,13 +251,32 @@
                     FlowDirection="LeftToRight"
                     Stretch="Fill"
                     Visibility="Collapsed" />
-                <ContentPresenter
+                <!--<ContentPresenter
                     x:Name="Icon"
                     Grid.Column="1"
                     Margin="3,0,3,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    ContentSource="Icon" />
+                    ContentSource="Icon" />-->
+
+                <Path
+                    x:Name="PART_Icon"
+                    Grid.Column="1"
+                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                    Margin="3,0,3,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                    Fill="{TemplateBinding Foreground}"
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                    </Path.RenderTransform>
+                </Path>
+
                 <ContentPresenter
                     Grid.Column="2"
                     Margin="{TemplateBinding Padding}"
@@ -257,12 +285,16 @@
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
-            <Trigger Property="Icon" Value="{x:Null}">
+            <!--<Trigger Property="Icon" Value="{x:Null}">
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
-            </Trigger>
+            </Trigger>-->
+
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
+                <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
             <Trigger Property="IsChecked" Value="true">
                 <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible" />
-                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                <!--<Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />-->
             </Trigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
@@ -313,21 +345,42 @@
                     Stretch="Fill"
                     Visibility="Collapsed" />
 
-                <ContentPresenter
-                    x:Name="Icon"
+                <!--<ContentPresenter
+                    x:Name="PART_Icon"
                     Grid.Column="1"
                     Margin="3,0,3,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    ContentSource="Icon" />
+                    Content="{TemplateBinding Icon}" />-->
+
+
+                <Path
+                    x:Name="PART_Icon"
+                    Grid.Column="1"
+                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                    Margin="3,0,3,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                    Fill="{TemplateBinding Foreground}"
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                    </Path.RenderTransform>
+                </Path>
+
 
                 <ContentPresenter
                     Grid.Column="2"
                     Margin="3,0,3,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    ContentSource="Header"
+                    Content="{TemplateBinding Header}"
                     RecognizesAccessKey="True" />
+
                 <TextBlock
                     Grid.Column="4"
                     VerticalAlignment="Center"
@@ -336,36 +389,30 @@
                 <Path
                     x:Name="RightArrow"
                     Grid.Column="5"
+                    Width="7"
+                    Height="12"
                     Margin="10,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Data="{StaticResource RSApp.Icons.MenuItemRightArrow}"
+                    Data="{StaticResource RSApp.Icons.RightArrow}"
                     Fill="{TemplateBinding Foreground}"
-                    Opacity="0.6" />
-                <Popup
+                    Opacity="0.6"
+                    Stretch="Fill" />
+                <rs:RSPopup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
                     Focusable="false"
                     IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                     Placement="Right"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                    VerticalOffset="-5">
-                    <Border Margin="15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                    RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                    <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Border
                             x:Name="SubMenuBorder"
-                            Margin="5"
                             Background="#fff"
-                            CornerRadius="3">
-                            <Border.Clip>
-                                <MultiBinding Converter="{StaticResource ClipConverter}">
-                                    <Binding ElementName="SubMenuBorder" Path="CornerRadius" />
-                                    <Binding ElementName="SubMenuBorder" Path="ActualWidth" />
-                                    <Binding ElementName="SubMenuBorder" Path="ActualHeight" />
-                                    <Binding ElementName="SubMenuBorder" Path="BorderThickness" />
-                                </MultiBinding>
-                            </Border.Clip>
+                            CornerRadius="5">
                             <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                <Grid RenderOptions.ClearTypeHint="Enabled">
+                                <Grid Margin="3" RenderOptions.ClearTypeHint="Enabled">
                                     <ItemsPresenter
                                         x:Name="ItemsPresenter"
                                         Grid.IsSharedSizeScope="true"
@@ -375,16 +422,16 @@
                             </ScrollViewer>
                         </Border>
                     </Border>
-                </Popup>
+                </rs:RSPopup>
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                 <Setter TargetName="PART_Popup" Property="PopupAnimation" Value="None" />
             </Trigger>
-            <Trigger Property="Icon" Value="{x:Null}">
-                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
-            </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
+                <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
             <Trigger Property="IsChecked" Value="True">
                 <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible" />
             </Trigger>
@@ -396,6 +443,7 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="#949494" />
                 <Setter Property="Background" Value="#eee" />
+                <Setter TargetName="GlyphPanel" Property="Fill" Value="#eee" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -418,29 +466,45 @@
                     <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGTColumnGroup" />
                     <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
-                <Border
+
+                <Path
                     x:Name="GlyphPanel"
                     Grid.Column="0"
-                    HorizontalAlignment="Center"
+                    Width="{TemplateBinding FontSize}"
+                    Height="{TemplateBinding FontSize}"
+                    Margin="3,0,3,0"
                     VerticalAlignment="Center"
-                    ClipToBounds="False"
-                    Visibility="Collapsed">
-                    <Path
-                        x:Name="Glyph"
-                        Width="{TemplateBinding FontSize}"
-                        Height="{TemplateBinding FontSize}"
-                        VerticalAlignment="Center"
-                        Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
-                        Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
-                        Stretch="Fill" />
-                </Border>
-                <ContentPresenter
+                    Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
+                    Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
+                    FlowDirection="LeftToRight"
+                    Stretch="Fill"
+                    Visibility="Collapsed" />
+
+                <!--<ContentPresenter
                     x:Name="Icon"
                     Grid.Column="1"
                     Margin="3,0,3,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    ContentSource="Icon" />
+                    ContentSource="Icon" />-->
+
+                <Path
+                    x:Name="PART_Icon"
+                    Grid.Column="1"
+                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                    Margin="3,0,3,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                    Fill="{TemplateBinding Foreground}"
+                    IsEnabled="{TemplateBinding IsEnabled}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                    </Path.RenderTransform>
+                </Path>
 
                 <ContentPresenter
                     x:Name="menuHeaderContainer"
@@ -450,6 +514,8 @@
                     VerticalAlignment="Center"
                     ContentSource="Header"
                     RecognizesAccessKey="True" />
+
+
                 <TextBlock
                     x:Name="menuGestureText"
                     Grid.Column="4"
@@ -459,9 +525,12 @@
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
-            <Trigger Property="Icon" Value="{x:Null}">
+            <!--<Trigger Property="Icon" Value="{x:Null}">
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
-            </Trigger>
+            </Trigger>-->
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.IconData)}" Value="{x:Null}">
+                <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
             <Trigger Property="IsChecked" Value="True">
                 <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible" />
             </Trigger>
@@ -472,7 +541,7 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="#949494" />
                 <Setter Property="Background" Value="#eee" />
-                <Setter TargetName="Glyph" Property="Fill" Value="#eee" />
+                <Setter TargetName="GlyphPanel" Property="Fill" Value="#eee" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -485,12 +554,14 @@
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IsTabStop" Value="False" />
-
         <Setter Property="rs:MenuItemHelper.CheckedIconFill" Value="#06b025" />
         <Setter Property="rs:MenuItemHelper.CheckedIcon" Value="{DynamicResource RSApp.Icons.Checked}" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="Padding" Value="3,5,3,5" />
+        <Setter Property="Padding" Value="5,3,5,3" />
+        <Setter Property="Margin" Value="0,1,0,1" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="ClipToBounds" Value="True" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
@@ -500,11 +571,11 @@
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
-                <Setter Property="MinWidth" Value="200" />
+                <!--<Setter Property="MinWidth" Value="200" />-->
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuItem">
-                <Setter Property="MinWidth" Value="200" />
+                <!--<Setter Property="MinWidth" Value="200" />-->
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
         </Style.Triggers>

@@ -5,7 +5,7 @@
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.BootStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
     </ResourceDictionary.MergedDictionaries>
@@ -64,6 +64,7 @@
         <Setter Property="rs:ControlsHelper.IconWidth" Value="15" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
         <Setter Property="rs:ControlsHelper.IconData" Value="{x:Null}" />
+        <Setter Property="Padding" Value="3" />
         <Setter Property="Template" Value="{StaticResource RSApp.Templates.IconButtonTemplate}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
@@ -208,11 +209,12 @@
     <Style x:Key="RSApp.Styles.PopularityChart" TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="#fff" />
         <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="5,3,5,3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border
-                        Padding="5,3,5,3"
+                        Padding="{TemplateBinding Padding}"
                         VerticalAlignment="Center"
                         Background="#3d3d3d"
                         CornerRadius="5">

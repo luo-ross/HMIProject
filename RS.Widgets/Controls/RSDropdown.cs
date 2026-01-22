@@ -6,20 +6,26 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
     public class RSDropdown : ToggleButton
     {
+        private Popup PART_Popup;
         static RSDropdown()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDropdown), new FrameworkPropertyMetadata(typeof(RSDropdown)));
         }
         public RSDropdown()
         {
-
+           
         }
 
+      
+
+    
 
         public UIElement PlacementTarget
         {
@@ -89,6 +95,32 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty PlacementProperty =
             DependencyProperty.Register(nameof(Placement), typeof(PlacementMode), typeof(RSDropdown), new PropertyMetadata(PlacementMode.Bottom));
+
+
+
+
+        public double ArrowAngle
+        {
+            get { return (double)GetValue(ArrowAngleProperty); }
+            set { SetValue(ArrowAngleProperty, value); }
+        }
+
+        public static readonly DependencyProperty ArrowAngleProperty =
+            DependencyProperty.Register(nameof(ArrowAngle), typeof(double), typeof(RSDropdown), new PropertyMetadata(90D));
+
+
+
+
+     
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            this.PART_Popup = this.GetTemplateChild(nameof(this.PART_Popup)) as Popup;
+
+
+
+        }
 
 
     }

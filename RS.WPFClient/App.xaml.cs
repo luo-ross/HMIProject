@@ -53,23 +53,6 @@ namespace RS.WPFClient
         public string AppHostAddress { get; set; } = "http://localhost:7000/";
 #endif
 
-        //#region 心跳检测
-        ///// <summary>
-        ///// 心跳检测间隔（毫秒）
-        ///// </summary>
-        //private int HeartbeatInterval = 1000 * 100;
-
-        ///// <summary>
-        ///// 心跳检测线程
-        ///// </summary>
-        //private Thread heartbeatThread;
-
-        ///// <summary>
-        ///// 心跳检测取消标记
-        ///// </summary>
-        //private CancellationTokenSource HeartbeatCancellation = new CancellationTokenSource();
-        //#endregion
-
         public App()
         {
             //配置依赖注入服务
@@ -138,7 +121,7 @@ namespace RS.WPFClient
             base.OnStartup(e);
 
             // 获取Window服务
-           var windowService = ServiceProvider.GetRequiredService<IWindowService>();
+            var windowService = ServiceProvider.GetRequiredService<IWindowService>();
             //windowService.ShowAsync<LoginViewModel,LoginView>();
             windowService.ShowAsync<HomeViewModel, HomeView>();
 

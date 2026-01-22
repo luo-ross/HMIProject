@@ -3,7 +3,7 @@
         x:Key="RSApp.Styles.DefaultEffect"
         BlurRadius="15"
         Direction="270"
-        Opacity="0.2"
-        ShadowDepth="-1"
+        Opacity="0.1"
+        ShadowDepth="0"
         Color="#000" />
 </ResourceDictionary>

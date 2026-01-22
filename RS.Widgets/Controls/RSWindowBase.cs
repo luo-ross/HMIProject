@@ -427,31 +427,29 @@ namespace RS.Widgets.Controls
 
         private void RSWindowBase_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                this.RefreshWindowSizeAndLocation();
-            }
+            //if (this.WindowState == WindowState.Maximized)
+            //{
+            //    this.RefreshWindowSizeAndLocation();
+            //}
         }
 
 
         private void RSWindow_StateChanged(object? sender, EventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                this.RefreshWindowSizeAndLocation();
-            }
+            //if (this.WindowState == WindowState.Maximized)
+            //{
+            //    this.RefreshWindowSizeAndLocation();
+            //}
         }
 
-        private void RefreshWindowSizeAndLocation()
-        {
-
-            // 使用 WindowInteropHelper 获取窗口句柄
-            var hWnd = new WindowInteropHelper(this).Handle;
-            int nWidth = IsMaxsizedFullScreen ? (int)SystemParameters.PrimaryScreenWidth : (int)SystemParameters.WorkArea.Width;  // 新的宽度
-            int nHeight = IsMaxsizedFullScreen ? (int)SystemParameters.PrimaryScreenHeight : (int)SystemParameters.WorkArea.Height; // 新的高度
-            //NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null, IntPtr.Zero), 0, 0, nWidth, nHeight, (int)(SWP.NOZORDER | SWP.NOACTIVATE));
-            NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null, IntPtr.Zero), 0, 0, nWidth, nHeight, 0);
-        }
+        //private void RefreshWindowSizeAndLocation()
+        //{
+        //    // 使用 WindowInteropHelper 获取窗口句柄
+        //    var hWnd = new WindowInteropHelper(this).Handle;
+        //    int nWidth = IsMaxsizedFullScreen ? (int)SystemParameters.PrimaryScreenWidth : (int)SystemParameters.WorkArea.Width;  // 新的宽度
+        //    int nHeight = IsMaxsizedFullScreen ? (int)SystemParameters.PrimaryScreenHeight : (int)SystemParameters.WorkArea.Height; // 新的高度
+        //    NativeMethods.SetWindowPos(new HandleRef(null, hWnd), new HandleRef(null, IntPtr.Zero), 0, 0, nWidth, nHeight, 0);
+        //}
 
         public override void OnApplyTemplate()
         {

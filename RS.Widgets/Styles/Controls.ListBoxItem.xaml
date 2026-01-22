@@ -5,7 +5,6 @@
 
     <Style x:Key="RSApp.Styles.ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="Background" Value="Transparent" />
@@ -50,6 +49,7 @@
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="MinHeight" Value="32" />
         <Setter Property="Margin" Value="5,2,5,2" />
         <Setter Property="Template">
             <Setter.Value>

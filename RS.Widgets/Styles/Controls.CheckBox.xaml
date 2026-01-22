@@ -18,6 +18,7 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="18" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="18" />
+        <Setter Property="rs:ControlsHelper.IconColor" Value="#305BD2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -46,7 +47,7 @@
                                     Height="8"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Data="{StaticResource RSApp.Icons.CheckMark}"
+                                    Data="M5.749 11.486a1.06 1.06 0 0 0 1.502 0L13.12 5.62A.875.875 0 0 0 11.88 4.38L6.5 9.763 4.494 7.756a.875.875 0 1 0-1.238 1.238z"
                                     Fill="#fff"
                                     Stretch="Fill" />
                             </Border>
@@ -60,10 +61,10 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="Hand" />
-                            <Setter Property="Foreground" Value="#198cff" />
+                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconColor)}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="#198cff" />
+                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconColor)}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

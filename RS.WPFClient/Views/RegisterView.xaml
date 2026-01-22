@@ -41,7 +41,7 @@
 
                     <TextBox
                         Margin="0,50,0,5"
-                        Padding="3,5,3,5"
+                        Padding="5,3,5,3"
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.User}"
                         rs:TextBoxHelper.IsShowClearButton="True"
                         rs:TextBoxHelper.Watermark="请输入用户名"
@@ -51,7 +51,7 @@
 
                     <PasswordBox
                         Margin="0,5,0,5"
-                        Padding="3,5,3,5"
+                        Padding="5,3,5,3"
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                         rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.Password, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}"
                         rs:TextBoxHelper.IsShowClearButton="True"
@@ -61,7 +61,7 @@
 
                     <PasswordBox
                         Margin="0,5,0,5"
-                        Padding="3,5,3,5"
+                        Padding="5,3,5,3"
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Password}"
                         rs:PasswordBoxBindBehavior.Password="{Binding SignUpModel.PasswordConfirm, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"
                         rs:TextBoxHelper.IsShowClearButton="True"
