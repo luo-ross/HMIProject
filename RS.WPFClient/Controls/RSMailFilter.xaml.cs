@@ -187,6 +187,9 @@ namespace RS.WPFClient.Controls
             {
                 return;
             }
+            mailFilter.IsOldestToNewest = false;
+            mailFilter.IsSmallToLarge = false;
+            mailFilter.IsLargeToSmall = false;
             mailFilter.GetMailFilterModel().MailSortType = MailSortType.NewestToOldest;
             mailFilter.HandleDateSortPropertyChanged();
         }
@@ -208,6 +211,9 @@ namespace RS.WPFClient.Controls
                 return;
             }
 
+            mailFilter.IsNewestToOldest = false;
+            mailFilter.IsSmallToLarge = false;
+            mailFilter.IsLargeToSmall = false;
             mailFilter.GetMailFilterModel().MailSortType = MailSortType.OldestToNewest;
             mailFilter.HandleDateSortPropertyChanged();
         }
@@ -229,7 +235,9 @@ namespace RS.WPFClient.Controls
             {
                 return;
             }
-
+            mailFilter.IsNewestToOldest = false;
+            mailFilter.IsSmallToLarge = false;
+            mailFilter.IsOldestToNewest = false;
             mailFilter.GetMailFilterModel().MailSortType = MailSortType.LargeToSmall;
             mailFilter.HandleSizeSortPropertyChanged();
         }
@@ -250,6 +258,9 @@ namespace RS.WPFClient.Controls
             {
                 return;
             }
+            mailFilter.IsNewestToOldest = false;
+            mailFilter.IsLargeToSmall = false;
+            mailFilter.IsOldestToNewest = false;
             mailFilter.GetMailFilterModel().MailSortType = MailSortType.SmallToLarge;
             mailFilter.HandleSizeSortPropertyChanged();
         }

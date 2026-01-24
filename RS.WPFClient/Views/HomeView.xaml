@@ -327,9 +327,7 @@
                 Margin="15,0,15,0"
                 Background="#fff"
                 CornerRadius="10,10,0,0">
-                <ScrollViewer Focusable="False">
-                    <ContentControl Content="{Binding ViewModelSelect}" />
-                </ScrollViewer>
+                <ContentControl Content="{Binding ViewModelSelect}" />
             </Border>
         </Grid>
     </Grid>

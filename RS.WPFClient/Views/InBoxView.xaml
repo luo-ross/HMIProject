@@ -19,6 +19,237 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converter:MailDateGroupConverter x:Key="MailDateGroupConverter" />
+        <converter:MailTimeFormatConverter x:Key="MailTimeFormatConverter" />
+
+        <Style x:Key="MailDataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="BorderBrush" Value="{StaticResource RSApp.Styles.BaseGray007}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridRow">
+                        <Border
+                            x:Name="PART_Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Path
+                                    x:Name="PART_SelectIcon"
+                                    Grid.Column="0"
+                                    Width="12"
+                                    Height="12"
+                                    Margin="2,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="m9.5 6.393-5.691 4.471A.5.5 0 0 1 3 10.471V1.53a.5.5 0 0 1 .809-.393l5.69 4.47a.5.5 0 0 1 0 .787"
+                                    Fill="{StaticResource RSApp.Styles.ChromeGreen}"
+                                    Stretch="Uniform"
+                                    Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <DataGridCellsPresenter Grid.Column="1" VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsHeader}" Value="True">
+                                <Setter Property="IsHitTestVisible" Value="False" />
+                                <Setter Property="Focusable" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsHeader}" Value="False">
+                                <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                <Setter Property="Height" Value="40" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsHeader}" Value="False" />
+                                    <Condition Binding="{Binding IsSelected}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.BaseGray010}" />
+                            </MultiDataTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsSelected" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
+                            </MultiTrigger>
+
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="GroupHeaderTemplate" DataType="{x:Type model:GroupHeaderModel}">
+            <Border>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        FontSize="13"
+                        Foreground="{StaticResource RSApp.Styles.BaseGray080}"
+                        Text="{Binding GroupTitle}" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Bottom"
+                        FontSize="11"
+                        Foreground="{StaticResource RSApp.Styles.BaseGray080}"
+                        Text="{Binding ItemCount, StringFormat='({0}封)'}"
+                        Visibility="{Binding ItemCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MailItemDataContentTemplate" DataType="{x:Type model:MailModel}">
+            <Grid Height="40" TextBlock.FontSize="14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="85" />
+                    <ColumnDefinition Width="40" />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Path
+                        x:Name="PART_IsRead"
+                        Width="16"
+                        Height="16"
+                        Stretch="Uniform" />
+
+                    <TextBlock
+                        Margin="5,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Text="{Binding Account}"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <Path
+                    x:Name="PART_HasAttachment"
+                    Grid.Column="2"
+                    Width="14"
+                    Height="14"
+                    HorizontalAlignment="Left"
+                    Data="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.66 1.34 3 3 3s3-1.34 3-3V5c0-2.48-2.02-4.5-4.5-4.5S7 2.52 7 5v12.5c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5V6z"
+                    Fill="Gray"
+                    Stretch="Uniform"
+                    Visibility="{Binding HasAttachment, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBlock
+                    Grid.Column="3"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Left"
+                    FontSize="14"
+                    Text="{Binding Digest}"
+                    TextTrimming="CharacterEllipsis">
+                    <Run Text="{Binding Subject}" />
+                    <Run Foreground="{StaticResource RSApp.Styles.BaseGray040}" Text="{Binding Digest}" />
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="4"
+                    VerticalAlignment="Center"
+                    Text="{Binding Time, Converter={StaticResource MailTimeFormatConverter}}" />
+
+                <CheckBox
+                    Grid.Column="5"
+                    Margin="0"
+                    Padding="3,5,3,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    rs:ControlsHelper.IconData="M11.537 8.231 10 4.177 8.463 8.23l-4.33.187 3.392 2.662-1.167 4.152L10 12.854l3.642 2.378-1.167-4.152 3.393-2.662zm6.518-.97c.43.019.605.554.269.818l-4.419 3.468 1.509 5.37c.115.409-.346.74-.704.505L10 14.347l-4.71 3.075c-.358.234-.819-.096-.704-.506l1.509-5.369L1.676 8.08a.458.458 0 0 1 .27-.818l5.64-.243 1.979-5.22a.467.467 0 0 1 .87 0l1.979 5.22z"
+                    ToolTip="添加星标">
+                    <CheckBox.Style>
+                        <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="CheckBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsStarred}" Value="True">
+                                    <Setter Property="Foreground" Value="#F4B400" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsStarred}" Value="False">
+                                    <Setter Property="Foreground" Value="#BDC1C6" />
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray010}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </CheckBox.Style>
+                </CheckBox>
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsRead}" Value="True">
+                    <Setter TargetName="PART_IsRead" Property="Fill" Value="{StaticResource RSApp.Styles.BaseGray040}" />
+                    <Setter TargetName="PART_IsRead" Property="Data" Value="{StaticResource RSApp.Icons.EmailRead}" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding IsRead}" Value="False">
+                    <Setter TargetName="PART_IsRead" Property="Fill" Value="#FBBC00" />
+                    <Setter TargetName="PART_IsRead" Property="Data" Value="{StaticResource RSApp.Icons.EmailUnread}" />
+                </DataTrigger>
+
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MailItemDataPreviewTemplate">
+            <Border
+                Padding="10"
+                BorderBrush="#EEE"
+                BorderThickness="0,0,0,1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse
+                            Width="8"
+                            Height="8"
+                            Margin="0,0,8,0"
+                            Fill="#4285F4"
+                            Visibility="{Binding IsRead, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Text="{Binding Account}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Grid.Column="1"
+                        Foreground="#999"
+                        Text="{Binding MailTime, Converter={StaticResource MailTimeFormatConverter}}" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        MaxHeight="40"
+                        Margin="0,5,0,0"
+                        Foreground="#666"
+                        Text="{Binding MailContent}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap" />
+                </Grid>
+            </Border>
+        </DataTemplate>
     </UserControl.Resources>
     <Border
         x:Name="PART_Border"
@@ -37,7 +268,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <CheckBox />
+                    <CheckBox IsChecked="{x:Null}" IsThreeState="True" />
                     <TextBlock FontSize="14" Text="收件箱" />
                     <controls:RSMailFilter />
                 </StackPanel>
@@ -253,38 +484,68 @@
                             <rs:RSCalendar BorderThickness="0" CalendarSelectType="Month" />
                         </rs:RSDropdown.DropdownContent>
                     </rs:RSDropdown>
-                    <CheckBox Padding="6">
+                    <CheckBox Padding="6" IsChecked="{Binding IsPreviewMode}">
                         <CheckBox.Style>
                             <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type CheckBox}">
                                 <Style.Triggers>
-                                    <Trigger Property="IsChecked" Value="False">
+                                    <DataTrigger Binding="{Binding IsPreviewMode}" Value="False">
                                         <Setter Property="rs:ControlsHelper.IconData" Value="M4 6.625C4 6.28 4.28 6 4.625 6h1.75a.625.625 0 1 1 0 1.25h-1.75A.625.625 0 0 1 4 6.625M4.625 8.875a.625.625 0 1 0 0 1.25h1.75a.625.625 0 1 0 0-1.25zM4 12.375c0-.345.28-.625.625-.625h1.75a.625.625 0 1 1 0 1.25h-1.75A.625.625 0 0 1 4 12.375 M3 3a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm.25 1.25v10.5h4.625V4.25zm5.875 0v10.5h7.625V4.25z" />
                                         <Setter Property="ToolTip" Value="切换到预览模式" />
-                                    </Trigger>
-                                    <Trigger Property="IsChecked" Value="True">
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
                                         <Setter Property="rs:ControlsHelper.IconData" Value="M5.625 6a.625.625 0 1 0 0 1.25h8.75a.625.625 0 1 0 0-1.25zM5 9.5c0-.345.28-.625.625-.625h8.75a.625.625 0 1 1 0 1.25h-8.75A.625.625 0 0 1 5 9.5M5.625 11.75a.625.625 0 1 0 0 1.25h8.75a.625.625 0 1 0 0-1.25z M2 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm1.25 10.75V4.25h13.5v10.5z" />
                                         <Setter Property="ToolTip" Value="切换到列表模式" />
-                                    </Trigger>
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </CheckBox.Style>
                     </CheckBox>
                 </StackPanel>
-
             </Grid>
-            <DataGrid Grid.Row="1">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Border>
-                                    <Grid />
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+
+            <Border
+                Grid.Row="1"
+                BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                BorderThickness="0,1,0,0">
+                <DataGrid
+                    Margin="5"
+                    AutoGenerateColumns="False"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    CanUserAddRows="False"
+                    GridLinesVisibility="None"
+                    HeadersVisibility="None"
+                    ItemsSource="{Binding MailList}"
+                    RowStyle="{StaticResource MailDataGridRowStyle}"
+                    SelectionMode="Single">
+                    <DataGrid.Resources>
+                        <DataTemplate DataType="{x:Type model:GroupHeaderModel}">
+                            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource GroupHeaderTemplate}" />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type model:MailModel}">
+                            <ContentControl
+                                x:Name="MailContentPresenter"
+                                Content="{Binding}"
+                                ContentTemplate="{StaticResource MailItemDataContentTemplate}" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsPreviewMode, RelativeSource={RelativeSource AncestorType=DataGrid}}" Value="True">
+                                    <Setter TargetName="MailContentPresenter" Property="ContentTemplate" Value="{StaticResource MailItemDataPreviewTemplate}" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ContentControl Content="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
         </Grid>
     </Border>
 

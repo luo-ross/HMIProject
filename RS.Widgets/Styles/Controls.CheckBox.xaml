@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -15,10 +16,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="IsThreeState" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="18" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="18" />
-        <Setter Property="rs:ControlsHelper.IconColor" Value="#305BD2" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -41,15 +43,26 @@
                                 BorderBrush="#eeeeee"
                                 BorderThickness="1"
                                 CornerRadius="3">
-                                <Path
+                                <!--<Path
+                                    x:Name="PART_CheckIcon"
                                     Grid.Column="0"
-                                    Width="8"
-                                    Height="8"
+                                    Width="9"
+                                    Height="7"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data=""
+                                    Stretch="Fill" />-->
+
+                                <Path
+                                    x:Name="PART_CheckIcon"
+                                    Grid.Column="0"
+                                    Width="9"
+                                    Height="7"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Data="M5.749 11.486a1.06 1.06 0 0 0 1.502 0L13.12 5.62A.875.875 0 0 0 11.88 4.38L6.5 9.763 4.494 7.756a.875.875 0 1 0-1.238 1.238z"
-                                    Fill="#fff"
                                     Stretch="Fill" />
+
                             </Border>
                             <ContentPresenter
                                 Grid.Column="1"
@@ -59,13 +72,29 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconColor)}" />
-                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="False" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
+                            <Setter TargetName="PART_CheckBorder" Property="BorderBrush" Value="{StaticResource RSApp.Styles.BaseGray050}" />
+                            <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.BaseGray050}" />
+                        </MultiTrigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconColor)}" />
+                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten1}" />
+                            <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.BaseWhite100}" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsThreeState" Value="True" />
+                                <Condition Property="IsChecked" Value="{x:Null}" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.ThemeLighten1}" />
+                            <Setter TargetName="PART_CheckIcon" Property="Data" Value="{StaticResource RSApp.Icons.Minus}" />
+                            <Setter TargetName="PART_CheckIcon" Property="Height" Value="3" />
+                        </MultiTrigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

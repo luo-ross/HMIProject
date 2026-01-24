@@ -235,13 +235,11 @@
                                                             <RadioButton
                                                                 x:Name="FromNewToOld"
                                                                 Content="由新到旧"
-                                                                GroupName="SortGroup"
                                                                 IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsNewestToOldest, Mode=TwoWay}"
                                                                 Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
                                                             <RadioButton
                                                                 x:Name="FromOldToNew"
                                                                 Content="由旧到新"
-                                                                GroupName="SortGroup"
                                                                 IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsOldestToNewest, Mode=TwoWay}"
                                                                 Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
                                                         </StackPanel>
@@ -283,13 +281,11 @@
                                                             <RadioButton
                                                                 x:Name="BtnFromLargeToSmall"
                                                                 Content="由大到小"
-                                                                GroupName="SortGroup"
                                                                 IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsLargeToSmall, Mode=TwoWay}"
                                                                 Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
                                                             <RadioButton
                                                                 x:Name="BtnFromSmallToLarge"
                                                                 Content="由小到大"
-                                                                GroupName="SortGroup"
                                                                 IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsSmallToLarge, Mode=TwoWay}"
                                                                 Style="{StaticResource RSApp.Styles.DropdownItemStyle}" />
                                                         </StackPanel>

@@ -15,9 +15,27 @@ using System.Collections.ObjectModel;
 
 namespace RS.WPFClient.ViewModels
 {
+
     [ServiceInjectConfig(ServiceLifetime.Transient)]
     public class InBoxViewModel : ViewModelBase
     {
+
+        private List<MailModel> RawMailList = new List<MailModel>();
+
+
+        private bool isPreviewMode;
+        public bool IsPreviewMode
+        {
+            get
+            {
+                return isPreviewMode;
+            }
+            set
+            {
+                SetProperty(ref isPreviewMode, value);
+            }
+        }
+
         public ICommand DeleteCommand { get; }
         public ICommand ReplyCommand { get; }
         public ICommand ReplyAllCommand { get; }
@@ -48,11 +66,59 @@ namespace RS.WPFClient.ViewModels
             MarkAsUnStarredCommand = new RelayCommand(MarkAsUnStarred);
             MarkAsSpamCommand = new RelayCommand(MarkAsSpam);
             CreateLabelCommand = new RelayCommand(CreateLabel);
+            CreateFolderCommand = new RelayCommand(CreateFolder);
             MoveToSentCommand = new RelayCommand(MoveToSent);
             MoveToSubscriptionCommand = new RelayCommand(MoveToSubscription);
-            CreateFolderCommand = new RelayCommand(CreateFolder);
 
-            InitSearchTypeList();
+            InitTestData();
+        }
+
+        private void InitTestData()
+        {
+            var today = DateTime.Now;
+            
+            // 计算本周二
+            int daysToTuesday = (int)today.DayOfWeek - (int)DayOfWeek.Tuesday;
+            if (daysToTuesday < 0) daysToTuesday += 7;
+            var thisTuesday = today.Date.AddDays(-daysToTuesday).AddHours(14); // 设置一个固定时间
+
+            // 添加一些固定样式的初始数据
+            RawMailList.Add(new MailModel { Account = "GitHub", Content = "广告邮件", Time = today, IsStarred = false });
+            RawMailList.Add(new MailModel { Account = ".NET - UXDivers Team", Content = "Grial UI Kit Monthly Summary - December 2025 ", Time = thisTuesday, IsStarred = false });
+
+            // 批量生成数据
+            Random random = new Random();
+            for (int i = 0; i < 30; i++)
+            {
+                int rand = random.Next(100);
+                DateTime mailTime;
+                if (rand < 10)
+                {
+                    mailTime = today.Date.AddHours(random.Next(0, 24)).AddMinutes(random.Next(0, 60));
+                }
+                else if (rand < 30)
+                {
+                    mailTime = today.Date.AddDays(-random.Next(1, 7)).AddHours(random.Next(0, 24));
+                }
+                else
+                {
+                    mailTime = today.Date.AddDays(-random.Next(8, 365)).AddHours(random.Next(0, 24));
+                }
+
+                RawMailList.Add(new MailModel
+                {
+                    Account = i % 3 == 0 ? "GitHub" : (i % 3 == 1 ? "TeamViewer" : "Avalonia UI"),
+                    Content = $"测试邮件内容 {i + 1}",
+                    Time = mailTime,
+                    IsStarred = i % 10 == 0,
+                    IsRead = i % 4 == 0,
+                    Subject = $"测试邮件主题 {i + 1}",
+                    HasAttachment = i % 8 == 0,
+                    Digest = $"测试邮件摘要数据快速反击快速减肥刷卡积分快速减肥 {i + 1}",
+                });
+            }
+
+            UpdateFlattenedLists();
         }
 
        
@@ -155,47 +221,93 @@ namespace RS.WPFClient.ViewModels
         }
 
 
-        private MailFilterType mailFilterTypeSelect;
+     
+
+
+        private ObservableCollection<object>? mailList;
         /// <summary>
-        /// 邮件筛选类型
+        /// 邮件列表 (包含分组头和邮件项)
         /// </summary>
-        public MailFilterType MailFilterTypeSelect
-        {
-            get { return mailFilterTypeSelect; }
-            set
-            {
-                this.SetProperty(ref mailFilterTypeSelect, value);
-            }
-        }
-
-
-
-        private ObservableCollection<MailFilterType>? mailFilterTypeList;
-        /// <summary>
-        /// 邮件筛选类型
-        /// </summary>
-        public ObservableCollection<MailFilterType> MailFilterTypeList
+        public ObservableCollection<object> MailList
         {
             get
             {
-                return mailFilterTypeList;
+                if (mailList == null)
+                {
+                    mailList = new ObservableCollection<object>();
+                }
+                return mailList;
             }
             set
             {
-                SetProperty(ref mailFilterTypeList, value);
+                SetProperty(ref mailList, value);
             }
         }
 
-
         /// <summary>
-        /// 初始化搜索类型
+        /// 更新扁平化列表
         /// </summary>
-        private void InitSearchTypeList()
+        private void UpdateFlattenedLists()
         {
-            var dataList = GetDataList<MailFilterType>();
-            this.MailFilterTypeList = new ObservableCollection<MailFilterType>(dataList);
-            this.MailFilterTypeSelect = this.MailFilterTypeList.FirstOrDefault(t => t == MailFilterType.AllRead);
+            if (RawMailList == null)
+            {
+                return;
+            }
+
+            var result = new ObservableCollection<object>();
+
+            // 使用排序和分组逻辑
+            var groups = RawMailList
+                .OrderByDescending(m => m.Time)
+                .GroupBy(m => GetGroupTitle(m.Time));
+
+            foreach (var group in groups)
+            {
+                // 添加分组头
+                var header = new GroupHeaderModel();
+                header.GroupTitle = group.Key;
+                header.ItemCount = group.Count();
+                result.Add(header);
+
+                foreach (var item in group)
+                {
+                    result.Add(item);
+                }
+            }
+
+            MailList = result;
         }
 
+        private string GetGroupTitle(DateTime? mailTime)
+        {
+            if (!mailTime.HasValue)
+            {
+                return "更早";
+            }
+
+            var date = mailTime.Value.Date;
+            var today = DateTime.Today;
+
+            if (date == today)
+            {
+                return "今天";
+            }
+
+            if (date == today.AddDays(-1))
+            {
+                return "昨天";
+            }
+            
+            // 本周逻辑
+            int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
+            var startOfWeek = today.AddDays(-1 * diff).Date;
+            if (date >= startOfWeek)
+            {
+                return date.ToString("dddd");
+            }
+
+            return date.ToString("yyyy年MM月");
+        }
     }
 }
+
