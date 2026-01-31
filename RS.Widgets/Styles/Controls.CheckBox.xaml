@@ -21,6 +21,7 @@
         <Setter Property="rs:ControlsHelper.IconWidth" Value="18" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="18" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -40,29 +41,18 @@
                                 Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
                                 Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
                                 Background="#fff"
-                                BorderBrush="#eeeeee"
-                                BorderThickness="1"
+                                BorderBrush="{StaticResource RSApp.Styles.BaseGray040}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="3">
-                                <!--<Path
-                                    x:Name="PART_CheckIcon"
-                                    Grid.Column="0"
-                                    Width="9"
-                                    Height="7"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Data=""
-                                    Stretch="Fill" />-->
-
                                 <Path
                                     x:Name="PART_CheckIcon"
                                     Grid.Column="0"
                                     Width="9"
-                                    Height="7"
+                                    Height="9"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Data="M5.749 11.486a1.06 1.06 0 0 0 1.502 0L13.12 5.62A.875.875 0 0 0 11.88 4.38L6.5 9.763 4.494 7.756a.875.875 0 1 0-1.238 1.238z"
-                                    Stretch="Fill" />
-
+                                    Stretch="Uniform" />
                             </Border>
                             <ContentPresenter
                                 Grid.Column="1"
@@ -82,7 +72,8 @@
                             <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.BaseGray050}" />
                         </MultiTrigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten1}" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter TargetName="PART_CheckBorder" Property="Background" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                             <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.BaseWhite100}" />
                         </Trigger>
                         <MultiTrigger>
@@ -90,9 +81,9 @@
                                 <Condition Property="IsThreeState" Value="True" />
                                 <Condition Property="IsChecked" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.ThemeLighten1}" />
+                            <Setter TargetName="PART_CheckIcon" Property="Fill" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                             <Setter TargetName="PART_CheckIcon" Property="Data" Value="{StaticResource RSApp.Icons.Minus}" />
-                            <Setter TargetName="PART_CheckIcon" Property="Height" Value="3" />
+                            <Setter TargetName="PART_CheckIcon" Property="Height" Value="4" />
                         </MultiTrigger>
 
                     </ControlTemplate.Triggers>

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using RS.WPFClient.Enums;
 using System;
 
 namespace RS.WPFClient.Models
@@ -11,7 +12,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public string? Account
         {
-            get { return account; }
+            get
+            {
+                return account;
+            }
             set
             {
                 this.SetProperty(ref account, value);
@@ -24,7 +28,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public string? Content
         {
-            get { return content; }
+            get
+            {
+                return content;
+            }
             set
             {
                 this.SetProperty(ref content, value);
@@ -37,7 +44,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public DateTime? Time
         {
-            get { return time; }
+            get
+            {
+                return time;
+            }
             set
             {
                 this.SetProperty(ref time, value);
@@ -50,7 +60,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public bool IsStarred
         {
-            get { return isStarred; }
+            get
+            {
+                return isStarred;
+            }
             set
             {
                 this.SetProperty(ref isStarred, value);
@@ -64,7 +77,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public bool IsRead
         {
-            get { return isRead; }
+            get
+            {
+                return isRead;
+            }
             set
             {
                 this.SetProperty(ref isRead, value);
@@ -78,7 +94,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public string Subject
         {
-            get { return subject; }
+            get
+            {
+                return subject;
+            }
             set
             {
                 this.SetProperty(ref subject, value);
@@ -92,7 +111,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public bool HasAttachment
         {
-            get { return hasAttachment; }
+            get
+            {
+                return hasAttachment;
+            }
             set
             {
                 this.SetProperty(ref hasAttachment, value);
@@ -106,7 +128,10 @@ namespace RS.WPFClient.Models
         /// </summary>
         public string Digest
         {
-            get { return digest; }
+            get
+            {
+                return digest;
+            }
             set
             {
                 this.SetProperty(ref digest, value);
@@ -114,11 +139,75 @@ namespace RS.WPFClient.Models
         }
 
 
-        public virtual bool IsHeader
+        private bool isSelect;
+        /// <summary>
+        /// 是否选中
+        /// </summary>
+        public bool IsSelect
+        {
+            get
+            {
+                return isSelect;
+            }
+            set
+            {
+                this.SetProperty(ref isSelect, value);
+            }
+        }
+
+
+        public bool IsHeader
         {
             get
             {
                 return false;
+            }
+        }
+        private SelectionPosition selectionPosition;
+        /// <summary>
+        /// 选中位置状态
+        /// </summary>
+        public SelectionPosition SelectionPosition
+        {
+            get
+            {
+                return selectionPosition;
+            }
+            set
+            {
+                this.SetProperty(ref selectionPosition, value);
+            }
+        }
+
+        private string? email;
+        /// <summary>
+        /// 邮箱地址
+        /// </summary>
+        public string? Email
+        {
+            get
+            {
+                return email;
+            }
+            set
+            {
+                this.SetProperty(ref email, value);
+            }
+        }
+
+        private string? avatar;
+        /// <summary>
+        /// 头像
+        /// </summary>
+        public string? Avatar
+        {
+            get
+            {
+                return avatar;
+            }
+            set
+            {
+                this.SetProperty(ref avatar, value);
             }
         }
     }

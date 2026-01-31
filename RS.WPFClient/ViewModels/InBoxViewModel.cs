@@ -15,27 +15,9 @@ using System.Collections.ObjectModel;
 
 namespace RS.WPFClient.ViewModels
 {
-
-    [ServiceInjectConfig(ServiceLifetime.Transient)]
     public class InBoxViewModel : ViewModelBase
     {
-
         private List<MailModel> RawMailList = new List<MailModel>();
-
-
-        private bool isPreviewMode;
-        public bool IsPreviewMode
-        {
-            get
-            {
-                return isPreviewMode;
-            }
-            set
-            {
-                SetProperty(ref isPreviewMode, value);
-            }
-        }
-
         public ICommand DeleteCommand { get; }
         public ICommand ReplyCommand { get; }
         public ICommand ReplyAllCommand { get; }
@@ -51,7 +33,10 @@ namespace RS.WPFClient.ViewModels
         public ICommand MoveToSentCommand { get; }
         public ICommand MoveToSubscriptionCommand { get; }
         public ICommand CreateFolderCommand { get; }
+        public ICommand ToggleStarCommand { get; }
 
+        public ICommand MailSelectAllCommand { get; }
+        public ICommand MailSelectCommand { get; }
         public InBoxViewModel()
         {
             DeleteCommand = new RelayCommand(Delete);
@@ -69,23 +54,42 @@ namespace RS.WPFClient.ViewModels
             CreateFolderCommand = new RelayCommand(CreateFolder);
             MoveToSentCommand = new RelayCommand(MoveToSent);
             MoveToSubscriptionCommand = new RelayCommand(MoveToSubscription);
-
+            ToggleStarCommand = new RelayCommand<MailModel>(ToggleStar);
+            MailSelectAllCommand = new RelayCommand(MailSelectAll);
+            MailSelectCommand = new RelayCommand(MailSelect);
             InitTestData();
+        }
+
+        private void MailSelect()
+        {
+            UpdateIsSelectedAll();
+            UpdateCornerRadius();
+        }
+
+        private void MailSelectAll()
+        {
+            if (!IsSelectedAll.HasValue)
+            {
+                return;
+            }
+            bool isSelectAll = this.IsSelectedAll.Value;
+            foreach (var mail in RawMailList)
+            {
+                mail.IsSelect = isSelectAll;
+            }
+            UpdateCornerRadius();
         }
 
         private void InitTestData()
         {
             var today = DateTime.Now;
-            
+
             // 计算本周二
             int daysToTuesday = (int)today.DayOfWeek - (int)DayOfWeek.Tuesday;
             if (daysToTuesday < 0) daysToTuesday += 7;
             var thisTuesday = today.Date.AddDays(-daysToTuesday).AddHours(14); // 设置一个固定时间
 
-            // 添加一些固定样式的初始数据
-            RawMailList.Add(new MailModel { Account = "GitHub", Content = "广告邮件", Time = today, IsStarred = false });
-            RawMailList.Add(new MailModel { Account = ".NET - UXDivers Team", Content = "Grial UI Kit Monthly Summary - December 2025 ", Time = thisTuesday, IsStarred = false });
-
+          
             // 批量生成数据
             Random random = new Random();
             for (int i = 0; i < 30; i++)
@@ -105,23 +109,66 @@ namespace RS.WPFClient.ViewModels
                     mailTime = today.Date.AddDays(-random.Next(8, 365)).AddHours(random.Next(0, 24));
                 }
 
+                string accountName = i % 3 == 0 ? "GitHub" : (i % 3 == 1 ? "TeamViewer" : "Avalonia UI");
+                string emailAddr = i % 3 == 0 ? "noreply@github.com" : (i % 3 == 1 ? "support@teamviewer.com" : "contact@avalonia.com");
+
                 RawMailList.Add(new MailModel
                 {
-                    Account = i % 3 == 0 ? "GitHub" : (i % 3 == 1 ? "TeamViewer" : "Avalonia UI"),
-                    Content = $"测试邮件内容 {i + 1}",
+                    Account = accountName,
+                    Email = emailAddr,
+                    Content = $"测试邮sdfjlksjf lsjflksjl收到附件是浪费大家塑料袋放进楼上看风景拉萨扩大飞机楼市房价卢卡斯的积分卢卡斯的积分件内容 测试邮件士大夫精神立刻发酵饲料会sfsdjklfjslfjslkfjlsk上了看大家分厘卡撒酒疯历史交锋了快速减肥了快速减肥了快速减肥了快速减肥了快速减肥的两款手机法律框架十六客服的j计法了快速反击历史交锋接口的风景主题{i + 1}",
                     Time = mailTime,
                     IsStarred = i % 10 == 0,
                     IsRead = i % 4 == 0,
-                    Subject = $"测试邮件主题 {i + 1}",
+                    Subject = $"测试邮件士大夫精神立刻发酵饲料会sfsdjklfjslfjslkfjlsk上了看大家分厘卡撒酒疯历史交锋了快速减肥了快速减肥了快速减肥了快速减肥了快速减肥的两款手机法律框架十六客服的j计法了快速反击历史交锋接口的风景主题 {i + 1}",
                     HasAttachment = i % 8 == 0,
-                    Digest = $"测试邮件摘要数据快速反击快速减肥刷卡积分快速减肥 {i + 1}",
+                    Digest = $"测试邮件摘要数据快速反击sdjflksjflksjflksjflksjflksjflksjflsjf skfd快速减肥刷卡积分快速减肥 测试邮件士大夫精神立刻发酵饲料会sfsdjklfjslfjslkfjlsk上了看大家分厘卡撒酒疯历史交锋了快速减肥了快速减肥了快速减肥了快速减肥了快速减肥的两款手机法律框架十六客服的j计法了快速反击历史交锋接口的风景主题{i + 1}",
                 });
             }
 
             UpdateFlattenedLists();
+            UpdateCornerRadius();
+        }
+      
+
+        private void UpdateIsSelectedAll()
+        {
+            bool hasSelected = false;
+            bool hasUnselected = false;
+
+            foreach (var mail in RawMailList)
+            {
+                if (mail.IsSelect)
+                {
+                    hasSelected = true;
+                }
+                else
+                {
+                    hasUnselected = true;
+                }
+
+                if (hasSelected && hasUnselected)
+                {
+                    break;
+                }
+            }
+
+            if (hasSelected && hasUnselected)
+            {
+                IsSelectedAll = null;
+            }
+            else if (hasSelected)
+            {
+                IsSelectedAll = true;
+            }
+            else
+            {
+                IsSelectedAll = false;
+            }
         }
 
-       
+
+
 
         private void Delete()
         {
@@ -173,6 +220,15 @@ namespace RS.WPFClient.ViewModels
             /* 取消星标逻辑待实现 */
         }
 
+        private void ToggleStar(MailModel mail)
+        {
+            if (mail != null)
+            {
+                mail.IsStarred = !mail.IsStarred;
+            }
+        }
+
+
         private void MarkAsSpam()
         {
             /* 标记为广告邮件逻辑待实现 */
@@ -201,6 +257,31 @@ namespace RS.WPFClient.ViewModels
 
 
 
+        private bool isPreviewMode;
+        public bool IsPreviewMode
+        {
+            get
+            {
+                return isPreviewMode;
+            }
+            set
+            {
+                SetProperty(ref isPreviewMode, value);
+            }
+        }
+
+        private bool? isSelectedAll = false;
+        public bool? IsSelectedAll
+        {
+            get
+            {
+                return isSelectedAll;
+            }
+            set
+            {
+                this.SetProperty(ref isSelectedAll, value);
+            }
+        }
 
 
 
@@ -221,7 +302,7 @@ namespace RS.WPFClient.ViewModels
         }
 
 
-     
+
 
 
         private ObservableCollection<object>? mailList;
@@ -254,28 +335,58 @@ namespace RS.WPFClient.ViewModels
                 return;
             }
 
-            var result = new ObservableCollection<object>();
+            // 1. 排序 (不使用 lambda)
+            List<MailModel> sortedList = new List<MailModel>(RawMailList);
+            sortedList.Sort(new Comparison<MailModel>(CompareMailsByTime));
 
-            // 使用排序和分组逻辑
-            var groups = RawMailList
-                .OrderByDescending(m => m.Time)
-                .GroupBy(m => GetGroupTitle(m.Time));
+            // 2. 分组 (使用 Dictionary 手动分组)
+            Dictionary<string, List<MailModel>> groups = new Dictionary<string, List<MailModel>>();
+            List<string> groupOrder = new List<string>();
 
-            foreach (var group in groups)
+            foreach (var mail in sortedList)
             {
-                // 添加分组头
-                var header = new GroupHeaderModel();
-                header.GroupTitle = group.Key;
-                header.ItemCount = group.Count();
+                string title = GetGroupTitle(mail.Time);
+                if (!groups.ContainsKey(title))
+                {
+                    groups[title] = new List<MailModel>();
+                    groupOrder.Add(title);
+                }
+                groups[title].Add(mail);
+            }
+
+            // 3. 构建 Flattened List
+            ObservableCollection<object> result = new ObservableCollection<object>();
+            foreach (var title in groupOrder)
+            {
+                GroupHeaderModel header = new GroupHeaderModel();
+                header.GroupTitle = title;
+                header.ItemCount = groups[title].Count;
                 result.Add(header);
 
-                foreach (var item in group)
+                foreach (var item in groups[title])
                 {
                     result.Add(item);
                 }
             }
 
             MailList = result;
+        }
+
+        private int CompareMailsByTime(MailModel x, MailModel y)
+        {
+            if (x.Time == y.Time)
+            {
+                return 0;
+            }
+            if (x.Time == null)
+            {
+                return 1;
+            }
+            if (y.Time == null)
+            {
+                return -1;
+            }
+            return y.Time.Value.CompareTo(x.Time.Value); // 倒序
         }
 
         private string GetGroupTitle(DateTime? mailTime)
@@ -297,7 +408,7 @@ namespace RS.WPFClient.ViewModels
             {
                 return "昨天";
             }
-            
+
             // 本周逻辑
             int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
             var startOfWeek = today.AddDays(-1 * diff).Date;
@@ -307,6 +418,50 @@ namespace RS.WPFClient.ViewModels
             }
 
             return date.ToString("yyyy年MM月");
+        }
+
+
+        private void UpdateCornerRadius()
+        {
+            if (MailList == null)
+            {
+                return;
+            }
+
+            var list = MailList.ToList();
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (!(list[i] is MailModel currentMail))
+                {
+                    continue;
+                }
+
+                if (!currentMail.IsSelect)
+                {
+                    currentMail.SelectionPosition = SelectionPosition.None;
+                    continue;
+                }
+
+                bool prevSelected = (i > 0 && list[i - 1] is MailModel prevMail && prevMail.IsSelect);
+                bool nextSelected = (i < list.Count - 1 && list[i + 1] is MailModel nextMail && nextMail.IsSelect);
+
+                if (prevSelected && nextSelected)
+                {
+                    currentMail.SelectionPosition = SelectionPosition.Middle;
+                }
+                else if (prevSelected)
+                {
+                    currentMail.SelectionPosition = SelectionPosition.Bottom;
+                }
+                else if (nextSelected)
+                {
+                    currentMail.SelectionPosition = SelectionPosition.Top;
+                }
+                else
+                {
+                    currentMail.SelectionPosition = SelectionPosition.Single;
+                }
+            }
         }
     }
 }
