@@ -42,6 +42,7 @@
                         <Grid Background="{TemplateBinding Background}">
                             <ScrollViewer
                                 x:Name="SubMenuScrollViewer"
+                                Margin="0,2,0,2"
                                 CanContentScroll="True"
                                 Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
                                                                               TypeInTargetAssembly={x:Type FrameworkElement}}}">
@@ -60,4 +61,6 @@
         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
+
+
 </ResourceDictionary>

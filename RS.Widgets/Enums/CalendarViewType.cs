@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RS.Widgets.Enums
 {
-    internal enum CalendarViewType
+    public enum CalendarViewType
     {
         Day,
         Month,

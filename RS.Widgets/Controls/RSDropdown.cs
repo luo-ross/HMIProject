@@ -23,10 +23,6 @@ namespace RS.Widgets.Controls
            
         }
 
-      
-
-    
-
         public UIElement PlacementTarget
         {
             get { return (UIElement)GetValue(PlacementTargetProperty); }
@@ -117,9 +113,6 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_Popup = this.GetTemplateChild(nameof(this.PART_Popup)) as Popup;
-
-
-
         }
 
 

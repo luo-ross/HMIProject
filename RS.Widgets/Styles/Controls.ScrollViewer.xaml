@@ -3,6 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.RepeatButton.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
 
     <Style TargetType="{x:Type ScrollViewer}">
@@ -58,6 +62,104 @@
         </Setter>
     </Style>
 
+
+    <!--  菜单/下拉滚动视图样式 (用于 Menu、ToolBar 溢出面板等)  -->
+    <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
+    <Style
+        x:Key="{ComponentResourceKey ResourceId=MenuScrollViewer,
+                                     TypeInTargetAssembly={x:Type FrameworkElement}}"
+        BasedOn="{x:Null}"
+        TargetType="{x:Type ScrollViewer}">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!--  向上滚动按钮  -->
+                        <RepeatButton
+                            x:Name="PART_BtnUpArrow"
+                            Grid.Row="0"
+                            Command="{x:Static ScrollBar.LineUpCommand}"
+                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                            Focusable="False"
+                            Style="{StaticResource MenuScrollButton}">
+                            <RepeatButton.Visibility>
+                                <MultiBinding
+                                    Converter="{StaticResource MenuScrollingVisibilityConverter}"
+                                    ConverterParameter="0"
+                                    FallbackValue="Collapsed">
+                                    <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </RepeatButton.Visibility>
+                            <Path
+                                x:Name="PART_IconUpArrow"
+                                Width="10"
+                                Height="6"
+                                Data="{StaticResource RSApp.Icons.MenuItemUpArrow}"
+                                Fill="#666"
+                                Stretch="Uniform" />
+                        </RepeatButton>
+
+                        <!--  内容区域  -->
+                        <Border Grid.Row="1">
+                            <ScrollContentPresenter CanContentScroll="{TemplateBinding CanContentScroll}" />
+                        </Border>
+
+                        <!--  向下滚动按钮  -->
+                        <RepeatButton
+                            x:Name="PART_BtnDownArrow"
+                            Grid.Row="2"
+                            Command="{x:Static ScrollBar.LineDownCommand}"
+                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                            Focusable="False"
+                            Style="{StaticResource MenuScrollButton}">
+                            <RepeatButton.Visibility>
+                                <MultiBinding
+                                    Converter="{StaticResource MenuScrollingVisibilityConverter}"
+                                    ConverterParameter="100"
+                                    FallbackValue="Collapsed">
+                                    <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </RepeatButton.Visibility>
+                            <Path
+                                x:Name="PART_IconDownArrow"
+                                Width="10"
+                                Height="6"
+                                Data="{StaticResource RSApp.Icons.MenuItemDownArrow}"
+                                Fill="#666"
+                                Stretch="Uniform" />
+                        </RepeatButton>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="PART_BtnDownArrow" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_IconDownArrow" Property="Opacity" Value="0.7" />
+                            <Setter TargetName="PART_BtnDownArrow" Property="BorderThickness" Value="0,1,0,0" />
+                            <Setter TargetName="PART_BtnDownArrow" Property="BorderBrush" Value="#F1F2F3" />
+                        </Trigger>
+                        <Trigger SourceName="PART_BtnUpArrow" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_IconUpArrow" Property="Opacity" Value="0.7" />
+                            <Setter TargetName="PART_BtnUpArrow" Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter TargetName="PART_BtnUpArrow" Property="BorderBrush" Value="#F1F2F3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
 </ResourceDictionary>

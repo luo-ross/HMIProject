@@ -34,6 +34,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Thickness.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Thumb.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToggleButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToolBar.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tooltip.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Tree.xaml" />
     </ResourceDictionary.MergedDictionaries>

@@ -209,13 +209,13 @@ namespace RS.Widgets.Controls
         /// <summary>
         /// 日历视图类型
         /// </summary>
-        internal CalendarViewType CalendarViewType
+        public CalendarViewType CalendarViewType
         {
             get { return (CalendarViewType)GetValue(CalendarViewTypeProperty); }
             private set { SetValue(CalendarViewTypeProperty, value); }
         }
 
-        internal static readonly DependencyProperty CalendarViewTypeProperty =
+        public static readonly DependencyProperty CalendarViewTypeProperty =
             DependencyProperty.Register(nameof(CalendarViewType), typeof(CalendarViewType), typeof(RSCalendar), new PropertyMetadata(CalendarViewType.Day));
 
 

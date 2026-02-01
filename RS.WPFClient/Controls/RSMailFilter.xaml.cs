@@ -18,19 +18,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ZXing.OneD;
 
 namespace RS.WPFClient.Controls
 {
     /// <summary>
     /// RSMailFilter.xaml 的交互逻辑
+    /// 使用 ContextMenu 替代 Popup，左键点击显示菜单
     /// </summary>
     public partial class RSMailFilter : ToggleButton
     {
-        private Popup PART_Popup;
-        private RSDropdown PART_MailSize;
-        private RSDropdown PART_MailDate;
-        private Window ParentWindow;
         public RSMailFilter()
         {
             InitializeComponent();
@@ -95,18 +91,7 @@ namespace RS.WPFClient.Controls
             set { SetValue(IsAllReadProperty, value); }
         }
         public static readonly DependencyProperty IsAllReadProperty =
-            DependencyProperty.Register(nameof(IsAllRead), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true, IsAllReadPropertyChanged));
-
-        private static void IsAllReadPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-            mailFilter.GetMailFilterModel().MailFilterType = MailFilterType.AllRead;
-            mailFilter.HandleFilterPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsAllRead), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true));
 
         public bool IsUnread
         {
@@ -115,18 +100,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsUnreadProperty =
-            DependencyProperty.Register(nameof(IsUnread), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false, OnIsUnreadPropertyChanged));
-
-        private static void OnIsUnreadPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-            mailFilter.GetMailFilterModel().MailFilterType = MailFilterType.Unread;
-            mailFilter.HandleFilterPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsUnread), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
 
         public bool IsWithAttachment
         {
@@ -135,19 +109,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsWithAttachmentProperty =
-            DependencyProperty.Register(nameof(IsWithAttachment), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false, OnIsWithAttachmentPropertyChanged));
-
-        private static void OnIsWithAttachmentPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-
-            mailFilter.GetMailFilterModel().MailFilterType = MailFilterType.WithAttachment;
-            mailFilter?.HandleFilterPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsWithAttachment), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
 
         public bool IsFromContact
         {
@@ -156,18 +118,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsFromContactProperty =
-            DependencyProperty.Register(nameof(IsFromContact), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false, OnIsFromContactPropertyChanged));
-
-        private static void OnIsFromContactPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-            mailFilter.GetMailFilterModel().MailFilterType = MailFilterType.FromContact;
-            mailFilter.HandleFilterPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsFromContact), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
 
 
 
@@ -178,21 +129,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsNewestToOldestProperty =
-            DependencyProperty.Register(nameof(IsNewestToOldest), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true, OnIsNewestToOldestPropertyChanged));
-
-        private static void OnIsNewestToOldestPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-            mailFilter.IsOldestToNewest = false;
-            mailFilter.IsSmallToLarge = false;
-            mailFilter.IsLargeToSmall = false;
-            mailFilter.GetMailFilterModel().MailSortType = MailSortType.NewestToOldest;
-            mailFilter.HandleDateSortPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsNewestToOldest), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true));
 
         public bool IsOldestToNewest
         {
@@ -201,22 +138,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsOldestToNewestProperty =
-            DependencyProperty.Register(nameof(IsOldestToNewest), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false, OnIsOldestToNewestPropertyChanged));
-
-        private static void OnIsOldestToNewestPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-
-            mailFilter.IsNewestToOldest = false;
-            mailFilter.IsSmallToLarge = false;
-            mailFilter.IsLargeToSmall = false;
-            mailFilter.GetMailFilterModel().MailSortType = MailSortType.OldestToNewest;
-            mailFilter.HandleDateSortPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsOldestToNewest), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
 
 
         public bool IsLargeToSmall
@@ -226,21 +148,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsLargeToSmallProperty =
-            DependencyProperty.Register(nameof(IsLargeToSmall), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false, OnIsLargeToSmallPropertyChanged));
-
-        private static void OnIsLargeToSmallPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-            mailFilter.IsNewestToOldest = false;
-            mailFilter.IsSmallToLarge = false;
-            mailFilter.IsOldestToNewest = false;
-            mailFilter.GetMailFilterModel().MailSortType = MailSortType.LargeToSmall;
-            mailFilter.HandleSizeSortPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsLargeToSmall), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
 
         public bool IsSmallToLarge
         {
@@ -249,21 +157,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsSmallToLargeProperty =
-            DependencyProperty.Register(nameof(IsSmallToLarge), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false, OnIsSmallToLargePropertyChanged));
-
-        private static void OnIsSmallToLargePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var mailFilter = d as RSMailFilter;
-            if (!e.NewValue.ToBool() || mailFilter == null)
-            {
-                return;
-            }
-            mailFilter.IsNewestToOldest = false;
-            mailFilter.IsLargeToSmall = false;
-            mailFilter.IsOldestToNewest = false;
-            mailFilter.GetMailFilterModel().MailSortType = MailSortType.SmallToLarge;
-            mailFilter.HandleSizeSortPropertyChanged();
-        }
+            DependencyProperty.Register(nameof(IsSmallToLarge), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
 
         public string MailFilterDes
         {
@@ -300,7 +194,216 @@ namespace RS.WPFClient.Controls
 
         private void RSMailFilter_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ParentWindow = Window.GetWindow(this);
+            // 初始化 MenuItem 的选中状态
+            this.UpdateMenuItemCheckState();
+
+            // 订阅 ContextMenu 关闭事件，同步 IsChecked 状态
+            if (this.ContextMenu != null)
+            {
+                this.ContextMenu.Closed += this.ContextMenu_Closed;
+            }
+        }
+
+        /// <summary>
+        /// ContextMenu 关闭事件处理
+        /// </summary>
+        private void ContextMenu_Closed(object sender, RoutedEventArgs e)
+        {
+            // 菜单关闭时，重置 ToggleButton 的 IsChecked 状态
+            this.SetCurrentValue(IsCheckedProperty, false);
+        }
+
+        /// <summary>
+        /// 重写 OnClick，左键点击时切换 ContextMenu 显示/隐藏
+        /// </summary>
+        protected override void OnClick()
+        {
+            // 先调用 base.OnClick() 来切换 IsChecked 状态
+            base.OnClick();
+
+            // 根据切换后的 IsChecked 状态决定打开或关闭菜单
+            if (this.IsChecked == true)
+            {
+                // ToggleButton 现在是 checked 状态，打开菜单
+                this.ShowContextMenu();
+            }
+            else
+            {
+                // ToggleButton 现在是 unchecked 状态，关闭菜单
+                this.CloseContextMenu();
+            }
+        }
+
+        /// <summary>
+        /// 显示 ContextMenu
+        /// </summary>
+        private void ShowContextMenu()
+        {
+            if (this.ContextMenu == null)
+            {
+                return;
+            }
+
+            // 更新菜单项选中状态
+            this.UpdateMenuItemCheckState();
+
+            this.ContextMenu.PlacementTarget = this;
+            this.ContextMenu.Placement = PlacementMode.Bottom;
+            this.ContextMenu.IsOpen = true;
+        }
+
+        /// <summary>
+        /// 更新 MenuItem 的选中状态
+        /// </summary>
+        private void UpdateMenuItemCheckState()
+        {
+            if (this.BtnAllRead != null)
+            {
+                this.BtnAllRead.IsChecked = this.IsAllRead;
+            }
+            if (this.BtnUnread != null)
+            {
+                this.BtnUnread.IsChecked = this.IsUnread;
+            }
+            if (this.BtnWithAttachment != null)
+            {
+                this.BtnWithAttachment.IsChecked = this.IsWithAttachment;
+            }
+            if (this.BtnFromContact != null)
+            {
+                this.BtnFromContact.IsChecked = this.IsFromContact;
+            }
+            if (this.FromNewToOld != null)
+            {
+                this.FromNewToOld.IsChecked = this.IsNewestToOldest;
+            }
+            if (this.FromOldToNew != null)
+            {
+                this.FromOldToNew.IsChecked = this.IsOldestToNewest;
+            }
+            if (this.BtnFromLargeToSmall != null)
+            {
+                this.BtnFromLargeToSmall.IsChecked = this.IsLargeToSmall;
+            }
+            if (this.BtnFromSmallToLarge != null)
+            {
+                this.BtnFromSmallToLarge.IsChecked = this.IsSmallToLarge;
+            }
+
+            // 更新子菜单的 Tag（显示当前选中项的描述）
+            this.UpdateSubMenuTags();
+        }
+
+        /// <summary>
+        /// 更新子菜单的 Tag 显示
+        /// </summary>
+        private void UpdateSubMenuTags()
+        {
+            if (this.PART_MailDateMenu != null)
+            {
+                if (this.IsOldestToNewest)
+                {
+                    this.PART_MailDateMenu.Tag = "由旧到新";
+                }
+                else
+                {
+                    this.PART_MailDateMenu.Tag = string.Empty;
+                }
+            }
+
+            if (this.PART_MailSizeMenu != null)
+            {
+                if (this.IsLargeToSmall)
+                {
+                    this.PART_MailSizeMenu.Tag = "由大到小";
+                }
+                else if (this.IsSmallToLarge)
+                {
+                    this.PART_MailSizeMenu.Tag = "由小到大";
+                }
+                else
+                {
+                    this.PART_MailSizeMenu.Tag = string.Empty;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 筛选菜单项点击事件
+        /// </summary>
+        private void FilterMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            if (menuItem == null)
+            {
+                return;
+            }
+
+            // 实现单选逻辑：取消其他筛选项的选中状态
+            this.IsAllRead = menuItem == this.BtnAllRead;
+            this.IsUnread = menuItem == this.BtnUnread;
+            this.IsWithAttachment = menuItem == this.BtnWithAttachment;
+            this.IsFromContact = menuItem == this.BtnFromContact;
+
+            // 更新 MailFilterModel
+            var mailFilterModel = this.GetMailFilterModel();
+            if (this.IsAllRead)
+            {
+                mailFilterModel.MailFilterType = MailFilterType.AllRead;
+            }
+            else if (this.IsUnread)
+            {
+                mailFilterModel.MailFilterType = MailFilterType.Unread;
+            }
+            else if (this.IsWithAttachment)
+            {
+                mailFilterModel.MailFilterType = MailFilterType.WithAttachment;
+            }
+            else if (this.IsFromContact)
+            {
+                mailFilterModel.MailFilterType = MailFilterType.FromContact;
+            }
+
+            this.HandleFilterPropertyChanged();
+        }
+
+        /// <summary>
+        /// 排序菜单项点击事件
+        /// </summary>
+        private void SortMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            if (menuItem == null)
+            {
+                return;
+            }
+
+            // 实现单选逻辑：取消其他排序项的选中状态
+            this.IsNewestToOldest = menuItem == this.FromNewToOld;
+            this.IsOldestToNewest = menuItem == this.FromOldToNew;
+            this.IsLargeToSmall = menuItem == this.BtnFromLargeToSmall;
+            this.IsSmallToLarge = menuItem == this.BtnFromSmallToLarge;
+
+            // 更新 MailFilterModel
+            var mailFilterModel = this.GetMailFilterModel();
+            if (this.IsNewestToOldest)
+            {
+                mailFilterModel.MailSortType = MailSortType.NewestToOldest;
+            }
+            else if (this.IsOldestToNewest)
+            {
+                mailFilterModel.MailSortType = MailSortType.OldestToNewest;
+            }
+            else if (this.IsLargeToSmall)
+            {
+                mailFilterModel.MailSortType = MailSortType.LargeToSmall;
+            }
+            else if (this.IsSmallToLarge)
+            {
+                mailFilterModel.MailSortType = MailSortType.SmallToLarge;
+            }
+
+            this.HandleSortPropertyChanged();
         }
 
         private void PART_BtnClear_Click(object sender, RoutedEventArgs e)
@@ -309,51 +412,42 @@ namespace RS.WPFClient.Controls
             mailFilterModel.MailFilterType = MailFilterType.AllRead;
             mailFilterModel.MailSortType = MailSortType.NewestToOldest;
             this.IsAllRead = true;
+            this.IsUnread = false;
+            this.IsWithAttachment = false;
+            this.IsFromContact = false;
             this.IsNewestToOldest = true;
+            this.IsOldestToNewest = false;
+            this.IsLargeToSmall = false;
+            this.IsSmallToLarge = false;
             this.GenerateMailFilterDes();
             this.RaiseMailFilterEvent();
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            this.PART_Popup = this.GetTemplateChild(nameof(this.PART_Popup)) as Popup;
-            this.PART_MailSize = this.GetTemplateChild(nameof(this.PART_MailSize)) as RSDropdown;
-            this.PART_MailDate = this.GetTemplateChild(nameof(this.PART_MailDate)) as RSDropdown;
         }
 
         private void HandleFilterPropertyChanged()
         {
             this.GenerateMailFilterDes();
-            this.HidePopup();
+            this.CloseContextMenu();
             this.RaiseMailFilterEvent();
         }
 
-        private void HandleSizeSortPropertyChanged()
+        private void HandleSortPropertyChanged()
         {
             this.GenerateMailFilterDes();
-            this.HideMailSizePopup();
-            this.HidePopup();
-            RaiseMailFilterEvent();
+            this.CloseContextMenu();
+            this.RaiseMailFilterEvent();
         }
 
-        private void HandleDateSortPropertyChanged()
+        /// <summary>
+        /// 关闭 ContextMenu
+        /// </summary>
+        private void CloseContextMenu()
         {
-            this.GenerateMailFilterDes();
-            this.HideMailDatePopup();
-            this.HidePopup();
-            RaiseMailFilterEvent();
-        }
-
-        private void HidePopup()
-        {
-            if (this.PART_Popup == null)
+            if (this.ContextMenu != null)
             {
-                return;
+                this.ContextMenu.IsOpen = false;
             }
-
-            this.PART_Popup.SetCurrentValue(Popup.IsOpenProperty, false);
-            this.ActivateWindow();
+            // 重置 ToggleButton 的 IsChecked 状态
+            this.SetCurrentValue(IsCheckedProperty, false);
         }
 
         private void RaiseMailFilterEvent()
@@ -369,37 +463,6 @@ namespace RS.WPFClient.Controls
             {
                 MailFilteredCommand.Execute(mailFilterModel);
             }
-        }
-
-        private void HideMailSizePopup()
-        {
-            if (this.PART_MailSize == null)
-            {
-                return;
-            }
-
-            this.PART_MailSize.SetCurrentValue(ToggleButton.IsCheckedProperty, false);
-            this.ActivateWindow();
-        }
-
-        private void HideMailDatePopup()
-        {
-            if (this.PART_MailDate == null)
-            {
-                return;
-            }
-
-            this.PART_MailDate.SetCurrentValue(ToggleButton.IsCheckedProperty, false);
-            this.ActivateWindow();
-        }
-
-        private void ActivateWindow()
-        {
-            if (this.ParentWindow == null)
-            {
-                return;
-            }
-            this.ParentWindow.Activate();
         }
 
         private void GenerateMailFilterDes()

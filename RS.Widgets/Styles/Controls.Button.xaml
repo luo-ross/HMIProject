@@ -113,15 +113,6 @@
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Content="{TemplateBinding Content}"
                                 FontSize="{TemplateBinding FontSize}" />
-
-                            <Path
-                                Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
-                                Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="{TemplateBinding rs:ControlsHelper.IconData}"
-                                Fill="{TemplateBinding rs:ControlsHelper.IconColor}"
-                                Stretch="Fill" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

@@ -1,9 +1,12 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.RepeatButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="RSApp.Styles.MenuStyle" TargetType="{x:Type Menu}">
@@ -28,6 +31,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
 </ResourceDictionary>

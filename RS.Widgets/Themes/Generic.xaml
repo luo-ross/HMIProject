@@ -16,6 +16,8 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDragEffect.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDragPreview.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDropdown.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMenu.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSDropdownMenu.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSPicker.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSLoading.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Themes/RSMessage.xaml" />

@@ -72,7 +72,6 @@
                                     ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                     DropdownWidth="200"
                                     Focusable="false"
-                                    IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     IsShowDropDownIcon="True">
                                     <rs:RSDropdown.DropdownContent>
                                         <Grid x:Name="DropDown">

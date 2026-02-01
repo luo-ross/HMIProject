@@ -12,7 +12,6 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ListBoxItem.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.MenuItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Templates.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ToggleButton.xaml" />
     </ResourceDictionary.MergedDictionaries>

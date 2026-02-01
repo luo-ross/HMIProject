@@ -6,12 +6,10 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.RepeatButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ScrollViewer.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <converters:ClipConverter x:Key="ClipConverter" />
-    <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
-
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -25,101 +23,9 @@
     </Style>
 
 
-    <Style
-        x:Key="{ComponentResourceKey ResourceId=MenuScrollViewer,
-                                     TypeInTargetAssembly={x:Type FrameworkElement}}"
-        BasedOn="{x:Null}"
-        TargetType="{x:Type ScrollViewer}">
-        <Setter Property="HorizontalScrollBarVisibility" Value="Visible" />
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="1" Grid.Column="0">
-                            <ScrollContentPresenter Margin="{TemplateBinding Padding}" CanContentScroll="{TemplateBinding CanContentScroll}" />
-                        </Border>
-
-                        <RepeatButton
-                            x:Name="PART_BtnUpArrow"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Command="{x:Static ScrollBar.LineUpCommand}"
-                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                            Focusable="false"
-                            Style="{StaticResource MenuScrollButton}">
-                            <RepeatButton.Visibility>
-                                <MultiBinding
-                                    Converter="{StaticResource MenuScrollingVisibilityConverter}"
-                                    ConverterParameter="0"
-                                    FallbackValue="Visibility.Collapsed">
-                                    <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                </MultiBinding>
-                            </RepeatButton.Visibility>
-                            <Path
-                                x:Name="PART_IconUpArrow"
-                                Data="{StaticResource RSApp.Icons.MenuItemUpArrow}"
-                                Fill="{TemplateBinding Foreground}" />
-                        </RepeatButton>
-
-                        <RepeatButton
-                            x:Name="PART_BtnDownArrow"
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Command="{x:Static ScrollBar.LineDownCommand}"
-                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                            Focusable="false"
-                            Style="{StaticResource MenuScrollButton}">
-                            <RepeatButton.Visibility>
-                                <MultiBinding
-                                    Converter="{StaticResource MenuScrollingVisibilityConverter}"
-                                    ConverterParameter="100"
-                                    FallbackValue="Visibility.Collapsed">
-                                    <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
-                                </MultiBinding>
-                            </RepeatButton.Visibility>
-                            <Path
-                                x:Name="PART_IconDownArrow"
-                                Data="{StaticResource RSApp.Icons.MenuItemDownArrow}"
-                                Fill="{TemplateBinding Foreground}" />
-                        </RepeatButton>
-                    </Grid>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger SourceName="PART_BtnDownArrow" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_IconDownArrow" Property="Opacity" Value="0.7" />
-                            <Setter TargetName="PART_BtnDownArrow" Property="BorderThickness" Value="0,1,0,0" />
-                            <Setter TargetName="PART_BtnDownArrow" Property="BorderBrush" Value="#F1F2F3" />
-                        </Trigger>
-                        <Trigger SourceName="PART_BtnUpArrow" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_IconUpArrow" Property="Opacity" Value="0.7" />
-                            <Setter TargetName="PART_BtnUpArrow" Property="BorderThickness" Value="0,0,0,1" />
-                            <Setter TargetName="PART_BtnUpArrow" Property="BorderBrush" Value="#F1F2F3" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
     <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
         <Border
-            x:Name="templateRoot"
+            x:Name="PART_Border"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
@@ -130,6 +36,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
                 <Path
@@ -175,12 +82,25 @@
                     Margin="3,0,3,0"
                     ContentSource="Header"
                     RecognizesAccessKey="True" />
+
+                <Path
+                    x:Name="DownArrow"
+                    Grid.Column="3"
+                    Width="12"
+                    Height="7"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Data="{StaticResource RSApp.Icons.DownArrow}"
+                    Fill="{TemplateBinding Foreground}"
+                    Opacity="0.6"
+                    Stretch="Fill"
+                    Visibility="Collapsed" />
                 <rs:RSPopup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
                     IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                     Placement="Bottom"
-                    PlacementTarget="{Binding ElementName=templateRoot}"
+                    PlacementTarget="{Binding ElementName=PART_Border}"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                     RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
                     <Border Margin="15,0,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
@@ -221,13 +141,16 @@
                 <Setter Property="Foreground" Value="#949494" />
                 <Setter Property="Background" Value="#eee" />
             </Trigger>
+            <Trigger Property="HasItems" Value="True">
+                <Setter TargetName="DownArrow" Property="Visibility" Value="Visible" />
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
 
     <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
         <Border
-            x:Name="templateRoot"
+            x:Name="PART_Border"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
@@ -279,7 +202,6 @@
 
                 <ContentPresenter
                     Grid.Column="2"
-                    Margin="{TemplateBinding Padding}"
                     ContentSource="Header"
                     RecognizesAccessKey="True" />
             </Grid>
@@ -316,7 +238,7 @@
 
     <ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
         <Border
-            x:Name="templateRoot"
+            x:Name="PART_Border"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
@@ -402,10 +324,13 @@
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
                     Focusable="false"
+                    HorizontalOffset="3"
                     IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                     Placement="Right"
+                    PlacementTarget="{Binding ElementName=PART_Border}"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                    RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                    RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                    VerticalOffset="-3">
                     <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Border
                             x:Name="SubMenuBorder"
@@ -451,7 +376,7 @@
 
     <ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
         <Border
-            x:Name="templateRoot"
+            x:Name="PART_Border"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
@@ -559,26 +484,187 @@
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="Padding" Value="5,3,5,3" />
-        <Setter Property="Margin" Value="0,1,0,1" />
-        <Setter Property="MinHeight" Value="32" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="rs:ControlsHelper.IconWidth" Value="15" />
+        <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
+                <Setter Property="Margin" Value="3" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="TopLevelItem">
+                <Setter Property="Margin" Value="3" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
-                <!--<Setter Property="MinWidth" Value="200" />-->
+                <Setter Property="Margin" Value="0,1,0,1" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuItem">
-                <!--<Setter Property="MinWidth" Value="200" />-->
+                <Setter Property="Margin" Value="0,1,0,1" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+
+    <Style x:Key="RSApp.Styles.FilterMenuItemStyle" TargetType="{x:Type MenuItem}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="5,3,5,3" />
+        <Setter Property="Margin" Value="5,1,5,1" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="Foreground" Value="#333" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Border
+                        x:Name="PART_Border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5"
+                        FocusVisualStyle="{x:Null}"
+                        Focusable="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Header}" />
+                            <Path
+                                x:Name="PART_CheckIcon"
+                                Grid.Column="1"
+                                Width="15"
+                                Height="10"
+                                Margin="5,0,5,0"
+                                Data="{StaticResource RSApp.Icons.CheckMark}"
+                                Fill="{TemplateBinding Foreground}"
+                                Stretch="Fill"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#f5f5f5" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="PART_CheckIcon" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="RSApp.Styles.FilterMenuSubItemStyle" TargetType="{x:Type MenuItem}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="5,3,5,3" />
+        <Setter Property="Margin" Value="5,1,5,1" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="Foreground" Value="#333" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Border
+                        x:Name="PART_Border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5"
+                        FocusVisualStyle="{x:Null}"
+                        Focusable="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Header}" />
+                            <TextBlock
+                                x:Name="PART_SubText"
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Foreground="#999"
+                                Text="{TemplateBinding Tag}" />
+                            <Path
+                                x:Name="PART_Arrow"
+                                Grid.Column="2"
+                                Width="8"
+                                Height="8"
+                                Margin="10,0,5,0"
+                                VerticalAlignment="Center"
+                                Data="M 0,0 L 4,4 L 0,8"
+                                Fill="#999"
+                                Stretch="Uniform" />
+                            <Popup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                HorizontalOffset="5"
+                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                Placement="Right"
+                                PlacementTarget="{Binding ElementName=PART_Border}"
+                                PopupAnimation="Fade">
+                                <Border
+                                    MinWidth="150"
+                                    Margin="10"
+                                    Background="#fff"
+                                    BorderBrush="#EEEEEE"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                    <StackPanel Margin="0,5,0,5" IsItemsHost="True" />
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#f5f5f5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="RSApp.Styles.MenuLabelStyle" TargetType="{x:Type MenuItem}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsEnabled" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <TextBlock
+                        Margin="5,3,5,3"
+                        Foreground="#999"
+                        Text="{TemplateBinding Header}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>
