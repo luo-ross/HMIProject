@@ -396,6 +396,8 @@ namespace RS.Widgets.Controls
             {
                 this.PART_TxtPage.KeyDown += PART_TxtPage_KeyDown;
             }
+
+            this.FindChild<ScrollViewer>();
         }
 
         private async void PART_TxtPage_KeyDown(object sender, KeyEventArgs e)

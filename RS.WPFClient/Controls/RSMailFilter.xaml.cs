@@ -1,36 +1,25 @@
-﻿using RS.Commons.Extend;
-using RS.Widgets;
+﻿using RS.Widgets;
 using RS.Widgets.Controls;
 using RS.WPFClient.Enums;
 using RS.WPFClient.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RS.WPFClient.Controls
 {
     /// <summary>
     /// RSMailFilter.xaml 的交互逻辑
-    /// 使用 ContextMenu 替代 Popup，左键点击显示菜单
+    /// 使用 RSDropdownMenu 组件实现筛选下拉菜单
     /// </summary>
-    public partial class RSMailFilter : ToggleButton
+    public partial class RSMailFilter : UserControl
     {
         public RSMailFilter()
         {
             InitializeComponent();
-            this.Loaded += RSMailFilter_Loaded;
+
         }
 
 
@@ -67,9 +56,6 @@ namespace RS.WPFClient.Controls
             set { SetValue(MailFilteredCommandProperty, value); }
         }
 
-        /// <summary>
-        /// 邮件筛选命令依赖属性
-        /// </summary>
         public static readonly DependencyProperty MailFilteredCommandProperty =
             DependencyProperty.Register(nameof(MailFilteredCommand), typeof(ICommand), typeof(RSMailFilter), new PropertyMetadata(null));
 
@@ -84,12 +70,12 @@ namespace RS.WPFClient.Controls
             DependencyProperty.Register(nameof(MailFilterModel), typeof(MailFilterModel), typeof(RSMailFilter), new PropertyMetadata(null));
 
 
-
         public bool IsAllRead
         {
             get { return (bool)GetValue(IsAllReadProperty); }
             set { SetValue(IsAllReadProperty, value); }
         }
+
         public static readonly DependencyProperty IsAllReadProperty =
             DependencyProperty.Register(nameof(IsAllRead), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true));
 
@@ -119,7 +105,6 @@ namespace RS.WPFClient.Controls
 
         public static readonly DependencyProperty IsFromContactProperty =
             DependencyProperty.Register(nameof(IsFromContact), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
-
 
 
         public bool IsNewestToOldest
@@ -169,6 +154,19 @@ namespace RS.WPFClient.Controls
             DependencyProperty.Register(nameof(MailFilterDes), typeof(string), typeof(RSMailFilter), new PropertyMetadata(null));
 
 
+
+
+        public bool HasMailFilterDes
+        {
+            get { return (bool)GetValue(HasMailFilterDesProperty); }
+            set { SetValue(HasMailFilterDesProperty, value); }
+        }
+
+        public static readonly DependencyProperty HasMailFilterDesProperty =
+            DependencyProperty.Register(nameof(HasMailFilterDes), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+
+
+
         public string SizeSortDes
         {
             get { return (string)GetValue(SizeSortDesProperty); }
@@ -179,8 +177,6 @@ namespace RS.WPFClient.Controls
             DependencyProperty.Register(nameof(SizeSortDes), typeof(string), typeof(RSMailFilter), new PropertyMetadata(null));
 
 
-
-
         public string DateSortDes
         {
             get { return (string)GetValue(DateSortDesProperty); }
@@ -189,110 +185,9 @@ namespace RS.WPFClient.Controls
 
         public static readonly DependencyProperty DateSortDesProperty =
             DependencyProperty.Register(nameof(DateSortDes), typeof(string), typeof(RSMailFilter), new PropertyMetadata(null));
+
         #endregion
 
-
-        private void RSMailFilter_Loaded(object sender, RoutedEventArgs e)
-        {
-            // 初始化 MenuItem 的选中状态
-            this.UpdateMenuItemCheckState();
-
-            // 订阅 ContextMenu 关闭事件，同步 IsChecked 状态
-            if (this.ContextMenu != null)
-            {
-                this.ContextMenu.Closed += this.ContextMenu_Closed;
-            }
-        }
-
-        /// <summary>
-        /// ContextMenu 关闭事件处理
-        /// </summary>
-        private void ContextMenu_Closed(object sender, RoutedEventArgs e)
-        {
-            // 菜单关闭时，重置 ToggleButton 的 IsChecked 状态
-            this.SetCurrentValue(IsCheckedProperty, false);
-        }
-
-        /// <summary>
-        /// 重写 OnClick，左键点击时切换 ContextMenu 显示/隐藏
-        /// </summary>
-        protected override void OnClick()
-        {
-            // 先调用 base.OnClick() 来切换 IsChecked 状态
-            base.OnClick();
-
-            // 根据切换后的 IsChecked 状态决定打开或关闭菜单
-            if (this.IsChecked == true)
-            {
-                // ToggleButton 现在是 checked 状态，打开菜单
-                this.ShowContextMenu();
-            }
-            else
-            {
-                // ToggleButton 现在是 unchecked 状态，关闭菜单
-                this.CloseContextMenu();
-            }
-        }
-
-        /// <summary>
-        /// 显示 ContextMenu
-        /// </summary>
-        private void ShowContextMenu()
-        {
-            if (this.ContextMenu == null)
-            {
-                return;
-            }
-
-            // 更新菜单项选中状态
-            this.UpdateMenuItemCheckState();
-
-            this.ContextMenu.PlacementTarget = this;
-            this.ContextMenu.Placement = PlacementMode.Bottom;
-            this.ContextMenu.IsOpen = true;
-        }
-
-        /// <summary>
-        /// 更新 MenuItem 的选中状态
-        /// </summary>
-        private void UpdateMenuItemCheckState()
-        {
-            if (this.BtnAllRead != null)
-            {
-                this.BtnAllRead.IsChecked = this.IsAllRead;
-            }
-            if (this.BtnUnread != null)
-            {
-                this.BtnUnread.IsChecked = this.IsUnread;
-            }
-            if (this.BtnWithAttachment != null)
-            {
-                this.BtnWithAttachment.IsChecked = this.IsWithAttachment;
-            }
-            if (this.BtnFromContact != null)
-            {
-                this.BtnFromContact.IsChecked = this.IsFromContact;
-            }
-            if (this.FromNewToOld != null)
-            {
-                this.FromNewToOld.IsChecked = this.IsNewestToOldest;
-            }
-            if (this.FromOldToNew != null)
-            {
-                this.FromOldToNew.IsChecked = this.IsOldestToNewest;
-            }
-            if (this.BtnFromLargeToSmall != null)
-            {
-                this.BtnFromLargeToSmall.IsChecked = this.IsLargeToSmall;
-            }
-            if (this.BtnFromSmallToLarge != null)
-            {
-                this.BtnFromSmallToLarge.IsChecked = this.IsSmallToLarge;
-            }
-
-            // 更新子菜单的 Tag（显示当前选中项的描述）
-            this.UpdateSubMenuTags();
-        }
 
         /// <summary>
         /// 更新子菜单的 Tag 显示
@@ -404,6 +299,8 @@ namespace RS.WPFClient.Controls
             }
 
             this.HandleSortPropertyChanged();
+
+            this.UpdateSubMenuTags();
         }
 
         private void PART_BtnClear_Click(object sender, RoutedEventArgs e)
@@ -426,28 +323,15 @@ namespace RS.WPFClient.Controls
         private void HandleFilterPropertyChanged()
         {
             this.GenerateMailFilterDes();
-            this.CloseContextMenu();
+            this.PART_DropdownMenu.IsDropdownOpen = false;
             this.RaiseMailFilterEvent();
         }
 
         private void HandleSortPropertyChanged()
         {
             this.GenerateMailFilterDes();
-            this.CloseContextMenu();
+            this.PART_DropdownMenu.IsDropdownOpen = false;
             this.RaiseMailFilterEvent();
-        }
-
-        /// <summary>
-        /// 关闭 ContextMenu
-        /// </summary>
-        private void CloseContextMenu()
-        {
-            if (this.ContextMenu != null)
-            {
-                this.ContextMenu.IsOpen = false;
-            }
-            // 重置 ToggleButton 的 IsChecked 状态
-            this.SetCurrentValue(IsCheckedProperty, false);
         }
 
         private void RaiseMailFilterEvent()
@@ -510,11 +394,13 @@ namespace RS.WPFClient.Controls
 
             if (mailFilterDesList.Count > 0)
             {
-                this.SetCurrentValue(ToggleButton.ContentProperty, string.Join(';', mailFilterDesList));
+                this.HasMailFilterDes = true;
+                this.MailFilterDes = string.Join(";", mailFilterDesList);
             }
             else
             {
-                this.SetCurrentValue(ToggleButton.ContentProperty, null);
+                this.MailFilterDes = null;
+                this.HasMailFilterDes = false;
             }
         }
 
@@ -528,8 +414,5 @@ namespace RS.WPFClient.Controls
             }
             return this.MailFilterModel;
         }
-
-
-
     }
 }

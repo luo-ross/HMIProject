@@ -28,17 +28,6 @@
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
                         <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PART_Border" Property="Opacity" Value="0.8" />
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -61,60 +50,62 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSDropdownMenu}">
-                    <ToggleButton
-                        x:Name="PART_ToggleButton"
+                    <Border
                         Padding="{TemplateBinding Padding}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        rs:ControlsHelper.CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsDropdownOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource RSDropdownMenuToggleButtonStyle}">
-                        <Grid FlowDirection="LeftToRight">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
-                            <Path
-                                x:Name="PART_Icon"
-                                Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
-                                Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="{TemplateBinding rs:ControlsHelper.IconData}"
-                                Fill="{TemplateBinding rs:ControlsHelper.IconColor}"
-                                Stretch="Fill" />
-                            <ContentControl
-                                x:Name="PART_Content"
-                                Grid.Column="1"
-                                Margin="5,0,0,0"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding Content}"
-                                FontSize="{TemplateBinding FontSize}" />
-                            <Path
-                                x:Name="PART_Arrow"
-                                Grid.Column="2"
-                                Width="7"
-                                Height="10"
-                                Margin="5,0,0,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="{StaticResource RSApp.Icons.RightArrow}"
-                                Fill="{TemplateBinding Foreground}"
-                                RenderTransformOrigin="0.5,0.5"
-                                Stretch="Fill"
-                                Visibility="Collapsed">
-                                <Path.RenderTransform>
-                                    <RotateTransform Angle="90" />
-                                </Path.RenderTransform>
-                            </Path>
-                        </Grid>
-                    </ToggleButton>
-
+                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
+                        <ToggleButton
+                            x:Name="PART_ToggleButton"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            rs:ControlsHelper.CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                            IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsDropdownOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource RSDropdownMenuToggleButtonStyle}">
+                            <Grid FlowDirection="LeftToRight">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <Path
+                                    x:Name="PART_Icon"
+                                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                                    Fill="{TemplateBinding rs:ControlsHelper.IconColor}"
+                                    Stretch="Fill" />
+                                <ContentControl
+                                    x:Name="PART_Content"
+                                    Grid.Column="1"
+                                    Margin="5,0,0,0"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Content}"
+                                    FontSize="{TemplateBinding FontSize}" />
+                                <Path
+                                    x:Name="PART_Arrow"
+                                    Grid.Column="2"
+                                    Width="7"
+                                    Height="10"
+                                    Margin="5,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{StaticResource RSApp.Icons.RightArrow}"
+                                    Fill="{TemplateBinding Foreground}"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Stretch="Fill"
+                                    Visibility="Collapsed">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ArrowAngle}" />
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Grid>
+                        </ToggleButton>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PART_Icon" Property="Data" Value="{x:Null}">
                             <Setter TargetName="PART_Content" Property="Margin" Value="0,0,0,0" />
@@ -127,6 +118,16 @@
 
                         <Trigger Property="Content" Value="{x:Null}">
                             <Setter TargetName="PART_Content" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
+                        </Trigger>
+                        <Trigger SourceName="PART_ToggleButton" Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" Value="0.8" />
+                        </Trigger>
+                        <Trigger SourceName="PART_ToggleButton" Property="IsChecked" Value="True">
+                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray005}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

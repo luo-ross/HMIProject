@@ -26,9 +26,6 @@ namespace RS.Widgets.Controls
 
         #region 依赖属性
 
-        /// <summary>
-        /// 是否展开下拉菜单
-        /// </summary>
         public bool IsDropdownOpen
         {
             get { return (bool)GetValue(IsDropdownOpenProperty); }
@@ -54,9 +51,6 @@ namespace RS.Widgets.Controls
         }
 
 
-        /// <summary>
-        /// 菜单子项集合（支持 MenuItem、Separator 等）
-        /// </summary>
         public ObservableCollection<object> Items
         {
             get { return (ObservableCollection<object>)GetValue(ItemsProperty); }
@@ -92,10 +86,20 @@ namespace RS.Widgets.Controls
         public static readonly DependencyProperty IsShowDropDownIconProperty =
             DependencyProperty.Register(nameof(IsShowDropDownIcon), typeof(bool), typeof(RSDropdownMenu), new PropertyMetadata(true));
 
+
+
+        public double ArrowAngle
+        {
+            get { return (double)GetValue(ArrowAngleProperty); }
+            set { SetValue(ArrowAngleProperty, value); }
+        }
+
+        public static readonly DependencyProperty ArrowAngleProperty =
+            DependencyProperty.Register(nameof(ArrowAngle), typeof(double), typeof(RSDropdownMenu), new PropertyMetadata(90D));
+
         #endregion
 
         #region 事件处理
-
         private void RSDropdownMenu_Loaded(object sender, RoutedEventArgs e)
         {
             this.InitializeContextMenu();
@@ -109,9 +113,7 @@ namespace RS.Widgets.Controls
             }
         }
 
-        /// <summary>
-        /// 初始化内部 ContextMenu
-        /// </summary>
+
         private void InitializeContextMenu()
         {
             if (this.InternalContextMenu != null)
@@ -121,7 +123,6 @@ namespace RS.Widgets.Controls
 
             this.InternalContextMenu = new ContextMenu();
 
-            // 将 Items 中的 MenuItem 添加到 ContextMenu
             if (this.Items != null)
             {
                 foreach (var item in this.Items)
@@ -130,38 +131,27 @@ namespace RS.Widgets.Controls
                 }
             }
 
-            // 订阅 ContextMenu 关闭事件
             this.InternalContextMenu.Closed += this.InternalContextMenu_Closed;
         }
 
-        /// <summary>
-        /// ContextMenu 关闭事件处理
-        /// </summary>
+
         private void InternalContextMenu_Closed(object sender, RoutedEventArgs e)
         {
-            // 菜单关闭时，重置 IsDropdownOpen 状态
             this.SetCurrentValue(IsDropdownOpenProperty, false);
         }
 
-        /// <summary>
-        /// 显示 ContextMenu
-        /// </summary>
         private void ShowContextMenu()
         {
             if (this.InternalContextMenu == null)
             {
                 return;
             }
-
-            // 使用 ToggleButton 作为放置目标
-            this.InternalContextMenu.PlacementTarget = this.PART_ToggleButton != null ? (UIElement)this.PART_ToggleButton : this;
+            this.InternalContextMenu.PlacementTarget = this;
             this.InternalContextMenu.Placement = this.Placement;
             this.InternalContextMenu.IsOpen = true;
         }
 
-        /// <summary>
-        /// 关闭 ContextMenu
-        /// </summary>
+
         private void CloseContextMenu()
         {
             if (this.InternalContextMenu != null)
@@ -171,6 +161,29 @@ namespace RS.Widgets.Controls
         }
 
         #endregion
+
+        /// <summary>
+        /// 添加项到菜单
+        /// </summary>
+        public void AddItem(object item)
+        {
+            if (item == null || this.Items.Contains(item))
+            {
+                return;
+            }
+            
+            this.Items.Add(item);
+            this.InternalContextMenu?.Items.Add(item);
+        }
+
+        /// <summary>
+        /// 从菜单移除项
+        /// </summary>
+        public void RemoveItem(object item)
+        {
+            this.InternalContextMenu?.Items.Remove(item);
+            this.Items?.Remove(item);
+        }
 
         public override void OnApplyTemplate()
         {

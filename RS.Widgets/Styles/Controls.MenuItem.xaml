@@ -95,15 +95,14 @@
                     Opacity="0.6"
                     Stretch="Fill"
                     Visibility="Collapsed" />
-                <rs:RSPopup
+                <Popup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
-                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                     Placement="Bottom"
-                    PlacementTarget="{Binding ElementName=PART_Border}"
-                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                    RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
-                    <Border Margin="15,0,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                    PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                    <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Border
                             x:Name="SubMenuBorder"
                             Background="#fff"
@@ -120,7 +119,7 @@
                         </Border>
                     </Border>
 
-                </rs:RSPopup>
+                </Popup>
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
@@ -320,16 +319,15 @@
                     Fill="{TemplateBinding Foreground}"
                     Opacity="0.6"
                     Stretch="Fill" />
-                <rs:RSPopup
+                <Popup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
                     Focusable="false"
                     HorizontalOffset="3"
                     IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                     Placement="Right"
-                    PlacementTarget="{Binding ElementName=PART_Border}"
+                    PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                    RelativeElement="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                     VerticalOffset="-3">
                     <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Border
@@ -347,7 +345,7 @@
                             </ScrollViewer>
                         </Border>
                     </Border>
-                </rs:RSPopup>
+                </Popup>
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
@@ -486,9 +484,9 @@
         <Setter Property="Padding" Value="5,3,5,3" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="ClipToBounds" Value="True" />
-        <Setter Property="MinHeight" Value="32" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="15" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="15" />
+        <Setter Property="MinHeight" Value="30" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
@@ -500,11 +498,13 @@
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
-                <Setter Property="Margin" Value="0,1,0,1" />
+                <Setter Property="Margin" Value="3,1,3,1" />
+                <Setter Property="MinWidth" Value="200" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuItem">
-                <Setter Property="Margin" Value="0,1,0,1" />
+                <Setter Property="Margin" Value="3,1,3,1" />
+                <Setter Property="MinWidth" Value="200" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
         </Style.Triggers>
@@ -518,7 +518,7 @@
         <Setter Property="Padding" Value="5,3,5,3" />
         <Setter Property="Margin" Value="5,1,5,1" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="MinHeight" Value="30" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="MinWidth" Value="200" />
         <Setter Property="Foreground" Value="#333" />
@@ -576,7 +576,7 @@
         <Setter Property="Padding" Value="5,3,5,3" />
         <Setter Property="Margin" Value="5,1,5,1" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="MinHeight" Value="30" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="MinWidth" Value="200" />
         <Setter Property="Foreground" Value="#333" />
