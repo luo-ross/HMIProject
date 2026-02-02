@@ -1,24 +1,16 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Markup;
-using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-  
     [ContentProperty(nameof(Items))]
-    public class RSDropdownMenu : ToggleButton
+    public class RSDropdownMenu : ContentControl
     {
         private ContextMenu InternalContextMenu;
+        private ToggleButton PART_ToggleButton;
 
         static RSDropdownMenu()
         {
@@ -33,6 +25,34 @@ namespace RS.Widgets.Controls
         }
 
         #region 依赖属性
+
+        /// <summary>
+        /// 是否展开下拉菜单
+        /// </summary>
+        public bool IsDropdownOpen
+        {
+            get { return (bool)GetValue(IsDropdownOpenProperty); }
+            set { SetValue(IsDropdownOpenProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDropdownOpenProperty =
+            DependencyProperty.Register(nameof(IsDropdownOpen), typeof(bool), typeof(RSDropdownMenu), new PropertyMetadata(false, OnIsDropdownOpenChanged));
+
+        private static void OnIsDropdownOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            RSDropdownMenu dropdownMenu = (RSDropdownMenu)d;
+            bool isOpen = (bool)e.NewValue;
+
+            if (isOpen)
+            {
+                dropdownMenu.ShowContextMenu();
+            }
+            else
+            {
+                dropdownMenu.CloseContextMenu();
+            }
+        }
+
 
         /// <summary>
         /// 菜单子项集合（支持 MenuItem、Separator 等）
@@ -119,27 +139,8 @@ namespace RS.Widgets.Controls
         /// </summary>
         private void InternalContextMenu_Closed(object sender, RoutedEventArgs e)
         {
-            // 菜单关闭时，重置 ToggleButton 的 IsChecked 状态
-            this.SetCurrentValue(IsCheckedProperty, false);
-        }
-
-        /// <summary>
-        /// 重写 OnClick，左键点击时切换 ContextMenu 显示/隐藏
-        /// </summary>
-        protected override void OnClick()
-        {
-            // 先调用 base.OnClick() 来切换 IsChecked 状态
-            base.OnClick();
-
-            // 根据切换后的 IsChecked 状态决定打开或关闭菜单
-            if (this.IsChecked == true)
-            {
-                this.ShowContextMenu();
-            }
-            else
-            {
-                this.CloseContextMenu();
-            }
+            // 菜单关闭时，重置 IsDropdownOpen 状态
+            this.SetCurrentValue(IsDropdownOpenProperty, false);
         }
 
         /// <summary>
@@ -152,7 +153,8 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            this.InternalContextMenu.PlacementTarget = this;
+            // 使用 ToggleButton 作为放置目标
+            this.InternalContextMenu.PlacementTarget = this.PART_ToggleButton != null ? (UIElement)this.PART_ToggleButton : this;
             this.InternalContextMenu.Placement = this.Placement;
             this.InternalContextMenu.IsOpen = true;
         }
@@ -166,7 +168,6 @@ namespace RS.Widgets.Controls
             {
                 this.InternalContextMenu.IsOpen = false;
             }
-            this.SetCurrentValue(IsCheckedProperty, false);
         }
 
         #endregion
@@ -174,6 +175,7 @@ namespace RS.Widgets.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+            this.PART_ToggleButton = this.GetTemplateChild(nameof(this.PART_ToggleButton)) as ToggleButton;
         }
     }
 }

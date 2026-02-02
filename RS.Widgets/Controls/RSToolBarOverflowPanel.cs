@@ -18,7 +18,12 @@ namespace RS.Widgets.Controls
             // 先调用基类方法，确保子元素被正确收集
             base.MeasureOverride(constraint);
 
-            double maxWidth = 0;
+            // 如果用户设置了 WrapWidth，使用它作为宽度
+            double panelWidth = this.WrapWidth > 0 && !double.IsNaN(this.WrapWidth) && !double.IsInfinity(this.WrapWidth)
+                ? this.WrapWidth
+                : 0;
+
+            double maxWidth = panelWidth;
             double totalHeight = 0;
 
             UIElementCollection children = this.InternalChildren;
@@ -46,6 +51,11 @@ namespace RS.Widgets.Controls
             double currentY = 0;
             double maxWidth = 0;
 
+            // 如果用户设置了 WrapWidth，使用它作为宽度
+            double panelWidth = this.WrapWidth > 0 && !double.IsNaN(this.WrapWidth) && !double.IsInfinity(this.WrapWidth)
+                ? this.WrapWidth
+                : arrangeBounds.Width;
+
             UIElementCollection children = this.Children;
             int count = children.Count;
 
@@ -55,13 +65,13 @@ namespace RS.Widgets.Controls
                 Size desiredSize = child.DesiredSize;
 
                 // 垂直排列：每个元素占满宽度，依次向下排列
-                child.Arrange(new Rect(0, currentY, arrangeBounds.Width, desiredSize.Height));
+                child.Arrange(new Rect(0, currentY, panelWidth, desiredSize.Height));
 
                 currentY += desiredSize.Height;
                 maxWidth = Math.Max(maxWidth, desiredSize.Width);
             }
 
-            return new Size(maxWidth, currentY);
+            return new Size(Math.Max(maxWidth, panelWidth), currentY);
         }
     }
 }

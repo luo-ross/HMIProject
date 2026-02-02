@@ -1,27 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace RS.Widgets.Controls
 {
-    public class RSDropdown : ToggleButton
+    public class RSDropdown : ContentControl
     {
         private Popup PART_Popup;
+        private ToggleButton PART_ToggleButton;
+
         static RSDropdown()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSDropdown), new FrameworkPropertyMetadata(typeof(RSDropdown)));
         }
+
         public RSDropdown()
         {
-           
+
         }
+
+        /// <summary>
+        /// 是否展开下拉面板
+        /// </summary>
+        public bool IsDropdownOpen
+        {
+            get { return (bool)GetValue(IsDropdownOpenProperty); }
+            set { SetValue(IsDropdownOpenProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDropdownOpenProperty =
+            DependencyProperty.Register(nameof(IsDropdownOpen), typeof(bool), typeof(RSDropdown), new PropertyMetadata(false));
+
 
         public UIElement PlacementTarget
         {
@@ -30,8 +39,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty PlacementTargetProperty =
-            DependencyProperty.Register("PlacementTarget", typeof(UIElement), typeof(RSDropdown), new PropertyMetadata(null));
-
+            DependencyProperty.Register(nameof(PlacementTarget), typeof(UIElement), typeof(RSDropdown), new PropertyMetadata(null));
 
 
         public object DropdownContent
@@ -41,9 +49,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DropdownContentProperty =
-            DependencyProperty.Register("DropdownContent", typeof(object), typeof(RSDropdown), new PropertyMetadata(null));
-
-
+            DependencyProperty.Register(nameof(DropdownContent), typeof(object), typeof(RSDropdown), new PropertyMetadata(null));
 
 
         public double DropdownWidth
@@ -53,8 +59,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DropdownWidthProperty =
-            DependencyProperty.Register("DropdownWidth", typeof(double), typeof(RSDropdown), new PropertyMetadata(double.NaN));
-
+            DependencyProperty.Register(nameof(DropdownWidth), typeof(double), typeof(RSDropdown), new PropertyMetadata(double.NaN));
 
 
         public double DropdownHeight
@@ -64,10 +69,7 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty DropdownHeightProperty =
-            DependencyProperty.Register("DropdownHeight", typeof(double), typeof(RSDropdown), new PropertyMetadata(double.NaN));
-
-
-
+            DependencyProperty.Register(nameof(DropdownHeight), typeof(double), typeof(RSDropdown), new PropertyMetadata(double.NaN));
 
 
         public bool IsShowDropDownIcon
@@ -80,9 +82,6 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register(nameof(IsShowDropDownIcon), typeof(bool), typeof(RSDropdown), new PropertyMetadata(false));
 
 
-
-
-
         public PlacementMode Placement
         {
             get { return (PlacementMode)GetValue(PlacementProperty); }
@@ -91,8 +90,6 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty PlacementProperty =
             DependencyProperty.Register(nameof(Placement), typeof(PlacementMode), typeof(RSDropdown), new PropertyMetadata(PlacementMode.Bottom));
-
-
 
 
         public double ArrowAngle
@@ -105,16 +102,11 @@ namespace RS.Widgets.Controls
             DependencyProperty.Register(nameof(ArrowAngle), typeof(double), typeof(RSDropdown), new PropertyMetadata(90D));
 
 
-
-
-     
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             this.PART_Popup = this.GetTemplateChild(nameof(this.PART_Popup)) as Popup;
+            this.PART_ToggleButton = this.GetTemplateChild(nameof(this.PART_ToggleButton)) as ToggleButton;
         }
-
-
     }
 }

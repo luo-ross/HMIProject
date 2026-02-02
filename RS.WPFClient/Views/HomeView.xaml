@@ -115,10 +115,7 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
                                         </Trigger>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
-                                        </Trigger>
-                                        <Trigger Property="IsPressed" Value="True">
+                                        <Trigger Property="IsDropdownOpen" Value="True">
                                             <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
                                         </Trigger>
                                     </Style.Triggers>

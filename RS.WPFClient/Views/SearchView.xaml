@@ -338,7 +338,7 @@
                 Padding="8,0,8,0"
                 rs:ControlsHelper.CornerRadius="8"
                 DropdownWidth="{Binding ElementName=PART_Border, Path=ActualWidth, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                IsChecked="{Binding IsAdvancedSearchChecked}"
+                IsDropdownOpen="{Binding IsAdvancedSearchChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 PlacementTarget="{Binding ElementName=PART_Border}">
                 <rs:RSDropdown.Style>
                     <Style TargetType="{x:Type rs:RSDropdown}">
@@ -348,10 +348,7 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#C0DCFC" />
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#A8CFFB" />
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
+                            <Trigger Property="IsDropdownOpen" Value="True">
                                 <Setter Property="Background" Value="#DAEBFD" />
                             </Trigger>
                             <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="True">

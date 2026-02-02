@@ -171,7 +171,8 @@
                                             FocusVisualStyle="{x:Null}"
                                             Focusable="true"
                                             KeyboardNavigation.DirectionalNavigation="Cycle"
-                                            KeyboardNavigation.TabNavigation="Cycle" />
+                                            KeyboardNavigation.TabNavigation="Cycle"
+                                            WrapWidth="200" />
                                     </ScrollViewer>
                                 </Border>
                             </Popup>

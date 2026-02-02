@@ -7,6 +7,7 @@
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.RepeatButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
 
 
     <Style TargetType="{x:Type ScrollViewer}">
@@ -63,8 +64,6 @@
     </Style>
 
 
-    <!--  菜单/下拉滚动视图样式 (用于 Menu、ToolBar 溢出面板等)  -->
-    <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
     <Style
         x:Key="{ComponentResourceKey ResourceId=MenuScrollViewer,
                                      TypeInTargetAssembly={x:Type FrameworkElement}}"
