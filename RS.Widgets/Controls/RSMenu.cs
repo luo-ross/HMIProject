@@ -28,7 +28,6 @@ namespace RS.Widgets.Controls
 
         private void RSMenu_Loaded(object sender, RoutedEventArgs e)
         {
-            // 延迟检查溢出，确保布局完成
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
                 this.CheckForOverflow();
@@ -43,14 +42,11 @@ namespace RS.Widgets.Controls
             }
         }
 
-
-
         /// <summary>
         /// 检查溢出并重新分配 MenuItems
         /// </summary>
         private void CheckForOverflow()
         {
-
             if (this.PART_OverflowMenu == null || this.IsUpdatingOverflow)
             {
                 return;
@@ -64,12 +60,12 @@ namespace RS.Widgets.Controls
                 this.PART_OverflowMenu.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 double overflowButtonWidth = this.PART_OverflowMenu.DesiredSize.Width;
                 
-                // 计算可用宽度（Menu总宽度减去溢出按钮宽度）
+                // 计算可用宽度
                 double availableWidth = this.ActualWidth - overflowButtonWidth;
 
-                // 第一步：找到第一个不可见的 MenuItem 索引
-                int overflowIndex = this.Items.Count; // 默认为总数，表示无溢出
+                // 第一步：计算当前主菜单需要的宽度，找到溢出点
                 double currentWidth = 0;
+                int overflowIndex = this.Items.Count;
 
                 for (int i = 0; i < this.Items.Count; i++)
                 {
@@ -86,64 +82,53 @@ namespace RS.Widgets.Controls
                     }
                 }
 
-                // 第二步：从溢出索引开始，将所有项移到 DropdownMenu
-                // 如果 overflowIndex == Items.Count，循环不执行
-                for (int i = overflowIndex; i < this.Items.Count;)
+                // 第二步：从后往前移除超出的项，插入到溢出菜单开头
+                // 这样溢出菜单中的顺序与原始顺序一致
+                while (this.Items.Count > overflowIndex)
                 {
-                    var item = this.Items[i];
+                    int lastIndex = this.Items.Count - 1;
+                    var item = this.Items[lastIndex];
                     if (item is MenuItem menuItem)
                     {
-                        this.Items.Remove(menuItem);
-                        this.PART_OverflowMenu.AddItem(menuItem);
-                        // 设置 DropdownMenu 样式
+                        this.Items.RemoveAt(lastIndex);
+                        // 插入到溢出菜单开头（index 0）
+                        this.PART_OverflowMenu.InsertItem(0, menuItem);
                         this.SetMenuItemStyleForDropdown(menuItem);
-                        // 注意：RemoveAt 后不需要 i++，因为后续元素会前移
-                    }
-                    else
-                    {
-                        i++; // 非 MenuItem，跳过
                     }
                 }
 
-                // 第三步：循环 DropdownMenu.Items（从前往后），检查是否可以移回 Menu
-                for (int i = 0; i < this.PART_OverflowMenu.Items.Count;)
+                // 第三步：尝试将溢出菜单中的项移回主菜单
+                // 从溢出菜单开头取出，添加到主菜单末尾
+                while (this.PART_OverflowMenu.Items.Count > 0)
                 {
-                    var item = this.PART_OverflowMenu.Items[i];
-                    if (item is MenuItem menuItem)
+                    if (this.PART_OverflowMenu.Items[0] is MenuItem menuItem)
                     {
-                        // 先临时设置为 Menu 样式以便测量
+                        // 先设置为 Menu 样式以便测量
                         this.SetMenuItemStyleForMenu(menuItem);
 
-                        // 测量这个 MenuItem
                         menuItem.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                         double itemWidth = menuItem.DesiredSize.Width;
-
-                        // 计算当前 Menu 的已用宽度
                         double currentMenuWidth = this.GetMenuItemsWidth();
 
-                        // 如果加上这个item后不会超出可用宽度，则移回 Menu
                         if (currentMenuWidth + itemWidth <= availableWidth)
                         {
                             this.PART_OverflowMenu.RemoveItem(menuItem);
+                            // 添加到主菜单末尾
                             this.Items.Add(menuItem);
-                            // Menu 样式已经在上面设置过了，保持不变
-                            // 注意：RemoveAt 后不需要 i++
                         }
                         else
                         {
-                            // 不能移回，恢复 DropdownMenu 样式
+                            // 恢复样式并退出
                             this.SetMenuItemStyleForDropdown(menuItem);
-                            // 后面的项也肯定放不下，直接退出
                             break;
                         }
                     }
                     else
                     {
-                        i++;
+                        break;
                     }
                 }
 
-                // 更新溢出菜单的可见性
                 this.UpdateOverflowMenuVisibility();
             }
             finally
@@ -190,7 +175,6 @@ namespace RS.Widgets.Controls
             }
             return totalWidth;
         }
-
 
         /// <summary>
         /// 更新溢出菜单的可见性

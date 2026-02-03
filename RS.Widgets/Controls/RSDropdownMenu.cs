@@ -177,6 +177,30 @@ namespace RS.Widgets.Controls
         }
 
         /// <summary>
+        /// 在指定索引位置插入项到菜单
+        /// </summary>
+        public void InsertItem(int index, object item)
+        {
+            if (item == null || this.Items.Contains(item))
+            {
+                return;
+            }
+
+            // 确保索引在有效范围内
+            if (index < 0)
+            {
+                index = 0;
+            }
+            else if (index > this.Items.Count)
+            {
+                index = this.Items.Count;
+            }
+
+            this.Items.Insert(index, item);
+            this.InternalContextMenu?.Items.Insert(index, item);
+        }
+
+        /// <summary>
         /// 从菜单移除项
         /// </summary>
         public void RemoveItem(object item)
