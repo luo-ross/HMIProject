@@ -39,7 +39,6 @@
         <Setter Property="rs:ControlsHelper.DesForeground" Value="#6B7280" />
         <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Templates.DefaultDataError}" />
         <Setter Property="rs:TextBoxHelper.Watermark" Value="请选择内容" />
-        <Setter Property="rs:ComboBoxHelper.SelectionBoxItemTemplate" Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionBoxItemTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ComboBox}">
@@ -94,7 +93,6 @@
                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                         Content="{TemplateBinding SelectionBoxItem}"
-                                        ContentTemplate="{TemplateBinding rs:ComboBoxHelper.SelectionBoxItemTemplate}"
                                         ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                         IsHitTestVisible="False" />
                                 </Grid>

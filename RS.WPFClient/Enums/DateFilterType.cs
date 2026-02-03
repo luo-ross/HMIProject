@@ -11,7 +11,7 @@ namespace RS.WPFClient.Enums
         /// <summary>
         /// 任何时间（不限制时间范围）
         /// </summary>
-        Any = -1,
+        Any,
 
         /// <summary>
         /// 一天内（最近24小时内）
@@ -56,6 +56,6 @@ namespace RS.WPFClient.Enums
         /// <summary>
         /// 自定义时间范围（用户手动指定的起始和结束时间）
         /// </summary>
-        Customise = 9999,
+        Customise,
     }
 }

@@ -23,7 +23,7 @@
         <converter:FolderTypeConverter x:Key="FolderTypeConverter" />
         <converter:AttachmentTypeConverter x:Key="AttachmentTypeConverter" />
         <converter:ReadUnReadTypeConverter x:Key="ReadUnReadTypeConverter" />
-        <SolidColorBrush x:Key="BorderBrush">#0F7AF5</SolidColorBrush>
+
 
         <Style
             x:Key="AdvancedSearchTextBoxStyle"
@@ -32,7 +32,7 @@
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
                     <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -45,56 +45,7 @@
             <Setter Property="Foreground" Value="#333333" />
         </Style>
 
-        <Style x:Key="CustomComboBoxStyle" TargetType="{x:Type ComboBox}">
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Background" Value="#F3F4F6" />
-            <Setter Property="Visibility" Value="Collapsed" />
-            <Setter Property="rs:ControlsHelper.CornerRadius" Value="10,0,0,10" />
-            <Setter Property="rs:ComboBoxHelper.SelectionBoxItemTemplate" Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionBoxItemTemplate}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ComboBox}">
-                        <Border
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                            <Grid>
-                                <rs:RSDropdown
-                                    rs:ControlsHelper.CornerRadius="10,0,0,10"
-                                    rs:ControlsHelper.IconColor="{TemplateBinding rs:ControlsHelper.IconColor}"
-                                    rs:ControlsHelper.IconData="{TemplateBinding rs:ControlsHelper.IconData}"
-                                    rs:ControlsHelper.IconHeight="{TemplateBinding rs:ControlsHelper.IconHeight}"
-                                    rs:ControlsHelper.IconWidth="{TemplateBinding rs:ControlsHelper.IconWidth}"
-                                    Content="{TemplateBinding SelectionBoxItem}"
-                                    ContentTemplate="{TemplateBinding rs:ComboBoxHelper.SelectionBoxItemTemplate}"
-                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                    DropdownWidth="200"
-                                    Focusable="false"
-                                    IsShowDropDownIcon="True">
-                                    <rs:RSDropdown.DropdownContent>
-                                        <Grid x:Name="DropDown">
-                                            <ScrollViewer Margin="0,3,0,3">
-                                                <VirtualizingStackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                            </ScrollViewer>
-                                        </Grid>
-                                    </rs:RSDropdown.DropdownContent>
-                                </rs:RSDropdown>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                    <Setter Property="Visibility" Value="Visible" />
-                </DataTrigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#E8EAEE" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+
 
         <DataTemplate DataType="{x:Type enums:SearchType}">
             <TextBlock Style="{StaticResource TextBlockDesStyle}" Text="{Binding Converter={StaticResource SearchTypeConverter}}" />
@@ -148,25 +99,6 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="MultiComboBoxSelectDataTemplate" DataType="{x:Type enums:SearchType}">
-            <Border>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="sdfsdfsdfsd" />
-                    <TextBox
-                        Grid.Column="1"
-                        Text="sf"
-                        TextWrapping="Wrap" />
-                </Grid>
-            </Border>
-        </DataTemplate>
-
-
-
-
         <Style
             x:Key="FilterComboBoxItemStyle"
             BasedOn="{StaticResource RSApp.Styles.ComboBoxItemBaseStyle}"
@@ -207,16 +139,18 @@
                                 <Setter TargetName="PART_CheckIcon" Property="Visibility" Value="Visible" />
                                 <Setter TargetName="PART_Bg" Property="Background" Value="#F3F4F6" />
                             </Trigger>
+
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Cursor" Value="Hand" />
                                 <Setter TargetName="PART_Bg" Property="Background" Value="#F3F4F6" />
                             </Trigger>
-                            <DataTrigger Binding="{Binding}" Value="-1">
+
+                            <DataTrigger Binding="{Binding}" Value="Any">
                                 <Setter TargetName="PART_Border" Property="BorderThickness" Value="0,0,0,1" />
                                 <Setter TargetName="PART_Border" Property="BorderBrush" Value="#eeeeee" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding}" Value="9999">
+                            <DataTrigger Binding="{Binding}" Value="Customise">
                                 <Setter TargetName="PART_Border" Property="BorderThickness" Value="0,1,0,0" />
                                 <Setter TargetName="PART_Border" Property="BorderBrush" Value="#eeeeee" />
                             </DataTrigger>
@@ -225,11 +159,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <DataTemplate x:Key="ComboBoxSelectDataTemplate">
-            <ContentControl Content="{Binding}" />
-        </DataTemplate>
-
 
     </UserControl.Resources>
     <i:Interaction.Behaviors>
@@ -260,7 +189,7 @@
                     </DataTrigger>
                     <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="True">
                         <Setter Property="Background" Value="#FFFFFF" />
-                        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                        <Setter Property="BorderBrush" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                         <Setter Property="BorderThickness" Value="1" />
                     </DataTrigger>
                 </Style.Triggers>
@@ -297,15 +226,57 @@
 
             <ComboBox
                 x:Name="PART_SearchType"
-                rs:ComboBoxHelper.SelectionBoxItemTemplate="{StaticResource SearchTypeSelectDataTemplate}"
                 rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Search}"
                 rs:ControlsHelper.IconHeight="16"
                 rs:ControlsHelper.IconWidth="16"
                 IsDropDownOpen="{Binding IsSearchTypeChecked}"
                 ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                 ItemsSource="{Binding SearchTypeList}"
-                SelectedItem="{Binding SearchTypeSelect}"
-                Style="{StaticResource CustomComboBoxStyle}" />
+                SelectedItem="{Binding SearchTypeSelect}">
+                <ComboBox.Style>
+                    <Style TargetType="{x:Type ComboBox}">
+                        <Setter Property="OverridesDefaultStyle" Value="True" />
+                        <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray007}" />
+                        <Setter Property="rs:ControlsHelper.CornerRadius" Value="10,0,0,10" />
+                        <Setter Property="Padding" Value="10,0,10,0" />
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBox}">
+                                    <rs:RSDropdown
+                                        Margin="0"
+                                        Padding="{TemplateBinding Padding}"
+                                        VerticalAlignment="Stretch"
+                                        rs:ControlsHelper.CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                                        rs:ControlsHelper.IconColor="{TemplateBinding rs:ControlsHelper.IconColor}"
+                                        rs:ControlsHelper.IconData="{TemplateBinding rs:ControlsHelper.IconData}"
+                                        rs:ControlsHelper.IconHeight="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                                        rs:ControlsHelper.IconWidth="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                                        Background="{TemplateBinding Background}"
+                                        Content="{TemplateBinding SelectionBoxItem}"
+                                        DropdownWidth="200"
+                                        Focusable="false"
+                                        IsDropdownOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsDropDownOpen, Mode=TwoWay}"
+                                        IsShowDropDownIcon="True">
+                                        <rs:RSDropdown.DropdownContent>
+                                            <Grid x:Name="DropDown">
+                                                <ScrollViewer Margin="0,3,0,3">
+                                                    <VirtualizingStackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                                </ScrollViewer>
+                                            </Grid>
+                                        </rs:RSDropdown.DropdownContent>
+                                    </rs:RSDropdown>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+            </ComboBox>
 
             <rs:RSMultiSelectTextBox
                 Grid.Column="1"
@@ -313,7 +284,6 @@
                 VerticalAlignment="Center"
                 rs:TextBoxHelper.IsShowClearButton="True"
                 rs:TextBoxHelper.Watermark="搜索"
-                rs:TextBoxHelper.WatermarkForground="{StaticResource RSApp.Styles.BaseWhite040}"
                 Background="Transparent"
                 BorderThickness="0"
                 HasContent="{Binding IsSearchHasContent}"
@@ -322,9 +292,11 @@
                 <rs:RSMultiSelectTextBox.Style>
                     <Style TargetType="{x:Type rs:RSMultiSelectTextBox}">
                         <Setter Property="IsReadOnly" Value="True" />
+                        <Setter Property="rs:TextBoxHelper.WatermarkForground" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsShowSearch}" Value="True">
                                 <Setter Property="IsReadOnly" Value="False" />
+                                <Setter Property="rs:TextBoxHelper.WatermarkForground" Value="{StaticResource RSApp.Styles.BaseGray040}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -342,14 +314,14 @@
                 PlacementTarget="{Binding ElementName=PART_Border}">
                 <rs:RSDropdown.Style>
                     <Style TargetType="{x:Type rs:RSDropdown}">
-                        <Setter Property="Background" Value="#DAEBFD" />
+                        <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten5}" />
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#C0DCFC" />
+                                <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten4L}" />
                             </Trigger>
                             <Trigger Property="IsDropdownOpen" Value="True">
-                                <Setter Property="Background" Value="#DAEBFD" />
+                                <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten5}" />
                             </Trigger>
                             <DataTrigger Binding="{Binding IsShowSearch, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />
@@ -429,7 +401,6 @@
                                 <ComboBox
                                     Grid.Row="1"
                                     Grid.Column="1"
-                                    rs:ComboBoxHelper.SelectionBoxItemTemplate="{StaticResource ComboBoxSelectDataTemplate}"
                                     rs:ControlsHelper.CornerRadius="5"
                                     ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                                     ItemsSource="{Binding LocationTypeList}"
@@ -494,7 +465,6 @@
                                 <ComboBox
                                     Grid.Row="4"
                                     Grid.Column="1"
-                                    rs:ComboBoxHelper.SelectionBoxItemTemplate="{StaticResource ComboBoxSelectDataTemplate}"
                                     rs:ControlsHelper.CornerRadius="5"
                                     ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                                     ItemsSource="{Binding DateFilterTypeList}"
@@ -510,7 +480,6 @@
                                 <ComboBox
                                     Grid.Row="5"
                                     Grid.Column="1"
-                                    rs:ComboBoxHelper.SelectionBoxItemTemplate="{StaticResource ComboBoxSelectDataTemplate}"
                                     rs:ControlsHelper.CornerRadius="5"
                                     ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                                     ItemsSource="{Binding FolderTypeList}"
@@ -526,7 +495,6 @@
                                 <ComboBox
                                     Grid.Row="6"
                                     Grid.Column="1"
-                                    rs:ComboBoxHelper.SelectionBoxItemTemplate="{StaticResource ComboBoxSelectDataTemplate}"
                                     rs:ControlsHelper.CornerRadius="5"
                                     ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                                     ItemsSource="{Binding AttachmentTypeList}"
@@ -541,7 +509,6 @@
                                 <ComboBox
                                     Grid.Row="7"
                                     Grid.Column="1"
-                                    rs:ComboBoxHelper.SelectionBoxItemTemplate="{StaticResource ComboBoxSelectDataTemplate}"
                                     rs:ControlsHelper.CornerRadius="5"
                                     ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                                     ItemsSource="{Binding ReadUnReadTypeList}"

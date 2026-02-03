@@ -12,7 +12,7 @@ namespace RS.WPFClient.Enums
         /// <summary>
         /// 任何附件状态（不限制附件是否存在，包含有附件和无附件的全部内容）
         /// </summary>
-        Any = -1,
+        Any,
 
         /// <summary>
         /// 包含附件（仅包含带有附件的内容）

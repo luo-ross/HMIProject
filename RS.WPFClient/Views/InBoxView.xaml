@@ -136,7 +136,7 @@
             <Grid Height="40" TextBlock.FontSize="14">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
-                    <ColumnDefinition Width="270" />
+                    <ColumnDefinition Width="240" />
                     <ColumnDefinition Width="15" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="85" />
@@ -431,7 +431,7 @@
                 <StackPanel
                     Grid.Row="0"
                     Grid.Column="0"
-                    Width="330"
+                    Width="280"
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
                     <Grid Width="30">
@@ -473,7 +473,7 @@
                             <DataTrigger Binding="{Binding IsPreviewMode}" Value="False">
                                 <Setter Property="Grid.Column" Value="0" />
                                 <Setter Property="Grid.ColumnSpan" Value="2" />
-                                <Setter Property="Margin" Value="335,0,130,0" />
+                                <Setter Property="Margin" Value="300,0,130,0" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -558,7 +558,7 @@
                                 <Setter Property="Grid.Column" Value="0" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsPreviewMode}" Value="False">
-                                <Setter Property="Margin" Value="0,0,40,0" />
+                                <Setter Property="Margin" Value="0,0,55,0" />
                                 <Setter Property="Grid.Column" Value="0" />
                                 <Setter Property="Grid.ColumnSpan" Value="2" />
                             </DataTrigger>
@@ -566,7 +566,6 @@
                     </Style>
                 </Border.Style>
                 <rs:RSDropdown
-                    BorderBrush="#eee"
                     BorderThickness="0"
                     Content="共144封"
                     DropdownWidth="315"
@@ -584,6 +583,7 @@
 
             <CheckBox
                 Grid.Row="0"
+                Margin="0,3,15,3"
                 Padding="6"
                 HorizontalAlignment="Right"
                 IsChecked="{Binding IsPreviewMode}">
@@ -660,6 +660,16 @@
                                     </DataTrigger.Binding>
                                     <Setter TargetName="MailContentPresenter" Property="ContentTemplate" Value="{StaticResource MailItemDataPreviewTemplate}" />
                                 </DataTrigger>
+
+                                <!--<DataTrigger Value="True">
+                                    <DataTrigger.Binding>
+                                        <MultiBinding Converter="{StaticResource PreviewModeWithWidthCheckConverter}">
+                                            <Binding Path="DataContext.IsPreviewMode" RelativeSource="{RelativeSource AncestorType=DataGrid}" />
+                                            <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
+                                        </MultiBinding>
+                                    </DataTrigger.Binding>
+                                    <Setter TargetName="MailContentPresenter" Property="ContentTemplate" Value="{StaticResource MailItemDataPreviewTemplate}" />
+                                </DataTrigger>-->
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </DataGrid.Resources>
@@ -676,10 +686,25 @@
             </Border>
 
 
-            <Grid Grid.Row="1" Grid.Column="2">
-                <Border x:Name="TEST" />
-            </Grid>
-
+            <Border Grid.Row="1" Grid.Column="2">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderThickness" Value="0,1,0,0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPreviewMode}" Value="True">
+                                <Setter Property="Grid.ColumnSpan" Value="1" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsPreviewMode}" Value="False">
+                                <Setter Property="Grid.ColumnSpan" Value="2" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=PART_DataGrid, Path=(rs:ScrollViewHelper.VerticalScrollOffset)}" Value="0">
+                                <Setter Property="BorderThickness" Value="0,0,0,0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <ScrollViewer x:Name="PART_MailScrollViewer" />
+            </Border>
 
             <GridSplitter
                 Grid.Row="0"

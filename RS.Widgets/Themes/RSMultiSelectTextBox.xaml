@@ -45,7 +45,7 @@
         <Setter Property="rs:TextBoxHelper.IsShowClearButton" Value="False" />
         <Setter Property="rs:ControlsHelper.DesForeground" Value="#6B7280" />
         <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
-        <Setter Property="rs:TextBoxHelper.WatermarkForground" Value="#949494" />
+        <Setter Property="rs:TextBoxHelper.WatermarkForground" Value="{StaticResource RSApp.Styles.BaseGray040}" />
         <Setter Property="Validation.ErrorTemplate" Value="{StaticResource RSApp.Templates.DefaultDataError}" />
         <Setter Property="Template">
             <Setter.Value>

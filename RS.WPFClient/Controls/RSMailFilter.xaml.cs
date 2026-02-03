@@ -10,10 +10,6 @@ using System.Windows.Input;
 
 namespace RS.WPFClient.Controls
 {
-    /// <summary>
-    /// RSMailFilter.xaml 的交互逻辑
-    /// 使用 RSDropdownMenu 组件实现筛选下拉菜单
-    /// </summary>
     public partial class RSMailFilter : UserControl
     {
         public RSMailFilter()

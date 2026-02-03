@@ -60,7 +60,12 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="220" />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition
+                        Width="*"
+                        MinWidth="180"
+                        MaxWidth="380" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel
                     Grid.Column="0"
@@ -78,234 +83,239 @@
                         Text="MultiVerseKit" />
                 </StackPanel>
 
-                <Grid Grid.Column="1" Margin="15,0,0,0">
+
+
+                <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*">
+                            <ColumnDefinition.Style>
+                                <Style TargetType="{x:Type ColumnDefinition}">
+                                    <Setter Property="MinWidth" Value="230" />
+                                    <Setter Property="MaxWidth" Value="500" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SearchViewModel.IsShowSearch}" Value="True">
+                                            <Setter Property="MaxWidth" Value="800" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ColumnDefinition.Style>
+                        </ColumnDefinition>
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*">
-                                <ColumnDefinition.Style>
-                                    <Style TargetType="{x:Type ColumnDefinition}">
-                                        <Setter Property="MinWidth" Value="230" />
-                                        <Setter Property="MaxWidth" Value="500" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding SearchViewModel.IsShowSearch}" Value="True">
-                                                <Setter Property="MaxWidth" Value="800" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ColumnDefinition.Style>
-                            </ColumnDefinition>
-                            <ColumnDefinition Width="auto" />
-                        </Grid.ColumnDefinitions>
+                    <local:SearchView
+                        Height="36"
+                        Margin="15,0,10,0"
+                        rs:TextBoxHelper.Watermark="请输入"
+                        DataContext="{Binding SearchViewModel}" />
+                </Grid>
 
-                        <local:SearchView
-                            Height="36"
-                            Margin="0,0,10,0"
-                            DataContext="{Binding SearchViewModel}" />
-                    </Grid>
+                <rs:RSDropdown
+                    Grid.Column="2"
+                    Padding="5,3,5,3"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center">
+                    <rs:RSDropdown.Style>
+                        <Style TargetType="{x:Type rs:RSDropdown}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
+                                </Trigger>
+                                <Trigger Property="IsDropdownOpen" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </rs:RSDropdown.Style>
+                    <rs:RSDropdown.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <rs:RSDropdown Padding="5,3,5,3" VerticalAlignment="Center">
-                            <rs:RSDropdown.Style>
-                                <Style TargetType="{x:Type rs:RSDropdown}">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
-                                        </Trigger>
-                                        <Trigger Property="IsDropdownOpen" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </rs:RSDropdown.Style>
-                            <rs:RSDropdown.Content>
-                                <StackPanel Orientation="Horizontal">
-                                    <Border
-                                        Width="32"
-                                        Height="32"
-                                        CornerRadius="50">
-                                        <Border.Background>
-                                            <ImageBrush ImageSource="/Assets/login-left.jpg" />
-                                        </Border.Background>
-                                    </Border>
+                            <Border
+                                Grid.Column="0"
+                                Width="32"
+                                Height="32"
+                                CornerRadius="50">
+                                <Border.Background>
+                                    <ImageBrush ImageSource="/Assets/login-left.jpg" />
+                                </Border.Background>
+                            </Border>
+
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="3,0,0,0"
+                                Foreground="{StaticResource RSApp.Styles.BaseWhite080}"
+                                Text="">
+                                <Run FontSize="14" Text="行云游者" />
+                                <Run FontSize="12" Text="•" />
+                                <Run FontSize="12" Text="1845960295@qq.com" />
+                            </TextBlock>
+
+                            <Button
+                                Grid.Column="2"
+                                Padding="5,0,5,0"
+                                rs:ControlsHelper.CornerRadius="3"
+                                Background="{StaticResource RSApp.Styles.BaseWhite025}"
+                                Content="普通用户"
+                                Foreground="{StaticResource RSApp.Styles.BaseWhite080}"
+                                Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                        </Grid>
+
+                    </rs:RSDropdown.Content>
+                    <rs:RSDropdown.DropdownContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" Padding="5">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="14" Text="行云游者" />
+                                        <Button
+                                            Padding="5,0,5,0"
+                                            rs:ControlsHelper.CornerRadius="3"
+                                            Background="#e1e2e3"
+                                            Content="成为 VIP"
+                                            Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                                    </StackPanel>
+
 
                                     <TextBlock
-                                        Margin="3,0,0,0"
-                                        Foreground="{StaticResource RSApp.Styles.BaseWhite080}"
-                                        Text="">
-                                        <Run FontSize="14" Text="行云游者" />
-                                        <Run FontSize="12" Text="•" />
-                                        <Run FontSize="12" Text="1845960295@qq.com" />
+                                        Foreground="#949494"
+                                        Text="1845960295@qq.com"
+                                        ToolTip="复制邮箱地址">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding Command="{Binding CopyEmailCommand}" Gesture="LeftClick" />
+                                        </TextBlock.InputBindings>
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}" TargetType="{x:Type TextBlock}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Underline" />
+                                                        <Setter Property="Cursor" Value="Hand" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
                                     </TextBlock>
 
+
                                     <Button
-                                        Padding="5,0,5,0"
-                                        rs:ControlsHelper.CornerRadius="3"
-                                        Background="#e1e2e3"
-                                        Content="普通用户"
-                                        Foreground="{StaticResource RSApp.Styles.BaseWhite080}"
-                                        Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                                        Padding="8"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.VIP}"
+                                        BorderBrush="#C5BFFA"
+                                        BorderThickness="1"
+                                        Command="{Binding OpenMembershipCommand}"
+                                        Content="开通VIP会员，让邮箱更好用"
+                                        FontSize="12"
+                                        Foreground="MediumPurple"
+                                        Style="{StaticResource RSApp.Styles.AccessButtonStyle}" />
+
+                                    <Separator
+                                        Height="1"
+                                        Margin="0,2,0,5"
+                                        Background="#E6EDF5" />
+
+                                    <TextBlock Foreground="#949494" Text="切换账号" />
+
+                                    <Button
+                                        Padding="5,8,5,8"
+                                        rs:ControlsHelper.IconColor="#cdcdcd"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Add}"
+                                        rs:ControlsHelper.IconHeight="20"
+                                        rs:ControlsHelper.IconWidth="20"
+                                        Command="{Binding AddAccountCommand}"
+                                        Content="添加账号"
+                                        Style="{StaticResource RSApp.Styles.IconWithDesButton}" />
+
+                                    <Separator
+                                        Height="1"
+                                        Margin="0,2,0,5"
+                                        Background="#E6EDF5" />
+
+                                    <StackPanel>
+
+                                        <Button
+                                            Command="{Binding AccountSecurityCommand}"
+                                            Content="账号与安全"
+                                            Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                                        <Button
+                                            Command="{Binding HelpCenterCommand}"
+                                            Content="帮助中心"
+                                            Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                                        <Button
+                                            Command="{Binding FeedbackCommand}"
+                                            Content="意见反馈"
+                                            Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                                        <Button
+                                            Command="{Binding OldEmailCommand}"
+                                            Content="旧版邮箱"
+                                            Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
+                                    </StackPanel>
                                 </StackPanel>
-                            </rs:RSDropdown.Content>
-                            <rs:RSDropdown.DropdownContent>
+                            </Border>
 
+
+                            <Border
+                                Grid.Row="1"
+                                Padding="5"
+                                Background="#f8f8f9">
                                 <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition Height="auto" />
-                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <Border Grid.Row="0" Padding="5">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock FontSize="14" Text="行云游者" />
-                                                <Button
-                                                    Padding="5,0,5,0"
-                                                    rs:ControlsHelper.CornerRadius="3"
-                                                    Background="#e1e2e3"
-                                                    Content="成为 VIP"
-                                                    Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
-                                            </StackPanel>
+                                    <Button
+                                        rs:ControlsHelper.IconColor="MediumPurple"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.VIP}"
+                                        Command="{Binding MembershipCenterCommand}"
+                                        Content="会员中心"
+                                        Style="{StaticResource RSApp.Styles.IconWithDesButton}" />
 
-
-                                            <TextBlock
-                                                Foreground="#949494"
-                                                Text="1845960295@qq.com"
-                                                ToolTip="复制邮箱地址">
-                                                <TextBlock.InputBindings>
-                                                    <MouseBinding Command="{Binding CopyEmailCommand}" Gesture="LeftClick" />
-                                                </TextBlock.InputBindings>
-                                                <TextBlock.Style>
-                                                    <Style BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}" TargetType="{x:Type TextBlock}">
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="TextDecorations" Value="Underline" />
-                                                                <Setter Property="Cursor" Value="Hand" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-
-
-                                            <Button
-                                                Padding="8"
-                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.VIP}"
-                                                BorderBrush="#C5BFFA"
-                                                BorderThickness="1"
-                                                Command="{Binding OpenMembershipCommand}"
-                                                Content="开通VIP会员，让邮箱更好用"
-                                                FontSize="12"
-                                                Foreground="MediumPurple"
-                                                Style="{StaticResource RSApp.Styles.AccessButtonStyle}" />
-
-                                            <Separator
-                                                Height="1"
-                                                Margin="0,2,0,5"
-                                                Background="#E6EDF5" />
-
-                                            <TextBlock Foreground="#949494" Text="切换账号" />
-
-                                            <Button
-                                                Padding="5,8,5,8"
-                                                rs:ControlsHelper.IconColor="#cdcdcd"
-                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Add}"
-                                                rs:ControlsHelper.IconHeight="20"
-                                                rs:ControlsHelper.IconWidth="20"
-                                                Command="{Binding AddAccountCommand}"
-                                                Content="添加账号"
-                                                Style="{StaticResource RSApp.Styles.IconWithDesButton}" />
-
-                                            <Separator
-                                                Height="1"
-                                                Margin="0,2,0,5"
-                                                Background="#E6EDF5" />
-
-                                            <StackPanel>
-
-                                                <Button
-                                                    Command="{Binding AccountSecurityCommand}"
-                                                    Content="账号与安全"
-                                                    Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
-                                                <Button
-                                                    Command="{Binding HelpCenterCommand}"
-                                                    Content="帮助中心"
-                                                    Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
-                                                <Button
-                                                    Command="{Binding FeedbackCommand}"
-                                                    Content="意见反馈"
-                                                    Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
-                                                <Button
-                                                    Command="{Binding OldEmailCommand}"
-                                                    Content="旧版邮箱"
-                                                    Style="{StaticResource RSApp.Styles.MenuButtonStyle}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Border>
-
-
-                                    <Border
-                                        Grid.Row="1"
-                                        Padding="5"
-                                        Background="#f8f8f9">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                                <ColumnDefinition Width="auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <Button
-                                                rs:ControlsHelper.IconColor="MediumPurple"
-                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.VIP}"
-                                                Command="{Binding MembershipCenterCommand}"
-                                                Content="会员中心"
-                                                Style="{StaticResource RSApp.Styles.IconWithDesButton}" />
-
-                                            <Button
-                                                Grid.Column="2"
-                                                rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Exit}"
-                                                Command="{Binding LogoutCommand}"
-                                                Content="退出"
-                                                Style="{StaticResource RSApp.Styles.IconWithDesButton}" />
-                                        </Grid>
-                                    </Border>
-
+                                    <Button
+                                        Grid.Column="2"
+                                        rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Exit}"
+                                        Command="{Binding LogoutCommand}"
+                                        Content="退出"
+                                        Style="{StaticResource RSApp.Styles.IconWithDesButton}" />
                                 </Grid>
+                            </Border>
 
-                            </rs:RSDropdown.DropdownContent>
-                        </rs:RSDropdown>
+                        </Grid>
 
+                    </rs:RSDropdown.DropdownContent>
+                </rs:RSDropdown>
 
-
-
-                        <Button
-                            Padding="8,6,8,6"
-                            VerticalAlignment="Center"
-                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
-                            rs:ControlsHelper.IconHeight="20"
-                            rs:ControlsHelper.IconWidth="20"
-                            Content="设置"
-                            FontSize="14"
-                            Foreground="#CCFFFFFF">
-                            <Button.Style>
-                                <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type Button}">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
-                                        </Trigger>
-                                        <Trigger Property="IsPressed" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </StackPanel>
-                </Grid>
+                <Button
+                    Grid.Column="3"
+                    Padding="8,6,8,6"
+                    VerticalAlignment="Center"
+                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Setting}"
+                    rs:ControlsHelper.IconHeight="20"
+                    rs:ControlsHelper.IconWidth="20"
+                    Content="设置"
+                    FontSize="14"
+                    Foreground="{StaticResource RSApp.Styles.BaseWhite080}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite030}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseWhite040}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </Border>
 

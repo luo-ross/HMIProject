@@ -12,7 +12,7 @@ namespace RS.WPFClient.Enums
         /// <summary>
         /// 任何位置（不限制具体位置，涵盖所有可能的位置范围）
         /// </summary>
-        Any = -1,
+        Any,
 
         /// <summary>
         /// 主题（如邮件主题、消息标题等内容的主题部分）

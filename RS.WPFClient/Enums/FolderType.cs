@@ -12,7 +12,7 @@ namespace RS.WPFClient.Enums
         /// <summary>
         /// 任何 
         /// </summary>
-        Any= -1,
+        Any,
         /// <summary>
         /// 收件箱
         /// </summary>

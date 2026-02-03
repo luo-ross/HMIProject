@@ -98,10 +98,12 @@
                 <Popup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
+                    HorizontalOffset="3"
                     IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                     Placement="Bottom"
                     PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                    VerticalOffset="-3">
                     <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
                         <Border
                             x:Name="SubMenuBorder"

@@ -47,8 +47,6 @@ namespace RS.WPFClient.ViewModels
             this.InitFolderTypeList();
             this.InitReadUnReadTypeList();
             this.InitAttachmentTypeList();
-
-
         }
 
         private void Search()
@@ -165,7 +163,6 @@ namespace RS.WPFClient.ViewModels
 
 
 
-
         #region 搜索类型
         /// <summary>
         /// 初始化搜索类型
@@ -204,8 +201,6 @@ namespace RS.WPFClient.ViewModels
             }
         }
         #endregion
-
-
 
         #region 关键字
         private string keywords;
@@ -263,8 +258,6 @@ namespace RS.WPFClient.ViewModels
             }
         }
         #endregion
-
-
 
 
         private ObservableCollection<TagModel> tagModelList;
