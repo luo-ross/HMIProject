@@ -22,9 +22,11 @@
             x:Name="TxtEmail"
             rs:TextBoxHelper.IsShowClearButton="True"
             Text="{Binding ModelEdit.Email}">
-            <i:Interaction.Behaviors>
-                <rs:FocusOnLoadBehavior />
-            </i:Interaction.Behaviors>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <rs:FocusAction />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </TextBox>
         <TextBlock
             Margin="2,0,0,0"

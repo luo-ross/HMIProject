@@ -233,6 +233,11 @@
                 ItemContainerStyle="{StaticResource FilterComboBoxItemStyle}"
                 ItemsSource="{Binding SearchTypeList}"
                 SelectedItem="{Binding SearchTypeSelect}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <rs:FocusAction TargetElement="{Binding ElementName=PART_SearchTextBox}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ComboBox.Style>
                     <Style TargetType="{x:Type ComboBox}">
                         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -279,6 +284,7 @@
             </ComboBox>
 
             <rs:RSMultiSelectTextBox
+                x:Name="PART_SearchTextBox"
                 Grid.Column="1"
                 Grid.ColumnSpan="2"
                 VerticalAlignment="Center"

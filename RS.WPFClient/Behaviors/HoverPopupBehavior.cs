@@ -13,9 +13,18 @@ namespace RS.WPFClient.Behaviors
     /// </summary>
     public class HoverPopupBehavior : Behavior<FrameworkElement>
     {
-        public static readonly DependencyProperty PopupProperty =
-            DependencyProperty.Register(nameof(Popup), typeof(Popup), typeof(HoverPopupBehavior), new PropertyMetadata(null));
+        private CancellationTokenSource openCts;
 
+        public static readonly DependencyProperty PopupProperty =
+            DependencyProperty.Register(
+                nameof(Popup),
+                typeof(Popup),
+                typeof(HoverPopupBehavior),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// 要显示的 Popup 控件
+        /// </summary>
         public Popup Popup
         {
             get { return (Popup)GetValue(PopupProperty); }
@@ -23,7 +32,11 @@ namespace RS.WPFClient.Behaviors
         }
 
         public static readonly DependencyProperty OpenDelayProperty =
-            DependencyProperty.Register(nameof(OpenDelay), typeof(int), typeof(HoverPopupBehavior), new PropertyMetadata(500));
+            DependencyProperty.Register(
+                nameof(OpenDelay),
+                typeof(int),
+                typeof(HoverPopupBehavior),
+                new PropertyMetadata(500));
 
         /// <summary>
         /// 开启延迟（毫秒），默认为 500ms
@@ -34,7 +47,21 @@ namespace RS.WPFClient.Behaviors
             set { SetValue(OpenDelayProperty, value); }
         }
 
-        private CancellationTokenSource OpenCts;
+        public static readonly DependencyProperty CloseDelayProperty =
+            DependencyProperty.Register(
+                nameof(CloseDelay),
+                typeof(int),
+                typeof(HoverPopupBehavior),
+                new PropertyMetadata(200));
+
+        /// <summary>
+        /// 关闭延迟（毫秒），默认为 200ms
+        /// </summary>
+        public int CloseDelay
+        {
+            get { return (int)GetValue(CloseDelayProperty); }
+            set { SetValue(CloseDelayProperty, value); }
+        }
 
         protected override void OnAttached()
         {
@@ -45,42 +72,35 @@ namespace RS.WPFClient.Behaviors
 
         protected override void OnDetaching()
         {
-            base.OnDetaching();
             AssociatedObject.MouseEnter -= OnMouseEnter;
             AssociatedObject.MouseLeave -= OnMouseLeave;
             CancelOpen();
+            base.OnDetaching();
         }
 
         private async void OnMouseEnter(object sender, MouseEventArgs e)
         {
-            if (Popup != null)
+            if (Popup == null || Popup.IsOpen)
             {
-                if (Popup.IsOpen) return;
+                return;
+            }
 
-                CancelOpen();
-                OpenCts = new CancellationTokenSource();
-                
-                try 
+            CancelOpen();
+            openCts = new CancellationTokenSource();
+
+            try
+            {
+                await Task.Delay(OpenDelay, openCts.Token);
+
+                if (Popup != null && AssociatedObject.IsMouseOver)
                 {
-                    await Task.Delay(OpenDelay, OpenCts.Token);
-                    
-                    if (Popup != null && AssociatedObject.IsMouseOver)
-                    {
-                        Popup.IsOpen = true;
-                        // 确保 Popup 内部也能感知鼠标事件以保持开启
-                        if (Popup.Child is FrameworkElement content)
-                        {
-                            content.MouseEnter -= OnPopupMouseEnter;
-                            content.MouseEnter += OnPopupMouseEnter;
-                            content.MouseLeave -= OnPopupMouseLeave;
-                            content.MouseLeave += OnPopupMouseLeave;
-                        }
-                    }
+                    Popup.IsOpen = true;
+                    SubscribePopupEvents();
                 }
-                catch (TaskCanceledException)
-                {
-                    // 正常取消
-                }
+            }
+            catch (TaskCanceledException)
+            {
+                // 正常取消，无需处理
             }
         }
 
@@ -92,9 +112,23 @@ namespace RS.WPFClient.Behaviors
 
         private void CancelOpen()
         {
-            OpenCts?.Cancel();
-            OpenCts?.Dispose();
-            OpenCts = null;
+            if (openCts != null)
+            {
+                openCts.Cancel();
+                openCts.Dispose();
+                openCts = null;
+            }
+        }
+
+        private void SubscribePopupEvents()
+        {
+            if (Popup?.Child is FrameworkElement content)
+            {
+                content.MouseEnter -= OnPopupMouseEnter;
+                content.MouseEnter += OnPopupMouseEnter;
+                content.MouseLeave -= OnPopupMouseLeave;
+                content.MouseLeave += OnPopupMouseLeave;
+            }
         }
 
         private void OnPopupMouseEnter(object sender, MouseEventArgs e)
@@ -112,8 +146,7 @@ namespace RS.WPFClient.Behaviors
 
         private async Task DelayCheckClose()
         {
-            // 给用户 200 毫秒的时间移动鼠标
-            await Task.Delay(200);
+            await Task.Delay(CloseDelay);
 
             if (Popup == null)
             {
@@ -121,7 +154,10 @@ namespace RS.WPFClient.Behaviors
             }
 
             // 只有当鼠标既不在触发元素上，也不在 Popup 内部时，才关闭
-            if (!AssociatedObject.IsMouseOver && !(Popup.Child?.IsMouseOver ?? false))
+            bool isMouseOverTarget = AssociatedObject.IsMouseOver;
+            bool isMouseOverPopup = Popup.Child?.IsMouseOver ?? false;
+
+            if (!isMouseOverTarget && !isMouseOverPopup)
             {
                 Popup.IsOpen = false;
             }

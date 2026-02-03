@@ -60,38 +60,6 @@ namespace RS.WPFClient.ViewModels
             this.QRLoginCommand = new RelayCommand(QRLogin);
         }
 
-        private bool isEmailFocused;
-        /// <summary>
-        /// Email输入框是否获取焦点
-        /// </summary>
-        public bool IsEmailFocused
-        {
-            get
-            {
-                return isEmailFocused;
-            }
-            set
-            {
-                SetProperty(ref isEmailFocused, value);
-            }
-        }
-
-
-        private bool isPasswordFocused;
-        /// <summary>
-        /// Email输入框是否获取焦点
-        /// </summary>
-        public bool IsPasswordFocused
-        {
-            get
-            {
-                return isPasswordFocused;
-            }
-            set
-            {
-                SetProperty(ref isPasswordFocused, value);
-            }
-        }
 
 
 
@@ -264,16 +232,9 @@ namespace RS.WPFClient.ViewModels
 
         private OperateResult ValidForm()
         {
+            // ValidationFocusBehavior 会自动在验证失败时设置焦点
             if (!this.LoginModel.ValidObject())
             {
-                if (this.LoginModel.HasError(nameof(this.LoginModel.Email)))
-                {
-                    this.IsEmailFocused = true;
-                }
-                else if (this.LoginModel.HasError(nameof(this.LoginModel.Password)))
-                {
-                    this.IsPasswordFocused = true;
-                }
                 return OperateResult.CreateFailResult();
             }
             return OperateResult.CreateSuccessResult();
