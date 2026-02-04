@@ -77,6 +77,7 @@ namespace RS.WPFClient.ViewModels
             {
                 mail.IsSelect = isSelectAll;
             }
+            UpdateIsSelectedAll();
             UpdateCornerRadius();
         }
 
@@ -165,6 +166,8 @@ namespace RS.WPFClient.ViewModels
             {
                 IsSelectedAll = false;
             }
+
+            HasItemIsChecked = hasSelected;
         }
 
 
@@ -268,6 +271,19 @@ namespace RS.WPFClient.ViewModels
             set
             {
                 this.SetProperty(ref isSelectedAll, value);
+            }
+        }
+
+        private bool hasItemIsChecked;
+        public bool HasItemIsChecked
+        {
+            get
+            {
+                return hasItemIsChecked;
+            }
+            set
+            {
+                SetProperty(ref hasItemIsChecked, value);
             }
         }
 
