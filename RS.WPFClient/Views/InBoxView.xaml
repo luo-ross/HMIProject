@@ -484,7 +484,7 @@
                     <Style TargetType="{x:Type rs:RSMenu}">
                         <Setter Property="Grid.Column" Value="0" />
                         <Setter Property="Grid.ColumnSpan" Value="2" />
-                        <Setter Property="Margin" Value="300,0,130,0" />
+                        <Setter Property="Margin" Value="300,0,180,0" />
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
@@ -498,6 +498,22 @@
                                 <Setter Property="Grid.ColumnSpan" Value="1" />
                                 <Setter Property="Margin" Value="20,0,100,0" />
                             </DataTrigger>
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ElementName=PART_PreviewToggle, Path=IsChecked}" Value="False" />
+                                    <Condition Value="True">
+                                        <Condition.Binding>
+                                            <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="UseCompactTemplate">
+                                                <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
+                                                <Binding ElementName="this" Path="ActualWidth" />
+                                                <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
+                                            </MultiBinding>
+                                        </Condition.Binding>
+                                    </Condition>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Margin" Value="250,0,180,0" />
+                            </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>
                 </rs:RSMenu.Style>
