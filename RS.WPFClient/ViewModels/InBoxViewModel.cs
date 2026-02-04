@@ -257,18 +257,6 @@ namespace RS.WPFClient.ViewModels
 
 
 
-        private bool isPreviewMode;
-        public bool IsPreviewMode
-        {
-            get
-            {
-                return isPreviewMode;
-            }
-            set
-            {
-                SetProperty(ref isPreviewMode, value);
-            }
-        }
 
         private bool? isSelectedAll = false;
         public bool? IsSelectedAll
