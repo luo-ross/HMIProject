@@ -10,6 +10,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("https://github.com/luo-ross/MultiVerseKit", "RS.Widgets.Behaviors")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/MultiVerseKit", "RS.Widgets.PixelShaders")]
 [assembly: XmlnsDefinition("https://github.com/luo-ross/MultiVerseKit", "RS.Widgets.Models")]
+[assembly: XmlnsDefinition("https://github.com/luo-ross/MultiVerseKit", "RS.Widgets.Helpers")]
 
 
 

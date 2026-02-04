@@ -14,6 +14,9 @@
     xmlns:rs="https://github.com/luo-ross/MultiVerseKit"
     xmlns:viewModel="clr-namespace:RS.WPFClient.ViewModels"
     x:Name="this"
+    rs:AdaptiveLayoutHelper.ContainerWidth="{Binding ElementName=PART_LeftBorder, Path=ActualWidth}"
+    rs:AdaptiveLayoutHelper.IsPreviewChecked="{Binding ElementName=PART_PreviewToggle, Path=IsChecked}"
+    rs:AdaptiveLayoutHelper.TotalWidth="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
     d:DataContext="{d:DesignInstance Type=viewModel:InBoxViewModel}"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -21,7 +24,6 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converter:MailDateGroupConverter x:Key="MailDateGroupConverter" />
         <converter:MailTimeFormatConverter x:Key="MailTimeFormatConverter" />
-        <converter:AdaptiveLayoutConverter x:Key="AdaptiveLayoutConverter" />
 
         <Style x:Key="MailDataGridRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="Transparent" />
@@ -104,11 +106,7 @@
 
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="UseCompactTemplate">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.UseCompactTemplate)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter TargetName="PART_SelectIcon" Property="VerticalAlignment" Value="Top" />
                                 <Setter TargetName="PART_SelectIcon" Property="Margin" Value="0,16,0,0" />
@@ -387,11 +385,7 @@
                             <Style.Triggers>
                                 <DataTrigger Value="True">
                                     <DataTrigger.Binding>
-                                        <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                            <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                            <Binding ElementName="this" Path="ActualWidth" />
-                                            <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                        </MultiBinding>
+                                        <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </DataTrigger.Binding>
                                     <Setter Property="Width" Value="61.8*" />
                                     <Setter Property="MinWidth" Value="350" />
@@ -407,11 +401,7 @@
                             <Style.Triggers>
                                 <DataTrigger Value="True">
                                     <DataTrigger.Binding>
-                                        <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                            <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                            <Binding ElementName="this" Path="ActualWidth" />
-                                            <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                        </MultiBinding>
+                                        <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </DataTrigger.Binding>
                                     <Setter Property="Width" Value="38.2*" />
                                     <Setter Property="MinWidth" Value="470" />
@@ -434,11 +424,7 @@
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.ColumnSpan" Value="1" />
                                 <Setter Property="BorderThickness" Value="0,0,1,0" />
@@ -488,11 +474,7 @@
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.Column" Value="1" />
                                 <Setter Property="Grid.ColumnSpan" Value="1" />
@@ -502,15 +484,7 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding ElementName=PART_PreviewToggle, Path=IsChecked}" Value="False" />
-                                    <Condition Value="True">
-                                        <Condition.Binding>
-                                            <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="UseCompactTemplate">
-                                                <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                                <Binding ElementName="this" Path="ActualWidth" />
-                                                <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                            </MultiBinding>
-                                        </Condition.Binding>
-                                    </Condition>
+                                    <Condition Binding="{Binding Path=(rs:AdaptiveLayoutHelper.UseCompactTemplate), RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Margin" Value="250,0,180,0" />
                             </MultiDataTrigger>
@@ -597,11 +571,7 @@
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Margin" Value="0,0,10,0" />
                                 <Setter Property="Grid.Column" Value="0" />
@@ -648,11 +618,7 @@
                             </DataTrigger>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.Column" Value="1" />
                                 <Setter Property="Grid.ColumnSpan" Value="1" />
@@ -673,21 +639,13 @@
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.ColumnSpan" Value="1" />
                             </DataTrigger>
                             <DataTrigger Value="False">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.ColumnSpan" Value="2" />
                             </DataTrigger>
@@ -723,11 +681,7 @@
                             <DataTemplate.Triggers>
                                 <DataTrigger Value="True">
                                     <DataTrigger.Binding>
-                                        <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="UseCompactTemplate">
-                                            <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                            <Binding ElementName="this" Path="ActualWidth" />
-                                            <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                        </MultiBinding>
+                                        <Binding Path="(rs:AdaptiveLayoutHelper.UseCompactTemplate)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </DataTrigger.Binding>
                                     <Setter TargetName="MailContentPresenter" Property="ContentTemplate" Value="{StaticResource MailCompactTemplate}" />
                                 </DataTrigger>
@@ -754,21 +708,13 @@
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.ColumnSpan" Value="1" />
                             </DataTrigger>
                             <DataTrigger Value="False">
                                 <DataTrigger.Binding>
-                                    <MultiBinding Converter="{StaticResource AdaptiveLayoutConverter}" ConverterParameter="ShowPreviewPane">
-                                        <Binding ElementName="PART_PreviewToggle" Path="IsChecked" />
-                                        <Binding ElementName="this" Path="ActualWidth" />
-                                        <Binding ElementName="PART_LeftBorder" Path="ActualWidth" />
-                                    </MultiBinding>
+                                    <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter Property="Grid.ColumnSpan" Value="2" />
                             </DataTrigger>
