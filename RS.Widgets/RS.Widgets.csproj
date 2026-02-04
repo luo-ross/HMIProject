@@ -29,6 +29,7 @@
 		<PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="System.Composition.Hosting" Version="7.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="9.0.2" />

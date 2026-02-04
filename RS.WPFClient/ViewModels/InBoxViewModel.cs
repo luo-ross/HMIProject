@@ -81,6 +81,16 @@ namespace RS.WPFClient.ViewModels
             UpdateCornerRadius();
         }
 
+        private MailModel? selectedMail;
+        /// <summary>
+        /// 当前选中的邮件
+        /// </summary>
+        public MailModel? SelectedMail
+        {
+            get => selectedMail;
+            set => SetProperty(ref selectedMail, value);
+        }
+
         private void InitTestData()
         {
             var today = DateTime.Now;
@@ -113,22 +123,38 @@ namespace RS.WPFClient.ViewModels
                 string accountName = i % 3 == 0 ? "GitHub" : (i % 3 == 1 ? "TeamViewer" : "Avalonia UI");
                 string emailAddr = i % 3 == 0 ? "noreply@github.com" : (i % 3 == 1 ? "support@teamviewer.com" : "contact@avalonia.com");
 
+                // 模拟一个 HTML 内容
+                string htmlContent = $@"
+                    <div style='font-family: sans-serif; color: #333;'>
+                        <h2 style='color: #0078d4;'>欢迎使用 MultiVerseKit</h2>
+                        <p>这是您的测试邮件内容。<strong>{accountName}</strong> 向您发送了重要通知。</p>
+                        <p style='background: #f4f4f4; padding: 10px; border-radius: 4px;'>ID: {i + 1} | Time: {mailTime:yyyy-MM-dd HH:mm}</p>
+                        <p>请点击下方按钮查看更多详情：</p>
+                        <a href='https://www.baidu.com' style='display: inline-block; padding: 10px 20px; background: #0078d4; color: white; text-decoration: none; border-radius: 20px;'>立即查看</a>
+                    </div>";
+
                 RawMailList.Add(new MailModel
                 {
                     Account = accountName,
                     Email = emailAddr,
-                    Content = $"测试邮sdfjlksjf lsjflksjl收到附件是浪费大家塑料袋放进楼上看风景拉萨扩大飞机楼市房价卢卡斯的积分卢卡斯的积分件内容 测试邮件士大夫精神立刻发酵饲料会sfsdjklfjslfjslkfjlsk上了看大家分厘卡撒酒疯历史交锋了快速减肥了快速减肥了快速减肥了快速减肥了快速减肥的两款手机法律框架十六客服的j计法了快速反击历史交锋接口的风景主题{i + 1}",
+                    Content = htmlContent,
                     Time = mailTime,
                     IsStarred = i % 10 == 0,
                     IsRead = i % 4 == 0,
-                    Subject = $"测试邮件士大夫精神立刻发酵饲料会sfsdjklfjslfjslkfjlsk上了看大家分厘卡撒酒疯历史交锋了快速减肥了快速减肥了快速减肥了快速减肥了快速减肥的两款手机法律框架十六客服的j计法了快速反击历史交锋接口的风景主题 {i + 1}",
+                    Subject = $"测试邮件主题 {i + 1}",
                     HasAttachment = i % 8 == 0,
-                    Digest = $"测试邮件摘要数据快速反击sdjflksjflksjflksjflksjflksjflksjflsjf skfd快速减肥刷卡积分快速减肥 测试邮件士大夫精神立刻发酵饲料会sfsdjklfjslfjslkfjlsk上了看大家分厘卡撒酒疯历史交锋了快速减肥了快速减肥了快速减肥了快速减肥了快速减肥的两款手机法律框架十六客服的j计法了快速反击历史交锋接口的风景主题{i + 1}",
+                    Digest = $"测试邮件摘要数据 {i + 1}...",
                 });
             }
 
             UpdateFlattenedLists();
             UpdateCornerRadius();
+
+            // 默认选中第一个
+            if (RawMailList.Count > 0)
+            {
+                SelectedMail = RawMailList[0];
+            }
         }
       
 

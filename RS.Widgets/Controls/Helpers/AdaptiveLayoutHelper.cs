@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace RS.Widgets.Helpers
+namespace RS.Widgets.Controls
 {
     /// <summary>
     /// 自适应布局助手类，通过附加属性提供计算后的布局状态

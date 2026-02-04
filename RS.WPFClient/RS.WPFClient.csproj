@@ -47,6 +47,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Compent.Shared.ConfigurationProvider.Json" Version="0.2.2" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
 		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.9" />
 		<PackageReference Include="System.Drawing.Common" Version="9.0.9" />
 		<PackageReference Include="System.IO.Ports" Version="9.0.9" />
@@ -112,7 +113,7 @@
 	  <None Update="Configs\log4net.config">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Temlates\ModbusRTU数据导入模版.xlsx">
+	  <None Update="Templates\ModbusRTU数据导入模版.xlsx">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

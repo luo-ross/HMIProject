@@ -25,7 +25,7 @@
         <converter:MailDateGroupConverter x:Key="MailDateGroupConverter" />
         <converter:MailTimeFormatConverter x:Key="MailTimeFormatConverter" />
 
-        <Style x:Key="MailDataGridRowStyle" TargetType="DataGridRow">
+        <Style x:Key="MailDataGridRowStyle" TargetType="{x:Type DataGridRow}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Cursor" Value="Hand" />
@@ -112,6 +112,19 @@
                                 <Setter TargetName="PART_SelectIcon" Property="Margin" Value="0,16,0,0" />
                                 <Setter Property="Height" Value="auto" />
                             </DataTrigger>
+
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="True">
+                                        <Condition.Binding>
+                                            <Binding Path="(rs:AdaptiveLayoutHelper.ShowPreviewPane)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        </Condition.Binding>
+                                    </Condition>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsSelected}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeAlpha020}" />
+                            </MultiDataTrigger>
 
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -667,6 +680,7 @@
                     HorizontalScrollBarVisibility="Hidden"
                     ItemsSource="{Binding MailList}"
                     RowStyle="{StaticResource MailDataGridRowStyle}"
+                    SelectedItem="{Binding SelectedMail}"
                     SelectionMode="Single">
                     <DataGrid.Resources>
                         <DataTemplate DataType="{x:Type model:GroupHeaderModel}">
@@ -699,7 +713,6 @@
                 </DataGrid>
             </Border>
 
-
             <Border Grid.Row="1" Grid.Column="2">
                 <Border.Style>
                     <Style TargetType="{x:Type Border}">
@@ -723,7 +736,7 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <ScrollViewer x:Name="PART_MailScrollViewer" />
+                <controls:RSMailDetail DataContext="{Binding SelectedMail}" />
             </Border>
 
             <GridSplitter
