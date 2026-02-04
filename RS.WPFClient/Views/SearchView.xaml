@@ -26,25 +26,12 @@
 
 
         <Style
-            x:Key="AdvancedSearchTextBoxStyle"
-            BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}"
-            TargetType="{x:Type TextBox}">
-            <Style.Triggers>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="BorderBrush" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style
             x:Key="TextBlockDesStyle"
             BasedOn="{StaticResource RSApp.Styles.FormTextBlockStyle}"
             TargetType="{x:Type TextBlock}">
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="#333333" />
+            <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray100}" />
         </Style>
-
 
 
         <DataTemplate DataType="{x:Type enums:SearchType}">
@@ -159,7 +146,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
     <i:Interaction.Behaviors>
         <behavior:SearchViewBehavior HideSearchCommand="{Binding HideSearchCommand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -394,9 +380,18 @@
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     rs:TextBoxHelper.IsShowClearButton="True"
-                                    rs:TextBoxHelper.Watermark="请输入"
-                                    Style="{StaticResource AdvancedSearchTextBoxStyle}" />
-
+                                    rs:TextBoxHelper.Watermark="请输入">
+                                    <TextBox.Style>
+                                        <Style BasedOn="{StaticResource RSApp.Styles.TextBoxStyle}" TargetType="{x:Type TextBox}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderThickness" Value="1" />
+                                                    <Setter Property="BorderBrush" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
 
                                 <TextBlock
                                     Grid.Row="1"
