@@ -8,6 +8,8 @@ using System.IO;
 using System.Windows;
 using RS.Annotation.Models;
 using RS.Annotation.Enums;
+using RS.Widgets.Attached;
+using RS.Widgets.Utilities;
 
 namespace RS.Annotation.Views.Areas
 {

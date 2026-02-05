@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Microsoft.Xaml.Behaviors;
-using RS.Widgets.Controls;
+using RS.Widgets.Utilities;
 
 namespace RS.Widgets.Behaviors
 {

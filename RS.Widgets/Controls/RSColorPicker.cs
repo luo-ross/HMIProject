@@ -1,5 +1,5 @@
-﻿using RS.Widgets.Commons;
-using RS.Widgets.Structs;
+﻿using RS.Widgets.Structs;
+using RS.Widgets.Utilities;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;

@@ -65,7 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Commons\AnimatedTypeHelper.cs" />
+	  <Folder Include="Controls\Helpers\" />
 	</ItemGroup>
 
 </Project>

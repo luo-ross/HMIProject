@@ -1,7 +1,9 @@
 ﻿using RS.Commons;
 using RS.Commons.Enums;
 using RS.OmniComLib.DataConfigs;
+using RS.Widgets.Attached;
 using RS.Widgets.Controls;
+using RS.Widgets.Utilities;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Ports;

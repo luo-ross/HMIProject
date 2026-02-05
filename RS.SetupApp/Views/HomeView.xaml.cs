@@ -2,8 +2,8 @@
 using Ookii.Dialogs.Wpf;
 using RS.SetupApp.Controls;
 using RS.SetupApp.Models;
-using RS.Widgets.Commons;
 using RS.Widgets.Controls;
+using RS.Widgets.Utilities;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;

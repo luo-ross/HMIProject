@@ -20,8 +20,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using System.Reflection.Emit;
-using RS.Widgets.Commons;
 using RS.Annotation.Models;
+using RS.Widgets.Attached;
+using RS.Widgets.Utilities;
 
 namespace RS.Annotation.Views.Areas
 {
@@ -894,7 +895,7 @@ namespace RS.Annotation.Views.Areas
             var imgModelSelect = this.ViewModel.ImgModelSelect;
             if (File.Exists(imgModelSelect.ImgPath))
             {
-                RS.Widgets.Commons.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
+                Widgets.Utilities.FileHelper.ExplorerFile(imgModelSelect.ImgPath);
             }
         }
 

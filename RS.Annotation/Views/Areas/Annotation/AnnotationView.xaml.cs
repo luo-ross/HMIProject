@@ -3,7 +3,6 @@ using OpenCvSharp.WpfExtensions;
 using RS.Commons;
 using RS.Commons.Enums;
 using RS.Commons.Helper;
-using RS.Widgets.Commons;
 using RS.Widgets.Controls;
 using RS.Widgets.Enums;
 using RS.Widgets.Models;
@@ -18,9 +17,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Resources;
 using System.Windows.Shapes;
-using RS.Widgets.Controls;
 using RS.Annotation.Models;
 using TagModel = RS.Annotation.Models.TagModel;
+using RS.Widgets.Attached;
+using RS.Widgets.Utilities;
 
 namespace RS.Annotation.Views.Areas
 {

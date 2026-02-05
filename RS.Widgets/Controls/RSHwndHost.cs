@@ -1,7 +1,7 @@
 ﻿using NPOI.SS.Formula.Functions;
-using RS.Widgets.Commons;
+using RS.Widgets.Infrastructure;
 using RS.Widgets.Interop;
-using RS.Widgets.Standard;
+using RS.Widgets.Utilities;
 using RS.Win32API;
 using RS.Win32API.Enums;
 using RS.Win32API.Helper;

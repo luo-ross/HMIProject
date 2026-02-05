@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using RS.Win32API.SafeHandles;
 using RS.Win32API.Enums;
+using RS.Widgets.Utilities;
 
 namespace RS.Widgets.Controls
 {

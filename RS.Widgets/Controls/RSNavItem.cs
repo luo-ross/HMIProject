@@ -2,6 +2,7 @@
 using RS.Widgets.Enums;
 using RS.Widgets.Extensions;
 using RS.Widgets.Models;
+using RS.Widgets.Utilities;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;

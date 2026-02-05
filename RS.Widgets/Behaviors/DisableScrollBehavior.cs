@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows;
-using RS.Widgets.Controls;
+using RS.Widgets.Utilities;
 
 namespace RS.Widgets.Behaviors
 {
