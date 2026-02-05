@@ -254,7 +254,5 @@ namespace RS.Widgets.Utilities
             return false;
         }
 
-       
-
     }
 }
