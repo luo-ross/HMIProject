@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Adorners
 {
-    internal class SelectionAdorner : Adorner
+    public class SelectionAdorner : Adorner
     {
         private RSSelectableTextBlock Control;
 

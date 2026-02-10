@@ -21,24 +21,27 @@
         <DataTemplate x:Key="EmailDetailActionBarTemplate">
             <Menu>
                 <MenuItem
+                    MinHeight="25"
                     Margin="2,0,2,0"
-                    Padding="0"
+                    Padding="2,0,2,0"
                     VerticalAlignment="Center"
                     rs:ControlsHelper.IconData="M11.5 4.25h4a.25.25 0 0 1 .25.25v4a.25.25 0 0 1-.25.25h-4a.25.25 0 0 1-.25-.25v-4a.25.25 0 0 1 .25-.25M10 4.5A1.5 1.5 0 0 1 11.5 3h4A1.5 1.5 0 0 1 17 4.5v4a1.5 1.5 0 0 1-1.5 1.5h-4A1.5 1.5 0 0 1 10 8.5zm-4.5.75H9V4H5.5A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16h9a1.5 1.5 0 0 0 1.5-1.5V11h-1.25v3.5a.25.25 0 0 1-.25.25h-9a.25.25 0 0 1-.25-.25v-9a.25.25 0 0 1 .25-.25"
                     rs:ControlsHelper.IconHeight="13"
                     rs:ControlsHelper.IconWidth="13"
                     ToolTip="打开新窗口" />
                 <MenuItem
+                    MinHeight="25"
                     Margin="2,0,2,0"
-                    Padding="0"
+                    Padding="2,0,2,0"
                     VerticalAlignment="Center"
                     rs:ControlsHelper.IconData="M5 4.167c0-.99.802-1.792 1.792-1.792h6.416c.99 0 1.792.802 1.792 1.792V5h.833c.99 0 1.792.802 1.792 1.792v6.125c0 .99-.802 1.791-1.792 1.791H15v1.125c0 .99-.802 1.792-1.792 1.792H6.792c-.99 0-1.792-.802-1.792-1.792v-1.125h-.833c-.99 0-1.792-.802-1.792-1.791V6.792c0-.99.802-1.792 1.792-1.792H5zM6.25 5h7.5v-.833c0-.3-.242-.542-.542-.542H6.792c-.3 0-.542.243-.542.542zM5 13.458V11.75c0-.99.802-1.792 1.792-1.792h6.416c.99 0 1.792.803 1.792 1.792v1.708h.833c.3 0 .542-.242.542-.541V6.792c0-.3-.242-.542-.542-.542H4.167c-.3 0-.542.243-.542.542v6.125c0 .299.243.541.542.541zm1.792-2.25c-.3 0-.542.243-.542.542v4.083c0 .3.243.542.542.542h6.416c.3 0 .542-.242.542-.542V11.75c0-.3-.242-.542-.542-.542z"
                     rs:ControlsHelper.IconHeight="13"
                     rs:ControlsHelper.IconWidth="13"
                     ToolTip="打印" />
                 <MenuItem
+                    MinHeight="25"
                     Margin="2,0,2,0"
-                    Padding="0"
+                    Padding="2,0,2,0"
                     VerticalAlignment="Center"
                     rs:ControlsHelper.IconData="M4.867 2.375c-.997 0-1.909.747-1.909 1.792v11.666c0 1.045.912 1.792 1.909 1.792h7.74c.545 0 1.077-.22 1.447-.622l2.526-2.756a1.73 1.73 0 0 0 .462-1.17v-8.91c0-1.045-.912-1.792-1.909-1.792zM10 4.792h5.792v8.083h-2.225c-.898 0-1.625.727-1.625 1.625v1.875H4.867c-.421 0-.659-.297-.659-.542V4.792zm3.567 9.333h1.429l-1.804 1.968V14.5c0-.207.168-.375.375-.375M6.583 7.503a.5.5 0 0 1 .5-.5h5.834a.5.5 0 0 1 0 1H7.083a.5.5 0 0 1-.5-.5m0 3.259a.5.5 0 0 1 .5-.5h5.834a.5.5 0 0 1 0 1H7.083a.5.5 0 0 1-.5-.5"
                     rs:ControlsHelper.IconHeight="13"
@@ -46,8 +49,9 @@
                     ToolTip="添加备注" />
 
                 <MenuItem
+                    MinHeight="25"
                     Margin="2,0,2,0"
-                    Padding="0"
+                    Padding="2,0,2,0"
                     Background="Transparent"
                     IsEnabled="False">
                     <MenuItem.Header>
@@ -59,6 +63,7 @@
                     </MenuItem.Header>
                 </MenuItem>
                 <MenuItem
+                    MinHeight="25"
                     Margin="2,0,2,0"
                     Padding="5,0,5,0"
                     VerticalContentAlignment="Center"
@@ -123,7 +128,7 @@
                 </Grid.ColumnDefinitions>
 
                 <rs:RSSelectableTextBlock
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                     Text="附件" />
 
@@ -145,7 +150,8 @@
                                 rs:ControlsHelper.IconColor="#CC3C29"
                                 rs:ControlsHelper.IconData="M0 45.329067C0 20.297956 20.457244 0 45.329067 0h933.341866C1003.702044 0 1024 20.457244 1024 45.329067v933.341866c0 25.031111-20.457244 45.329067-45.329067 45.329067H45.329067C20.297956 1024 0 1003.542756 0 978.670933V45.329067z m745.972622 526.336c-11.423289-19.069156-41.938489-26.715022-87.699911-26.715023-15.291733 0-30.492444 3.822933-49.607111 3.822934-15.246222-7.645867-22.9376-15.291733-34.360889-22.892089-22.892089-22.914844-45.784178-57.207467-60.984889-99.214222v-3.777423c15.200711-49.607111 28.672-122.333867-1.956978-144.406755-6.894933-5.006222-13.334756-5.302044-20.957866-5.415822-27.670756-0.295822-40.254578 26.328178-43.030756 41.870222-7.5776 42.370844 12.470044 71.156622 12.470045 119.3984 0 36.181333-48.992711 144.5888-80.099556 179.245511-11.377778 12.743111-26.624 15.291733-34.338133 19.137422-45.784178 26.646756-84.764444 58.823111-68.630756 102.991645 5.620622 15.428267 26.715022 15.223467 34.292622 15.223466 30.583467 0 61.2352-25.3952 107.019378-105.449244 7.441067-15.587556 23.096889-22.983111 26.737778-24.075378 53.293511-15.701333 76.071822-20.252444 140.879644-27.875555 38.206578 19.069156 83.968 31.516444 114.460445 31.516444 15.337244 0 26.692267-3.777422 34.360889-7.600356 15.291733-7.281778 13.038933-19.069156 16.884622-22.892088 0.022756-7.623111-1.592889-15.291733-5.461333-22.914845z m-437.930666 138.6496c0-25.918578 48.310044-45.556622 48.310044-45.556623-6.280533 28.603733-48.310044 71.520711-48.310044 45.556623z m177.948444-411.648c3.049244-2.434844 7.759644 2.275556 9.284267 3.777422 3.800178 3.800178 3.800178 19.069156 0 38.115555 0 0-5.415822 26.715022-9.284267 42.006756h2.889956-2.889956c-7.5776-34.360889-12.834133-73.864533 0-83.922489zM425.528889 602.134756c7.668622-15.223467 15.246222-26.669511 22.9376-41.961245 15.246222-34.315378 30.492444-64.830578 38.161067-91.5456 15.246222 34.360889 64.807822 95.391289 72.476444 99.145956-30.560711 3.868444-133.575111 34.360889-133.575111 34.360889z m287.266133-7.259023c-17.885867 6.644622-74.729244-13.744356-74.729244-13.744355l7.5776-0.910222c52.929422-6.599111 69.563733 2.844444 73.773511 6.189511 0.500622 3.754667-4.096 7.532089-6.621867 8.465066z"
                                 rs:ControlsHelper.IconHeight="18"
-                                rs:ControlsHelper.IconWidth="18">
+                                rs:ControlsHelper.IconWidth="18"
+                                FontSize="13">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource RSApp.Styles.IconWithDesButton}" TargetType="{x:Type Button}">
                                         <Setter Property="VerticalAlignment" Value="Center" />
@@ -165,11 +171,16 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
-
-                                <rs:RSSelectableTextBlock>
-                                    <Run Text="{Binding AttachName}" />
-                                    <Run Text="{Binding AttachSuffix}" />
-                                </rs:RSSelectableTextBlock>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="0"
+                                        Padding="0"
+                                        Text="{Binding AttachName}" />
+                                    <TextBlock
+                                        Margin="0"
+                                        Padding="0"
+                                        Text="{Binding AttachSuffix}" />
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -205,7 +216,7 @@
                             <Setter Property="Cursor" Value="Hand" />
                             <Setter Property="Margin" Value="5,0,0,0" />
                             <Setter Property="Padding" Value="0" />
-                            <Setter Property="FontSize" Value="14" />
+                            <Setter Property="FontSize" Value="13" />
                             <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueDarken1}" />
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
@@ -246,7 +257,7 @@
                     </Grid.ColumnDefinitions>
 
                     <rs:RSSelectableTextBlock
-                        FontSize="12"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="由" />
 
@@ -263,6 +274,7 @@
                             Grid.Column="0"
                             Margin="2,0,0,0"
                             Padding="0"
+                            FontSize="13"
                             Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                             Text="{Binding ProxyName, Converter={StaticResource EmailParserConverter}, ConverterParameter=Name}"
                             TextTrimming="CharacterEllipsis" />
@@ -271,7 +283,7 @@
                             Grid.Column="1"
                             Margin="0"
                             Padding="0"
-                            FontSize="12"
+                            FontSize="13"
                             Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                             Text="@" />
 
@@ -280,6 +292,7 @@
                             Grid.Column="2"
                             Margin="0"
                             Padding="0"
+                            FontSize="13"
                             Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                             Text="{Binding ProxyName, Converter={StaticResource EmailParserConverter}, ConverterParameter=Domain}"
                             TextTrimming="CharacterEllipsis" />
@@ -315,13 +328,13 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <rs:RSSelectableTextBlock
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                     Text="收件人" />
                 <rs:RSSelectableTextBlock
                     Grid.Column="1"
                     Margin="2,0,0,0"
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray100}">
                     <rs:RSSelectableTextBlock.Style>
                         <Style BasedOn="{StaticResource RSApp.Styles.TextBlockStyle}" TargetType="{x:Type TextBlock}">
@@ -343,16 +356,19 @@
                     <rs:RSSelectableTextBlock
                         Margin="0"
                         Padding="0"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="&lt;" />
                     <rs:RSSelectableTextBlock
                         Margin="0"
                         Padding="0"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="1845960295@qq.com" />
                     <rs:RSSelectableTextBlock
                         Margin="0"
                         Padding="0"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="&gt;" />
                 </StackPanel>
@@ -384,14 +400,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <rs:RSSelectableTextBlock
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                     Text="发件人" />
 
                 <rs:RSSelectableTextBlock
                     Grid.Column="1"
                     Margin="2,0,0,0"
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray100}"
                     Text="Team" />
 
@@ -402,16 +418,19 @@
                     <rs:RSSelectableTextBlock
                         Margin="0"
                         Padding="0"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="&lt;" />
                     <rs:RSSelectableTextBlock
                         Margin="0"
                         Padding="0"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="team@avaloniaui.net" />
                     <rs:RSSelectableTextBlock
                         Margin="0"
                         Padding="0"
+                        FontSize="13"
                         Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                         Text="&gt;" />
                 </StackPanel>
@@ -427,14 +446,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <rs:RSSelectableTextBlock
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                     Text="大小" />
 
                 <rs:RSSelectableTextBlock
                     Grid.Column="1"
                     Margin="2,0,0,0"
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray100}"
                     Text="5K" />
             </Grid>
@@ -448,21 +467,21 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <rs:RSSelectableTextBlock
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                     Text="时间" />
 
                 <rs:RSSelectableTextBlock
                     Grid.Column="1"
                     Margin="2,0,0,0"
-                    FontSize="12"
+                    FontSize="13"
                     Foreground="{StaticResource RSApp.Styles.BaseGray100}"
                     Text="{Binding Time, StringFormat='{}{0:yyyy年MM月dd日 HH:mm}'}" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="EmailBasicDetailTemplate" DataType="{x:Type model:EmailModel}">
-            <StackPanel Margin="5,0,0,0">
+            <StackPanel Margin="10,0,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -471,6 +490,7 @@
                     </Grid.ColumnDefinitions>
                     <rs:RSSelectableTextBlock
                         VerticalAlignment="Center"
+                        FontSize="14"
                         FontWeight="Bold"
                         Foreground="{StaticResource RSApp.Styles.BaseGray100}"
                         Text="{Binding Account}" />
@@ -491,16 +511,19 @@
                         <rs:RSSelectableTextBlock
                             Margin="0"
                             Padding="0"
+                            FontSize="13"
                             Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                             Text="&lt;" />
                         <rs:RSSelectableTextBlock
                             Margin="0"
                             Padding="0"
+                            FontSize="13"
                             Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                             Text="noreply@github.com" />
                         <rs:RSSelectableTextBlock
                             Margin="0"
                             Padding="0"
+                            FontSize="13"
                             Foreground="{StaticResource RSApp.Styles.BaseGray040}"
                             Text="&gt;" />
                     </StackPanel>
@@ -510,8 +533,14 @@
                         Content="{Binding}"
                         ContentTemplate="{StaticResource EmailDetailActionBarTemplate}" />
                 </Grid>
-                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource EmailProxyTemplate}" />
-                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource EmailFromTemplate}">
+                <ContentControl
+                    Margin="0,2,0,2"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource EmailProxyTemplate}" />
+                <ContentControl
+                    Margin="0,2,0,2"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource EmailFromTemplate}">
                     <ContentControl.Style>
                         <Style TargetType="{x:Type ContentControl}">
                             <Style.Triggers>
@@ -525,8 +554,14 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
-                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource EmailToTemplate}" />
-                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource EmailSizeTemplate}">
+                <ContentControl
+                    Margin="0,2,0,2"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource EmailToTemplate}" />
+                <ContentControl
+                    Margin="0,2,0,2"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource EmailSizeTemplate}">
                     <ContentControl.Style>
                         <Style TargetType="{x:Type ContentControl}">
                             <Style.Triggers>
@@ -540,7 +575,10 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
-                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource EmailTimeTemplate}">
+                <ContentControl
+                    Margin="0,2,0,2"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource EmailTimeTemplate}">
                     <ContentControl.Style>
                         <Style TargetType="{x:Type ContentControl}">
                             <Style.Triggers>
@@ -554,7 +592,10 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
-                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource EmailAttachmentTemplate}" />
+                <ContentControl
+                    Margin="0,2,0,2"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource EmailAttachmentTemplate}" />
             </StackPanel>
         </DataTemplate>
 
@@ -569,7 +610,7 @@
         <Grid Grid.Row="0">
             <TextBlock TextWrapping="WrapWithOverflow">
                 <Run
-                    FontSize="18"
+                    FontSize="20"
                     FontWeight="Bold"
                     Text="{Binding SelectedMail.Subject}" />
                 <InlineUIContainer BaselineAlignment="Center">
@@ -615,7 +656,7 @@
                 Grid.Column="0"
                 Width="36"
                 Height="36"
-                Margin="0,5,0,0"
+                Margin="0,2,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Background="{StaticResource RSApp.Styles.BaseGray010}"

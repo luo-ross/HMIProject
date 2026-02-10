@@ -33,6 +33,7 @@
         <Setter Property="Margin" Value="3,3,3,3" />
         <Setter Property="Padding" Value="2,3,2,3" />
         <Setter Property="MinWidth" Value="80" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
         <Setter Property="rs:ControlsHelper.IconHeight" Value="40" />
         <Setter Property="rs:ControlsHelper.IconWidth" Value="50" />

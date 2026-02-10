@@ -774,7 +774,7 @@
                     </Style>
                 </Border.Style>
                 <ScrollViewer>
-                    <ContentControl Margin="20,0,20,0" Content="{Binding EmailDetailViewModel}" />
+                    <ContentControl Margin="20,10,20,0" Content="{Binding EmailDetailViewModel}" />
                 </ScrollViewer>
             </Border>
 

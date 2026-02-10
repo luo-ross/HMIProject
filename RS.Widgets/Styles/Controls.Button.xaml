@@ -137,7 +137,6 @@
                                 <Border
                                     x:Name="PART_Decorations"
                                     Height="1"
-                                    Margin="3,0,3,2"
                                     VerticalAlignment="Bottom"
                                     Background="{TemplateBinding Foreground}"
                                     Visibility="Collapsed" />
