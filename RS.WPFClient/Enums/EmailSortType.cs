@@ -9,7 +9,7 @@ namespace RS.WPFClient.Enums
     /// <summary>
     /// 排序顺序枚举
     /// </summary>
-    public enum MailSortType
+    public enum EmailSortType
     {
         /// <summary>
         /// 由新到旧（按日期降序排列，最新的在前）

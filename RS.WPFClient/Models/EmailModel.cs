@@ -1,10 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using RS.WPFClient.Enums;
 using System;
+using System.Collections.ObjectModel;
 
 namespace RS.WPFClient.Models
 {
-    public class MailModel : ObservableObject
+    public class EmailModel : ObservableObject
     {
         private string? account;
         /// <summary>
@@ -210,5 +211,65 @@ namespace RS.WPFClient.Models
                 this.SetProperty(ref avatar, value);
             }
         }
+
+
+
+        private string? proxyName;
+        /// <summary>
+        /// 代理名称
+        /// </summary>
+        public string? ProxyName
+        {
+            get
+            {
+                return proxyName;
+            }
+            set
+            {
+                this.SetProperty(ref proxyName, value);
+            }
+        }
+
+
+
+
+        private bool? isCarbonCopy = false;
+        /// <summary>
+        /// 是否抄送
+        /// </summary>
+        public bool? IsCarbonCopy
+        {
+            get
+            {
+                return isCarbonCopy;
+            }
+            set
+            {
+                this.SetProperty(ref isCarbonCopy, value);
+            }
+        }
+
+
+
+        private ObservableCollection<EmailAttachmentModel>? mailAttachmentModelList;
+        /// <summary>
+        /// 附件列表
+        /// </summary>
+        public ObservableCollection<EmailAttachmentModel>? EmailAttachmentModelList
+        {
+            get
+            {
+                if (mailAttachmentModelList==null)
+                {
+                    mailAttachmentModelList = new ObservableCollection<EmailAttachmentModel>();
+                }
+                return mailAttachmentModelList;
+            }
+            set
+            {
+                this.SetProperty(ref mailAttachmentModelList, value);
+            }
+        }
+
     }
 }

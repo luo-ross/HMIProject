@@ -5,6 +5,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
@@ -117,12 +118,13 @@
                                             PlacementTarget="{Binding ElementName=PART_BtnWindowPosition}"
                                             PopupAnimation="None"
                                             StaysOpen="False">
-                                            <Border
-                                                Width="200"
-                                                Margin="15,0,15,15"
-                                                Background="#FFF"
-                                                CornerRadius="3"
-                                                Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                            <Grid Width="200" Margin="15,0,15,15">
+                                                <Border
+                                                    Background="#fff"
+                                                    BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="5"
+                                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                                 <StackPanel x:Name="DropDown">
                                                     <MenuItem
                                                         x:Name="PART_MenuItem_WindowFloatingCommand"
@@ -147,7 +149,7 @@
                                                         CommandParameter="{Binding ElementName=PART_Popup}"
                                                         Header="关闭" />
                                                 </StackPanel>
-                                            </Border>
+                                            </Grid>
                                         </Popup>
 
                                         <CheckBox

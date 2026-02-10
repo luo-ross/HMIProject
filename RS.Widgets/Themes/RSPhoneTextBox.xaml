@@ -106,79 +106,69 @@
                                         Width="200"
                                         Height="200"
                                         Margin="15,0,15,15">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
                                         <Border
-                                            Grid.Row="1"
-                                            Background="#FFF"
-                                            CornerRadius="5">
-                                            <Grid>
-                                                <Grid.Resources>
-                                                    <CollectionViewSource x:Key="CountryCodeCollectionViewSource" Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CountryCodeModelList}">
-                                                        <CollectionViewSource.GroupDescriptions>
-                                                            <PropertyGroupDescription PropertyName="GroupName" />
-                                                        </CollectionViewSource.GroupDescriptions>
-                                                    </CollectionViewSource>
-                                                </Grid.Resources>
-                                                <ListBox
-                                                    x:Name="PART_CountryCodeListBox"
-                                                    Margin="0,20,0,20"
-                                                    HorizontalContentAlignment="Stretch"
-                                                    ItemsSource="{Binding Source={StaticResource CountryCodeCollectionViewSource}}"
-                                                    SelectedValue="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CountryCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                    SelectedValuePath="CountryCode"
-                                                    Style="{StaticResource RSApp.Styles.ListBoxStyle}">
-                                                    <ListBox.ItemTemplate>
-                                                        <DataTemplate DataType="{x:Type model:CountryCodeModel}">
-                                                            <Border>
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition />
-                                                                        <ColumnDefinition Width="auto" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <TextBlock Grid.Column="0" Text="{Binding Country}" />
-                                                                    <TextBlock Grid.Column="1" Text="{Binding CountryCode, StringFormat='+{0}'}" />
-                                                                </Grid>
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </ListBox.ItemTemplate>
-                                                    <ListBox.GroupStyle>
-                                                        <GroupStyle>
-                                                            <GroupStyle.ContainerStyle>
-                                                                <Style TargetType="{x:Type GroupItem}">
-                                                                    <Setter Property="Template">
-                                                                        <Setter.Value>
-                                                                            <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                                                <Border>
-                                                                                    <StackPanel>
-                                                                                        <Border Padding="10,20,10,5">
-                                                                                            <Grid>
-                                                                                                <TextBlock FontSize="12" Text="{Binding Path=Name}" />
-                                                                                            </Grid>
-                                                                                        </Border>
-                                                                                        <ItemsPresenter />
-                                                                                    </StackPanel>
-                                                                                </Border>
-                                                                            </ControlTemplate>
-                                                                        </Setter.Value>
-                                                                    </Setter>
-                                                                </Style>
-                                                            </GroupStyle.ContainerStyle>
-                                                        </GroupStyle>
-                                                    </ListBox.GroupStyle>
-                                                </ListBox>
-                                            </Grid>
+                                            Background="#fff"
+                                            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                            BorderThickness="1"
+                                            CornerRadius="5"
+                                            Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
 
-                                            <Border.Effect>
-                                                <DropShadowEffect
-                                                    BlurRadius="15"
-                                                    Opacity="0.3"
-                                                    ShadowDepth="0"
-                                                    Color="Black" />
-                                            </Border.Effect>
-                                        </Border>
+                                        <Grid>
+                                            <Grid.Resources>
+                                                <CollectionViewSource x:Key="CountryCodeCollectionViewSource" Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CountryCodeModelList}">
+                                                    <CollectionViewSource.GroupDescriptions>
+                                                        <PropertyGroupDescription PropertyName="GroupName" />
+                                                    </CollectionViewSource.GroupDescriptions>
+                                                </CollectionViewSource>
+                                            </Grid.Resources>
+                                            <ListBox
+                                                x:Name="PART_CountryCodeListBox"
+                                                Margin="0,20,0,20"
+                                                HorizontalContentAlignment="Stretch"
+                                                ItemsSource="{Binding Source={StaticResource CountryCodeCollectionViewSource}}"
+                                                SelectedValue="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=CountryCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedValuePath="CountryCode"
+                                                Style="{StaticResource RSApp.Styles.ListBoxStyle}">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type model:CountryCodeModel}">
+                                                        <Border>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0" Text="{Binding Country}" />
+                                                                <TextBlock Grid.Column="1" Text="{Binding CountryCode, StringFormat='+{0}'}" />
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                                <ListBox.GroupStyle>
+                                                    <GroupStyle>
+                                                        <GroupStyle.ContainerStyle>
+                                                            <Style TargetType="{x:Type GroupItem}">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                                            <Border>
+                                                                                <StackPanel>
+                                                                                    <Border Padding="10,20,10,5">
+                                                                                        <Grid>
+                                                                                            <TextBlock FontSize="12" Text="{Binding Path=Name}" />
+                                                                                        </Grid>
+                                                                                    </Border>
+                                                                                    <ItemsPresenter />
+                                                                                </StackPanel>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Style>
+                                                        </GroupStyle.ContainerStyle>
+                                                    </GroupStyle>
+                                                </ListBox.GroupStyle>
+                                            </ListBox>
+                                        </Grid>
 
                                         <Path
                                             Grid.Column="1"

@@ -7,7 +7,7 @@ namespace RS.WPFClient.Converters
     /// <summary>
     /// 邮件日期分组转换器，将日期转换为"今天"、"周二"、"更早"等格式
     /// </summary>
-    public class MailDateGroupConverter : IValueConverter
+    public class EmailDateGroupConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

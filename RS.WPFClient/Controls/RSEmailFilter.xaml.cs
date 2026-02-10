@@ -10,9 +10,9 @@ using System.Windows.Input;
 
 namespace RS.WPFClient.Controls
 {
-    public partial class RSMailFilter : UserControl
+    public partial class RSEmailFilter : UserControl
     {
-        public RSMailFilter()
+        public RSEmailFilter()
         {
             InitializeComponent();
 
@@ -28,7 +28,7 @@ namespace RS.WPFClient.Controls
             nameof(MailFiltered),
             RoutingStrategy.Bubble,
             typeof(EventHandler<MailFilterEventArgs>),
-            typeof(RSMailFilter));
+            typeof(RSEmailFilter));
 
         /// <summary>
         /// 邮件筛选事件
@@ -53,17 +53,17 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty MailFilteredCommandProperty =
-            DependencyProperty.Register(nameof(MailFilteredCommand), typeof(ICommand), typeof(RSMailFilter), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(MailFilteredCommand), typeof(ICommand), typeof(RSEmailFilter), new PropertyMetadata(null));
 
 
-        public MailFilterModel MailFilterModel
+        public EmailFilterModel EmailFilterModel
         {
-            get { return (MailFilterModel)GetValue(MailFilterModelProperty); }
-            set { SetValue(MailFilterModelProperty, value); }
+            get { return (EmailFilterModel)GetValue(EmailFilterModelProperty); }
+            set { SetValue(EmailFilterModelProperty, value); }
         }
 
-        public static readonly DependencyProperty MailFilterModelProperty =
-            DependencyProperty.Register(nameof(MailFilterModel), typeof(MailFilterModel), typeof(RSMailFilter), new PropertyMetadata(null));
+        public static readonly DependencyProperty EmailFilterModelProperty =
+            DependencyProperty.Register(nameof(EmailFilterModel), typeof(EmailFilterModel), typeof(RSEmailFilter), new PropertyMetadata(null));
 
 
         public bool IsAllRead
@@ -73,7 +73,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsAllReadProperty =
-            DependencyProperty.Register(nameof(IsAllRead), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true));
+            DependencyProperty.Register(nameof(IsAllRead), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(true));
 
         public bool IsUnread
         {
@@ -82,7 +82,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsUnreadProperty =
-            DependencyProperty.Register(nameof(IsUnread), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsUnread), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
         public bool IsWithAttachment
         {
@@ -91,7 +91,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsWithAttachmentProperty =
-            DependencyProperty.Register(nameof(IsWithAttachment), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsWithAttachment), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
         public bool IsFromContact
         {
@@ -100,7 +100,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsFromContactProperty =
-            DependencyProperty.Register(nameof(IsFromContact), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsFromContact), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
 
         public bool IsNewestToOldest
@@ -110,7 +110,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsNewestToOldestProperty =
-            DependencyProperty.Register(nameof(IsNewestToOldest), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(true));
+            DependencyProperty.Register(nameof(IsNewestToOldest), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(true));
 
         public bool IsOldestToNewest
         {
@@ -119,7 +119,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsOldestToNewestProperty =
-            DependencyProperty.Register(nameof(IsOldestToNewest), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsOldestToNewest), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
 
         public bool IsLargeToSmall
@@ -129,7 +129,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsLargeToSmallProperty =
-            DependencyProperty.Register(nameof(IsLargeToSmall), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsLargeToSmall), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
         public bool IsSmallToLarge
         {
@@ -138,7 +138,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty IsSmallToLargeProperty =
-            DependencyProperty.Register(nameof(IsSmallToLarge), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsSmallToLarge), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
         public string MailFilterDes
         {
@@ -147,7 +147,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty MailFilterDesProperty =
-            DependencyProperty.Register(nameof(MailFilterDes), typeof(string), typeof(RSMailFilter), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(MailFilterDes), typeof(string), typeof(RSEmailFilter), new PropertyMetadata(null));
 
 
 
@@ -159,7 +159,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty HasMailFilterDesProperty =
-            DependencyProperty.Register(nameof(HasMailFilterDes), typeof(bool), typeof(RSMailFilter), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(HasMailFilterDes), typeof(bool), typeof(RSEmailFilter), new PropertyMetadata(false));
 
 
 
@@ -170,7 +170,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty SizeSortDesProperty =
-            DependencyProperty.Register(nameof(SizeSortDes), typeof(string), typeof(RSMailFilter), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(SizeSortDes), typeof(string), typeof(RSEmailFilter), new PropertyMetadata(null));
 
 
         public string DateSortDes
@@ -180,7 +180,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty DateSortDesProperty =
-            DependencyProperty.Register(nameof(DateSortDes), typeof(string), typeof(RSMailFilter), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(DateSortDes), typeof(string), typeof(RSEmailFilter), new PropertyMetadata(null));
 
         #endregion
 
@@ -236,23 +236,23 @@ namespace RS.WPFClient.Controls
             this.IsWithAttachment = menuItem == this.BtnWithAttachment;
             this.IsFromContact = menuItem == this.BtnFromContact;
 
-            // 更新 MailFilterModel
-            var mailFilterModel = this.GetMailFilterModel();
+            // 更新 EmailFilterModel
+            var mailFilterModel = this.GetEmailFilterModel();
             if (this.IsAllRead)
             {
-                mailFilterModel.MailFilterType = MailFilterType.AllRead;
+                mailFilterModel.EmailFilterType = EmailFilterType.AllRead;
             }
             else if (this.IsUnread)
             {
-                mailFilterModel.MailFilterType = MailFilterType.Unread;
+                mailFilterModel.EmailFilterType = EmailFilterType.Unread;
             }
             else if (this.IsWithAttachment)
             {
-                mailFilterModel.MailFilterType = MailFilterType.WithAttachment;
+                mailFilterModel.EmailFilterType = EmailFilterType.WithAttachment;
             }
             else if (this.IsFromContact)
             {
-                mailFilterModel.MailFilterType = MailFilterType.FromContact;
+                mailFilterModel.EmailFilterType = EmailFilterType.FromContact;
             }
 
             this.HandleFilterPropertyChanged();
@@ -275,23 +275,23 @@ namespace RS.WPFClient.Controls
             this.IsLargeToSmall = menuItem == this.BtnFromLargeToSmall;
             this.IsSmallToLarge = menuItem == this.BtnFromSmallToLarge;
 
-            // 更新 MailFilterModel
-            var mailFilterModel = this.GetMailFilterModel();
+            // 更新 EmailFilterModel
+            var mailFilterModel = this.GetEmailFilterModel();
             if (this.IsNewestToOldest)
             {
-                mailFilterModel.MailSortType = MailSortType.NewestToOldest;
+                mailFilterModel.EmailSortType = EmailSortType.NewestToOldest;
             }
             else if (this.IsOldestToNewest)
             {
-                mailFilterModel.MailSortType = MailSortType.OldestToNewest;
+                mailFilterModel.EmailSortType = EmailSortType.OldestToNewest;
             }
             else if (this.IsLargeToSmall)
             {
-                mailFilterModel.MailSortType = MailSortType.LargeToSmall;
+                mailFilterModel.EmailSortType = EmailSortType.LargeToSmall;
             }
             else if (this.IsSmallToLarge)
             {
-                mailFilterModel.MailSortType = MailSortType.SmallToLarge;
+                mailFilterModel.EmailSortType = EmailSortType.SmallToLarge;
             }
 
             this.HandleSortPropertyChanged();
@@ -301,9 +301,9 @@ namespace RS.WPFClient.Controls
 
         private void PART_BtnClear_Click(object sender, RoutedEventArgs e)
         {
-            var mailFilterModel = GetMailFilterModel();
-            mailFilterModel.MailFilterType = MailFilterType.AllRead;
-            mailFilterModel.MailSortType = MailSortType.NewestToOldest;
+            var mailFilterModel = GetEmailFilterModel();
+            mailFilterModel.EmailFilterType = EmailFilterType.AllRead;
+            mailFilterModel.EmailSortType = EmailSortType.NewestToOldest;
             this.IsAllRead = true;
             this.IsUnread = false;
             this.IsWithAttachment = false;
@@ -332,7 +332,7 @@ namespace RS.WPFClient.Controls
 
         private void RaiseMailFilterEvent()
         {
-            var mailFilterModel = this.GetMailFilterModel();
+            var mailFilterModel = this.GetEmailFilterModel();
             //触发路由事件
             MailFilterEventArgs eventArgs = new MailFilterEventArgs(
                 MailFilteredEvent,
@@ -347,42 +347,42 @@ namespace RS.WPFClient.Controls
 
         private void GenerateMailFilterDes()
         {
-            var mailFilterModel = this.GetMailFilterModel();
+            var mailFilterModel = this.GetEmailFilterModel();
             if (mailFilterModel == null)
             {
                 return;
             }
 
             List<string> mailFilterDesList = new List<string>();
-            switch (mailFilterModel.MailFilterType)
+            switch (mailFilterModel.EmailFilterType)
             {
-                case MailFilterType.AllRead:
+                case EmailFilterType.AllRead:
                     break;
-                case MailFilterType.Unread:
+                case EmailFilterType.Unread:
                     mailFilterDesList.Add("未读");
                     break;
-                case MailFilterType.WithAttachment:
+                case EmailFilterType.WithAttachment:
                     mailFilterDesList.Add("包含附件");
                     break;
-                case MailFilterType.FromContact:
+                case EmailFilterType.FromContact:
                     mailFilterDesList.Add("来自联系人");
                     break;
             }
             this.DateSortDes = string.Empty;
             this.SizeSortDes = string.Empty;
-            switch (mailFilterModel.MailSortType)
+            switch (mailFilterModel.EmailSortType)
             {
-                case MailSortType.NewestToOldest:
+                case EmailSortType.NewestToOldest:
                     break;
-                case MailSortType.OldestToNewest:
+                case EmailSortType.OldestToNewest:
                     mailFilterDesList.Add("由旧到新");
                     this.DateSortDes = "由旧到新";
                     break;
-                case MailSortType.LargeToSmall:
+                case EmailSortType.LargeToSmall:
                     mailFilterDesList.Add("由大到小");
                     this.SizeSortDes = "由大到小";
                     break;
-                case MailSortType.SmallToLarge:
+                case EmailSortType.SmallToLarge:
                     mailFilterDesList.Add("由小到大");
                     this.SizeSortDes = "由小到大";
                     break;
@@ -400,15 +400,15 @@ namespace RS.WPFClient.Controls
             }
         }
 
-        private MailFilterModel GetMailFilterModel()
+        private EmailFilterModel GetEmailFilterModel()
         {
-            if (this.MailFilterModel == null)
+            if (this.EmailFilterModel == null)
             {
-                this.MailFilterModel = new MailFilterModel();
-                this.MailFilterModel.MailFilterType = MailFilterType.AllRead;
-                this.MailFilterModel.MailSortType = MailSortType.NewestToOldest;
+                this.EmailFilterModel = new EmailFilterModel();
+                this.EmailFilterModel.EmailFilterType = EmailFilterType.AllRead;
+                this.EmailFilterModel.EmailSortType = EmailSortType.NewestToOldest;
             }
-            return this.MailFilterModel;
+            return this.EmailFilterModel;
         }
     }
 }

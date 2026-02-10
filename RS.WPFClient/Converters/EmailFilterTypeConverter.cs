@@ -5,25 +5,25 @@ using System.Windows.Data;
 
 namespace RS.WPFClient.Converters
 {
-    public class MailFilterTypeConverter : IValueConverter
+    public class EmailFilterTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var mailFilterType = (MailFilterType)value;
+            var mailFilterType = (EmailFilterType)value;
             // 语言本地化待接入
             string description = "全部";
             switch (mailFilterType)
             {
-                case MailFilterType.AllRead:
+                case EmailFilterType.AllRead:
                     description = "全部";
                     break;
-                case MailFilterType.Unread:
+                case EmailFilterType.Unread:
                     description = "未读";
                     break;
-                case MailFilterType.WithAttachment:
+                case EmailFilterType.WithAttachment:
                     description = "包含附件";
                     break;
-                case MailFilterType.FromContact:
+                case EmailFilterType.FromContact:
                     description = "来自联系人";
                     break;
             }

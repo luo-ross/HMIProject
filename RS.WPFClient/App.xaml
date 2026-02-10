@@ -32,6 +32,9 @@
             <DataTemplate DataType="{x:Type viewModel:InBoxViewModel}">
                 <view:InBoxView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:EmailDetailViewModel}">
+                <view:EmailDetailView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

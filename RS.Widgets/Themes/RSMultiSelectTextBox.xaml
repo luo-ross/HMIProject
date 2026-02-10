@@ -6,6 +6,7 @@
     xmlns:model="clr-namespace:RS.Widgets.Models"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Border.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ComboBoxItem.xaml" />
@@ -200,14 +201,19 @@
                                 RelativeElement="{Binding ElementName=PART_MoreButton}"
                                 StaysOpen="True"
                                 VerticalOffset="8">
-                                <Border
+                                <Grid
                                     MinWidth="250"
                                     MaxWidth="400"
                                     MaxHeight="400"
                                     Margin="15,0,15,15"
-                                    Background="#FFF"
-                                    CornerRadius="5"
-                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                    Background="#FFF">
+                                    <Border
+                                        Background="#fff"
+                                        BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
+                                        Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
+
                                     <Grid>
                                         <ScrollViewer
                                             MaxHeight="350"
@@ -378,7 +384,7 @@
                                             </ItemsControl>
                                         </ScrollViewer>
                                     </Grid>
-                                </Border>
+                                </Grid>
                             </rs:RSPopup>
                         </Grid>
                     </Border>

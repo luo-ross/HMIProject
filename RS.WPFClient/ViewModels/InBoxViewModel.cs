@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using RS.Commons.Attributs;
 using RS.Commons.Extensions;
 using RS.WPFClient.Enums;
-using RS.Models;
 using RS.Server.WebAPI;
 using RS.Widgets.Controls;
 using RS.Widgets.Enums;
@@ -17,7 +16,7 @@ namespace RS.WPFClient.ViewModels
 {
     public class InBoxViewModel : ViewModelBase
     {
-        private List<MailModel> RawMailList = new List<MailModel>();
+        private List<EmailModel> RawMailList = new List<EmailModel>();
         public ICommand DeleteCommand { get; }
         public ICommand ReplyCommand { get; }
         public ICommand ReplyAllCommand { get; }
@@ -35,8 +34,8 @@ namespace RS.WPFClient.ViewModels
         public ICommand CreateFolderCommand { get; }
         public ICommand ToggleStarCommand { get; }
 
-        public ICommand MailSelectAllCommand { get; }
-        public ICommand MailSelectCommand { get; }
+        public ICommand EmailSelectAllCommand { get; }
+        public ICommand EmailSelectCommand { get; }
         public InBoxViewModel()
         {
             DeleteCommand = new RelayCommand(Delete);
@@ -54,19 +53,21 @@ namespace RS.WPFClient.ViewModels
             CreateFolderCommand = new RelayCommand(CreateFolder);
             MoveToSentCommand = new RelayCommand(MoveToSent);
             MoveToSubscriptionCommand = new RelayCommand(MoveToSubscription);
-            ToggleStarCommand = new RelayCommand<MailModel>(ToggleStar);
-            MailSelectAllCommand = new RelayCommand(MailSelectAll);
-            MailSelectCommand = new RelayCommand(MailSelect);
+            ToggleStarCommand = new RelayCommand<EmailModel>(ToggleStar);
+            EmailSelectAllCommand = new RelayCommand(EmailSelectAll);
+            EmailSelectCommand = new RelayCommand(EmailSelect);
+            EmailDetailViewModel = new EmailDetailViewModel();
+
             InitTestData();
         }
 
-        private void MailSelect()
+        private void EmailSelect()
         {
             UpdateIsSelectedAll();
             UpdateCornerRadius();
         }
 
-        private void MailSelectAll()
+        private void EmailSelectAll()
         {
             if (!IsSelectedAll.HasValue)
             {
@@ -81,14 +82,22 @@ namespace RS.WPFClient.ViewModels
             UpdateCornerRadius();
         }
 
-        private MailModel? selectedMail;
+
+
+        private EmailDetailViewModel? mailDetailViewModel;
         /// <summary>
-        /// 当前选中的邮件
+        /// 邮件详情 ViewModel，负责管理邮件详情的显示和数据
         /// </summary>
-        public MailModel? SelectedMail
+        public EmailDetailViewModel? EmailDetailViewModel
         {
-            get => selectedMail;
-            set => SetProperty(ref selectedMail, value);
+            get
+            {
+                return mailDetailViewModel;
+            }
+            set
+            {
+                this.SetProperty(ref mailDetailViewModel, value);
+            }
         }
 
         private void InitTestData()
@@ -100,7 +109,7 @@ namespace RS.WPFClient.ViewModels
             if (daysToTuesday < 0) daysToTuesday += 7;
             var thisTuesday = today.Date.AddDays(-daysToTuesday).AddHours(14); // 设置一个固定时间
 
-          
+
             // 批量生成数据
             Random random = new Random();
             for (int i = 0; i < 30; i++)
@@ -133,7 +142,7 @@ namespace RS.WPFClient.ViewModels
                         <a href='https://www.baidu.com' style='display: inline-block; padding: 10px 20px; background: #0078d4; color: white; text-decoration: none; border-radius: 20px;'>立即查看</a>
                     </div>";
 
-                RawMailList.Add(new MailModel
+                RawMailList.Add(new EmailModel
                 {
                     Account = accountName,
                     Email = emailAddr,
@@ -144,6 +153,16 @@ namespace RS.WPFClient.ViewModels
                     Subject = $"测试邮件主题 {i + 1}",
                     HasAttachment = i % 8 == 0,
                     Digest = $"测试邮件摘要数据 {i + 1}...",
+                    EmailAttachmentModelList = new ObservableCollection<EmailAttachmentModel>()
+                    {
+                        new EmailAttachmentModel(){
+                            Id=Guid.NewGuid().ToString(),
+                            AttachName="R04162495",
+                            AttachSuffix=".pdf",
+                        }
+                    },
+                    IsCarbonCopy = i % 2 == 0,
+                    ProxyName=$"bounce-md_31242303.69459033.v1-9a25bc4332a446bd9df8360c6fdf1a75@mandrillapp.com"
                 });
             }
 
@@ -153,10 +172,10 @@ namespace RS.WPFClient.ViewModels
             // 默认选中第一个
             if (RawMailList.Count > 0)
             {
-                SelectedMail = RawMailList[0];
+                EmailDetailViewModel!.SelectedMail = RawMailList[0];
             }
         }
-      
+
 
         private void UpdateIsSelectedAll()
         {
@@ -249,7 +268,7 @@ namespace RS.WPFClient.ViewModels
             /* 取消星标逻辑待实现 */
         }
 
-        private void ToggleStar(MailModel mail)
+        private void ToggleStar(EmailModel mail)
         {
             if (mail != null)
             {
@@ -339,7 +358,7 @@ namespace RS.WPFClient.ViewModels
         /// <summary>
         /// 邮件列表 (包含分组头和邮件项)
         /// </summary>
-        public ObservableCollection<object> MailList
+        public ObservableCollection<object> EmailList
         {
             get
             {
@@ -366,11 +385,11 @@ namespace RS.WPFClient.ViewModels
             }
 
             // 1. 排序 (不使用 lambda)
-            List<MailModel> sortedList = new List<MailModel>(RawMailList);
-            sortedList.Sort(new Comparison<MailModel>(CompareMailsByTime));
+            List<EmailModel> sortedList = new List<EmailModel>(RawMailList);
+            sortedList.Sort(new Comparison<EmailModel>(CompareMailsByTime));
 
             // 2. 分组 (使用 Dictionary 手动分组)
-            Dictionary<string, List<MailModel>> groups = new Dictionary<string, List<MailModel>>();
+            Dictionary<string, List<EmailModel>> groups = new Dictionary<string, List<EmailModel>>();
             List<string> groupOrder = new List<string>();
 
             foreach (var mail in sortedList)
@@ -378,7 +397,7 @@ namespace RS.WPFClient.ViewModels
                 string title = GetGroupTitle(mail.Time);
                 if (!groups.ContainsKey(title))
                 {
-                    groups[title] = new List<MailModel>();
+                    groups[title] = new List<EmailModel>();
                     groupOrder.Add(title);
                 }
                 groups[title].Add(mail);
@@ -399,10 +418,10 @@ namespace RS.WPFClient.ViewModels
                 }
             }
 
-            MailList = result;
+            EmailList = result;
         }
 
-        private int CompareMailsByTime(MailModel x, MailModel y)
+        private int CompareMailsByTime(EmailModel x, EmailModel y)
         {
             if (x.Time == y.Time)
             {
@@ -453,15 +472,15 @@ namespace RS.WPFClient.ViewModels
 
         private void UpdateCornerRadius()
         {
-            if (MailList == null)
+            if (EmailList == null)
             {
                 return;
             }
 
-            var list = MailList.ToList();
+            var list = EmailList.ToList();
             for (int i = 0; i < list.Count; i++)
             {
-                if (!(list[i] is MailModel currentMail))
+                if (!(list[i] is EmailModel currentMail))
                 {
                     continue;
                 }
@@ -472,8 +491,8 @@ namespace RS.WPFClient.ViewModels
                     continue;
                 }
 
-                bool prevSelected = (i > 0 && list[i - 1] is MailModel prevMail && prevMail.IsSelect);
-                bool nextSelected = (i < list.Count - 1 && list[i + 1] is MailModel nextMail && nextMail.IsSelect);
+                bool prevSelected = (i > 0 && list[i - 1] is EmailModel prevMail && prevMail.IsSelect);
+                bool nextSelected = (i < list.Count - 1 && list[i + 1] is EmailModel nextMail && nextMail.IsSelect);
 
                 if (prevSelected && nextSelected)
                 {

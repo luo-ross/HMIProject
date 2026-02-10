@@ -133,15 +133,17 @@
                                     PopupAnimation="None"
                                     RelativeElement="{Binding ElementName=ToggleButton}"
                                     StaysOpen="True">
-                                    <Border
+                                    <Grid
                                         MinWidth="{TemplateBinding ActualWidth}"
                                         MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                        Margin="15,0,15,15"
-                                        Padding="0,2,0,2"
-                                        Background="#FFF"
-                                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
-                                        Effect="{StaticResource RSApp.Styles.DefaultEffect}">
-                                        <Grid x:Name="DropDown">
+                                        Margin="15,0,15,15">
+                                        <Border
+                                            Background="#fff"
+                                            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                            BorderThickness="1"
+                                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                                            Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
+                                        <Grid x:Name="DropDown" Margin="0,2,0,2">
                                             <ScrollViewer>
                                                 <VirtualizingStackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                             </ScrollViewer>
@@ -155,7 +157,7 @@
                                                 Template="{StaticResource RSApp.Templates.EmptyData}"
                                                 Visibility="Collapsed" />
                                         </Grid>
-                                    </Border>
+                                    </Grid>
                                 </rs:RSPopup>
                             </Grid>
                         </Border>

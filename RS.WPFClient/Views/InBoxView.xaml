@@ -22,10 +22,10 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converter:MailDateGroupConverter x:Key="MailDateGroupConverter" />
-        <converter:MailTimeFormatConverter x:Key="MailTimeFormatConverter" />
+        <converter:EmailDateGroupConverter x:Key="EmailDateGroupConverter" />
+        <converter:EmailTimeFormatConverter x:Key="EmailTimeFormatConverter" />
 
-        <Style x:Key="MailDataGridRowStyle" TargetType="{x:Type DataGridRow}">
+        <Style x:Key="EmailDataGridRowStyle" TargetType="{x:Type DataGridRow}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Cursor" Value="Hand" />
@@ -109,7 +109,7 @@
                                     <Binding Path="(rs:AdaptiveLayoutHelper.UseCompactTemplate)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                 </DataTrigger.Binding>
                                 <Setter TargetName="PART_SelectIcon" Property="VerticalAlignment" Value="Top" />
-                                <Setter TargetName="PART_SelectIcon" Property="Margin" Value="0,16,0,0" />
+                                <Setter TargetName="PART_SelectIcon" Property="Margin" Value="0,12,0,0" />
                                 <Setter Property="Height" Value="auto" />
                             </DataTrigger>
 
@@ -150,7 +150,7 @@
             </Border>
         </DataTemplate>
 
-        <DataTemplate x:Key="MailStandardTemplate" DataType="{x:Type model:MailModel}">
+        <DataTemplate x:Key="EmailStandardTemplate" DataType="{x:Type model:EmailModel}">
             <Grid Height="40" TextBlock.FontSize="14">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -187,7 +187,7 @@
                         Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                         ToolTip="新窗口打开" />
 
-                    <controls:RSMailAccount
+                    <controls:RSEmailAccount
                         Grid.Column="1"
                         Account="{Binding Account}"
                         Email="{Binding Email}"
@@ -217,7 +217,7 @@
                 <TextBlock
                     Grid.Column="4"
                     VerticalAlignment="Center"
-                    Text="{Binding Time, Converter={StaticResource MailTimeFormatConverter}}" />
+                    Text="{Binding Time, Converter={StaticResource EmailTimeFormatConverter}}" />
 
                 <CheckBox
                     Grid.Column="5"
@@ -229,18 +229,19 @@
                     rs:ControlsHelper.IconWidth="16"
                     Command="{Binding DataContext.ToggleStarCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                     CommandParameter="{Binding}"
-                    IsChecked="{Binding IsStarred, Mode=OneWay}"
-                    ToolTip="添加星标">
+                    IsChecked="{Binding IsStarred, Mode=OneWay}">
                     <CheckBox.Style>
                         <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="CheckBox">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsStarred}" Value="True">
                                     <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.ChromeYellowLighten1}" />
                                     <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarFilled}" />
+                                    <Setter Property="ToolTip" Value="取消星标" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsStarred}" Value="False">
                                     <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray050}" />
                                     <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarOutline}" />
+                                    <Setter Property="ToolTip" Value="添加星标" />
                                 </DataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray010}" />
@@ -269,8 +270,8 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <DataTemplate x:Key="MailCompactTemplate">
-            <Grid Margin="0,10,0,10">
+        <DataTemplate x:Key="EmailCompactTemplate">
+            <Grid Margin="0,5,0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
                     <ColumnDefinition />
@@ -313,7 +314,7 @@
                                 Style="{StaticResource RSApp.Styles.IconButtonStyle}"
                                 ToolTip="新窗口打开" />
 
-                            <controls:RSMailAccount
+                            <controls:RSEmailAccount
                                 Grid.Column="1"
                                 Account="{Binding Account}"
                                 Email="{Binding Email}"
@@ -334,7 +335,7 @@
                         <TextBlock
                             Grid.Column="1"
                             VerticalAlignment="Center"
-                            Text="{Binding Time, Converter={StaticResource MailTimeFormatConverter}}" />
+                            Text="{Binding Time, Converter={StaticResource EmailTimeFormatConverter}}" />
 
                     </Grid>
 
@@ -347,14 +348,53 @@
                         <Run Text="{Binding Subject}" />
                     </TextBlock>
 
-                    <TextBlock
-                        Grid.Row="2"
-                        Margin="0,0,10,0"
-                        HorizontalAlignment="Left"
-                        FontSize="14"
-                        TextTrimming="CharacterEllipsis">
-                        <Run Foreground="{StaticResource RSApp.Styles.BaseGray040}" Text="{Binding Digest}" />
-                    </TextBlock>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Left"
+                            FontSize="14"
+                            TextTrimming="CharacterEllipsis">
+                            <Run Foreground="{StaticResource RSApp.Styles.BaseGray040}" Text="{Binding Digest}" />
+                        </TextBlock>
+
+
+                        <CheckBox
+                            Grid.Column="1"
+                            Margin="0"
+                            Padding="3,5,3,5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            rs:ControlsHelper.IconHeight="16"
+                            rs:ControlsHelper.IconWidth="16"
+                            Command="{Binding DataContext.ToggleStarCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                            CommandParameter="{Binding}"
+                            IsChecked="{Binding IsStarred, Mode=OneWay}">
+                            <CheckBox.Style>
+                                <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="CheckBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStarred}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.ChromeYellowLighten1}" />
+                                            <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarFilled}" />
+                                            <Setter Property="ToolTip" Value="取消星标" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsStarred}" Value="False">
+                                            <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray050}" />
+                                            <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarOutline}" />
+                                            <Setter Property="ToolTip" Value="添加星标" />
+                                        </DataTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray010}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                    </Grid>
+
                 </Grid>
             </Grid>
 
@@ -454,7 +494,7 @@
                             x:Name="PART_SelectAll"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Command="{Binding MailSelectAllCommand}"
+                            Command="{Binding EmailSelectAllCommand}"
                             IsChecked="{Binding IsSelectedAll}">
                             <CheckBox.Style>
                                 <Style BasedOn="{StaticResource RSApp.Styles.CheckBoxStyle}" TargetType="{x:Type CheckBox}">
@@ -472,7 +512,7 @@
                         VerticalAlignment="Center"
                         FontSize="14"
                         Text="收件箱" />
-                    <controls:RSMailFilter Margin="5,0,0,0" VerticalAlignment="Center" />
+                    <controls:RSEmailFilter Margin="5,0,0,0" VerticalAlignment="Center" />
 
                 </StackPanel>
             </Border>
@@ -600,10 +640,7 @@
                     IsShowDropDownIcon="True"
                     Placement="Bottom">
                     <rs:RSDropdown.DropdownContent>
-                        <rs:RSCalendar
-                            BorderThickness="0"
-                            CalendarSelectType="Month"
-                            FlowDirection="LeftToRight" />
+                        <rs:RSCalendar BorderThickness="0" CalendarSelectType="Month" />
                     </rs:RSDropdown.DropdownContent>
                 </rs:RSDropdown>
             </Border>
@@ -678,25 +715,25 @@
                     GridLinesVisibility="None"
                     HeadersVisibility="None"
                     HorizontalScrollBarVisibility="Hidden"
-                    ItemsSource="{Binding MailList}"
-                    RowStyle="{StaticResource MailDataGridRowStyle}"
-                    SelectedItem="{Binding SelectedMail}"
+                    ItemsSource="{Binding EmailList}"
+                    RowStyle="{StaticResource EmailDataGridRowStyle}"
+                    SelectedItem="{Binding EmailDetailViewModel.SelectedMail}"
                     SelectionMode="Single">
                     <DataGrid.Resources>
                         <DataTemplate DataType="{x:Type model:GroupHeaderModel}">
                             <ContentControl Content="{Binding}" ContentTemplate="{StaticResource GroupHeaderTemplate}" />
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type model:MailModel}">
+                        <DataTemplate DataType="{x:Type model:EmailModel}">
                             <ContentControl
-                                x:Name="MailContentPresenter"
+                                x:Name="EmailContentPresenter"
                                 Content="{Binding}"
-                                ContentTemplate="{StaticResource MailStandardTemplate}" />
+                                ContentTemplate="{StaticResource EmailStandardTemplate}" />
                             <DataTemplate.Triggers>
                                 <DataTrigger Value="True">
                                     <DataTrigger.Binding>
                                         <Binding Path="(rs:AdaptiveLayoutHelper.UseCompactTemplate)" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </DataTrigger.Binding>
-                                    <Setter TargetName="MailContentPresenter" Property="ContentTemplate" Value="{StaticResource MailCompactTemplate}" />
+                                    <Setter TargetName="EmailContentPresenter" Property="ContentTemplate" Value="{StaticResource EmailCompactTemplate}" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
@@ -736,7 +773,9 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <controls:RSMailDetail DataContext="{Binding SelectedMail}" />
+                <ScrollViewer>
+                    <ContentControl Margin="20,0,20,0" Content="{Binding EmailDetailViewModel}" />
+                </ScrollViewer>
             </Border>
 
             <GridSplitter

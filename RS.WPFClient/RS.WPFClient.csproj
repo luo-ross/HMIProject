@@ -122,9 +122,6 @@
 	  <Compile Update="Controls\MySlider.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
-	  <Compile Update="Controls\RSMailDetail.xaml.cs">
-	    <SubType>Code</SubType>
-	  </Compile>
 	  <Compile Update="Controls\RSSerialPort11.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
@@ -135,6 +132,9 @@
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Views\InBoxView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\EmailDetailView.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
 	  <Compile Update="Views\SearchView.xaml.cs">

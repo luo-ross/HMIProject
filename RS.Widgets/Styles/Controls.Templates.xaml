@@ -148,6 +148,7 @@
                         StaysOpen="True"
                         VerticalOffset="5">
                         <Border Padding="10,5,10,5" Background="#ff5b5b">
+
                             <TextBlock Foreground="#FFF" Text="{Binding ErrorContent}" />
                         </Border>
                     </Popup>

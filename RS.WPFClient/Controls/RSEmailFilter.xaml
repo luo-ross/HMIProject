@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="RS.WPFClient.Controls.RSMailFilter"
+    x:Class="RS.WPFClient.Controls.RSEmailFilter"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,16 +27,16 @@
         <rs:RSDropdownMenu.Style>
             <Style TargetType="{x:Type rs:RSDropdownMenu}">
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}" Value="True">
+                    <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}" Value="True">
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten5}" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}" Value="False">
+                    <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}" Value="False">
                         <Setter Property="Padding" Value="8,0,8,0" />
                     </DataTrigger>
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
-                            <Condition Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}" Value="True" />
+                            <Condition Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}" Value="True" />
                             <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="True" />
                         </MultiDataTrigger.Conditions>
                         <Setter Property="Background" Value="{StaticResource RSApp.Styles.ThemeLighten4L}" />
@@ -44,7 +44,6 @@
                 </Style.Triggers>
             </Style>
         </rs:RSDropdownMenu.Style>
-        <!--  自定义 Content：图标 + 筛选文本 + 清除按钮  -->
         <rs:RSDropdownMenu.Content>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -52,7 +51,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <!--  筛选图标  -->
                 <Path
                     x:Name="PART_Icon"
                     Width="12"
@@ -65,7 +63,7 @@
                         <Style TargetType="Path">
                             <Setter Property="Fill" Value="{StaticResource RSApp.Styles.BaseGray100}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}" Value="True">
+                                <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}" Value="True">
                                     <Setter Property="Fill" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -73,20 +71,19 @@
                     </Path.Style>
                 </Path>
 
-                <!--  筛选描述文本  -->
                 <TextBlock
                     x:Name="PART_FilterText"
                     Grid.Column="1"
                     Margin="5,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="12"
-                    Text="{Binding MailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}">
+                    Text="{Binding MailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray100}" />
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}" Value="True">
+                                <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                     <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                                 </DataTrigger>
@@ -95,7 +92,6 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <!--  清除按钮  -->
                 <Button
                     x:Name="PART_BtnClear"
                     Grid.Column="2"
@@ -110,7 +106,7 @@
                         <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="Button">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSMailFilter}}" Value="True">
+                                <DataTrigger Binding="{Binding Path=HasMailFilterDes, RelativeSource={RelativeSource AncestorType=local:RSEmailFilter}}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                     <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.ThemePrimary}" />
                                 </DataTrigger>
@@ -121,7 +117,6 @@
             </Grid>
         </rs:RSDropdownMenu.Content>
 
-        <!--  下拉菜单项  -->
         <rs:RSDropdownMenu.Items>
             <MenuItem Header="筛选" Style="{StaticResource RSApp.Styles.MenuLabelStyle}" />
 

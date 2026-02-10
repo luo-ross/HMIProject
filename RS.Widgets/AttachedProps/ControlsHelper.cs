@@ -286,17 +286,47 @@ new FrameworkPropertyMetadata(new SolidColorBrush((Color)ColorConverter.ConvertF
         }
 
 
+
+
       
+        public static readonly DependencyProperty FlowDirectionProperty =
+            DependencyProperty.RegisterAttached(
+                "FlowDirection",
+                typeof(FlowDirection),
+                typeof(ControlsHelper),
+                new PropertyMetadata(FlowDirection.LeftToRight));
+        public static FlowDirection GetFlowDirection(DependencyObject obj)
+        {
+            return (FlowDirection)obj.GetValue(FlowDirectionProperty);
+        }
+
+        public static void SetFlowDirection(DependencyObject obj, FlowDirection value)
+        {
+            obj.SetValue(FlowDirectionProperty, value);
+        }
 
 
-   
-       
+
+
+        public static readonly DependencyProperty HasDecorationProperty =
+        DependencyProperty.RegisterAttached(
+            "HasDecoration",
+            typeof(bool),
+            typeof(ControlsHelper),
+            new PropertyMetadata(false));
+
+        public static bool GetHasDecoration(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(HasDecorationProperty);
+        }
+
+        public static void SetHasDecoration(DependencyObject obj, bool value)
+        {
+            obj.SetValue(HasDecorationProperty, value);
+        }
 
 
 
-
-
-       
 
     }
 }

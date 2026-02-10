@@ -4,6 +4,7 @@
     xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
@@ -17,44 +18,33 @@
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="#fff" />
+        <Setter Property="Margin" Value="15,0,15,15" />
         <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
-        <Setter Property="Margin" Value="15" />
-        <Setter Property="rs:ControlsHelper.CornerRadius" Value="3" />
-        <Setter Property="Effect" Value="{StaticResource RSApp.Styles.DefaultEffect}" />
+        <Setter Property="rs:ControlsHelper.CornerRadius" Value="5" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <Border
-                        x:Name="PART_Border"
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                        <Border.Clip>
-                            <MultiBinding Converter="{StaticResource ClipConverter}">
-                                <Binding ElementName="PART_Border" Path="CornerRadius" />
-                                <Binding ElementName="PART_Border" Path="ActualWidth" />
-                                <Binding ElementName="PART_Border" Path="ActualHeight" />
-                                <Binding ElementName="PART_Border" Path="BorderThickness" />
-                            </MultiBinding>
-                        </Border.Clip>
-                        <Grid Background="{TemplateBinding Background}">
-                            <ScrollViewer
-                                x:Name="SubMenuScrollViewer"
-                                Margin="0,2,0,2"
-                                CanContentScroll="True"
-                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                              TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                <ItemsPresenter
-                                    x:Name="ItemsPresenter"
-                                    Margin="0"
-                                    Grid.IsSharedSizeScope="True"
-                                    KeyboardNavigation.DirectionalNavigation="Cycle"
-                                    KeyboardNavigation.TabNavigation="Cycle" />
-                            </ScrollViewer>
-                        </Grid>
-                    </Border>
+                    <Grid>
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                            BorderThickness="1"
+                            CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}"
+                            Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
+                        <ScrollViewer
+                            x:Name="SubMenuScrollViewer"
+                            Margin="0,2,0,2"
+                            CanContentScroll="True"
+                            Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
+                                                                          TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                            <ItemsPresenter
+                                x:Name="ItemsPresenter"
+                                Margin="0"
+                                Grid.IsSharedSizeScope="True"
+                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                KeyboardNavigation.TabNavigation="Cycle" />
+                        </ScrollViewer>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -7,7 +7,7 @@ namespace RS.WPFClient.Converters
     /// <summary>
     /// 邮件时间格式化转换器，根据日期显示不同格式
     /// </summary>
-    public class MailTimeFormatConverter : IValueConverter
+    public class EmailTimeFormatConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

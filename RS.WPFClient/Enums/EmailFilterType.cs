@@ -10,7 +10,7 @@ namespace RS.WPFClient.Enums
     /// 收件筛选类型枚举
     /// 用于对收件箱邮件进行不同维度的筛选
     /// </summary>
-    public enum MailFilterType
+    public enum EmailFilterType
     {
 
         /// <summary>

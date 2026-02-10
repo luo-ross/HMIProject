@@ -31,12 +31,13 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="{x:Type model:InfoBarModel}">
-                                            <Border
-                                                x:Name="PART_Border"
-                                                Margin="0,3,0,3"
-                                                Padding="5"
-                                                CornerRadius="3"
-                                                Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                            <Grid x:Name="PART_Border">
+                                                <Border
+                                                    Background="#fff"
+                                                    BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="5"
+                                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="auto" />
@@ -57,7 +58,7 @@
                                                         Foreground="#fff"
                                                         Text="{Binding Message}" />
                                                 </Grid>
-                                            </Border>
+                                            </Grid>
 
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding InfoType}" Value="None">

@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace RS.WPFClient.Models
 {
-    public class MailFilterModel
+    public class EmailFilterModel
     {
        
         /// <summary>
         /// 邮件筛选类型
         /// </summary>
-        public MailFilterType MailFilterType { get; set; }
+        public EmailFilterType EmailFilterType { get; set; }
 
         /// <summary>
         /// 排序顺序枚举
         /// </summary>
-        public MailSortType MailSortType { get; set; }
+        public EmailSortType EmailSortType { get; set; }
     }
 }

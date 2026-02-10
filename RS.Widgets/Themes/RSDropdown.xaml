@@ -60,6 +60,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
+                            FlowDirection="LeftToRight"
                             IsChecked="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsDropdownOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Style="{StaticResource RSDropdownToggleButtonStyle}">
                             <Grid FlowDirection="LeftToRight">
@@ -113,19 +114,21 @@
                             PlacementTarget="{TemplateBinding PlacementTarget}"
                             PopupAnimation="None"
                             RelativeElement="{Binding ElementName=PART_ToggleButton}">
-                            <Border
+                            <Grid
                                 Width="{TemplateBinding DropdownWidth}"
                                 Height="{TemplateBinding DropdownHeight}"
                                 Margin="15,0,15,15"
-                                Background="#fff"
-                                BorderBrush="#EEEEEE"
-                                BorderThickness="1"
-                                CornerRadius="5"
-                                Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                FlowDirection="LeftToRight">
+                                <Border
+                                    Background="#fff"
+                                    BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                 <ScrollViewer>
                                     <ContentControl Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=DropdownContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </ScrollViewer>
-                            </Border>
+                            </Grid>
                         </rs:RSPopup>
                     </Grid>
                     <ControlTemplate.Triggers>

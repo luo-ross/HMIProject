@@ -4,6 +4,7 @@
     xmlns:converters="clr-namespace:RS.Widgets.Converters"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.ScrollViewer.xaml" />
@@ -31,70 +32,72 @@
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-            <Grid VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid VerticalAlignment="Center" FlowDirection="LeftToRight">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Path
-                    x:Name="GlyphPanel"
-                    Grid.Column="0"
-                    Width="{TemplateBinding FontSize}"
-                    Height="{TemplateBinding FontSize}"
-                    Margin="3,0,3,0"
-                    VerticalAlignment="Center"
-                    Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
-                    Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
-                    FlowDirection="LeftToRight"
-                    Stretch="Fill"
-                    Visibility="Collapsed" />
-                <!--<ContentPresenter
-                    x:Name="Icon"
-                    Grid.Column="1"
-                    Margin="3,0,3,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    ContentSource="Icon" />-->
+                    <Path
+                        x:Name="GlyphPanel"
+                        Grid.Column="0"
+                        Width="{TemplateBinding FontSize}"
+                        Height="{TemplateBinding FontSize}"
+                        Margin="3,0,3,0"
+                        VerticalAlignment="Center"
+                        Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
+                        Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
+                        Stretch="Fill"
+                        Visibility="Collapsed" />
+                    <!--<ContentPresenter
+         x:Name="Icon"
+         Grid.Column="1"
+         Margin="3,0,3,0"
+         HorizontalAlignment="Center"
+         VerticalAlignment="Center"
+         ContentSource="Icon" />-->
 
-                <Path
-                    x:Name="PART_Icon"
-                    Grid.Column="1"
-                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
-                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
-                    Margin="3,0,3,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
-                    Fill="{TemplateBinding Foreground}"
-                    IsEnabled="{TemplateBinding IsEnabled}"
-                    RenderTransformOrigin="0.5,0.5"
-                    Stretch="Uniform">
-                    <Path.RenderTransform>
-                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
-                    </Path.RenderTransform>
-                </Path>
+                    <Path
+                        x:Name="PART_Icon"
+                        Grid.Column="1"
+                        Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                        Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                        Margin="3,0,3,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                        Fill="{TemplateBinding Foreground}"
+                        IsEnabled="{TemplateBinding IsEnabled}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                        </Path.RenderTransform>
+                    </Path>
 
-                <ContentPresenter
-                    Grid.Column="2"
-                    Margin="3,0,3,0"
-                    ContentSource="Header"
-                    RecognizesAccessKey="True" />
+                    <ContentPresenter
+                        Grid.Column="2"
+                        Margin="3,0,3,0"
+                        ContentSource="Header"
+                        RecognizesAccessKey="True" />
 
-                <Path
-                    x:Name="DownArrow"
-                    Grid.Column="3"
-                    Width="12"
-                    Height="7"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Data="{StaticResource RSApp.Icons.DownArrow}"
-                    Fill="{TemplateBinding Foreground}"
-                    Opacity="0.6"
-                    Stretch="Fill"
-                    Visibility="Collapsed" />
+                    <Path
+                        x:Name="DownArrow"
+                        Grid.Column="3"
+                        Width="12"
+                        Height="7"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Data="{StaticResource RSApp.Icons.DownArrow}"
+                        Fill="{TemplateBinding Foreground}"
+                        Opacity="0.6"
+                        Stretch="Fill"
+                        Visibility="Collapsed" />
+                </Grid>
+
                 <Popup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
@@ -102,25 +105,27 @@
                     Placement="Bottom"
                     PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
-                    <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                    <Grid Margin="15" FlowDirection="LeftToRight">
                         <Border
-                            x:Name="SubMenuBorder"
                             Background="#fff"
-                            CornerRadius="5">
-                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                <Grid Margin="3" RenderOptions.ClearTypeHint="Enabled">
-                                    <ItemsPresenter
-                                        x:Name="ItemsPresenter"
-                                        Grid.IsSharedSizeScope="true"
-                                        KeyboardNavigation.DirectionalNavigation="Cycle"
-                                        KeyboardNavigation.TabNavigation="Cycle" />
-                                </Grid>
-                            </ScrollViewer>
-                        </Border>
-                    </Border>
-
+                            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
+                        <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                            <Grid Margin="0,3,0,3" RenderOptions.ClearTypeHint="Enabled">
+                                <ItemsPresenter
+                                    x:Name="ItemsPresenter"
+                                    FlowDirection="LeftToRight"
+                                    Grid.IsSharedSizeScope="true"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    KeyboardNavigation.TabNavigation="Cycle" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Grid>
                 </Popup>
             </Grid>
+
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
@@ -155,7 +160,7 @@
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-            <Grid VerticalAlignment="Center">
+            <Grid VerticalAlignment="Center" FlowDirection="LeftToRight">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -170,7 +175,6 @@
                     VerticalAlignment="Center"
                     Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
                     Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
-                    FlowDirection="LeftToRight"
                     Stretch="Fill"
                     Visibility="Collapsed" />
                 <!--<ContentPresenter
@@ -244,81 +248,83 @@
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup1" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup2" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="30" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGTColumnGroup" />
-                    <ColumnDefinition Width="20" />
-                </Grid.ColumnDefinitions>
+                <Grid FlowDirection="LeftToRight">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup1" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup2" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGTColumnGroup" />
+                        <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
 
-                <Path
-                    x:Name="GlyphPanel"
-                    Grid.Column="0"
-                    Width="{TemplateBinding FontSize}"
-                    Height="{TemplateBinding FontSize}"
-                    Margin="3,0,3,0"
-                    VerticalAlignment="Center"
-                    Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
-                    Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
-                    FlowDirection="LeftToRight"
-                    Stretch="Fill"
-                    Visibility="Collapsed" />
+                    <Path
+                        x:Name="GlyphPanel"
+                        Grid.Column="0"
+                        Width="{TemplateBinding FontSize}"
+                        Height="{TemplateBinding FontSize}"
+                        Margin="3,0,3,0"
+                        VerticalAlignment="Center"
+                        Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
+                        Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
+                        Stretch="Fill"
+                        Visibility="Collapsed" />
 
-                <!--<ContentPresenter
-                    x:Name="PART_Icon"
-                    Grid.Column="1"
-                    Margin="3,0,3,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Content="{TemplateBinding Icon}" />-->
-
-
-                <Path
-                    x:Name="PART_Icon"
-                    Grid.Column="1"
-                    Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
-                    Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
-                    Margin="3,0,3,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Data="{TemplateBinding rs:ControlsHelper.IconData}"
-                    Fill="{TemplateBinding Foreground}"
-                    IsEnabled="{TemplateBinding IsEnabled}"
-                    RenderTransformOrigin="0.5,0.5"
-                    Stretch="Uniform">
-                    <Path.RenderTransform>
-                        <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
-                    </Path.RenderTransform>
-                </Path>
+                    <!--<ContentPresenter
+           x:Name="PART_Icon"
+           Grid.Column="1"
+           Margin="3,0,3,0"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+           Content="{TemplateBinding Icon}" />-->
 
 
-                <ContentPresenter
-                    Grid.Column="2"
-                    Margin="3,0,3,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Content="{TemplateBinding Header}"
-                    RecognizesAccessKey="True" />
+                    <Path
+                        x:Name="PART_Icon"
+                        Grid.Column="1"
+                        Width="{TemplateBinding rs:ControlsHelper.IconWidth}"
+                        Height="{TemplateBinding rs:ControlsHelper.IconHeight}"
+                        Margin="3,0,3,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Data="{TemplateBinding rs:ControlsHelper.IconData}"
+                        Fill="{TemplateBinding Foreground}"
+                        IsEnabled="{TemplateBinding IsEnabled}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
+                        </Path.RenderTransform>
+                    </Path>
 
-                <TextBlock
-                    Grid.Column="4"
-                    VerticalAlignment="Center"
-                    Opacity="0.7"
-                    Text="{TemplateBinding InputGestureText}" />
-                <Path
-                    x:Name="RightArrow"
-                    Grid.Column="5"
-                    Width="7"
-                    Height="12"
-                    Margin="10,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Data="{StaticResource RSApp.Icons.RightArrow}"
-                    Fill="{TemplateBinding Foreground}"
-                    Opacity="0.6"
-                    Stretch="Fill" />
+
+                    <ContentPresenter
+                        Grid.Column="2"
+                        Margin="3,0,3,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="{TemplateBinding Header}"
+                        RecognizesAccessKey="True" />
+
+                    <TextBlock
+                        Grid.Column="4"
+                        VerticalAlignment="Center"
+                        Opacity="0.7"
+                        Text="{TemplateBinding InputGestureText}" />
+                    <Path
+                        x:Name="RightArrow"
+                        Grid.Column="5"
+                        Width="7"
+                        Height="12"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Data="{StaticResource RSApp.Icons.RightArrow}"
+                        Fill="{TemplateBinding Foreground}"
+                        Opacity="0.6"
+                        Stretch="Fill" />
+                </Grid>
+
                 <Popup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"
@@ -329,24 +335,26 @@
                     PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                     VerticalOffset="-3">
-                    <Border Margin="15,15,15,15" Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                    <Grid Margin="15" FlowDirection="LeftToRight">
                         <Border
-                            x:Name="SubMenuBorder"
                             Background="#fff"
-                            CornerRadius="5">
-                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                <Grid Margin="3" RenderOptions.ClearTypeHint="Enabled">
-                                    <ItemsPresenter
-                                        x:Name="ItemsPresenter"
-                                        Grid.IsSharedSizeScope="true"
-                                        KeyboardNavigation.DirectionalNavigation="Cycle"
-                                        KeyboardNavigation.TabNavigation="Cycle" />
-                                </Grid>
-                            </ScrollViewer>
-                        </Border>
-                    </Border>
+                            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
+                        <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                            <Grid Margin="0,3,0,3" RenderOptions.ClearTypeHint="Enabled">
+                                <ItemsPresenter
+                                    x:Name="ItemsPresenter"
+                                    Grid.IsSharedSizeScope="true"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    KeyboardNavigation.TabNavigation="Cycle" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Grid>
                 </Popup>
             </Grid>
+
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
@@ -380,7 +388,7 @@
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-            <Grid>
+            <Grid FlowDirection="LeftToRight">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup1" />
                     <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup2" />
@@ -399,7 +407,6 @@
                     VerticalAlignment="Center"
                     Data="{TemplateBinding rs:MenuItemHelper.CheckedIcon}"
                     Fill="{TemplateBinding rs:MenuItemHelper.CheckedIconFill}"
-                    FlowDirection="LeftToRight"
                     Stretch="Fill"
                     Visibility="Collapsed" />
 
@@ -507,6 +514,9 @@
                 <Setter Property="MinWidth" Value="200" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </Trigger>
         </Style.Triggers>
     </Style>
 
@@ -561,6 +571,9 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="PART_CheckIcon" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -627,16 +640,15 @@
                                 Placement="Right"
                                 PlacementTarget="{Binding ElementName=PART_Border}"
                                 PopupAnimation="Fade">
-                                <Border
-                                    MinWidth="150"
-                                    Margin="10"
-                                    Background="#fff"
-                                    BorderBrush="#EEEEEE"
-                                    BorderThickness="1"
-                                    CornerRadius="5"
-                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                <Grid MinWidth="150" Margin="10">
+                                    <Border
+                                        Background="#fff"
+                                        BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
+                                        Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                     <StackPanel Margin="0,5,0,5" IsItemsHost="True" />
-                                </Border>
+                                </Grid>
                             </Popup>
                         </Grid>
                     </Border>

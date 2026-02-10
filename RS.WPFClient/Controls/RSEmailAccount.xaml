@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="RS.WPFClient.Controls.RSMailAccount"
+    x:Class="RS.WPFClient.Controls.RSEmailAccount"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behavior="clr-namespace:RS.WPFClient.Behaviors"
@@ -11,7 +11,7 @@
     xmlns:rs="https://github.com/luo-ross/MultiVerseKit"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converter:MailModelLimitItemsConverter x:Key="MailModelLimitItemsConverter" />
+        <converter:EmailModelLimitItemsConverter x:Key="EmailModelLimitItemsConverter" />
         <converter:FirstCharConverter x:Key="FirstCharConverter" />
     </UserControl.Resources>
 
@@ -35,13 +35,13 @@
             Placement="Right"
             PlacementTarget="{Binding ElementName=PART_TxtAccount}"
             PopupAnimation="Fade">
-            <Border
-                Margin="15,0,15,15"
-                Background="#fff"
-                BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
-                BorderThickness="1"
-                CornerRadius="5"
-                Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+            <Grid Margin="15,0,15,15">
+                <Border
+                    Background="#fff"
+                    BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                    BorderThickness="1"
+                    CornerRadius="5"
+                    Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                 <StackPanel>
                     <Grid Margin="16,16,16,0">
                         <Grid.ColumnDefinitions>
@@ -244,7 +244,7 @@
                                     <DataTrigger Binding="{Binding IsOpen, ElementName=PART_AccountPopup}" Value="True">
                                         <Setter Property="ItemsSource">
                                             <Setter.Value>
-                                                <MultiBinding Converter="{StaticResource MailModelLimitItemsConverter}" ConverterParameter="3">
+                                                <MultiBinding Converter="{StaticResource EmailModelLimitItemsConverter}" ConverterParameter="3">
                                                     <Binding Path="RecentInteractions" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
                                                     <Binding Path="Account" RelativeSource="{RelativeSource AncestorType={x:Type UserControl}}" />
                                                 </MultiBinding>
@@ -261,21 +261,21 @@
                                     Background="Transparent"
                                     CornerRadius="5">
                                     <!--<Grid Margin="10,5,10,5">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
-                                        <TextBlock
-                                            Grid.Row="0"
-                                            FontSize="14"
-                                            Text="{Binding Subject}"
-                                            TextTrimming="CharacterEllipsis" />
-                                        <TextBlock
-                                            Grid.Row="1"
-                                            FontSize="12"
-                                            Foreground="{StaticResource RSApp.Styles.BaseGray040}"
-                                            Text="{Binding Time, StringFormat='yyyy/MM/dd'}" />
-                                    </Grid>-->
+                          <Grid.RowDefinitions>
+                              <RowDefinition />
+                              <RowDefinition />
+                          </Grid.RowDefinitions>
+                          <TextBlock
+                              Grid.Row="0"
+                              FontSize="14"
+                              Text="{Binding Subject}"
+                              TextTrimming="CharacterEllipsis" />
+                          <TextBlock
+                              Grid.Row="1"
+                              FontSize="12"
+                              Foreground="{StaticResource RSApp.Styles.BaseGray040}"
+                              Text="{Binding Time, StringFormat='yyyy/MM/dd'}" />
+                      </Grid>-->
                                     <StackPanel Margin="10,5,10,5">
                                         <TextBlock
                                             FontSize="14"
@@ -300,9 +300,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
-
-
-            </Border>
+            </Grid>
         </Popup>
     </Grid>
 </UserControl>

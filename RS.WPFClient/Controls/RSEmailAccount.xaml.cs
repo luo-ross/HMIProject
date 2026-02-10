@@ -9,11 +9,11 @@ using System.Windows.Media;
 namespace RS.WPFClient.Controls
 {
     /// <summary>
-    /// RSMailAccount.xaml 的交互逻辑
+    /// RSEmailAccount.xaml 的交互逻辑
     /// </summary>
-    public partial class RSMailAccount : UserControl
+    public partial class RSEmailAccount : UserControl
     {
-        public RSMailAccount()
+        public RSEmailAccount()
         {
             InitializeComponent();
         }
@@ -33,7 +33,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty AccountProperty =
-            DependencyProperty.Register(nameof(Account), typeof(string), typeof(RSMailAccount), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register(nameof(Account), typeof(string), typeof(RSEmailAccount), new PropertyMetadata(string.Empty));
 
         public string Email
         {
@@ -48,7 +48,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty EmailProperty =
-            DependencyProperty.Register(nameof(Email), typeof(string), typeof(RSMailAccount), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register(nameof(Email), typeof(string), typeof(RSEmailAccount), new PropertyMetadata(string.Empty));
 
         public ImageSource Avatar
         {
@@ -63,7 +63,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty AvatarProperty =
-            DependencyProperty.Register(nameof(Avatar), typeof(ImageSource), typeof(RSMailAccount), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Avatar), typeof(ImageSource), typeof(RSEmailAccount), new PropertyMetadata(null));
 
         public IEnumerable RecentInteractions
         {
@@ -78,7 +78,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty RecentInteractionsProperty =
-            DependencyProperty.Register(nameof(RecentInteractions), typeof(IEnumerable), typeof(RSMailAccount), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(RecentInteractions), typeof(IEnumerable), typeof(RSEmailAccount), new PropertyMetadata(null));
 
         public ICommand ViewAllCommand
         {
@@ -93,7 +93,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty ViewAllCommandProperty =
-            DependencyProperty.Register(nameof(ViewAllCommand), typeof(ICommand), typeof(RSMailAccount), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewAllCommand), typeof(ICommand), typeof(RSEmailAccount), new PropertyMetadata(null));
 
         public ICommand SendEmailCommand
         {
@@ -108,14 +108,14 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly DependencyProperty SendEmailCommandProperty =
-            DependencyProperty.Register(nameof(SendEmailCommand), typeof(ICommand), typeof(RSMailAccount), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(SendEmailCommand), typeof(ICommand), typeof(RSEmailAccount), new PropertyMetadata(null));
 
         #endregion
 
         #region 路由事件
 
         public static readonly RoutedEvent ViewAllClickEvent = EventManager.RegisterRoutedEvent(
-            nameof(ViewAllClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSMailAccount));
+            nameof(ViewAllClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSEmailAccount));
 
         public event RoutedEventHandler ViewAllClick
         {
@@ -130,7 +130,7 @@ namespace RS.WPFClient.Controls
         }
 
         public static readonly RoutedEvent SendEmailClickEvent = EventManager.RegisterRoutedEvent(
-            nameof(SendEmailClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSMailAccount));
+            nameof(SendEmailClick), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(RSEmailAccount));
 
         public event RoutedEventHandler SendEmailClick
         {

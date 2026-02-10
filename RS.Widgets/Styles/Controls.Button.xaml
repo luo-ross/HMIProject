@@ -37,8 +37,27 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding rs:ControlsHelper.CornerRadius}">
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <Border
+                                x:Name="PART_Decorations"
+                                Height="1"
+                                Margin="3,0,3,2"
+                                VerticalAlignment="Bottom"
+                                Background="{TemplateBinding Foreground}"
+                                Visibility="Collapsed" />
+                        </Grid>
                     </Border>
+
+                    <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.HasDecoration)}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="PART_Decorations" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -54,6 +73,8 @@
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Background" Value="#F1F1F1" />
             </Trigger>
+
+
         </Style.Triggers>
     </Style>
 
@@ -105,14 +126,22 @@
                                 Data="{TemplateBinding rs:ControlsHelper.IconData}"
                                 Fill="{TemplateBinding rs:ControlsHelper.IconColor}"
                                 Stretch="Fill" />
-                            <ContentControl
-                                x:Name="PART_Content"
-                                Grid.Column="1"
-                                Margin="3,0,0,0"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding Content}"
-                                FontSize="{TemplateBinding FontSize}" />
+
+                            <Grid Grid.Column="1" Margin="3,0,0,0">
+                                <ContentControl
+                                    x:Name="PART_Content"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Content}"
+                                    FontSize="{TemplateBinding FontSize}" />
+                                <Border
+                                    x:Name="PART_Decorations"
+                                    Height="1"
+                                    Margin="3,0,3,2"
+                                    VerticalAlignment="Bottom"
+                                    Background="{TemplateBinding Foreground}"
+                                    Visibility="Collapsed" />
+                            </Grid>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -120,6 +149,13 @@
                             <Setter TargetName="PART_Content" Property="Margin" Value="0,0,0,0" />
                             <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=(rs:ControlsHelper.HasDecoration)}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="PART_Decorations" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

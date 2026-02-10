@@ -6,6 +6,7 @@
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
@@ -71,11 +72,14 @@
                                 Placement="Bottom"
                                 PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 RelativeElement="{Binding ElementName=PART_BtnDatePicker}">
-                                <Border
-                                    Margin="15,0,15,15"
-                                    Background="#fff"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                <Grid Margin="15">
+
+                                    <Border
+                                        Background="#fff"
+                                        BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                        BorderThickness="1"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                     <Grid x:Name="PART_PopupHost">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
@@ -185,7 +189,7 @@
                                             </Grid>
                                         </Border>
                                     </Grid>
-                                </Border>
+                                </Grid>
                             </rs:RSPopup>
                         </Grid>
                     </Border>

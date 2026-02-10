@@ -500,6 +500,9 @@
     <SolidColorBrush x:Key="RSApp.Styles.AccentBlueAlpha090" Color="#E60F7AF5" />
     <!--  rgba(15,122,245,0.9) → A=230  -->
 
+
+
+
     <!--  VIP紫色系列  -->
     <SolidColorBrush x:Key="RSApp.Styles.VipPrimary" Color="#8072F3" />
     <SolidColorBrush x:Key="RSApp.Styles.VipDarken1" Color="#7468DD" />
@@ -541,9 +544,21 @@
     <SolidColorBrush x:Key="RSApp.Styles.VipAlpha090" Color="#E68072F3" />
     <!--  rgba(128,114,243,0.9) → A=230  -->
 
-
-
-
+    <SolidColorBrush x:Key="RSApp.Styles.BgGrayWeb0" Color="#E6EDF5" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgGrayWeb1" Color="#F2F7FA" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgGrayWeb2" Color="#F7FAFC" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgGrayWeb3" Color="#FAFBFC" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgWhiteWeb" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgWhiteWebAlpha090" Color="#E6FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.MaskGray030" Color="#4D000000" />
+    <SolidColorBrush x:Key="RSApp.Styles.MaskWhite030" Color="#4DFFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.MaskWhite095" Color="#F2FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgSegmentedControlOptionSelected" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgSwitchGrabber" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.ButtonClearbuttonGrayXmark" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.ButtonClearbuttonWhiteXmark" Color="#99182430" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgPanelBlurStroke" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RSApp.Styles.BgInvoiceCardUnselectedHover" Color="#F3F4F6" />
 
 
 </ResourceDictionary>

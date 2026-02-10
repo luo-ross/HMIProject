@@ -8,13 +8,13 @@ using System.Windows.Data;
 
 namespace RS.WPFClient.Converters
 {
-    public class MailModelLimitItemsConverter : IMultiValueConverter
+    public class EmailModelLimitItemsConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length >= 2 && values[0] is IEnumerable enumerable && values[1] is string account && !string.IsNullOrEmpty(account))
             {
-                var mails = enumerable.Cast<object>().OfType<MailModel>();
+                var mails = enumerable.Cast<object>().OfType<EmailModel>();
 
                 // 根据 Account 筛选
                 var filteredMails = mails.Where(t => t.Account == account && !t.IsHeader);

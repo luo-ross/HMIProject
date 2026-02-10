@@ -157,13 +157,13 @@
                                 Placement="Right"
                                 PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 StaysOpen="False">
-                                <Border
-                                    Margin="15,0,15,15"
-                                    Background="#fff"
-                                    BorderBrush="#eee"
-                                    BorderThickness="1"
-                                    CornerRadius="5"
-                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                <Grid Margin="15,0,15,15">
+                                    <Border
+                                        Background="#fff"
+                                        BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
+                                        Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                     <ScrollViewer MaxHeight="400" Style="{StaticResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
                                         <rs:RSToolBarOverflowPanel
                                             x:Name="PART_ToolBarOverflowPanel"
@@ -174,7 +174,7 @@
                                             KeyboardNavigation.TabNavigation="Cycle"
                                             WrapWidth="200" />
                                     </ScrollViewer>
-                                </Border>
+                                </Grid>
                             </Popup>
                         </Grid>
                     </Border>

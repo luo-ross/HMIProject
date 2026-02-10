@@ -11,16 +11,16 @@ namespace RS.Widgets
     public class MailFilterEventArgs : RoutedEventArgs
     {
       
-        public MailFilterModel MailFilterModel { get; }
+        public EmailFilterModel EmailFilterModel { get; }
 
       
         /// <summary>
         /// 构造函数
         /// </summary>
-        public MailFilterEventArgs(RoutedEvent routedEvent,  MailFilterModel mailFilterModel)
+        public MailFilterEventArgs(RoutedEvent routedEvent,  EmailFilterModel mailFilterModel)
             : base(routedEvent)
         {
-            MailFilterModel = mailFilterModel;
+            EmailFilterModel = mailFilterModel;
         }
     }
 }

@@ -5,6 +5,7 @@
     xmlns:interface="clr-namespace:RS.Widgets.Interfaces"
     xmlns:rs="clr-namespace:RS.Widgets.Controls">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Brush.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Effects.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RS.Widgets;component/Styles/Controls.Icons.xaml" />
@@ -17,7 +18,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type rs:RSWinMessage}">
-                    <Border Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                    <Grid>
+                        <Border
+                            Background="#fff"
+                            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                         <Border
                             x:Name="PART_Border"
                             Margin="15"
@@ -112,7 +119,7 @@
                             </Grid>
 
                         </Border>
-                    </Border>
+                    </Grid>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="MessageBoxButton" Value="OK">

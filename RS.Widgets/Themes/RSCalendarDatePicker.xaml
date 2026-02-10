@@ -71,11 +71,13 @@
                                 Placement="Bottom"
                                 PlacementTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                 RelativeElement="{Binding ElementName=PART_BtnDatePicker}">
-                                <Border
-                                    Margin="15,0,15,15"
-                                    Background="#fff"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    Effect="{StaticResource RSApp.Styles.DefaultEffect}">
+                                <Grid Margin="15,0,15,15">
+                                    <Border
+                                        Background="#fff"
+                                        BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+                                        BorderThickness="1"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        Effect="{StaticResource RSApp.Styles.DefaultEffect}" />
                                     <Grid x:Name="PART_PopupHost">
                                         <rs:RSCalendar
                                             x:Name="PART_Calendar"
@@ -84,7 +86,7 @@
                                             MaxDate="{TemplateBinding MaxDate}"
                                             MinDate="{TemplateBinding MinDate}" />
                                     </Grid>
-                                </Border>
+                                </Grid>
                             </rs:RSPopup>
                         </Grid>
                     </Border>
