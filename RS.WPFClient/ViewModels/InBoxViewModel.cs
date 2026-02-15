@@ -134,7 +134,7 @@ namespace RS.WPFClient.ViewModels
 
                 // 模拟一个 HTML 内容
                 string htmlContent = $@"
-                    <div style='font-family: sans-serif; color: #333;'>
+                    <div style='font-family: sans-serif; color: #333;height:1800px;'>
                         <h2 style='color: #0078d4;'>欢迎使用 MultiVerseKit</h2>
                         <p>这是您的测试邮件内容。<strong>{accountName}</strong> 向您发送了重要通知。</p>
                         <p style='background: #f4f4f4; padding: 10px; border-radius: 4px;'>ID: {i + 1} | Time: {mailTime:yyyy-MM-dd HH:mm}</p>

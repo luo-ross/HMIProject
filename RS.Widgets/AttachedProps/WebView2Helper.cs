@@ -71,7 +71,6 @@ namespace RS.Widgets.Controls
     <meta charset=""UTF-8"">
     <meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"">
     <style>
-        /* Body styling */
         body {{
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             font-size: 14px;
@@ -82,10 +81,10 @@ namespace RS.Widgets.Controls
             background: #fff;
         }}
         
-        /* Custom scrollbar */
         ::-webkit-scrollbar {{
             width: 8px;
             height: 8px;
+            display: none;
         }}
         ::-webkit-scrollbar-track {{
             background: #f1f1f1;
@@ -99,7 +98,6 @@ namespace RS.Widgets.Controls
             background: #a8a8a8;
         }}
         
-        /* Link styling */
         a {{
             color: #0078d4;
             text-decoration: none;
@@ -108,7 +106,6 @@ namespace RS.Widgets.Controls
             text-decoration: underline;
         }}
         
-        /* Image max width */
         img {{
             max-width: 100%;
             height: auto;
@@ -119,7 +116,6 @@ namespace RS.Widgets.Controls
 {html}
 </body>
 </html>";
-
             webView.CoreWebView2?.NavigateToString(fullHtml);
         }
         #endregion
@@ -164,6 +160,25 @@ namespace RS.Widgets.Controls
                 try
                 {
                     await webView.EnsureCoreWebView2Async();
+                  
+                    webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                    webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                    webView.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled = false;
+                    webView.CoreWebView2.Settings.AreDevToolsEnabled = false;
+                    webView.CoreWebView2.Settings.AreHostObjectsAllowed = false;
+                    webView.CoreWebView2.Settings.IsScriptEnabled = false;
+                    webView.CoreWebView2.Settings.IsZoomControlEnabled = false;
+                    webView.CoreWebView2.Settings.IsWebMessageEnabled = false;
+                    webView.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
+                    webView.CoreWebView2.Settings.IsPinchZoomEnabled = false;
+                    webView.CoreWebView2.Settings.IsNonClientRegionSupportEnabled = false;
+                    webView.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = false;
+                    webView.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
+                    webView.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
+                    webView.CoreWebView2.Settings.IsReputationCheckingRequired = false;
+                    webView.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
+
+
                     webView.CoreWebView2.NewWindowRequested += (s, args) =>
                     {
                         // Open in default browser instead of new window

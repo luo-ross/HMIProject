@@ -19,7 +19,7 @@
         <converter:FirstCharConverter x:Key="FirstCharConverter" />
         <rs:EmailParserConverter x:Key="EmailParserConverter" />
         <DataTemplate x:Key="EmailDetailActionBarTemplate">
-            <Menu>
+            <Menu Margin="20,0,0,0">
                 <MenuItem
                     MinHeight="25"
                     Margin="2,0,2,0"
@@ -53,7 +53,7 @@
                     Margin="2,0,2,0"
                     Padding="2,0,2,0"
                     Background="Transparent"
-                    IsEnabled="False">
+                    IsHitTestVisible="False">
                     <MenuItem.Header>
                         <Border
                             Width="2"
@@ -69,8 +69,10 @@
                     VerticalContentAlignment="Center"
                     rs:ControlsHelper.IconData="M16.75 10a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0M6 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2m4 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m5-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0"
                     BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
-                    FlowDirection="RightToLeft"
-                    Header="更多操作">
+                    FlowDirection="RightToLeft">
+                    <MenuItem.Header>
+                        <TextBlock Margin="-5,0,0,0" Text="更多操作" />
+                    </MenuItem.Header>
                     <MenuItem Header="作为附件转发" />
                     <MenuItem
                         rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Delete}"
@@ -97,7 +99,7 @@
 
                     <MenuItem>
                         <MenuItem.Header>
-                            <rs:RSSelectableTextBlock Text="{Binding SelectedMail.Account, StringFormat='{}查看与 {0} 的邮件往来'}" />
+                            <rs:RSSelectableTextBlock Text="{Binding Account, StringFormat='{}查看与 {0} 的邮件往来'}" />
                         </MenuItem.Header>
                     </MenuItem>
                     <MenuItem Header="全文翻译" />
@@ -484,49 +486,46 @@
             <StackPanel Margin="10,0,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <rs:RSSelectableTextBlock
-                        VerticalAlignment="Center"
-                        FontSize="14"
-                        FontWeight="Bold"
-                        Foreground="{StaticResource RSApp.Styles.BaseGray100}"
-                        Text="{Binding Account}" />
-                    <StackPanel
-                        Grid.Column="1"
-                        Margin="2,0,0,0"
-                        Orientation="Horizontal">
-                        <StackPanel.Style>
-                            <Style TargetType="{x:Type StackPanel}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:EmailDetailView}}, Path=DataContext.IsBasicDetail}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </StackPanel.Style>
-                        <rs:RSSelectableTextBlock
-                            Margin="0"
-                            Padding="0"
-                            FontSize="13"
-                            Foreground="{StaticResource RSApp.Styles.BaseGray040}"
-                            Text="&lt;" />
-                        <rs:RSSelectableTextBlock
-                            Margin="0"
-                            Padding="0"
-                            FontSize="13"
-                            Foreground="{StaticResource RSApp.Styles.BaseGray040}"
-                            Text="noreply@github.com" />
-                        <rs:RSSelectableTextBlock
-                            Margin="0"
-                            Padding="0"
-                            FontSize="13"
-                            Foreground="{StaticResource RSApp.Styles.BaseGray040}"
-                            Text="&gt;" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <rs:RSSelectableTextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource RSApp.Styles.BaseGray100}"
+                                Text="{Binding Account}" />
+
+                            <rs:RSSelectableTextBlock
+                                Grid.Column="1"
+                                Margin="2,0,0,0"
+                                Padding="0"
+                                FontSize="13"
+                                Foreground="{StaticResource RSApp.Styles.BaseGray040}">
+                                <Run Text="&lt;" />
+                                <Run Text="noreply@github.com" />
+                                <Run Text="&gt;" />
+                                <rs:RSSelectableTextBlock.Style>
+                                    <Style TargetType="{x:Type rs:RSSelectableTextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:EmailDetailView}}, Path=DataContext.IsBasicDetail}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </rs:RSSelectableTextBlock.Style>
+                            </rs:RSSelectableTextBlock>
+                        </Grid>
+                    </Grid>
+
                     <ContentControl
                         Grid.Column="2"
                         VerticalAlignment="Center"
@@ -603,159 +602,167 @@
     <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <TextBlock TextWrapping="WrapWithOverflow">
-                <Run
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Text="{Binding SelectedMail.Subject}" />
-                <InlineUIContainer BaselineAlignment="Center">
-                    <CheckBox
-                        Margin="0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        rs:ControlsHelper.IconHeight="16"
-                        rs:ControlsHelper.IconWidth="16"
-                        Command="{Binding DataContext.ToggleStarCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                        CommandParameter="{Binding SelectedMail}"
-                        IsChecked="{Binding SelectedMail.IsStarred, Mode=OneWay}">
-                        <CheckBox.Style>
-                            <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="CheckBox">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SelectedMail.IsStarred}" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.ChromeYellowLighten1}" />
-                                        <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarFilled}" />
-                                        <Setter Property="ToolTip" Value="取消星标" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding SelectedMail.IsStarred}" Value="False">
-                                        <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray050}" />
-                                        <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarOutline}" />
-                                        <Setter Property="ToolTip" Value="添加星标" />
-                                    </DataTrigger>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray010}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </CheckBox.Style>
-                    </CheckBox>
-                </InlineUIContainer>
-            </TextBlock>
-        </Grid>
+        <StackPanel Grid.Row="0" Margin="20,10,20,0">
+            <Grid>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                    <Run
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="{Binding SelectedMail.Subject}" />
+                    <InlineUIContainer BaselineAlignment="Center">
+                        <CheckBox
+                            Margin="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            rs:ControlsHelper.IconHeight="16"
+                            rs:ControlsHelper.IconWidth="16"
+                            Command="{Binding DataContext.ToggleStarCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                            CommandParameter="{Binding SelectedMail}"
+                            IsChecked="{Binding SelectedMail.IsStarred, Mode=OneWay}">
+                            <CheckBox.Style>
+                                <Style BasedOn="{StaticResource RSApp.Styles.IconButtonStyle}" TargetType="CheckBox">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedMail.IsStarred}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.ChromeYellowLighten1}" />
+                                            <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarFilled}" />
+                                            <Setter Property="ToolTip" Value="取消星标" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SelectedMail.IsStarred}" Value="False">
+                                            <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.BaseGray050}" />
+                                            <Setter Property="rs:ControlsHelper.IconData" Value="{StaticResource RSApp.Icons.Email.StarOutline}" />
+                                            <Setter Property="ToolTip" Value="添加星标" />
+                                        </DataTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource RSApp.Styles.BaseGray010}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                    </InlineUIContainer>
+                </TextBlock>
+            </Grid>
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Grid.Column="0"
+                    Width="36"
+                    Height="36"
+                    Margin="0,2,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="{StaticResource RSApp.Styles.BaseGray010}"
+                    CornerRadius="25">
+                    <Grid>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="24"
+                            Foreground="White"
+                            Text="{Binding SelectedMail.Account, Converter={StaticResource FirstCharConverter}}" />
+                        <Image Source="{Binding SelectedMail.Avatar}" Stretch="UniformToFill">
+                            <Image.Clip>
+                                <EllipseGeometry
+                                    Center="25,25"
+                                    RadiusX="25"
+                                    RadiusY="25" />
+                            </Image.Clip>
+                        </Image>
+                    </Grid>
+                </Border>
 
-        <Grid Grid.Row="1" Margin="0,10,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Border
-                Grid.Column="0"
-                Width="36"
-                Height="36"
-                Margin="0,2,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="{StaticResource RSApp.Styles.BaseGray010}"
-                CornerRadius="25">
-                <Grid>
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Foreground="White"
-                        Text="{Binding SelectedMail.Account, Converter={StaticResource FirstCharConverter}}" />
-                    <Image Source="{Binding SelectedMail.Avatar}" Stretch="UniformToFill">
-                        <Image.Clip>
-                            <EllipseGeometry
-                                Center="25,25"
-                                RadiusX="25"
-                                RadiusY="25" />
-                        </Image.Clip>
-                    </Image>
-                </Grid>
-            </Border>
 
-
-            <ContentControl
-                Grid.Column="1"
-                Margin="5,0,0,0"
-                Content="{Binding SelectedMail}"
-                ContentTemplate="{StaticResource EmailBasicDetailTemplate}" />
-        </Grid>
-
+                <ContentControl
+                    Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Content="{Binding SelectedMail}"
+                    ContentTemplate="{StaticResource EmailBasicDetailTemplate}" />
+            </Grid>
+        </StackPanel>
 
         <Border
-            Grid.Row="2"
+            Grid.Row="1"
             Margin="0,20,0,0"
-            Padding="12,6,8,6"
-            Background="{StaticResource RSApp.Styles.BgGrayWeb1}"
-            CornerRadius="5">
+            BorderBrush="{StaticResource RSApp.Styles.BaseGray007}"
+            BorderThickness="0,1,0,0">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <rs:RSButton
-                        rs:ControlsHelper.IconData="M6.75 2.125a.625.625 0 1 0-1.25 0V3H3.625A.625.625 0 0 0 3 3.625v3.5c0 .345.28.625.625.625H5.5v1.375a.625.625 0 1 0 1.25 0V7.75h1.875c.345 0 .625-.28.625-.625v-3.5A.625.625 0 0 0 8.625 3H6.75zM4.25 4.25H5.5V6.5H4.25zM8 6.5H6.75V4.25H8zM13.518 10.75a.63.63 0 0 0-.575.379l-2.142 5a.625.625 0 0 0 1.149.492l.551-1.288h2.748l.551 1.288a.625.625 0 0 0 1.15-.492l-2.143-5a.63.63 0 0 0-.575-.379zm.357 1.378.838 1.955h-1.676z M11.004 3.625c0-.345.28-.625.625-.625h2.746A2.625 2.625 0 0 1 17 5.625v2.75a.625.625 0 1 1-1.25 0v-2.75c0-.76-.616-1.375-1.375-1.375h-2.746a.625.625 0 0 1-.625-.625M8.375 17a.625.625 0 1 0 0-1.25h-2.75c-.76 0-1.375-.616-1.375-1.375v-2.75a.625.625 0 1 0-1.25 0v2.75A2.625 2.625 0 0 0 5.625 17z"
-                        rs:ControlsHelper.IconHeight="14"
-                        rs:ControlsHelper.IconWidth="14"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{StaticResource RSApp.Styles.BaseGray080}"
-                        Text="邮件可翻译为中文" />
-                    <Button
-                        rs:ControlsHelper.HasDecoration="True"
-                        rs:ControlsHelper.IconColor="#CC3C29"
-                        rs:ControlsHelper.IconData="M0 45.329067C0 20.297956 20.457244 0 45.329067 0h933.341866C1003.702044 0 1024 20.457244 1024 45.329067v933.341866c0 25.031111-20.457244 45.329067-45.329067 45.329067H45.329067C20.297956 1024 0 1003.542756 0 978.670933V45.329067z m745.972622 526.336c-11.423289-19.069156-41.938489-26.715022-87.699911-26.715023-15.291733 0-30.492444 3.822933-49.607111 3.822934-15.246222-7.645867-22.9376-15.291733-34.360889-22.892089-22.892089-22.914844-45.784178-57.207467-60.984889-99.214222v-3.777423c15.200711-49.607111 28.672-122.333867-1.956978-144.406755-6.894933-5.006222-13.334756-5.302044-20.957866-5.415822-27.670756-0.295822-40.254578 26.328178-43.030756 41.870222-7.5776 42.370844 12.470044 71.156622 12.470045 119.3984 0 36.181333-48.992711 144.5888-80.099556 179.245511-11.377778 12.743111-26.624 15.291733-34.338133 19.137422-45.784178 26.646756-84.764444 58.823111-68.630756 102.991645 5.620622 15.428267 26.715022 15.223467 34.292622 15.223466 30.583467 0 61.2352-25.3952 107.019378-105.449244 7.441067-15.587556 23.096889-22.983111 26.737778-24.075378 53.293511-15.701333 76.071822-20.252444 140.879644-27.875555 38.206578 19.069156 83.968 31.516444 114.460445 31.516444 15.337244 0 26.692267-3.777422 34.360889-7.600356 15.291733-7.281778 13.038933-19.069156 16.884622-22.892088 0.022756-7.623111-1.592889-15.291733-5.461333-22.914845z m-437.930666 138.6496c0-25.918578 48.310044-45.556622 48.310044-45.556623-6.280533 28.603733-48.310044 71.520711-48.310044 45.556623z m177.948444-411.648c3.049244-2.434844 7.759644 2.275556 9.284267 3.777422 3.800178 3.800178 3.800178 19.069156 0 38.115555 0 0-5.415822 26.715022-9.284267 42.006756h2.889956-2.889956c-7.5776-34.360889-12.834133-73.864533 0-83.922489zM425.528889 602.134756c7.668622-15.223467 15.246222-26.669511 22.9376-41.961245 15.246222-34.315378 30.492444-64.830578 38.161067-91.5456 15.246222 34.360889 64.807822 95.391289 72.476444 99.145956-30.560711 3.868444-133.575111 34.360889-133.575111 34.360889z m287.266133-7.259023c-17.885867 6.644622-74.729244-13.744356-74.729244-13.744355l7.5776-0.910222c52.929422-6.599111 69.563733 2.844444 73.773511 6.189511 0.500622 3.754667-4.096 7.532089-6.621867 8.465066z"
-                        rs:ControlsHelper.IconHeight="18"
-                        rs:ControlsHelper.IconWidth="18"
-                        Content="全文翻译">
-                        <Button.Style>
-                            <Style BasedOn="{StaticResource RSApp.Styles.ButtonBaseStyle}" TargetType="{x:Type Button}">
-                                <Setter Property="VerticalAlignment" Value="Center" />
-                                <Setter Property="Cursor" Value="Hand" />
-                                <Setter Property="Margin" Value="5,0,0,0" />
-                                <Setter Property="Padding" Value="0" />
-                                <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueDarken1}" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border
+                    Margin="10,10,10,0"
+                    Padding="12,6,8,6"
+                    Background="{StaticResource RSApp.Styles.BgGrayWeb1}"
+                    CornerRadius="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <rs:RSButton
+                                rs:ControlsHelper.IconData="M6.75 2.125a.625.625 0 1 0-1.25 0V3H3.625A.625.625 0 0 0 3 3.625v3.5c0 .345.28.625.625.625H5.5v1.375a.625.625 0 1 0 1.25 0V7.75h1.875c.345 0 .625-.28.625-.625v-3.5A.625.625 0 0 0 8.625 3H6.75zM4.25 4.25H5.5V6.5H4.25zM8 6.5H6.75V4.25H8zM13.518 10.75a.63.63 0 0 0-.575.379l-2.142 5a.625.625 0 0 0 1.149.492l.551-1.288h2.748l.551 1.288a.625.625 0 0 0 1.15-.492l-2.143-5a.63.63 0 0 0-.575-.379zm.357 1.378.838 1.955h-1.676z M11.004 3.625c0-.345.28-.625.625-.625h2.746A2.625 2.625 0 0 1 17 5.625v2.75a.625.625 0 1 1-1.25 0v-2.75c0-.76-.616-1.375-1.375-1.375h-2.746a.625.625 0 0 1-.625-.625M8.375 17a.625.625 0 1 0 0-1.25h-2.75c-.76 0-1.375-.616-1.375-1.375v-2.75a.625.625 0 1 0-1.25 0v2.75A2.625 2.625 0 0 0 5.625 17z"
+                                rs:ControlsHelper.IconHeight="14"
+                                rs:ControlsHelper.IconWidth="14"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{StaticResource RSApp.Styles.BaseGray080}"
+                                Text="邮件可翻译为中文" />
+                            <Button
+                                rs:ControlsHelper.HasDecoration="True"
+                                rs:ControlsHelper.IconColor="#CC3C29"
+                                rs:ControlsHelper.IconData="M0 45.329067C0 20.297956 20.457244 0 45.329067 0h933.341866C1003.702044 0 1024 20.457244 1024 45.329067v933.341866c0 25.031111-20.457244 45.329067-45.329067 45.329067H45.329067C20.297956 1024 0 1003.542756 0 978.670933V45.329067z m745.972622 526.336c-11.423289-19.069156-41.938489-26.715022-87.699911-26.715023-15.291733 0-30.492444 3.822933-49.607111 3.822934-15.246222-7.645867-22.9376-15.291733-34.360889-22.892089-22.892089-22.914844-45.784178-57.207467-60.984889-99.214222v-3.777423c15.200711-49.607111 28.672-122.333867-1.956978-144.406755-6.894933-5.006222-13.334756-5.302044-20.957866-5.415822-27.670756-0.295822-40.254578 26.328178-43.030756 41.870222-7.5776 42.370844 12.470044 71.156622 12.470045 119.3984 0 36.181333-48.992711 144.5888-80.099556 179.245511-11.377778 12.743111-26.624 15.291733-34.338133 19.137422-45.784178 26.646756-84.764444 58.823111-68.630756 102.991645 5.620622 15.428267 26.715022 15.223467 34.292622 15.223466 30.583467 0 61.2352-25.3952 107.019378-105.449244 7.441067-15.587556 23.096889-22.983111 26.737778-24.075378 53.293511-15.701333 76.071822-20.252444 140.879644-27.875555 38.206578 19.069156 83.968 31.516444 114.460445 31.516444 15.337244 0 26.692267-3.777422 34.360889-7.600356 15.291733-7.281778 13.038933-19.069156 16.884622-22.892088 0.022756-7.623111-1.592889-15.291733-5.461333-22.914845z m-437.930666 138.6496c0-25.918578 48.310044-45.556622 48.310044-45.556623-6.280533 28.603733-48.310044 71.520711-48.310044 45.556623z m177.948444-411.648c3.049244-2.434844 7.759644 2.275556 9.284267 3.777422 3.800178 3.800178 3.800178 19.069156 0 38.115555 0 0-5.415822 26.715022-9.284267 42.006756h2.889956-2.889956c-7.5776-34.360889-12.834133-73.864533 0-83.922489zM425.528889 602.134756c7.668622-15.223467 15.246222-26.669511 22.9376-41.961245 15.246222-34.315378 30.492444-64.830578 38.161067-91.5456 15.246222 34.360889 64.807822 95.391289 72.476444 99.145956-30.560711 3.868444-133.575111 34.360889-133.575111 34.360889z m287.266133-7.259023c-17.885867 6.644622-74.729244-13.744356-74.729244-13.744355l7.5776-0.910222c52.929422-6.599111 69.563733 2.844444 73.773511 6.189511 0.500622 3.754667-4.096 7.532089-6.621867 8.465066z"
+                                rs:ControlsHelper.IconHeight="18"
+                                rs:ControlsHelper.IconWidth="18"
+                                Content="全文翻译">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource RSApp.Styles.ButtonBaseStyle}" TargetType="{x:Type Button}">
+                                        <Setter Property="VerticalAlignment" Value="Center" />
                                         <Setter Property="Cursor" Value="Hand" />
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueLighten1}" />
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueLighten2}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
-                <rs:RSButton
-                    Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
-                    rs:ControlsHelper.IconHeight="10"
-                    rs:ControlsHelper.IconWidth="10"
-                    BorderThickness="0"
-                    Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                                        <Setter Property="Margin" Value="5,0,0,0" />
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueDarken1}" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Cursor" Value="Hand" />
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueLighten1}" />
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Foreground" Value="{StaticResource RSApp.Styles.AccentBlueLighten2}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                        <rs:RSButton
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            rs:ControlsHelper.IconData="{StaticResource RSApp.Icons.Close}"
+                            rs:ControlsHelper.IconHeight="10"
+                            rs:ControlsHelper.IconWidth="10"
+                            BorderThickness="0"
+                            Style="{StaticResource RSApp.Styles.IconButtonStyle}" />
+                    </Grid>
+                </Border>
+                <web:WebView2
+                    x:Name="webView"
+                    Grid.Row="1"
+                    rs:WebView2Helper.HtmlContent="{Binding SelectedMail.Content}"
+                    rs:WebView2Helper.OpenExternalLinks="True" />
             </Grid>
         </Border>
 
-        <Border Grid.Row="3">
-            <web:WebView2
-                x:Name="webView"
-                rs:WebView2Helper.HtmlContent="{Binding SelectedMail.Content}"
-                rs:WebView2Helper.OpenExternalLinks="True" />
-        </Border>
     </Grid>
 </UserControl>

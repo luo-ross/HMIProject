@@ -365,6 +365,10 @@ namespace RS.Widgets.Controls
 
         internal void UpdateNavigateModelList()
         {
+            if (this.ItemsSource==null)
+            {
+                return;
+            }
             var dataList = this.ItemsSource.Where(t => string.IsNullOrEmpty(t.ParentId)).ToList();
             if (this.IsNavExpanded)
             {

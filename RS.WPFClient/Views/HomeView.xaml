@@ -334,8 +334,30 @@
                 Margin="15,0,15,0"
                 Background="#fff"
                 CornerRadius="10,10,0,0">
-                <ContentControl Content="{Binding ViewModelSelect}" />
+                <!--<ContentControl Content="{Binding ViewModelSelect}" />-->
+
+
+                <Canvas Background="AliceBlue">
+                    <Button
+                        rs:TransformHelper.IsMonitor="True"
+                        BorderThickness="1"
+                        Content="测试"
+                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
+
+
+                    <Button
+                        Canvas.Left="52"
+                        Canvas.Top="43"
+                        VerticalAlignment="Top"
+                        rs:TransformHelper.IsMonitor="True"
+                        BorderThickness="1"
+                        Content="测试"
+                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                </Canvas>
+
             </Border>
+
+            <!--<rs:RSNavigate />-->
         </Grid>
     </Grid>
 </rs:RSWindow>

@@ -27,7 +27,7 @@ namespace RS.Widgets.Controls
         }
 
 
-        public static void SetAmount(DependencyObject obj, Color value)
+        public static void SetAmount(DependencyObject obj, double value)
         {
             obj.SetValue(AmountProperty, value);
         }
