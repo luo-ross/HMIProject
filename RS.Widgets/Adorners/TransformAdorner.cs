@@ -60,22 +60,26 @@ namespace RS.Widgets.Adorners
             TransformRig = new RSTransformRig();
             TransformRig.IsAutonomous = false;
             AddVisualChild(TransformRig);
+            this.Focusable = true; // 启用焦点以支持键盘输入
 
-            // Sync Rotation
+            // 使用 PreviewMouseLeftButtonDown 在 Thumb 吞掉事件之前捕获焦点
+            this.PreviewMouseLeftButtonDown += TransformAdorner_PreviewMouseLeftButtonDown;
+
+            // 同步旋转
             Binding rotationBinding = new Binding();
             rotationBinding.Source = adornedElement;
             rotationBinding.Path = new PropertyPath(TransformHelper.RotationProperty);
             rotationBinding.Mode = BindingMode.TwoWay;
             BindingOperations.SetBinding(TransformRig, RSTransformRig.RotationAngleProperty, rotationBinding);
 
-            // Sync ScaleX
+            // 同步 ScaleX
             Binding scaleXBinding = new Binding();
             scaleXBinding.Source = adornedElement;
             scaleXBinding.Path = new PropertyPath(TransformHelper.ScaleXProperty);
             scaleXBinding.Mode = BindingMode.TwoWay;
             BindingOperations.SetBinding(TransformRig, RSTransformRig.ScaleXProperty, scaleXBinding);
 
-            // Sync ScaleY
+            // 同步 ScaleY
             Binding scaleYBinding = new Binding();
             scaleYBinding.Source = adornedElement;
             scaleYBinding.Path = new PropertyPath(TransformHelper.ScaleYProperty);
@@ -88,9 +92,51 @@ namespace RS.Widgets.Adorners
             this.TransformRig.ResizeCompleted += TransformRig_ResizeCompleted;
         }
 
-        // Note: TransformRig_RotationRequested is no longer needed because the Binding handles it TwoWay.
+        // 注意：TransformRig_RotationRequested 不再需要，因为 Binding 已经处理了 TwoWay 同步。
 
-        private void TransformRig_TranslationRequested(object sender, Vector delta)
+
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            
+            if (AdornedFE == null)
+            {
+                return;
+            }
+
+
+
+            double step = 10.0; // 粗调
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                step = 1.0; // 微调
+            }
+
+            Vector delta = new Vector(0, 0);
+            switch (e.Key)
+            {
+                case Key.Left:
+                    delta.X = -step;
+                    break;
+                case Key.Right:
+                    delta.X = step;
+                    break;
+                case Key.Up:
+                    delta.Y = -step;
+                    break;
+                case Key.Down:
+                    delta.Y = step;
+                    break;
+                default:
+                    return;
+            }
+
+            ApplyTranslation(delta);
+            e.Handled = true;
+        }
+
+        private void ApplyTranslation(Vector delta)
         {
             var parent = VisualTreeHelper.GetParent(AdornedElement) as UIElement;
             if (parent == null)
@@ -129,6 +175,11 @@ namespace RS.Widgets.Adorners
                 TransformHelper.SetTransformX(AdornedElement, x + dx);
                 TransformHelper.SetTransformY(AdornedElement, y + dy);
             }
+        }
+
+        private void TransformRig_TranslationRequested(object sender, Vector delta)
+        {
+            ApplyTranslation(delta);
         }
 
         private void TransformRig_ResizeStarted(object sender, ResizeGripDirection direction)
@@ -453,9 +504,10 @@ namespace RS.Widgets.Adorners
             var transformAdorner = d as TransformAdorner;
         }
 
-        private void TransformAdorner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void TransformAdorner_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             TransformSelectService.SingleSelect(this);
+            this.Focus();
             this.InvalidateVisual();
         }
 

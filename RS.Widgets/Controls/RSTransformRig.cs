@@ -93,6 +93,46 @@ namespace RS.Widgets.Controls
 
         public RSTransformRig()
         {
+            this.Focusable = true; // 启用焦点以支持键盘输入
+            this.PreviewMouseLeftButtonDown += RSTransformRig_PreviewMouseLeftButtonDown;
+        }
+
+        private void RSTransformRig_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.Focus();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            double step = 10.0; // 粗调
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                step = 1.0; // 微调
+            }
+
+            Vector delta = new Vector(0, 0);
+            switch (e.Key)
+            {
+                case Key.Left:
+                    delta.X = -step;
+                    break;
+                case Key.Right:
+                    delta.X = step;
+                    break;
+                case Key.Up:
+                    delta.Y = -step;
+                    break;
+                case Key.Down:
+                    delta.Y = step;
+                    break;
+                default:
+                    return;
+            }
+
+            ProcessMove(delta);
+            e.Handled = true;
         }
 
         public double RotationAngle
@@ -556,6 +596,11 @@ namespace RS.Widgets.Controls
                 screenDelta = new Vector(e.HorizontalChange, e.VerticalChange);
             }
 
+            ProcessMove(screenDelta);
+        }
+
+        private void ProcessMove(Vector screenDelta)
+        {
             TranslationRequested?.Invoke(this, screenDelta);
 
             // 如果处于自主模式且在 Canvas 中，则执行自我位移
@@ -575,6 +620,7 @@ namespace RS.Widgets.Controls
                 Canvas.SetTop(this, top + screenDelta.Y);
             }
         }
+
 
         /// <summary>
         /// 获取 Rig 局部空间（旋转后空间）的位移。
