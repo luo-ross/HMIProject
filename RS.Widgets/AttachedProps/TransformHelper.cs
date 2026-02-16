@@ -54,33 +54,9 @@ namespace RS.Widgets.Controls
             }
             var isEditable = GetIsEditable(frameworkElement);
             UpdateTransformAdorner(frameworkElement, isEditable);
-            UpdateScaleIndependent(frameworkElement, isEditable);   
         }
 
-        public static void UpdateScaleIndependent(FrameworkElement element, bool isEditable)
-        {
-            if (element == null)
-            {
-                return;
-            }
-            if (isEditable)
-            {
-                var transform = new ScaleTransform();
-                var binding = new Binding
-                {
-                    Path = new PropertyPath(ScaleXProperty),
-                    RelativeSource = new RelativeSource(RelativeSourceMode.Self),
-                    Converter = new ScaleConverter() 
-                };
-                BindingOperations.SetBinding(transform, ScaleTransform.ScaleXProperty, binding);
-                BindingOperations.SetBinding(transform, ScaleTransform.ScaleYProperty, binding);
-                element.LayoutTransform = transform;
-            }
-            else
-            {
-                element.LayoutTransform = Transform.Identity;
-            }
-        }
+      
 
         public static void UpdateTransformAdorner(FrameworkElement element, bool isEditable)
         {
@@ -203,10 +179,10 @@ namespace RS.Widgets.Controls
 
         private static void OnTransformPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is FrameworkElement element)
-            {
-                UpdateRenderTransform(element);
-            }
+            //if (d is FrameworkElement element)
+            //{
+            //    UpdateRenderTransform(element);
+            //}
         }
 
         private static void UpdateRenderTransform(FrameworkElement element)
@@ -303,76 +279,5 @@ namespace RS.Widgets.Controls
 
 
         #endregion
-
-
-        /// <summary>
-        /// 计算元素在视觉树中的综合缩放比例（包含所有父级的缩放）
-        /// </summary>
-        /// <param name="element">目标元素</param>
-        /// <param name="totalScaleX">输出X轴综合缩放比例</param>
-        /// <param name="totalScaleY">输出Y轴综合缩放比例</param>
-        public static void CalculateTotalScale(DependencyObject element, out double totalScaleX, out double totalScaleY)
-        {
-            // 初始缩放比例为1（无缩放）
-            totalScaleX = 1.0;
-            totalScaleY = 1.0;
-            if (element == null)
-            {
-                return;
-            }
-            // 向上遍历所有父级元素（包括自身）
-            while (element != null)
-            {
-                if (element is FrameworkElement uiElement)
-                {
-                    GetElementScale(uiElement, out double scaleX, out double scaleY);
-                    totalScaleX *= scaleX;
-                    totalScaleY *= scaleY;
-                }
-
-                element = VisualTreeHelper.GetParent(element);
-            }
-
-            totalScaleX = Math.Abs(totalScaleX - 1) < 1e-6 ? 1 : totalScaleX;
-            totalScaleY = Math.Abs(totalScaleY - 1) < 1e-6 ? 1 : totalScaleY;
-        }
-
-        /// <summary>
-        /// 解析单个元素的RenderTransform中的缩放比例（仅提取ScaleTransform）
-        /// </summary>
-        /// <param name="element">单个元素</param>
-        /// <param name="scaleX">X轴缩放</param>
-        /// <param name="scaleY">Y轴缩放</param>
-        public static void GetElementScale(FrameworkElement element, out double scaleX, out double scaleY)
-        {
-            scaleX = 1.0;
-            scaleY = 1.0;
-
-            if (element.LayoutTransform == null || element.LayoutTransform == Transform.Identity)
-            {
-                return;
-            }
-
-            if (element.LayoutTransform is ScaleTransform scale)
-            {
-                scaleX = scale.ScaleX;
-                scaleY = scale.ScaleY;
-            }
-            else if (element.LayoutTransform is TransformGroup group)
-            {
-                foreach (var transform in group.Children)
-                {
-                    if (transform is ScaleTransform groupScale)
-                    {
-                        scaleX = groupScale.ScaleX;
-                        scaleY = groupScale.ScaleY;
-                        break;
-                    }
-                }
-            }
-            scaleX = scaleX == 0 ? 1 : scaleX;
-            scaleY = scaleY == 0 ? 1 : scaleY;
-        }
-
     }
 }

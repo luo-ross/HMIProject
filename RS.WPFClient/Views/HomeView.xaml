@@ -357,7 +357,6 @@
                     <Button
                         Canvas.Left="52"
                         Canvas.Top="43"
-                        VerticalAlignment="Top"
                         rs:TransformHelper.IsEditable="True"
                         BorderThickness="1"
                         Content="测试"

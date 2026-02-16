@@ -1,5 +1,4 @@
-﻿using NPOI.POIFS.Properties;
-using RS.Widgets.Adorners;
+﻿using RS.Widgets.Adorners;
 using RS.Widgets.Controls;
 using RS.Widgets.CustomEventArgs;
 using RS.Widgets.Services;
@@ -26,7 +25,8 @@ namespace RS.Widgets.Adorners
     public class TransformAdorner : Adorner
     {
         private readonly RSTransformRig TransformRig;
-        private readonly ScaleTransform InverseScale = new ScaleTransform(1, 1);
+        private Size VisualPixelSize = new Size(0, 0);
+
         private static TransformSelectService TransformSelectService;
         static TransformAdorner()
         {
@@ -36,172 +36,12 @@ namespace RS.Widgets.Adorners
         public TransformAdorner(FrameworkElement adornedElement) : base(adornedElement)
         {
             TransformRig = new RSTransformRig();
-            TransformRig.LayoutTransform = InverseScale;
             AddVisualChild(TransformRig);
-
-            //this.LayoutUpdated += TransformAdorner_LayoutUpdated;
-
-
-            //adornedElement.SizeChanged += AdornedElement_SizeChanged;
-            //adornedElement.LayoutUpdated += AdornedElement_LayoutUpdated;
-            //adornedElement.RenderSizeChanged += AdornedElement_RenderSizeChanged;
-            //this.LayoutUpdated += (s, e) =>
-            //{
-            //    Console.WriteLine("LayoutUpdated");
-            //};
-
-
-            //this.OriginalCursor = this.Cursor;
-            //_transformControl.RotationRequested += TransformControl_RotationRequested;
-            //_transformControl.TranslationRequested += TransformControl_TranslationRequested;
-            //_transformControl.ResizeRequested += TransformControl_ResizeRequested;
-            //var cursorImage = LoadCursorImage();
-            //var rotated = CursorHelper.RotateBitmapSource(cursorImage, CurrentRotation);
-            //this.Cursor = CursorHelper.CreateCursor(rotated) ?? OriginalCursor;
-            //this.MouseLeftButtonDown += TransformAdorner_MouseLeftButtonDown;
-            //var descriptor = DependencyPropertyDescriptor.FromProperty(ScaleTransform.ScaleXProperty, typeof(FrameworkElement));
-            //descriptor?.AddValueChanged(adornedElement, (s, e) =>
-            //{
-            //    Console.WriteLine("AddValueChanged");
-            //    UpdateInverseScale();
-            //});
-            //this.UpdateInverseScale();
-        }
-
-        private void TransformAdorner_LayoutUpdated(object? sender, EventArgs e)
-        {
-            TransformHelper.CalculateTotalScale(this.AdornedElement, out double totalScaleX, out double totalScaleY);
-            UpdateInverseScale(totalScaleX, totalScaleY);
-            
-            //Console.WriteLine($"TransformAdorner_LayoutUpdated{totalScaleX}{totalScaleY}");
-        }
-
-        private void AdornedElement_LayoutUpdated(object? sender, EventArgs e)
-        {
-            //Console.WriteLine($"AdornedElement_LayoutUpdated{DateTime.Now}");
-        }
-
-        private void AdornedElement_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //Console.WriteLine("AdornedElement_SizeChanged");
-        }
-
-        private void UpdateInverseScale(double scaleX,  double scaleY)
-        {
-          
-            //if (scaleX > 0)
-            //{
-            //    InverseScale.ScaleX = 1D / scaleX;
-            //}
-            //if (scaleY > 0)
-            //{
-            //    InverseScale.ScaleY = 1D / scaleY;
-            //}
-
-            Console.WriteLine(InverseScale.ScaleX);
-            this.InvalidateMeasure();
-            this.InvalidateArrange();
         }
 
 
-        private void TransformControl_RotationRequested(object sender, double delta)
-        {
-            var currentAngle = TransformHelper.GetRotation(AdornedElement);
-            TransformHelper.SetRotation(AdornedElement, (currentAngle + delta) % 360);
-            UpdateControlState();
-        }
 
-        private void TransformControl_TranslationRequested(object sender, Vector delta)
-        {
-            var parent = VisualTreeHelper.GetParent(AdornedElement);
-            if (parent is Canvas)
-            {
-                var x = TransformHelper.GetCanvasX(AdornedElement);
-                var y = TransformHelper.GetCanvasY(AdornedElement);
-                TransformHelper.SetCanvasX(AdornedElement, x + delta.X);
-                TransformHelper.SetCanvasY(AdornedElement, y + delta.Y);
-            }
-            else
-            {
-                var x = TransformHelper.GetTransformX(AdornedElement);
-                var y = TransformHelper.GetTransformY(AdornedElement);
-                TransformHelper.SetTransformX(AdornedElement, x + delta.X);
-                TransformHelper.SetTransformY(AdornedElement, y + delta.Y);
-            }
-        }
 
-        private void TransformControl_ResizeRequested(object sender, ResizeEventArgs e)
-        {
-            if (AdornedElement is FrameworkElement fe)
-            {
-                double dw = 0, dh = 0, dx = 0, dy = 0;
-
-                switch (e.Direction)
-                {
-                    case ResizeGripDirection.TopLeft:
-                        {
-                            dx = e.Delta.X; dy = e.Delta.Y; dw = -e.Delta.X; dh = -e.Delta.Y;
-                            break;
-                        }
-                    case ResizeGripDirection.Top:
-                        {
-                            dy = e.Delta.Y; dh = -e.Delta.Y;
-                            break;
-                        }
-                    case ResizeGripDirection.TopRight:
-                        {
-                            dy = e.Delta.Y; dw = e.Delta.X; dh = -e.Delta.Y;
-                            break;
-                        }
-                    case ResizeGripDirection.Left:
-                        {
-                            dx = e.Delta.X; dw = -e.Delta.X;
-                            break;
-                        }
-                    case ResizeGripDirection.Right:
-                        {
-                            dw = e.Delta.X;
-                            break;
-                        }
-                    case ResizeGripDirection.BottomLeft:
-                        {
-                            dx = e.Delta.X; dw = -e.Delta.X; dh = e.Delta.Y;
-                            break;
-                        }
-                    case ResizeGripDirection.Bottom:
-                        {
-                            dh = e.Delta.Y;
-                            break;
-                        }
-                    case ResizeGripDirection.BottomRight:
-                        {
-                            dw = e.Delta.X; dh = e.Delta.Y;
-                            break;
-                        }
-                }
-
-                // Update Size
-                if (fe.Width + dw > 0)
-                {
-                    fe.Width += dw;
-                }
-                if (fe.Height + dh > 0)
-                {
-                    fe.Height += dh;
-                }
-
-                // Update Position if needed
-                if (dx != 0 || dy != 0)
-                {
-                    TransformControl_TranslationRequested(this, new Vector(dx, dy));
-                }
-            }
-        }
-
-        private void UpdateControlState()
-        {
-            this.TransformRig.RotationAngle = TransformHelper.GetRotation(AdornedElement);
-        }
 
         protected override int VisualChildrenCount
         {
@@ -216,17 +56,41 @@ namespace RS.Widgets.Adorners
             return this.TransformRig;
         }
 
+        public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
+        {
+            if (transform is Transform t)
+            {
+                Matrix matrix = t.Value;
+                double scaleX = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
+                double scaleY = Math.Sqrt(matrix.M21 * matrix.M21 + matrix.M22 * matrix.M22);
+                if (scaleX > 0)
+                {
+                    matrix.M11 /= scaleX;
+                    matrix.M12 /= scaleX;
+                }
+
+                if (scaleY > 0)
+                {
+                    matrix.M21 /= scaleY;
+                    matrix.M22 /= scaleY;
+                }
+                return new MatrixTransform(matrix);
+            }
+
+            return transform;
+        }
+
         protected override Size MeasureOverride(Size constraint)
         {
-            TransformHelper.CalculateTotalScale(this.AdornedElement, out double totalScaleX, out double totalScaleY);
-            this.TransformRig.Measure(new Size(AdornedElement.RenderSize.Width* totalScaleX, AdornedElement.RenderSize.Height* totalScaleY));
+            UpdateVisualScale();
+            this.TransformRig.Measure(VisualPixelSize);
             return AdornedElement.RenderSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            TransformHelper.CalculateTotalScale(this.AdornedElement, out double totalScaleX, out double totalScaleY);
-            this.TransformRig.Arrange(new Rect(0, 0, finalSize.Width* totalScaleX, finalSize.Height* totalScaleY));
+            UpdateVisualScale();
+            this.TransformRig.Arrange(new Rect(new Point(0, 0), VisualPixelSize));
             return finalSize;
         }
 
@@ -249,27 +113,9 @@ namespace RS.Widgets.Adorners
         private static void OnIsSelectPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var transformAdorner = d as TransformAdorner;
-            //if (transformAdorner != null)
-            //{
-            //    transformAdorner._transformControl.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
-            //    if ((bool)e.NewValue)
-            //    {
-            //        transformAdorner.SyncFromElement();
-            //    }
-            //    transformAdorner.InvalidateVisual();
-            //}
         }
 
-        private void SyncFromElement()
-        {
-            UpdateControlState();
-            // Initial sync of properties if they haven't been set yet
-            if (AdornedElement is FrameworkElement fe)
-            {
-                // We should probably read actual values if attached ones are 0, 
-                // but for now let's assume the attached properties are the source of truth.
-            }
-        }
+
 
         private void TransformAdorner_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -277,18 +123,57 @@ namespace RS.Widgets.Adorners
             this.InvalidateVisual();
         }
 
-        //protected override void OnRender(DrawingContext drawingContext)
-        //{
-        //    // We no longer draw handles here, TransformControl handles it
-        //    if (!this.IsSelect)
-        //    {
-        //        return;
-        //    }
-        //    Rect renderRect = new Rect(AdornedElement.RenderSize);
-        //    Pen pen = new Pen(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00E5FF")), 1.5);
-        //    drawingContext.DrawRectangle(null, pen, renderRect);
-        //}
+        private void UpdateVisualScale()
+        {
+            if (AdornedElement == null)
+            {
+                return;
+            }
 
+            Visual? root = null;
+            PresentationSource source = PresentationSource.FromVisual(AdornedElement);
+            if (source != null)
+            {
+                root = source.RootVisual;
+            }
+
+            if (root == null)
+            {
+                root = AdornedElement.TryFindParent<Visual>();
+            }
+
+            if (root == null || root == AdornedElement)
+            {
+                return;
+            }
+
+            GeneralTransform elementTransform = AdornedElement.TransformToAncestor(root);
+            if (elementTransform != null)
+            {
+
+                Point p0 = new Point(0, 0);
+                Point pW = new Point(AdornedElement.RenderSize.Width, 0);
+                Point pH = new Point(0, AdornedElement.RenderSize.Height);
+
+                Point tp0 = elementTransform.Transform(p0);
+                Point tpW = elementTransform.Transform(pW);
+                Point tpH = elementTransform.Transform(pH);
+
+                double pixelWidth = Math.Sqrt(Math.Pow(tpW.X - tp0.X, 2) + Math.Pow(tpW.Y - tp0.Y, 2));
+                double pixelHeight = Math.Sqrt(Math.Pow(tpH.X - tp0.X, 2) + Math.Pow(tpH.Y - tp0.Y, 2));
+
+                if (pixelWidth > 0 && pixelHeight > 0)
+                {
+                    if (Math.Abs(VisualPixelSize.Width - pixelWidth) > 1e-6 || Math.Abs(VisualPixelSize.Height - pixelHeight) > 1e-6)
+                    {
+                        VisualPixelSize = new Size(pixelWidth, pixelHeight);
+                        TransformRig.LayoutTransform = Transform.Identity;
+                    }
+                }
+            }
+
+
+        }
 
 
     }
