@@ -179,10 +179,10 @@ namespace RS.Widgets.Controls
 
         private static void OnTransformPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            //if (d is FrameworkElement element)
-            //{
-            //    UpdateRenderTransform(element);
-            //}
+            if (d is FrameworkElement element)
+            {
+                UpdateRenderTransform(element);
+            }
         }
 
         private static void UpdateRenderTransform(FrameworkElement element)
@@ -230,6 +230,9 @@ namespace RS.Widgets.Controls
             }
             translateTransform.X = x;
             translateTransform.Y = y;
+
+            // 强制更新装饰器层，以应对 RenderTransform 变化导致的装饰器不同步
+            AdornerLayer.GetAdornerLayer(element)?.Update(element);
         }
 
         #endregion

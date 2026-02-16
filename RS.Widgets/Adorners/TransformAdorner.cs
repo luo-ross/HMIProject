@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -25,6 +27,8 @@ namespace RS.Widgets.Adorners
     public class TransformAdorner : Adorner
     {
         private readonly RSTransformRig TransformRig;
+        private double _globalScaleX = 1;
+        private double _globalScaleY = 1;
         private Size VisualPixelSize = new Size(0, 0);
 
         private static TransformSelectService TransformSelectService;
@@ -37,6 +41,105 @@ namespace RS.Widgets.Adorners
         {
             TransformRig = new RSTransformRig();
             AddVisualChild(TransformRig);
+
+            // Sync Rotation
+            Binding rotationBinding = new Binding();
+            rotationBinding.Source = adornedElement;
+            rotationBinding.Path = new PropertyPath(TransformHelper.RotationProperty);
+            rotationBinding.Mode = BindingMode.TwoWay;
+            BindingOperations.SetBinding(TransformRig, RSTransformRig.RotationAngleProperty, rotationBinding);
+
+            // Sync ScaleX
+            Binding scaleXBinding = new Binding();
+            scaleXBinding.Source = adornedElement;
+            scaleXBinding.Path = new PropertyPath(TransformHelper.ScaleXProperty);
+            scaleXBinding.Mode = BindingMode.TwoWay;
+            BindingOperations.SetBinding(TransformRig, RSTransformRig.ScaleXProperty, scaleXBinding);
+
+            // Sync ScaleY
+            Binding scaleYBinding = new Binding();
+            scaleYBinding.Source = adornedElement;
+            scaleYBinding.Path = new PropertyPath(TransformHelper.ScaleYProperty);
+            scaleYBinding.Mode = BindingMode.TwoWay;
+            BindingOperations.SetBinding(TransformRig, RSTransformRig.ScaleYProperty, scaleYBinding);
+
+            this.TransformRig.TranslationRequested += TransformRig_TranslationRequested;
+            this.TransformRig.ResizeRequested += TransformRig_ResizeRequested;
+        }
+
+        // Note: TransformRig_RotationRequested is no longer needed because the Binding handles it TwoWay.
+
+        private void TransformRig_TranslationRequested(object sender, Vector delta)
+        {
+            UpdateVisualScale(); // Ensure _globalScaleX/Y are fresh
+            
+            double dx = delta.X / _globalScaleX;
+            double dy = delta.Y / _globalScaleY;
+
+            var parent = VisualTreeHelper.GetParent(AdornedElement);
+            if (parent is Canvas)
+            {
+                var x = TransformHelper.GetCanvasX(AdornedElement);
+                var y = TransformHelper.GetCanvasY(AdornedElement);
+                TransformHelper.SetCanvasX(AdornedElement, x + dx);
+                TransformHelper.SetCanvasY(AdornedElement, y + dy);
+            }
+            else
+            {
+                var x = TransformHelper.GetTransformX(AdornedElement);
+                var y = TransformHelper.GetTransformY(AdornedElement);
+                TransformHelper.SetTransformX(AdornedElement, x + dx);
+                TransformHelper.SetTransformY(AdornedElement, y + dy);
+            }
+        }
+
+        private void TransformRig_ResizeRequested(object sender, ResizeEventArgs e)
+        {
+            if (AdornedElement is FrameworkElement fe)
+            {
+                UpdateVisualScale(); // Ensure _globalScaleX/Y are fresh
+
+                double dw_scaled = 0, dh_scaled = 0, dx_scaled = 0, dy_scaled = 0;
+                double sdx = e.Delta.X;
+                double sdy = e.Delta.Y;
+
+                switch (e.Direction)
+                {
+                    case ResizeGripDirection.TopLeft:
+                        dx_scaled = sdx / _globalScaleX; dy_scaled = sdy / _globalScaleY; 
+                        dw_scaled = -sdx / _globalScaleX; dh_scaled = -sdy / _globalScaleY;
+                        break;
+                    case ResizeGripDirection.Top:
+                        dy_scaled = sdy / _globalScaleY; dh_scaled = -sdy / _globalScaleY;
+                        break;
+                    case ResizeGripDirection.TopRight:
+                        dy_scaled = sdy / _globalScaleY; dw_scaled = sdx / _globalScaleX; dh_scaled = -sdy / _globalScaleY;
+                        break;
+                    case ResizeGripDirection.Left:
+                        dx_scaled = sdx / _globalScaleX; dw_scaled = -sdx / _globalScaleX;
+                        break;
+                    case ResizeGripDirection.Right:
+                        dw_scaled = sdx / _globalScaleX;
+                        break;
+                    case ResizeGripDirection.BottomLeft:
+                        dx_scaled = sdx / _globalScaleX; dw_scaled = -sdx / _globalScaleX; dh_scaled = sdy / _globalScaleY;
+                        break;
+                    case ResizeGripDirection.Bottom:
+                        dh_scaled = sdy / _globalScaleY;
+                        break;
+                    case ResizeGripDirection.BottomRight:
+                        dw_scaled = sdx / _globalScaleX; dh_scaled = sdy / _globalScaleY;
+                        break;
+                }
+
+                if (fe.Width + dw_scaled > 0) fe.Width += dw_scaled;
+                if (fe.Height + dh_scaled > 0) fe.Height += dh_scaled;
+
+                if (dx_scaled != 0 || dy_scaled != 0)
+                {
+                    TransformRig_TranslationRequested(this, new Vector(dx_scaled * _globalScaleX, dy_scaled * _globalScaleY));
+                }
+            }
         }
 
 
@@ -61,20 +164,8 @@ namespace RS.Widgets.Adorners
             if (transform is Transform t)
             {
                 Matrix matrix = t.Value;
-                double scaleX = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-                double scaleY = Math.Sqrt(matrix.M21 * matrix.M21 + matrix.M22 * matrix.M22);
-                if (scaleX > 0)
-                {
-                    matrix.M11 /= scaleX;
-                    matrix.M12 /= scaleX;
-                }
-
-                if (scaleY > 0)
-                {
-                    matrix.M21 /= scaleY;
-                    matrix.M22 /= scaleY;
-                }
-                return new MatrixTransform(matrix);
+                // Strip all except translation to keep Adorner upright and 1:1
+                return new MatrixTransform(new Matrix(1, 0, 0, 1, matrix.OffsetX, matrix.OffsetY));
             }
 
             return transform;
@@ -162,14 +253,19 @@ namespace RS.Widgets.Adorners
                 double pixelWidth = Math.Sqrt(Math.Pow(tpW.X - tp0.X, 2) + Math.Pow(tpW.Y - tp0.Y, 2));
                 double pixelHeight = Math.Sqrt(Math.Pow(tpH.X - tp0.X, 2) + Math.Pow(tpH.Y - tp0.Y, 2));
 
-                if (pixelWidth > 0 && pixelHeight > 0)
-                {
-                    if (Math.Abs(VisualPixelSize.Width - pixelWidth) > 1e-6 || Math.Abs(VisualPixelSize.Height - pixelHeight) > 1e-6)
+                    if (pixelWidth > 0 && pixelHeight > 0)
                     {
-                        VisualPixelSize = new Size(pixelWidth, pixelHeight);
-                        TransformRig.LayoutTransform = Transform.Identity;
+                        if (Math.Abs(VisualPixelSize.Width - pixelWidth) > 1e-6 || Math.Abs(VisualPixelSize.Height - pixelHeight) > 1e-6)
+                        {
+                            VisualPixelSize = new Size(pixelWidth, pixelHeight);
+                            
+                            // Calculate global scale for interaction math
+                            _globalScaleX = pixelWidth / AdornedElement.RenderSize.Width;
+                            _globalScaleY = pixelHeight / AdornedElement.RenderSize.Height;
+
+                            TransformRig.LayoutTransform = Transform.Identity;
+                        }
                     }
-                }
             }
 
 
