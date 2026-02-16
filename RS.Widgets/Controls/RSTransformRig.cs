@@ -71,7 +71,9 @@ namespace RS.Widgets.Controls
         public event EventHandler<double>? RotationRequested;
         public event EventHandler<double>? RotationCompleted;
         public event EventHandler<Vector>? TranslationRequested;
+        public event EventHandler<ResizeGripDirection>? ResizeStarted;
         public event EventHandler<ResizeEventArgs>? ResizeRequested;
+        public event EventHandler<ResizeGripDirection>? ResizeCompleted;
         static RSTransformRig()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RSTransformRig), new FrameworkPropertyMetadata(typeof(RSTransformRig)));
@@ -120,8 +122,14 @@ namespace RS.Widgets.Controls
         /// </summary>
         public RectDirection RectDirection
         {
-            get { return (RectDirection)GetValue(RectDirectionProperty); }
-            set { SetValue(RectDirectionProperty, value); }
+            get
+            {
+                return (RectDirection)GetValue(RectDirectionProperty);
+            }
+            set
+            {
+                SetValue(RectDirectionProperty, value);
+            }
         }
 
         public static readonly DependencyProperty RectDirectionProperty =
@@ -132,8 +140,14 @@ namespace RS.Widgets.Controls
 
         public double ScaleX
         {
-            get { return (double)GetValue(ScaleXProperty); }
-            set { SetValue(ScaleXProperty, value); }
+            get
+            {
+                return (double)GetValue(ScaleXProperty);
+            }
+            set
+            {
+                SetValue(ScaleXProperty, value);
+            }
         }
 
         public static readonly DependencyProperty ScaleXProperty =
@@ -145,12 +159,33 @@ namespace RS.Widgets.Controls
 
         public double ScaleY
         {
-            get { return (double)GetValue(ScaleYProperty); }
-            set { SetValue(ScaleYProperty, value); }
+            get
+            {
+                return (double)GetValue(ScaleYProperty);
+            }
+            set
+            {
+                SetValue(ScaleYProperty, value);
+            }
         }
 
         public static readonly DependencyProperty ScaleYProperty =
             DependencyProperty.Register(nameof(ScaleY), typeof(double), typeof(RSTransformRig), new PropertyMetadata(1D));
+
+        public bool IsAutonomous
+        {
+            get
+            {
+                return (bool)GetValue(IsAutonomousProperty);
+            }
+            set
+            {
+                SetValue(IsAutonomousProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty IsAutonomousProperty =
+            DependencyProperty.Register(nameof(IsAutonomous), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(true));
 
 
 
@@ -195,21 +230,27 @@ namespace RS.Widgets.Controls
             if (this.PART_Top != null)
             {
                 this.PART_Top.MouseEnter += PART_Top_MouseEnter;
+                this.PART_Top.DragStarted += Resize_DragStarted;
                 this.PART_Top.DragDelta += PART_Top_DragDelta;
+                this.PART_Top.DragCompleted += Resize_DragCompleted;
             }
 
 
             if (this.PART_Bottom != null)
             {
                 this.PART_Bottom.MouseEnter += PART_Bottom_MouseEnter;
+                this.PART_Bottom.DragStarted += Resize_DragStarted;
                 this.PART_Bottom.DragDelta += PART_Bottom_DragDelta;
+                this.PART_Bottom.DragCompleted += Resize_DragCompleted;
             }
 
 
             if (this.PART_Left != null)
             {
                 this.PART_Left.MouseEnter += PART_Left_MouseEnter;
+                this.PART_Left.DragStarted += Resize_DragStarted;
                 this.PART_Left.DragDelta += PART_Left_DragDelta;
+                this.PART_Left.DragCompleted += Resize_DragCompleted;
             }
 
 
@@ -217,31 +258,41 @@ namespace RS.Widgets.Controls
             if (this.PART_Right != null)
             {
                 this.PART_Right.MouseEnter += PART_Right_MouseEnter;
+                this.PART_Right.DragStarted += Resize_DragStarted;
                 this.PART_Right.DragDelta += PART_Right_DragDelta;
+                this.PART_Right.DragCompleted += Resize_DragCompleted;
             }
 
             if (this.PART_TopLeft != null)
             {
                 this.PART_TopLeft.MouseEnter += PART_TopLeft_MouseEnter;
+                this.PART_TopLeft.DragStarted += Resize_DragStarted;
                 this.PART_TopLeft.DragDelta += PART_TopLeft_DragDelta;
+                this.PART_TopLeft.DragCompleted += Resize_DragCompleted;
             }
 
             if (this.PART_TopRight != null)
             {
                 this.PART_TopRight.MouseEnter += PART_TopRight_MouseEnter;
+                this.PART_TopRight.DragStarted += Resize_DragStarted;
                 this.PART_TopRight.DragDelta += PART_TopRight_DragDelta;
+                this.PART_TopRight.DragCompleted += Resize_DragCompleted;
             }
 
             if (this.PART_BottomLeft != null)
             {
                 this.PART_BottomLeft.MouseEnter += PART_BottomLeft_MouseEnter;
+                this.PART_BottomLeft.DragStarted += Resize_DragStarted;
                 this.PART_BottomLeft.DragDelta += PART_BottomLeft_DragDelta;
+                this.PART_BottomLeft.DragCompleted += Resize_DragCompleted;
             }
 
             if (this.PART_BottomRight != null)
             {
                 this.PART_BottomRight.MouseEnter += PART_BottomRight_MouseEnter;
+                this.PART_BottomRight.DragStarted += Resize_DragStarted;
                 this.PART_BottomRight.DragDelta += PART_BottomRight_DragDelta;
+                this.PART_BottomRight.DragCompleted += Resize_DragCompleted;
             }
 
 
@@ -330,10 +381,6 @@ namespace RS.Widgets.Controls
             Rotate_DragDelta(sender, e);
         }
 
-        private void Rotation_DragCompleted(object sender, DragCompletedEventArgs e)
-        {
-            RotationCompleted?.Invoke(this, this.RotationAngle);
-        }
         private void PART_RectDirectionBottom_Click(object sender, RoutedEventArgs e)
         {
             this.RectDirection = RectDirection.Bottom;
@@ -393,7 +440,8 @@ namespace RS.Widgets.Controls
 
         private void PART_BottomRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
+            RotationRequested?.Invoke(this, this.RotationAngle);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.BottomRight, delta));
             ApplySelfResize(ResizeGripDirection.BottomRight, delta);
         }
@@ -405,7 +453,7 @@ namespace RS.Widgets.Controls
 
         private void PART_BottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.BottomLeft, delta));
             ApplySelfResize(ResizeGripDirection.BottomLeft, delta);
         }
@@ -417,7 +465,7 @@ namespace RS.Widgets.Controls
 
         private void PART_TopRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.TopRight, delta));
             ApplySelfResize(ResizeGripDirection.TopRight, delta);
         }
@@ -429,7 +477,7 @@ namespace RS.Widgets.Controls
 
         private void PART_TopLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.TopLeft, delta));
             ApplySelfResize(ResizeGripDirection.TopLeft, delta);
         }
@@ -441,7 +489,7 @@ namespace RS.Widgets.Controls
 
         private void PART_Right_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Right, delta));
             ApplySelfResize(ResizeGripDirection.Right, delta);
         }
@@ -453,7 +501,7 @@ namespace RS.Widgets.Controls
 
         private void PART_Left_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Left, delta));
             ApplySelfResize(ResizeGripDirection.Left, delta);
         }
@@ -465,7 +513,7 @@ namespace RS.Widgets.Controls
 
         private void PART_Bottom_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Bottom, delta));
             ApplySelfResize(ResizeGripDirection.Bottom, delta);
         }
@@ -477,7 +525,7 @@ namespace RS.Widgets.Controls
 
         private void PART_Top_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = new Vector(e.HorizontalChange, e.VerticalChange);
+            Vector delta = GetLocalDelta(e);
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Top, delta));
             ApplySelfResize(ResizeGripDirection.Top, delta);
         }
@@ -494,15 +542,14 @@ namespace RS.Widgets.Controls
 
         private void PART_MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            // 如果 Rig 旋转了，Thumb 的局部 X/Y 也会随之旋转。
-            // 我们需要将这些增量转换回父级的（直立）空间，以便元素在屏幕上保持对齐移动。
+            // 对于平移，我们希望它是屏幕对齐的（鼠标往右滑，元素往右走）。
+            // 由于 MoveThumb 是 PART_Root（已旋转环境）的子级，其 DragDelta 是局部坐标。
+            // 我们需要将其转回父级（直立）空间。
             Vector screenDelta;
             if (this.PART_Root?.RenderTransform is RotateTransform rt)
             {
-                // 根据当前角度旋转局部增量向量
                 Vector localDelta = new Vector(e.HorizontalChange, e.VerticalChange);
-                Matrix matrix = rt.Value;
-                screenDelta = matrix.Transform(localDelta);
+                screenDelta = rt.Value.Transform(localDelta);
             }
             else
             {
@@ -511,8 +558,8 @@ namespace RS.Widgets.Controls
 
             TranslationRequested?.Invoke(this, screenDelta);
 
-            // 如果在 Canvas 中，执行自主移动逻辑
-            if (VisualTreeHelper.GetParent(this) is Canvas canvas)
+            // 如果处于自主模式且在 Canvas 中，则执行自我位移
+            if (this.IsAutonomous && VisualTreeHelper.GetParent(this) is Canvas canvas)
             {
                 double left = Canvas.GetLeft(this);
                 double top = Canvas.GetTop(this);
@@ -527,6 +574,15 @@ namespace RS.Widgets.Controls
                 Canvas.SetLeft(this, left + screenDelta.X);
                 Canvas.SetTop(this, top + screenDelta.Y);
             }
+        }
+
+        /// <summary>
+        /// 获取 Rig 局部空间（旋转后空间）的位移。
+        /// 由于 Thumbs 是 PART_Root（已旋转）的子级，WPF 的 DragDelta 已经提供了局部偏移。
+        /// </summary>
+        private Vector GetLocalDelta(DragDeltaEventArgs e)
+        {
+            return new Vector(e.HorizontalChange, e.VerticalChange);
         }
 
 
@@ -623,14 +679,9 @@ namespace RS.Widgets.Controls
 
         private void ApplySelfResize(ResizeGripDirection direction, Vector delta)
         {
-            if (!(VisualTreeHelper.GetParent(this) is Canvas canvas))
-            {
-                return;
-            }
-
             // 1. 确定在本次缩放期间应保持固定的局部锚点。
             // 这些点是相对于尺寸更改 *之前* 的 Rig 左上角 (0,0) 的。
-            Point anchorLocal;
+            Point anchorLocal = new Point(0, 0);
             switch (direction)
             {
                 case ResizeGripDirection.TopLeft:
@@ -662,8 +713,20 @@ namespace RS.Widgets.Controls
             }
 
             // 2. 捕获该锚点当前的屏幕位置。
-            double left = Canvas.GetLeft(this);
-            double top = Canvas.GetTop(this);
+            // 这里我们需要 Rig 在其父容器中的位置。
+            var parentElement = VisualTreeHelper.GetParent(this) as FrameworkElement;
+            if (parentElement == null)
+            {
+                return;
+            }
+
+            // 获取相对于父容器的左上角位置
+            double left = 0, top = 0;
+            if (parentElement is Canvas)
+            {
+                left = Canvas.GetLeft(this);
+                top = Canvas.GetTop(this);
+            }
             if (double.IsNaN(left))
             {
                 left = 0;
@@ -679,7 +742,7 @@ namespace RS.Widgets.Controls
             Point anchorScreen = rotMatrix.Transform(new Point(left + anchorLocal.X, top + anchorLocal.Y));
 
             // 3. 在本地更新 Rig 的尺寸。
-            // 'delta' 已经在局部坐标空间中，因为 Thumb 是旋转后的 PART_Root 的子级。
+            // 'delta' 已经在局部坐标空间中。
             double dw = 0, dh = 0;
             switch (direction)
             {
@@ -713,62 +776,67 @@ namespace RS.Widgets.Controls
                     break;
             }
 
-            if (this.Width + dw > 20)
+            if (this.IsAutonomous)
             {
-                this.Width += dw;
-            }
-            if (this.Height + dh > 20)
-            {
-                this.Height += dh;
-            }
-
-            // 4. 计算新的 Canvas 位置，使锚点保持在其捕获的屏幕位置。
-            // 尺寸更改后的新局部锚点位置
-            Point anchorLocalNew;
-            switch (direction)
-            {
-                case ResizeGripDirection.TopLeft:
-                    anchorLocalNew = new Point(this.Width, this.Height);
-                    break;
-                case ResizeGripDirection.Top:
-                    anchorLocalNew = new Point(this.Width / 2, this.Height);
-                    break;
-                case ResizeGripDirection.TopRight:
-                    anchorLocalNew = new Point(0, this.Height);
-                    break;
-                case ResizeGripDirection.Left:
-                    anchorLocalNew = new Point(this.Width, this.Height / 2);
-                    break;
-                case ResizeGripDirection.Right:
-                    anchorLocalNew = new Point(0, this.Height / 2);
-                    break;
-                case ResizeGripDirection.BottomLeft:
-                    anchorLocalNew = new Point(this.Width, 0);
-                    break;
-                case ResizeGripDirection.Bottom:
-                    anchorLocalNew = new Point(this.Width / 2, 0);
-                    break;
-                case ResizeGripDirection.BottomRight:
-                    anchorLocalNew = new Point(0, 0);
-                    break;
-                default:
-                    return;
+                if (this.Width + dw > 20)
+                {
+                    this.Width += dw;
+                }
+                if (this.Height + dh > 20)
+                {
+                    this.Height += dh;
+                }
             }
 
-            // 新中心点到新锚点在局部空间中的偏移量
-            Point centerRelAnchorNew = new Point(this.Width / 2 - anchorLocalNew.X, this.Height / 2 - anchorLocalNew.Y);
+            // 4. 计算新的位置（仅当处于自主模式且父容器是 Canvas 时）
+            if (this.IsAutonomous && parentElement is Canvas)
+            {
+                // 尺寸更改后的新局部锚点位置
+                Point anchorLocalNew = new Point(0, 0);
+                switch (direction)
+                {
+                    case ResizeGripDirection.TopLeft:
+                        anchorLocalNew = new Point(this.Width, this.Height);
+                        break;
+                    case ResizeGripDirection.Top:
+                        anchorLocalNew = new Point(this.Width / 2, this.Height);
+                        break;
+                    case ResizeGripDirection.TopRight:
+                        anchorLocalNew = new Point(0, this.Height);
+                        break;
+                    case ResizeGripDirection.Left:
+                        anchorLocalNew = new Point(this.Width, this.Height / 2);
+                        break;
+                    case ResizeGripDirection.Right:
+                        anchorLocalNew = new Point(0, this.Height / 2);
+                        break;
+                    case ResizeGripDirection.BottomLeft:
+                        anchorLocalNew = new Point(this.Width, 0);
+                        break;
+                    case ResizeGripDirection.Bottom:
+                        anchorLocalNew = new Point(this.Width / 2, 0);
+                        break;
+                    case ResizeGripDirection.BottomRight:
+                        anchorLocalNew = new Point(0, 0);
+                        break;
+                    default:
+                        return;
+                }
 
-            // 将此偏移量旋转当前角度，以获得从面锚点到中心的屏幕空间偏移量
-            Matrix rotOnly = Matrix.Identity;
-            rotOnly.Rotate(this.RotationAngle);
-            Vector screenOffsetToCenter = rotOnly.Transform(new Vector(centerRelAnchorNew.X, centerRelAnchorNew.Y));
+                // 新中心点到新锚点在局部空间中的偏移量
+                Point centerRelAnchorNew = new Point(this.Width / 2 - anchorLocalNew.X, this.Height / 2 - anchorLocalNew.Y);
 
-            // Canvas 空间中的新中心点
-            Point centerNew = new Point(anchorScreen.X + screenOffsetToCenter.X, anchorScreen.Y + screenOffsetToCenter.Y);
+                // 将此偏移量旋转当前角度，获得屏幕空间（直立空间）下的向量
+                Matrix rotOnly = Matrix.Identity;
+                rotOnly.Rotate(this.RotationAngle);
+                Vector screenOffsetToCenter = rotOnly.Transform(new Vector(centerRelAnchorNew.X, centerRelAnchorNew.Y));
 
-            // 根据新中心点设置新的左上角位置
-            Canvas.SetLeft(this, centerNew.X - this.Width / 2);
-            Canvas.SetTop(this, centerNew.Y - this.Height / 2);
+                // 计算新的位置
+                Point centerNew = new Point(anchorScreen.X + screenOffsetToCenter.X, anchorScreen.Y + screenOffsetToCenter.Y);
+
+                Canvas.SetLeft(this, centerNew.X - this.Width / 2);
+                Canvas.SetTop(this, centerNew.Y - this.Height / 2);
+            }
         }
 
 
@@ -825,7 +893,65 @@ namespace RS.Widgets.Controls
         }
 
 
+        private void Rotation_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            RotationCompleted?.Invoke(this, this.RotationAngle);
+        }
 
+        private void Resize_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var direction = GetDirection(thumb);
+                ResizeStarted?.Invoke(this, direction);
+            }
+        }
+
+        private void Resize_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var direction = GetDirection(thumb);
+                ResizeCompleted?.Invoke(this, direction);
+            }
+        }
+
+        private ResizeGripDirection GetDirection(Thumb thumb)
+        {
+            if (thumb == PART_Top)
+            {
+                return ResizeGripDirection.Top;
+            }
+            if (thumb == PART_Bottom)
+            {
+                return ResizeGripDirection.Bottom;
+            }
+            if (thumb == PART_Left)
+            {
+                return ResizeGripDirection.Left;
+            }
+            if (thumb == PART_Right)
+            {
+                return ResizeGripDirection.Right;
+            }
+            if (thumb == PART_TopLeft)
+            {
+                return ResizeGripDirection.TopLeft;
+            }
+            if (thumb == PART_TopRight)
+            {
+                return ResizeGripDirection.TopRight;
+            }
+            if (thumb == PART_BottomLeft)
+            {
+                return ResizeGripDirection.BottomLeft;
+            }
+            if (thumb == PART_BottomRight)
+            {
+                return ResizeGripDirection.BottomRight;
+            }
+            return ResizeGripDirection.None;
+        }
     }
 }
 
