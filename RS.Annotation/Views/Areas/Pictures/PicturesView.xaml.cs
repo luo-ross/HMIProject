@@ -21,7 +21,6 @@ using System.Windows.Interop;
 using System.Windows.Threading;
 using System.Reflection.Emit;
 using RS.Annotation.Models;
-using RS.Widgets.Attached;
 using RS.Widgets.Utilities;
 
 namespace RS.Annotation.Views.Areas

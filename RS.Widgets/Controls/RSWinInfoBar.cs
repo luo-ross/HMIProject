@@ -5,20 +5,11 @@ using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
 using RS.Win32API;
 using RS.Win32API.Enums;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
-using Windows.Win32;
-using Windows.Win32.Foundation;
-using Windows.Win32.UI.WindowsAndMessaging;
 namespace RS.Widgets.Controls
 {
     [ServiceInjectConfig(ServiceLifetime.Singleton)]
@@ -84,21 +75,6 @@ namespace RS.Widgets.Controls
                         {
                             infoBarModelList = this.InfoBarModelList.ToList();
                         });
-
-                        //if (infoBarModelList.Count == 0)
-                        //{
-                        //    this.Dispatcher.Invoke(() =>
-                        //    {
-                        //        this.Visibility = Visibility.Collapsed;
-                        //    });
-                        //}
-                        //else
-                        //{
-                        //    this.Dispatcher.Invoke(() =>
-                        //    {
-                        //        this.Visibility = Visibility.Visible;
-                        //    });
-                        //}
 
                         //移除消息
                         foreach (var item in infoBarModelList)

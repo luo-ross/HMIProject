@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\Rotation.cur" />
 	  <None Remove="Controls\RSPopup.cs~RF86d15d.TMP" />
 	  <None Remove="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
@@ -43,6 +44,7 @@
 
 	<ItemGroup>
 	  <Resource Include="Assets\NoiseAsset_256X256_PNG.png" />
+	  <Resource Include="Assets\Rotation.cur" />
 	  <Resource Include="PixelShaders\BrightnessContrastEffect.ps" />
 	</ItemGroup>
 

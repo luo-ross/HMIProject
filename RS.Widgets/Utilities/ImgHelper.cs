@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -14,7 +15,6 @@ namespace RS.Widgets.Utilities
 {
     public static class ImgHelper
     {
-
 
         /// <summary>
         /// Planar格式图像转Bitmap
@@ -377,5 +377,27 @@ namespace RS.Widgets.Utilities
             }
         }
 
+
+        //public static Bitmap ToBitmap(this BitmapSource bitmapSource)
+        //{
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        var encoder = new PngBitmapEncoder();
+        //        encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+        //        encoder.Save(ms);
+        //        ms.Seek(0, SeekOrigin.Begin);
+        //        return new System.Drawing.Bitmap(ms);
+        //    }
+        //}
+
+
     }
+
+
+
+
+
+
+
+
 }

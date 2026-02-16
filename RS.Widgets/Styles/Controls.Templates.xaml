@@ -43,7 +43,9 @@
                     Fill="{TemplateBinding Foreground}"
                     IsEnabled="{TemplateBinding IsEnabled}"
                     RenderTransformOrigin="0.5,0.5"
-                    Stretch="Uniform">
+                    Stretch="Uniform"
+                    Stroke="{TemplateBinding rs:ControlsHelper.IconStroke}"
+                    StrokeThickness="{TemplateBinding rs:ControlsHelper.IconStrokeThickness}">
                     <Path.RenderTransform>
                         <RotateTransform Angle="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(rs:ControlsHelper.IconRotateAngle)}" />
                     </Path.RenderTransform>

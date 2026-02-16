@@ -136,6 +136,42 @@ namespace RS.Widgets.Controls
             element.SetValue(IconColorProperty, value);
         }
 
+
+
+        public static readonly DependencyProperty IconStrokeProperty =
+            DependencyProperty.RegisterAttached(
+                "IconStroke",
+                typeof(Brush),
+                typeof(ControlsHelper),
+                new PropertyMetadata(null));
+        public static Brush GetIconStroke(DependencyObject obj)
+        {
+            return (Brush)obj.GetValue(IconStrokeProperty);
+        }
+
+        public static void SetIconStroke(DependencyObject obj, Brush value)
+        {
+            obj.SetValue(IconStrokeProperty, value);
+        }
+
+
+
+        public static readonly DependencyProperty IconStrokeThicknessProperty =
+            DependencyProperty.RegisterAttached(
+                "IconStrokeThickness",
+                typeof(double),
+                typeof(ControlsHelper),
+                new PropertyMetadata(null));
+        public static double GetIconStrokeThickness(DependencyObject obj)
+        {
+            return (double)obj.GetValue(IconStrokeThicknessProperty);
+        }
+
+        public static void SetIconStrokeThickness(DependencyObject obj, double value)
+        {
+            obj.SetValue(IconStrokeThicknessProperty, value);
+        }
+
         #endregion
         /// <summary>
         /// 设置控件圆角

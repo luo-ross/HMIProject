@@ -1,15 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using OpenCvSharp.WpfExtensions;
+﻿using RS.Annotation.Enums;
+using RS.Annotation.Models;
 using RS.Commons;
 using RS.Commons.Enums;
-using RS.Commons.Helper;
 using RS.Widgets.Controls;
-using RS.Widgets.Enums;
-using RS.Widgets.Models;
-using RS.Annotation.Commons;
-using RS.Annotation.Enums;
+using RS.Widgets.Utilities;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -17,10 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Resources;
 using System.Windows.Shapes;
-using RS.Annotation.Models;
 using TagModel = RS.Annotation.Models.TagModel;
-using RS.Widgets.Attached;
-using RS.Widgets.Utilities;
 
 namespace RS.Annotation.Views.Areas
 {

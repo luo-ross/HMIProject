@@ -327,6 +327,12 @@
             <Grid Grid.Column="0">
                 <StackPanel>
                     <Button Content="收件箱" />
+
+                    <Slider
+                        x:Name="Test"
+                        Maximum="20"
+                        Minimum="1"
+                        Value="1" />
                 </StackPanel>
             </Grid>
             <Border
@@ -335,11 +341,14 @@
                 Background="#fff"
                 CornerRadius="10,10,0,0">
                 <!--<ContentControl Content="{Binding ViewModelSelect}" />-->
-
+                <Border.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding ElementName=Test, Path=Value}" ScaleY="{Binding ElementName=Test, Path=Value}" />
+                </Border.LayoutTransform>
 
                 <Canvas Background="AliceBlue">
+
                     <Button
-                        rs:TransformHelper.IsMonitor="True"
+                        rs:TransformHelper.IsEditable="True"
                         BorderThickness="1"
                         Content="测试"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
@@ -349,11 +358,22 @@
                         Canvas.Left="52"
                         Canvas.Top="43"
                         VerticalAlignment="Top"
-                        rs:TransformHelper.IsMonitor="True"
+                        rs:TransformHelper.IsEditable="True"
                         BorderThickness="1"
                         Content="测试"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
+
+
+                    <rs:RSTransformRig
+                        Canvas.Left="237"
+                        Canvas.Top="102"
+                        Width="200"
+                        Height="200"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RectDirection="Top" />
                 </Canvas>
+
 
             </Border>
 
