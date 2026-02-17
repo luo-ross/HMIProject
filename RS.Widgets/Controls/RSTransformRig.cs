@@ -132,12 +132,14 @@ namespace RS.Widgets.Controls
             }
         }
 
+
         private void RSTransformRig_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.Focus();
-            _mouseDownPosition = e.GetPosition(this);
-
             var window = Window.GetWindow(this);
+            _mouseDownPosition = e.GetPosition(window);
+
+            // var window = Window.GetWindow(this);
             var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
             _wasAnySelectedInStack = hitList.Any(r => r.IsSelect);
 
@@ -151,7 +153,8 @@ namespace RS.Widgets.Controls
         {
             if (this.IsAutonomous && _wasAnySelectedInStack)
             {
-                var pos = e.GetPosition(this);
+                var window = Window.GetWindow(this);
+                var pos = e.GetPosition(window);
                 var diff = pos - _mouseDownPosition;
                 if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
                     Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
@@ -188,10 +191,14 @@ namespace RS.Widgets.Controls
             else
             {
                 // 单选模式：在堆叠中寻找当前活跃项，执行循环切换；若没找到则选中最顶层
+                // 按 ZIndex 升序排序 (Back -> Front)，确保循环顺序符合视觉直觉 (Front -> Back -> Front ...)
+                // 当最顶层 (Front) 选中时，Next 是最底层 (Back)
+                hitList.Sort((a, b) => Panel.GetZIndex(a).CompareTo(Panel.GetZIndex(b)));
+
                 var current = hitList.FirstOrDefault(r => r.IsSelect);
                 var nextIndex = (current != null && hitList.Count > 1) 
                     ? (hitList.IndexOf(current) + 1) % hitList.Count 
-                    : 0;
+                    : hitList.Count - 1; // 默认选最上层 (Max Z)
 
                 SelectionService.SingleSelect(hitList[nextIndex]);
             }
@@ -208,8 +215,10 @@ namespace RS.Widgets.Controls
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            // 只有选中时才响应键盘移动
             if (!this.IsSelect || Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
+                base.OnKeyDown(e);
                 return;
             }
 
@@ -277,7 +286,31 @@ namespace RS.Widgets.Controls
         }
 
         public static readonly DependencyProperty IsSelectProperty =
-            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(false, OnIsSelectChanged));
+
+        private static void OnIsSelectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is RSTransformRig rig && (bool)e.NewValue)
+            {
+                rig.BringToFront();
+            }
+        }
+
+        private void BringToFront()
+        {
+            var parent = VisualTreeHelper.GetParent(this) as Panel;
+            if (parent == null) return;
+
+            int maxZ = 0;
+            foreach (UIElement element in parent.Children)
+            {
+                if (element != this)
+                {
+                    maxZ = Math.Max(maxZ, Panel.GetZIndex(element));
+                }
+            }
+            Panel.SetZIndex(this, maxZ + 1);
+        }
 
         public bool IsSingleSelect
         {
@@ -602,6 +635,12 @@ namespace RS.Widgets.Controls
 
         private void HandleResizeGripEnter(object sender)
         {
+            if (!this.IsSelect)
+            {
+                this.Cursor = Cursors.Arrow;
+                return;
+            }
+
             if (sender is Thumb thumb)
             {
                 UpdateResizeGripCursor(thumb, GetDirection(thumb));
@@ -610,6 +649,12 @@ namespace RS.Widgets.Controls
 
         private void HandleRotationGripEnter(object sender)
         {
+            if (!this.IsSelect)
+            {
+                this.Cursor = Cursors.Arrow;
+                return;
+            }
+
             if (sender is Thumb thumb)
             {
                 UpdateRotationGripCursor(thumb, GetDirection(thumb));
@@ -757,7 +802,10 @@ namespace RS.Widgets.Controls
 
         private void PART_MoveThumb_MouseEnter(object sender, MouseEventArgs e)
         {
-
+            if (!this.IsSelect)
+            {
+                this.Cursor = Cursors.Arrow;
+            }
         }
 
         private void PART_MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -767,14 +815,13 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            // 对于平移，我们希望它是屏幕对齐的（鼠标往右滑，元素往右走）。
-            // 由于 MoveThumb 是 PART_Root（已旋转环境）的子级，其 DragDelta 是局部坐标。
-            // 我们需要将其转回父级（直立）空间。
             Vector screenDelta;
-            if (this.PART_Root?.RenderTransform is RotateTransform rt)
+            if (this.RotationAngle != 0)
             {
+                Matrix matrix = Matrix.Identity;
+                matrix.Rotate(this.RotationAngle);
                 Vector localDelta = new Vector(e.HorizontalChange, e.VerticalChange);
-                screenDelta = rt.Value.Transform(localDelta);
+                screenDelta = matrix.Transform(localDelta);
             }
             else
             {
@@ -787,8 +834,6 @@ namespace RS.Widgets.Controls
         private void ProcessMove(Vector screenDelta)
         {
             TranslationRequested?.Invoke(this, screenDelta);
-
-            // 如果处于自主模式且在 Canvas 中，则执行自我位移
             if (this.IsAutonomous && VisualTreeHelper.GetParent(this) is Canvas canvas)
             {
                 double left = Canvas.GetLeft(this);
@@ -814,6 +859,10 @@ namespace RS.Widgets.Controls
 
         private Cursor GetResizeCursor(ResizeGripDirection resizeGripDirection)
         {
+            if (!this.IsSelect)
+            {
+                return Cursors.Arrow;
+            }
             if (BaseResizeCursorData.Bitmap == null)
             {
                 return Cursors.Arrow;
@@ -855,6 +904,11 @@ namespace RS.Widgets.Controls
 
         private Cursor GetRotationCursor(ResizeGripDirection resizeGripDirection)
         {
+            if (!this.IsSelect)
+            {
+                return Cursors.Arrow;
+            }
+
             if (BaseRotationCursorData.Bitmap == null)
             {
                 return Cursors.Arrow;
@@ -1121,7 +1175,7 @@ namespace RS.Widgets.Controls
             this.RotationAngle = finalRotation;
 
             // 通知监听器 (TransformAdorner) 更新实际元素
-            RotationRequested?.Invoke(this, finalRotation);
+            this.RotationRequested?.Invoke(this, finalRotation);
         }
 
 

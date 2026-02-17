@@ -50,6 +50,9 @@ namespace RS.Widgets.Adorners
         // 累计拖动增量（因为 ResizeEventArgs 给的是增量，我们需要总和）
         private Vector AccResizeDelta;
 
+        private Point _mouseDownPosition;
+        private bool _wasAnySelectedInStack;
+
         static TransformAdorner()
         {
         }
@@ -63,6 +66,7 @@ namespace RS.Widgets.Adorners
 
             // 使用 PreviewMouseLeftButtonDown 在 Thumb 吞掉事件之前捕获焦点
             this.PreviewMouseLeftButtonDown += TransformAdorner_PreviewMouseLeftButtonDown;
+            this.PreviewMouseLeftButtonUp += TransformAdorner_PreviewMouseLeftButtonUp;
 
             // 同步旋转
             Binding rotationBinding = new Binding();
@@ -489,9 +493,36 @@ namespace RS.Widgets.Adorners
 
         private void TransformAdorner_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.TransformRig.Select(e);
             this.Focus();
+            var window = Window.GetWindow(this);
+            _mouseDownPosition = e.GetPosition(window);
+
+            // var window = Window.GetWindow(this); // window already retrieved
+            var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
+            _wasAnySelectedInStack = hitList.Any(r => r.IsSelect);
+
+            if (!_wasAnySelectedInStack)
+            {
+                this.TransformRig.Select(e);
+            }
+
             this.InvalidateVisual();
+        }
+
+        private void TransformAdorner_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_wasAnySelectedInStack)
+            {
+                var window = Window.GetWindow(this);
+                var pos = e.GetPosition(window);
+                var diff = pos - _mouseDownPosition;
+                if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
+                    Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
+                {
+                    this.TransformRig.Select(e);
+                    this.InvalidateVisual();
+                }
+            }
         }
 
         private void UpdateVisualScale()

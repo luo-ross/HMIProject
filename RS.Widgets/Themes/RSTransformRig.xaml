@@ -485,6 +485,9 @@
                         <Trigger Property="IsSelect" Value="True">
                             <Setter TargetName="PART_Frame" Property="BorderThickness" Value="2" />
                         </Trigger>
+                        <Trigger Property="IsSelect" Value="False">
+                            <Setter TargetName="PART_MoveThumb" Property="Cursor" Value="Arrow" />
+                        </Trigger>
 
                         <Trigger Property="IsSingleSelect" Value="False">
                             <Setter TargetName="PART_RectDirectionHost" Property="Visibility" Value="Collapsed" />
