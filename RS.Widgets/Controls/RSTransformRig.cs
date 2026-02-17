@@ -7,6 +7,7 @@ using RS.Widgets.Utilities;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
@@ -100,6 +101,11 @@ namespace RS.Widgets.Controls
 
         private void RSTransformRig_Loaded(object sender, RoutedEventArgs e)
         {
+            if (this.IsSelect)
+            {
+                BringToFront();
+            }
+
             var window = Window.GetWindow(this);
             if (window != null)
             {
@@ -222,7 +228,9 @@ namespace RS.Widgets.Controls
                     ? (hitList.IndexOf(current) + 1) % hitList.Count 
                     : hitList.Count - 1; // 默认选最上层 (Max Z)
 
-                SelectionService.SingleSelect(hitList[nextIndex]);
+                var target = hitList[nextIndex];
+                SelectionService.SingleSelect(target);
+                target.BringToFront();
             }
         }
 
@@ -342,20 +350,46 @@ namespace RS.Widgets.Controls
             }
         }
 
-        private void BringToFront()
+        public void BringToFront()
         {
-            var parent = VisualTreeHelper.GetParent(this) as Panel;
+            var parent = VisualTreeHelper.GetParent(this);
             if (parent == null) return;
 
-            int maxZ = 0;
-            foreach (UIElement element in parent.Children)
+            // 如果是在 Adorner 中，parent 是 Adorner，再上一层是 AdornerLayer
+            if (parent is Adorner adorner)
             {
-                if (element != this)
+                var adornerLayer = VisualTreeHelper.GetParent(adorner) as AdornerLayer;
+                if (adornerLayer != null)
                 {
-                    maxZ = Math.Max(maxZ, Panel.GetZIndex(element));
+                    // 检查是否已经在最上层（VisualTree的最后一个子元素）
+                    int count = VisualTreeHelper.GetChildrenCount(adornerLayer);
+                    if (count > 0)
+                    {
+                        var lastChild = VisualTreeHelper.GetChild(adornerLayer, count - 1);
+                        if (lastChild == adorner)
+                        {
+                            return; // 已经在最前，无需操作，也防止 Remove/Add 触发 Unloaded/Loaded 导致死循环
+                        }
+                    }
+
+                    // AdornerLayer 默认按照添加顺序渲染，Panel.ZIndex 可能无效
+                    // 通过重新添加移动到最后（最上层）
+                    adornerLayer.Remove(adorner);
+                    adornerLayer.Add(adorner);
                 }
             }
-            Panel.SetZIndex(this, maxZ + 1);
+            else if (parent is Panel panel)
+            {
+                int maxZ = 0;
+                foreach (UIElement element in panel.Children)
+                {
+                    if (element != this)
+                    {
+                        maxZ = Math.Max(maxZ, Panel.GetZIndex(element));
+                    }
+                }
+                Panel.SetZIndex(this, maxZ + 1);
+            }
         }
 
         public bool IsSingleSelect
