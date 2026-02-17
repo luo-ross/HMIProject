@@ -91,10 +91,6 @@ namespace RS.Widgets.Adorners
             this.TransformRig.ResizeCompleted += TransformRig_ResizeCompleted;
         }
 
-        // 注意：TransformRig_RotationRequested 不再需要，因为 Binding 已经处理了 TwoWay 同步。
-
-
-
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);

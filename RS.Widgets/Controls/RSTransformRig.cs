@@ -67,6 +67,9 @@ namespace RS.Widgets.Controls
         private Thumb PART_RectDirectionArrow;
         #endregion
 
+        private Point _mouseDownPosition;
+        private bool _wasAnySelectedInStack;
+
 
         private static readonly CursorData BaseRotationCursorData;
         private static readonly CursorData BaseResizeCursorData;
@@ -103,6 +106,7 @@ namespace RS.Widgets.Controls
 
             this.Focusable = true; // 启用焦点以支持键盘输入
             this.PreviewMouseLeftButtonDown += RSTransformRig_PreviewMouseLeftButtonDown;
+            this.PreviewMouseLeftButtonUp += RSTransformRig_PreviewMouseLeftButtonUp;
             this.Loaded += RSTransformRig_Loaded;
         }
 
@@ -131,9 +135,29 @@ namespace RS.Widgets.Controls
         private void RSTransformRig_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.Focus();
-            if (this.IsAutonomous)
+            _mouseDownPosition = e.GetPosition(this);
+
+            var window = Window.GetWindow(this);
+            var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
+            _wasAnySelectedInStack = hitList.Any(r => r.IsSelect);
+
+            if (this.IsAutonomous && !_wasAnySelectedInStack)
             {
                 Select(e);
+            }
+        }
+
+        private void RSTransformRig_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (this.IsAutonomous && _wasAnySelectedInStack)
+            {
+                var pos = e.GetPosition(this);
+                var diff = pos - _mouseDownPosition;
+                if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
+                    Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
+                {
+                    Select(e);
+                }
             }
         }
 

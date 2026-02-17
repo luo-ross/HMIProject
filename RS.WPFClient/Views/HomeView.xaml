@@ -371,6 +371,26 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         RectDirection="Top" />
+
+
+                    <rs:RSTransformRig
+                        Canvas.Left="237"
+                        Canvas.Top="102"
+                        Width="200"
+                        Height="200"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RectDirection="Top" />
+
+
+                    <rs:RSTransformRig
+                        Canvas.Left="237"
+                        Canvas.Top="102"
+                        Width="200"
+                        Height="200"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RectDirection="Top" />
                 </Canvas>
 
 
