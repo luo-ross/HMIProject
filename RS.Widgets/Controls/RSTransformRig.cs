@@ -135,6 +135,11 @@ namespace RS.Widgets.Controls
 
         private void RSTransformRig_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (IsDirectionButton(e.OriginalSource))
+            {
+                return;
+            }
+
             this.Focus();
             var window = Window.GetWindow(this);
             _mouseDownPosition = e.GetPosition(window);
@@ -151,6 +156,11 @@ namespace RS.Widgets.Controls
 
         private void RSTransformRig_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (IsDirectionButton(e.OriginalSource))
+            {
+                return;
+            }
+
             if (this.IsAutonomous && _wasAnySelectedInStack)
             {
                 var window = Window.GetWindow(this);
@@ -162,6 +172,30 @@ namespace RS.Widgets.Controls
                     Select(e);
                 }
             }
+        }
+
+        private bool IsDirectionButton(object source)
+        {
+            if (source is DependencyObject dep)
+            {
+                if (PART_RectDirectionTop != null && (PART_RectDirectionTop == dep || PART_RectDirectionTop.IsAncestorOf(dep)))
+                {
+                    return true;
+                }
+                if (PART_RectDirectionBottom != null && (PART_RectDirectionBottom == dep || PART_RectDirectionBottom.IsAncestorOf(dep)))
+                {
+                    return true;
+                }
+                if (PART_RectDirectionLeft != null && (PART_RectDirectionLeft == dep || PART_RectDirectionLeft.IsAncestorOf(dep)))
+                {
+                    return true;
+                }
+                if (PART_RectDirectionRight != null && (PART_RectDirectionRight == dep || PART_RectDirectionRight.IsAncestorOf(dep)))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void Select(MouseButtonEventArgs e)
