@@ -33,8 +33,34 @@ namespace RS.Widgets.Controls
 
         private double InitialRotationOffset = 0;
 
+        #region Resize
+        private Thumb PART_Top;
+        private Thumb PART_Bottom;
+        private Thumb PART_Left;
+        private Thumb PART_Right;
+        private Thumb PART_TopLeft;
+        private Thumb PART_TopRight;
+        private Thumb PART_BottomLeft;
+        private Thumb PART_BottomRight;
+        #endregion
+
+        #region Rotation
+        private Thumb PART_TopLeftRotate;
+        private Thumb PART_TopRightRotate;
+        private Thumb PART_BottomLeftRotate;
+        private Thumb PART_BottomRightRotate;
+        #endregion
+
+
+        #region Direction
+        private Button PART_RectDirectionTop;
+        private Button PART_RectDirectionLeft;
+        private Button PART_RectDirectionRight;
+        private Button PART_RectDirectionBottom;
+        #endregion
+
         #region RotateDirectionArrow
-        private Thumb? PART_RectDirectionArrow;
+        private Thumb PART_RectDirectionArrow;
         #endregion
 
 
@@ -210,265 +236,379 @@ namespace RS.Widgets.Controls
         {
             base.OnApplyTemplate();
             this.PART_Root = this.GetTemplateChild(nameof(this.PART_Root)) as Grid;
-            
-            if (this.GetTemplateChild(nameof(this.PART_MoveThumb)) is Thumb moveThumb)
+            this.PART_MoveThumb = this.GetTemplateChild(nameof(this.PART_MoveThumb)) as Thumb;
+            this.PART_Top = this.GetTemplateChild(nameof(this.PART_Top)) as Thumb;
+            this.PART_Bottom = this.GetTemplateChild(nameof(this.PART_Bottom)) as Thumb;
+            this.PART_Left = this.GetTemplateChild(nameof(this.PART_Left)) as Thumb;
+            this.PART_Right = this.GetTemplateChild(nameof(this.PART_Right)) as Thumb;
+            this.PART_TopLeft = this.GetTemplateChild(nameof(this.PART_TopLeft)) as Thumb;
+            this.PART_TopRight = this.GetTemplateChild(nameof(this.PART_TopRight)) as Thumb;
+            this.PART_BottomLeft = this.GetTemplateChild(nameof(this.PART_BottomLeft)) as Thumb;
+            this.PART_BottomRight = this.GetTemplateChild(nameof(this.PART_BottomRight)) as Thumb;
+
+            this.PART_TopLeftRotate = this.GetTemplateChild(nameof(this.PART_TopLeftRotate)) as Thumb;
+            this.PART_TopRightRotate = this.GetTemplateChild(nameof(this.PART_TopRightRotate)) as Thumb;
+            this.PART_BottomLeftRotate = this.GetTemplateChild(nameof(this.PART_BottomLeftRotate)) as Thumb;
+            this.PART_BottomRightRotate = this.GetTemplateChild(nameof(this.PART_BottomRightRotate)) as Thumb;
+
+            this.PART_RectDirectionTop = this.GetTemplateChild(nameof(this.PART_RectDirectionTop)) as Button;
+            this.PART_RectDirectionLeft = this.GetTemplateChild(nameof(this.PART_RectDirectionLeft)) as Button;
+            this.PART_RectDirectionRight = this.GetTemplateChild(nameof(this.PART_RectDirectionRight)) as Button;
+            this.PART_RectDirectionBottom = this.GetTemplateChild(nameof(this.PART_RectDirectionBottom)) as Button;
+
+            this.PART_RectDirectionArrow = this.GetTemplateChild(nameof(this.PART_RectDirectionArrow)) as Thumb;
+
+
+
+
+            if (this.PART_MoveThumb != null)
             {
-                this.PART_MoveThumb = moveThumb;
+                this.PART_MoveThumb.MouseEnter += PART_MoveThumb_MouseEnter;
                 this.PART_MoveThumb.DragDelta += PART_MoveThumb_DragDelta;
             }
 
-            // Initialize Resize Grips
-            InitializeResizeGrip(nameof(PART_Top), ResizeGripDirection.Top);
-            InitializeResizeGrip(nameof(PART_Bottom), ResizeGripDirection.Bottom);
-            InitializeResizeGrip(nameof(PART_Left), ResizeGripDirection.Left);
-            InitializeResizeGrip(nameof(PART_Right), ResizeGripDirection.Right);
-            InitializeResizeGrip(nameof(PART_TopLeft), ResizeGripDirection.TopLeft);
-            InitializeResizeGrip(nameof(PART_TopRight), ResizeGripDirection.TopRight);
-            InitializeResizeGrip(nameof(PART_BottomLeft), ResizeGripDirection.BottomLeft);
-            InitializeResizeGrip(nameof(PART_BottomRight), ResizeGripDirection.BottomRight);
-
-            // Initialize Rotation Grips
-            InitializeRotationGrip(nameof(PART_TopLeftRotate), ResizeGripDirection.TopLeft);
-            InitializeRotationGrip(nameof(PART_TopRightRotate), ResizeGripDirection.TopRight);
-            InitializeRotationGrip(nameof(PART_BottomLeftRotate), ResizeGripDirection.BottomLeft);
-            InitializeRotationGrip(nameof(PART_BottomRightRotate), ResizeGripDirection.BottomRight);
-
-            // Initialize Direction Buttons
-            InitializeDirectionButton("PART_RectDirectionTop", RectDirection.Top);
-            InitializeDirectionButton("PART_RectDirectionLeft", RectDirection.Left);
-            InitializeDirectionButton("PART_RectDirectionRight", RectDirection.Right);
-            InitializeDirectionButton("PART_RectDirectionBottom", RectDirection.Bottom);
-
-            if (this.GetTemplateChild(nameof(this.PART_RectDirectionArrow)) is Thumb arrowThumb)
+            if (this.PART_Top != null)
             {
-                this.PART_RectDirectionArrow = arrowThumb;
+                this.PART_Top.MouseEnter += PART_Top_MouseEnter;
+                this.PART_Top.DragStarted += Resize_DragStarted;
+                this.PART_Top.DragDelta += PART_Top_DragDelta;
+                this.PART_Top.DragCompleted += Resize_DragCompleted;
+            }
+
+
+            if (this.PART_Bottom != null)
+            {
+                this.PART_Bottom.MouseEnter += PART_Bottom_MouseEnter;
+                this.PART_Bottom.DragStarted += Resize_DragStarted;
+                this.PART_Bottom.DragDelta += PART_Bottom_DragDelta;
+                this.PART_Bottom.DragCompleted += Resize_DragCompleted;
+            }
+
+
+            if (this.PART_Left != null)
+            {
+                this.PART_Left.MouseEnter += PART_Left_MouseEnter;
+                this.PART_Left.DragStarted += Resize_DragStarted;
+                this.PART_Left.DragDelta += PART_Left_DragDelta;
+                this.PART_Left.DragCompleted += Resize_DragCompleted;
+            }
+
+
+
+            if (this.PART_Right != null)
+            {
+                this.PART_Right.MouseEnter += PART_Right_MouseEnter;
+                this.PART_Right.DragStarted += Resize_DragStarted;
+                this.PART_Right.DragDelta += PART_Right_DragDelta;
+                this.PART_Right.DragCompleted += Resize_DragCompleted;
+            }
+
+            if (this.PART_TopLeft != null)
+            {
+                this.PART_TopLeft.MouseEnter += PART_TopLeft_MouseEnter;
+                this.PART_TopLeft.DragStarted += Resize_DragStarted;
+                this.PART_TopLeft.DragDelta += PART_TopLeft_DragDelta;
+                this.PART_TopLeft.DragCompleted += Resize_DragCompleted;
+            }
+
+            if (this.PART_TopRight != null)
+            {
+                this.PART_TopRight.MouseEnter += PART_TopRight_MouseEnter;
+                this.PART_TopRight.DragStarted += Resize_DragStarted;
+                this.PART_TopRight.DragDelta += PART_TopRight_DragDelta;
+                this.PART_TopRight.DragCompleted += Resize_DragCompleted;
+            }
+
+            if (this.PART_BottomLeft != null)
+            {
+                this.PART_BottomLeft.MouseEnter += PART_BottomLeft_MouseEnter;
+                this.PART_BottomLeft.DragStarted += Resize_DragStarted;
+                this.PART_BottomLeft.DragDelta += PART_BottomLeft_DragDelta;
+                this.PART_BottomLeft.DragCompleted += Resize_DragCompleted;
+            }
+
+            if (this.PART_BottomRight != null)
+            {
+                this.PART_BottomRight.MouseEnter += PART_BottomRight_MouseEnter;
+                this.PART_BottomRight.DragStarted += Resize_DragStarted;
+                this.PART_BottomRight.DragDelta += PART_BottomRight_DragDelta;
+                this.PART_BottomRight.DragCompleted += Resize_DragCompleted;
+            }
+
+
+            if (this.PART_BottomRightRotate != null)
+            {
+                this.PART_BottomRightRotate.MouseEnter += PART_BottomRightRotate_MouseEnter;
+                this.PART_BottomRightRotate.DragStarted += Rotation_DragStarted;
+                this.PART_BottomRightRotate.DragDelta += PART_BottomRightRotate_DragDelta;
+                this.PART_BottomRightRotate.DragCompleted += Rotation_DragCompleted;
+            }
+
+            if (this.PART_BottomLeftRotate != null)
+            {
+                this.PART_BottomLeftRotate.MouseEnter += PART_BottomLeftRotate_MouseEnter;
+                this.PART_BottomLeftRotate.DragStarted += Rotation_DragStarted;
+                this.PART_BottomLeftRotate.DragDelta += PART_BottomLeftRotate_DragDelta;
+                this.PART_BottomLeftRotate.DragCompleted += Rotation_DragCompleted;
+            }
+
+            if (this.PART_TopRightRotate != null)
+            {
+                this.PART_TopRightRotate.MouseEnter += PART_TopRightRotate_MouseEnter;
+                this.PART_TopRightRotate.DragStarted += Rotation_DragStarted;
+                this.PART_TopRightRotate.DragDelta += PART_TopRightRotate_DragDelta;
+                this.PART_TopRightRotate.DragCompleted += Rotation_DragCompleted;
+            }
+
+            if (this.PART_TopLeftRotate != null)
+            {
+                this.PART_TopLeftRotate.MouseEnter += PART_TopLeftRotate_MouseEnter;
+                this.PART_TopLeftRotate.DragStarted += Rotation_DragStarted;
+                this.PART_TopLeftRotate.DragDelta += PART_TopLeftRotate_DragDelta;
+                this.PART_TopLeftRotate.DragCompleted += Rotation_DragCompleted;
+            }
+
+            if (this.PART_RectDirectionTop != null)
+            {
+                this.PART_RectDirectionTop.Click += PART_RectDirectionTop_Click;
+            }
+
+            if (this.PART_RectDirectionLeft != null)
+            {
+                this.PART_RectDirectionLeft.Click += PART_RectDirectionLeft_Click;
+            }
+
+            if (this.PART_RectDirectionRight != null)
+            {
+                this.PART_RectDirectionRight.Click += PART_RectDirectionRight_Click;
+            }
+
+            if (this.PART_RectDirectionBottom != null)
+            {
+                this.PART_RectDirectionBottom.Click += PART_RectDirectionBottom_Click;
+            }
+
+            if (this.PART_RectDirectionArrow != null)
+            {
                 this.PART_RectDirectionArrow.MouseEnter += PART_RectDirectionArrow_MouseEnter;
                 this.PART_RectDirectionArrow.DragStarted += Rotation_DragStarted;
-                this.PART_RectDirectionArrow.DragDelta += Rotation_DragDelta;
+                this.PART_RectDirectionArrow.DragDelta += PART_RectDirectionArrow_DragDelta;
                 this.PART_RectDirectionArrow.DragCompleted += Rotation_DragCompleted;
             }
         }
 
-        private void InitializeResizeGrip(string partName, ResizeGripDirection direction)
-        {
-            if (GetTemplateChild(partName) is Thumb thumb)
-            {
-                thumb.Tag = direction;
-                thumb.MouseEnter += ResizeGrip_MouseEnter;
-                thumb.DragStarted += Resize_DragStarted;
-                thumb.DragDelta += ResizeGrip_DragDelta;
-                thumb.DragCompleted += Resize_DragCompleted;
-            }
-        }
-
-        private void InitializeRotationGrip(string partName, ResizeGripDirection direction)
-        {
-            if (GetTemplateChild(partName) is Thumb thumb)
-            {
-                thumb.Tag = direction;
-                thumb.MouseEnter += RotationGrip_MouseEnter;
-                thumb.DragStarted += Rotation_DragStarted;
-                thumb.DragDelta += Rotation_DragDelta;
-                thumb.DragCompleted += Rotation_DragCompleted;
-            }
-        }
-
-        private void InitializeDirectionButton(string partName, RectDirection direction)
-        {
-            if (GetTemplateChild(partName) is Button button)
-            {
-                button.Tag = direction;
-                button.Click += DirectionButton_Click;
-            }
-        }
-
-        private void DirectionButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.Tag is RectDirection direction)
-            {
-                this.RectDirection = direction;
-            }
-        }
-        }
-
         private void PART_RectDirectionArrow_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (this.PART_RectDirectionArrow == null) return;
-
+            ResizeGripDirection direction = ResizeGripDirection.None;
             switch (this.RectDirection)
             {
                 case RectDirection.Top:
-                    this.PART_RectDirectionArrow.Cursor = this.GetRotationCursor(ResizeGripDirection.Top);
+                    direction = ResizeGripDirection.Top;
                     break;
                 case RectDirection.Bottom:
-                    this.PART_RectDirectionArrow.Cursor = this.GetRotationCursor(ResizeGripDirection.Bottom);
+                    direction = ResizeGripDirection.Bottom;
                     break;
                 case RectDirection.Left:
-                    this.PART_RectDirectionArrow.Cursor = this.GetRotationCursor(ResizeGripDirection.Left);
+                    direction = ResizeGripDirection.Left;
                     break;
                 case RectDirection.Right:
-                    this.PART_RectDirectionArrow.Cursor = this.GetRotationCursor(ResizeGripDirection.Right);
+                    direction = ResizeGripDirection.Right;
                     break;
             }
+            UpdateRotationGripCursor(this.PART_RectDirectionArrow, direction);
         }
 
         private void PART_RectDirectionArrow_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Rotate_DragDelta(sender, e);
+            Rotation_DragDelta(sender, e);
         }
 
         private void PART_RectDirectionBottom_Click(object sender, RoutedEventArgs e)
         {
-            this.RectDirection = RectDirection.Bottom;
+            SetRectDirection(RectDirection.Bottom);
         }
 
         private void PART_RectDirectionRight_Click(object sender, RoutedEventArgs e)
         {
-            this.RectDirection = RectDirection.Right;
+            SetRectDirection(RectDirection.Right);
         }
 
         private void PART_RectDirectionLeft_Click(object sender, RoutedEventArgs e)
         {
-            this.RectDirection = RectDirection.Left;
+            SetRectDirection(RectDirection.Left);
         }
 
         private void PART_RectDirectionTop_Click(object sender, RoutedEventArgs e)
         {
-            this.RectDirection = RectDirection.Top;
+            SetRectDirection(RectDirection.Top);
+        }
+
+        private void SetRectDirection(RectDirection direction)
+        {
+            this.RectDirection = direction;
+        }
+
+        private void HandleResize(object sender, DragDeltaEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                ProcessResize(GetDirection(thumb), GetLocalDelta(e));
+            }
+        }
+
+        private void HandleResizeGripEnter(object sender)
+        {
+            if (sender is Thumb thumb)
+            {
+                UpdateResizeGripCursor(thumb, GetDirection(thumb));
+            }
+        }
+
+        private void HandleRotationGripEnter(object sender)
+        {
+            if (sender is Thumb thumb)
+            {
+                UpdateRotationGripCursor(thumb, GetDirection(thumb));
+            }
+        }
+
+        private void ProcessResize(ResizeGripDirection direction, Vector delta)
+        {
+            ResizeRequested?.Invoke(this, new ResizeEventArgs(direction, delta));
+            ApplySelfResize(direction, delta);
+        }
+
+        private void UpdateResizeGripCursor(Thumb thumb, ResizeGripDirection direction)
+        {
+            if (thumb != null)
+            {
+                thumb.Cursor = this.GetResizeCursor(direction);
+            }
+        }
+
+        private void UpdateRotationGripCursor(Thumb thumb, ResizeGripDirection direction)
+        {
+            if (thumb != null)
+            {
+                thumb.Cursor = this.GetRotationCursor(direction);
+            }
         }
 
         private void PART_BottomRightRotate_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Rotate_DragDelta(sender, e);
+            Rotation_DragDelta(sender, e);
         }
         private void PART_BottomRightRotate_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_BottomRightRotate.Cursor = this.GetRotationCursor(ResizeGripDirection.BottomRight);
+            HandleRotationGripEnter(sender);
         }
 
         private void PART_BottomLeftRotate_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Rotate_DragDelta(sender, e);
+            Rotation_DragDelta(sender, e);
         }
         private void PART_BottomLeftRotate_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_BottomLeftRotate.Cursor = this.GetRotationCursor(ResizeGripDirection.BottomLeft);
+            HandleRotationGripEnter(sender);
         }
 
         private void PART_TopRightRotate_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Rotate_DragDelta(sender, e);
+            Rotation_DragDelta(sender, e);
         }
         private void PART_TopRightRotate_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_TopRightRotate.Cursor = this.GetRotationCursor(ResizeGripDirection.TopRight);
+            HandleRotationGripEnter(sender);
         }
 
         private void PART_TopLeftRotate_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Rotate_DragDelta(sender, e);
+            Rotation_DragDelta(sender, e);
         }
         private void PART_TopLeftRotate_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_TopLeftRotate.Cursor = this.GetRotationCursor(ResizeGripDirection.TopLeft);
+            HandleRotationGripEnter(sender);
         }
 
 
         private void PART_BottomRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            RotationRequested?.Invoke(this, this.RotationAngle);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.BottomRight, delta));
-            ApplySelfResize(ResizeGripDirection.BottomRight, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_BottomRight_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_BottomRight.Cursor = this.GetResizeCursor(ResizeGripDirection.BottomRight);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_BottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.BottomLeft, delta));
-            ApplySelfResize(ResizeGripDirection.BottomLeft, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_BottomLeft_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_BottomLeft.Cursor = this.GetResizeCursor(ResizeGripDirection.BottomLeft);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_TopRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.TopRight, delta));
-            ApplySelfResize(ResizeGripDirection.TopRight, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_TopRight_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_TopRight.Cursor = this.GetResizeCursor(ResizeGripDirection.TopRight);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_TopLeft_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.TopLeft, delta));
-            ApplySelfResize(ResizeGripDirection.TopLeft, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_TopLeft_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_TopLeft.Cursor = this.GetResizeCursor(ResizeGripDirection.TopLeft);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_Right_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Right, delta));
-            ApplySelfResize(ResizeGripDirection.Right, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_Right_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_Right.Cursor = this.GetResizeCursor(ResizeGripDirection.Right);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_Left_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Left, delta));
-            ApplySelfResize(ResizeGripDirection.Left, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_Left_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_Left.Cursor = this.GetResizeCursor(ResizeGripDirection.Left);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_Bottom_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Bottom, delta));
-            ApplySelfResize(ResizeGripDirection.Bottom, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_Bottom_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_Bottom.Cursor = this.GetResizeCursor(ResizeGripDirection.Bottom);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_Top_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Vector delta = GetLocalDelta(e);
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeGripDirection.Top, delta));
-            ApplySelfResize(ResizeGripDirection.Top, delta);
+            HandleResize(sender, e);
         }
 
         private void PART_Top_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.PART_Top.Cursor = this.GetResizeCursor(ResizeGripDirection.Top);
+            HandleResizeGripEnter(sender);
         }
 
         private void PART_MoveThumb_MouseEnter(object sender, MouseEventArgs e)
@@ -856,10 +996,14 @@ namespace RS.Widgets.Controls
 
         private ResizeGripDirection GetDirection(Thumb thumb)
         {
-            if (thumb.Tag is ResizeGripDirection direction)
-            {
-                return direction;
-            }
+            if (thumb == PART_Top) { return ResizeGripDirection.Top; }
+            if (thumb == PART_Bottom) { return ResizeGripDirection.Bottom; }
+            if (thumb == PART_Left) { return ResizeGripDirection.Left; }
+            if (thumb == PART_Right) { return ResizeGripDirection.Right; }
+            if (thumb == PART_TopLeft || thumb == PART_TopLeftRotate) { return ResizeGripDirection.TopLeft; }
+            if (thumb == PART_TopRight || thumb == PART_TopRightRotate) { return ResizeGripDirection.TopRight; }
+            if (thumb == PART_BottomLeft || thumb == PART_BottomLeftRotate) { return ResizeGripDirection.BottomLeft; }
+            if (thumb == PART_BottomRight || thumb == PART_BottomRightRotate) { return ResizeGripDirection.BottomRight; }
             return ResizeGripDirection.None;
         }
     }
