@@ -1,27 +1,15 @@
-using CommunityToolkit.Mvvm.Input;
 using RS.Widgets.CustomEventArgs;
 using RS.Widgets.Enums;
+using RS.Widgets.Interfaces;
+using RS.Widgets.Services;
 using RS.Widgets.Structs;
 using RS.Widgets.Utilities;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Resources;
 using System.Windows.Shell;
-
-using RS.Widgets.Interfaces;
-using RS.Widgets.Services;
 
 namespace RS.Widgets.Controls
 {
@@ -245,10 +233,34 @@ namespace RS.Widgets.Controls
         {
             SelectionService.ClearSelect();
         }
+
+        public void SelectAll()
+        {
+            var window = Window.GetWindow(this);
+            if (window == null) return;
+            var allRigs = VisualHelper.FindVisualChildren<RSTransformRig>(window);
+            foreach (var rig in allRigs)
+            {
+                if (!rig.IsSelect)
+                {
+                    SelectionService.MultiSelect(rig);
+                }
+            }
+        }
         
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                if (e.Key == Key.A)
+                {
+                    SelectAll();
+                    e.Handled = true;
+                    return;
+                }
+            }
+
             // 只有选中时才响应键盘移动
             if (!this.IsSelect || Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
