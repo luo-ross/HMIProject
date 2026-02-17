@@ -103,6 +103,29 @@ namespace RS.Widgets.Controls
 
             this.Focusable = true; // 启用焦点以支持键盘输入
             this.PreviewMouseLeftButtonDown += RSTransformRig_PreviewMouseLeftButtonDown;
+            this.Loaded += RSTransformRig_Loaded;
+        }
+
+        private void RSTransformRig_Loaded(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null)
+            {
+                window.MouseLeftButtonUp -= Window_MouseLeftButtonUp;
+                window.MouseLeftButtonUp += Window_MouseLeftButtonUp;
+            }
+        }
+
+        private static void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectionService.SelectedItems.Count > 0 && sender is Window window)
+            {
+                Point pt = e.GetPosition(window);
+                if (VisualHelper.TryFindFromPoint<RSTransformRig>(window, pt) == null)
+                {
+                    UnselectAll();
+                }
+            }
         }
 
         private void RSTransformRig_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -114,54 +137,48 @@ namespace RS.Widgets.Controls
             }
         }
 
-        public void Select()
-        {
-            Select(null);
-        }
-
         public void Select(MouseButtonEventArgs e)
         {
-            bool isMultiSelect = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            var isMulti = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            var window = Window.GetWindow(this);
+            var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
 
-            // 如果是单选，且当前有鼠标点击，则尝试进行循环选择（支持重叠情况下轮流切换选择）
-            if (!isMultiSelect && e != null)
+            // 保底确保至少包含当前操作项
+            if (hitList.Count == 0)
             {
-                // 获取最顶层的父级进行命中测试
-                Visual root = Window.GetWindow(this) as Visual ?? this.FindVisualTreeRoot() as Visual;
-
-                if (root != null)
-                {
-                    Point pt = e.GetPosition(root as IInputElement);
-                    var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(root, pt);
-
-                    // 如果命中列表中有多个 Rig
-                    if (hitList.Count > 1)
-                    {
-                        // 过滤出所有自主模式下的 Rig (或者根据需求是否过滤)
-                        // hitList = hitList.Where(r => r.IsAutonomous).ToList();
-
-                        // 检查当前 “全局已选中” 的项是否在该命中列表中
-                        var currentSelected = SelectionService.SelectedItems.FirstOrDefault();
-                        if (currentSelected != null && hitList.Contains(currentSelected))
-                        {
-                            // 如果当前选中的项在叠放列表中，则选中它的下一项（按 HitTest 返回的自然视觉顺序循环）
-                            int currentIndex = hitList.IndexOf(currentSelected);
-                            int nextIndex = (currentIndex + 1) % hitList.Count;
-                            SelectionService.SingleSelect(hitList[nextIndex]);
-                            return;
-                        }
-                    }
-                }
+                hitList.Add(this);
             }
 
-            if (isMultiSelect)
+            if (isMulti)
             {
-                SelectionService.MultiSelect(this);
+                // 多选模式：如果堆叠项全部已选，则执行“一键全反选”；否则按层级贪婪选中未选中的项
+                if (hitList.Count > 1 && hitList.All(r => r.IsSelect))
+                {
+                    hitList.ForEach(r => SelectionService.MultiSelect(r));
+                }
+                else
+                {
+                    SelectionService.MultiSelect(hitList.FirstOrDefault(r => !r.IsSelect) ?? this);
+                }
             }
             else
             {
-                SelectionService.SingleSelect(this);
+                // 单选模式：在堆叠中寻找当前活跃项，执行循环切换；若没找到则选中最顶层
+                var current = hitList.FirstOrDefault(r => r.IsSelect);
+                var nextIndex = (current != null && hitList.Count > 1) 
+                    ? (hitList.IndexOf(current) + 1) % hitList.Count 
+                    : 0;
+
+                SelectionService.SingleSelect(hitList[nextIndex]);
             }
+        }
+
+        /// <summary>
+        /// 取消选中所有项
+        /// </summary>
+        public static void UnselectAll()
+        {
+            SelectionService.ClearSelect();
         }
         
 
