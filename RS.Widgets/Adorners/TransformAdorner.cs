@@ -493,7 +493,7 @@ namespace RS.Widgets.Adorners
 
         private void TransformAdorner_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.TransformRig.Select();
+            this.TransformRig.Select(e);
             this.Focus();
             this.InvalidateVisual();
         }

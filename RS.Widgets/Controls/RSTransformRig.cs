@@ -110,13 +110,50 @@ namespace RS.Widgets.Controls
             this.Focus();
             if (this.IsAutonomous)
             {
-                Select();
+                Select(e);
             }
         }
 
         public void Select()
         {
+            Select(null);
+        }
+
+        public void Select(MouseButtonEventArgs e)
+        {
             bool isMultiSelect = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+            // 如果是单选，且当前有鼠标点击，则尝试进行循环选择（支持重叠情况下轮流切换选择）
+            if (!isMultiSelect && e != null)
+            {
+                // 获取最顶层的父级进行命中测试
+                Visual root = Window.GetWindow(this) as Visual ?? this.FindVisualTreeRoot() as Visual;
+
+                if (root != null)
+                {
+                    Point pt = e.GetPosition(root as IInputElement);
+                    var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(root, pt);
+
+                    // 如果命中列表中有多个 Rig
+                    if (hitList.Count > 1)
+                    {
+                        // 过滤出所有自主模式下的 Rig (或者根据需求是否过滤)
+                        // hitList = hitList.Where(r => r.IsAutonomous).ToList();
+
+                        // 检查当前 “全局已选中” 的项是否在该命中列表中
+                        var currentSelected = SelectionService.SelectedItems.FirstOrDefault();
+                        if (currentSelected != null && hitList.Contains(currentSelected))
+                        {
+                            // 如果当前选中的项在叠放列表中，则选中它的下一项（按 HitTest 返回的自然视觉顺序循环）
+                            int currentIndex = hitList.IndexOf(currentSelected);
+                            int nextIndex = (currentIndex + 1) % hitList.Count;
+                            SelectionService.SingleSelect(hitList[nextIndex]);
+                            return;
+                        }
+                    }
+                }
+            }
+
             if (isMultiSelect)
             {
                 SelectionService.MultiSelect(this);
@@ -126,6 +163,7 @@ namespace RS.Widgets.Controls
                 SelectionService.SingleSelect(this);
             }
         }
+        
 
         protected override void OnKeyDown(KeyEventArgs e)
         {

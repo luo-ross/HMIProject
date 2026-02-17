@@ -178,6 +178,22 @@ namespace RS.Widgets.Utilities
             return element.TryFindParent<T>();
         }
 
+        public static List<T> FindAllFromPoint<T>(Visual reference, Point point) where T : DependencyObject
+        {
+            var hitList = new List<T>();
+            VisualTreeHelper.HitTest(reference, null, (result) =>
+            {
+                var hit = result.VisualHit;
+                var item = hit as T ?? hit.TryFindParent<T>();
+                if (item != null && !hitList.Contains(item))
+                {
+                    hitList.Add(item);
+                }
+                return HitTestResultBehavior.Continue;
+            }, new PointHitTestParameters(point));
+            return hitList;
+        }
+
         public static bool IsDescendantOf(this DependencyObject node, DependencyObject reference)
         {
             DependencyObject? currentNode = node;
