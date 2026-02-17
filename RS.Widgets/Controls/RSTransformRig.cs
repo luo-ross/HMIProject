@@ -901,24 +901,31 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            Vector screenDelta;
+            Vector currentDelta;
             if (this.RotationAngle != 0)
             {
                 Matrix matrix = Matrix.Identity;
                 matrix.Rotate(this.RotationAngle);
                 Vector localDelta = new Vector(e.HorizontalChange, e.VerticalChange);
-                screenDelta = matrix.Transform(localDelta);
+                currentDelta = matrix.Transform(localDelta);
             }
             else
             {
-                screenDelta = new Vector(e.HorizontalChange, e.VerticalChange);
+                currentDelta = new Vector(e.HorizontalChange, e.VerticalChange);
             }
 
-            ProcessMove(screenDelta);
+            ProcessMove(currentDelta);
         }
 
-        private void ProcessMove(Vector screenDelta)
+        private void ProcessMove(Vector delta)
         {
+            // 将本地 Delta 转换为屏幕（全局）Delta
+            // 这样无论发送者在一个缩放 2.0 的容器中，还是在未缩放的 AdornerLayer 中
+            // 广播出去的都是统一的“屏幕像素”位移
+            var selfScale = GetGlobalScaleFactor(this);
+            Vector screenDelta = new Vector(delta.X * selfScale.X, delta.Y * selfScale.Y);
+
+            // 批量应用
             foreach (var item in SelectionService.SelectedItems)
             {
                 item.PerformMove(screenDelta);
@@ -927,9 +934,24 @@ namespace RS.Widgets.Controls
 
         private void PerformMove(Vector screenDelta)
         {
-            TranslationRequested?.Invoke(this, screenDelta);
-            if (this.IsAutonomous && VisualTreeHelper.GetParent(this) is Canvas canvas)
+            // 非自主模式（如在 Adorner 中）：直接转发 Global Delta，由监听者（TransformAdorner）自己处理坐标系转换
+            if (!this.IsAutonomous)
             {
+                TranslationRequested?.Invoke(this, screenDelta);
+                return;
+            }
+
+            // 自主模式：需要将 Screen Delta 转换回 Parent 的本地坐标系
+            if (VisualTreeHelper.GetParent(this) is Canvas canvas)
+            {
+                // 获取父容器的缩放系数
+                var parentScale = GetGlobalScaleFactor(canvas);
+                
+                // 转换回本地 Delta
+                // 避免除以 0
+                double localDx = parentScale.X > 0 ? screenDelta.X / parentScale.X : screenDelta.X;
+                double localDy = parentScale.Y > 0 ? screenDelta.Y / parentScale.Y : screenDelta.Y;
+
                 // 如果 Canvas.Left/Top 显式设置了，优先使用显式设置的值
                 double canvasLeft = Canvas.GetLeft(this);
                 double canvasTop = Canvas.GetTop(this);
@@ -944,7 +966,6 @@ namespace RS.Widgets.Controls
                 {
                     // 如果没有设置 Canvas.Left，说明可能通过 RenderTransform 或 Margin 定位
                     // 使用 TranslatePoint 获取相对于 Canvas 的实际视觉位置
-                    // 这样即使 RenderTransform 稍后被重置（如果发生的话），位置也已经 Bake 到了 Canvas.Left 中
                     Point currentPos = this.TranslatePoint(new Point(0, 0), canvas);
                     left = currentPos.X;
                 }
@@ -959,8 +980,38 @@ namespace RS.Widgets.Controls
                     top = currentPos.Y;
                 }
 
-                Canvas.SetLeft(this, left + screenDelta.X);
-                Canvas.SetTop(this, top + screenDelta.Y);
+                Canvas.SetLeft(this, left + localDx);
+                Canvas.SetTop(this, top + localDy);
+            }
+        }
+        
+        private Point GetGlobalScaleFactor(Visual target)
+        {
+            try 
+            {
+                PresentationSource source = PresentationSource.FromVisual(target);
+                if (source == null) return new Point(1, 1);
+
+                Matrix matrixScreen = source.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
+                
+                // 叠加从 target 到 Root 的变换
+                if (source.RootVisual is Visual root)
+                {
+                    GeneralTransform transformToRoot = target.TransformToAncestor(root);
+                    if (transformToRoot is Transform t)
+                    {
+                        matrixScreen.Append(t.Value);
+                    }
+                }
+
+                double scaleX = Math.Sqrt(matrixScreen.M11 * matrixScreen.M11 + matrixScreen.M12 * matrixScreen.M12);
+                double scaleY = Math.Sqrt(matrixScreen.M21 * matrixScreen.M21 + matrixScreen.M22 * matrixScreen.M22);
+
+                return new Point(scaleX > 0 ? scaleX : 1, scaleY > 0 ? scaleY : 1);
+            }
+            catch
+            {
+                return new Point(1, 1);
             }
         }
 
