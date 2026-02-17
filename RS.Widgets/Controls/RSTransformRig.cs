@@ -20,10 +20,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using System.Windows.Shell;
 
+using RS.Widgets.Interfaces;
+using RS.Widgets.Services;
+
 namespace RS.Widgets.Controls
 {
-    public class RSTransformRig : Control
+    public class RSTransformRig : Control, ISelectable
     {
+        private static readonly RSSelectService<RSTransformRig> SelectionService = new RSSelectService<RSTransformRig>();
 
         #region Move
         private Thumb? PART_MoveThumb;
@@ -93,6 +97,10 @@ namespace RS.Widgets.Controls
 
         public RSTransformRig()
         {
+            var brush = new SolidColorBrush(ColorHelper.GetNextVibrantColor());
+            brush.Freeze();
+            this.SetCurrentValue(BorderBrushProperty, brush);
+
             this.Focusable = true; // 启用焦点以支持键盘输入
             this.PreviewMouseLeftButtonDown += RSTransformRig_PreviewMouseLeftButtonDown;
         }
@@ -100,6 +108,23 @@ namespace RS.Widgets.Controls
         private void RSTransformRig_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.Focus();
+            if (this.IsAutonomous)
+            {
+                Select();
+            }
+        }
+
+        public void Select()
+        {
+            bool isMultiSelect = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            if (isMultiSelect)
+            {
+                SelectionService.MultiSelect(this);
+            }
+            else
+            {
+                SelectionService.SingleSelect(this);
+            }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -155,20 +180,35 @@ namespace RS.Widgets.Controls
 
         }
 
-        public bool IsSelected
+        public bool IsSelect
         {
             get
             {
-                return (bool)GetValue(IsSelectedProperty);
+                return (bool)GetValue(IsSelectProperty);
             }
             set
             {
-                SetValue(IsSelectedProperty, value);
+                SetValue(IsSelectProperty, value);
             }
         }
 
-        public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsSelectProperty =
+            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(false));
+
+        public bool IsSingleSelect
+        {
+            get
+            {
+                return (bool)GetValue(IsSingleSelectProperty);
+            }
+            set
+            {
+                SetValue(IsSingleSelectProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty IsSingleSelectProperty =
+            DependencyProperty.Register(nameof(IsSingleSelect), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(false));
 
 
 

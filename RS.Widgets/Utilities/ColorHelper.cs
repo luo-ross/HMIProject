@@ -162,17 +162,23 @@ namespace RS.Widgets.Utilities
             return r;
         }
 
+        private static double LastHue = 0;
+        private const double GoldenRatioConjugate = 0.618033988749895;
+
+        public static Color GetNextVibrantColor()
+        {
+            // 使用黄金比例分配色相，确保颜色尽可能分散
+            LastHue = (LastHue + GoldenRatioConjugate) % 1.0;
+            
+            // 保持饱和度 0.8 和 亮度 0.9，使颜色鲜艳但不过于刺眼
+            return ColorHelper.ColorFromAhsb(1.0, LastHue, 0.8, 0.9);
+        }
+
         public static Color GetRandomColor()
         {
             var random = new Random(Guid.NewGuid().GetHashCode());
-            float hue = (float)random.NextDouble() * 360; // 0-360  
-            var hsb = new HSB
-            {
-                H = hue,
-                S = 1,
-                B = 1
-            };
-            return ColorHelper.ColorFromAhsb(1, hsb.H, hsb.S, hsb.B);
+            float hue = (float)random.NextDouble(); 
+            return ColorHelper.ColorFromAhsb(1, hue, 1, 1);
         }
 
         public static Color ColorFromHsb(double H, double S, double B)

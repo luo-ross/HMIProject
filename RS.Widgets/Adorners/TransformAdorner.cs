@@ -36,7 +36,7 @@ namespace RS.Widgets.Adorners
         private double GlobalScaleY = 1;
         private Size VisualPixelSize = new Size(0, 0);
 
-        private static TransformSelectService TransformSelectService;
+
         
         // 缩放期间的快照状态，用于消除累积误差（Capture Once Strategy）
         private Point InitialAnchorInParent;
@@ -52,7 +52,6 @@ namespace RS.Widgets.Adorners
 
         static TransformAdorner()
         {
-            TransformSelectService = new TransformSelectService();
         }
 
         public TransformAdorner(FrameworkElement adornedElement) : base(adornedElement)
@@ -490,23 +489,11 @@ namespace RS.Widgets.Adorners
         }
 
 
-        public bool IsSelect
-        {
-            get => (bool)GetValue(IsSelectProperty);
-            set => SetValue(IsSelectProperty, value);
-        }
 
-        public static readonly DependencyProperty IsSelectProperty =
-            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(TransformAdorner), new PropertyMetadata(false, OnIsSelectPropertyChanged));
-
-        private static void OnIsSelectPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var transformAdorner = d as TransformAdorner;
-        }
 
         private void TransformAdorner_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TransformSelectService.SingleSelect(this);
+            this.TransformRig.Select();
             this.Focus();
             this.InvalidateVisual();
         }

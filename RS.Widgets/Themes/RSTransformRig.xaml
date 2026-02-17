@@ -92,7 +92,6 @@
     </Style>
 
     <Style TargetType="{x:Type rs:RSTransformRig}">
-        <Setter Property="BorderBrush" Value="#1296db" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
@@ -202,6 +201,7 @@
                         </Grid>
 
                         <Border
+                            x:Name="PART_Frame"
                             Margin="-1"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="1"
@@ -482,9 +482,12 @@
                             <Setter TargetName="PART_DirectionPreviewHost" Property="Margin" Value="0,0,-20,0" />
                         </Trigger>
 
-                        <Trigger Property="IsSelected" Value="False">
+                        <Trigger Property="IsSelect" Value="True">
+                            <Setter TargetName="PART_Frame" Property="BorderThickness" Value="2" />
+                        </Trigger>
+
+                        <Trigger Property="IsSingleSelect" Value="False">
                             <Setter TargetName="PART_RectDirectionHost" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="PART_RectDirectionArrow" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
