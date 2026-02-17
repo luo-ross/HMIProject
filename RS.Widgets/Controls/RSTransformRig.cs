@@ -155,6 +155,21 @@ namespace RS.Widgets.Controls
 
         }
 
+        public bool IsSelected
+        {
+            get
+            {
+                return (bool)GetValue(IsSelectedProperty);
+            }
+            set
+            {
+                SetValue(IsSelectedProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(false));
+
 
 
         /// <summary>

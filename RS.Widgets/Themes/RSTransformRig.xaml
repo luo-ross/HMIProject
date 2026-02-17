@@ -482,6 +482,10 @@
                             <Setter TargetName="PART_DirectionPreviewHost" Property="Margin" Value="0,0,-20,0" />
                         </Trigger>
 
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="PART_RectDirectionHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_RectDirectionArrow" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
