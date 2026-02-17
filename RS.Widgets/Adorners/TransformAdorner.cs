@@ -442,8 +442,8 @@ namespace RS.Widgets.Adorners
             }
 
             // 获取元素的中心点坐标（相对于元素自身）
-            // 注意：在 Resize 过程中，RenderSize 可能会滞后于 actual Width/Height，导致中心点计算偏差，
-            // 进而导致 Adorner 的位置出现漂移。因此如果 Width/Height 已显式设置，优先使用它们。
+            // 在 Resize 过程中，RenderSize 可能会滞后于 actual Width/Height，导致中心点计算偏差，
+            // Adorner 的位置出现漂移。如果 Width/Height 已设置，优先使用它们。
             double w = AdornedFE.RenderSize.Width;
             double h = AdornedFE.RenderSize.Height;
 
@@ -464,8 +464,8 @@ namespace RS.Widgets.Adorners
                 // 获取元素中心在装饰层坐标系（直立空间）下的位置
                 Point centerInParent = t.Transform(centerLocal);
 
-                // 我们希望 Rig 的中心对准 centerInParent。
-                // 由于 Rig 的排列尺寸 is VisualPixelSize，其中心偏移应该是 VisualPixelSize / 2。
+                // 我们希望 RSTransformRig 的中心对准 centerInParent。
+                // 由于 RSTransformRig 的排列尺寸 is VisualPixelSize，它的中心偏移应该是 VisualPixelSize / 2。
                 double offsetX = centerInParent.X - VisualPixelSize.Width / 2;
                 double offsetY = centerInParent.Y - VisualPixelSize.Height / 2;
 
@@ -552,7 +552,7 @@ namespace RS.Widgets.Adorners
             if (elementTransform != null)
             {
                 // 计算 GlobalScale 时避开 RenderSize 陷阱。
-                // 我们直接看 (0,0) 和 (Width, Height) 在物理屏幕上的真实跨度。
+                // 我们直接计算 (0,0) 和 (Width, Height) 在物理屏幕上的真实跨度。
                 double logicalW = double.IsNaN(AdornedFE.Width) ? AdornedFE.ActualWidth : AdornedFE.Width;
                 double logicalH = double.IsNaN(AdornedFE.Height) ? AdornedFE.ActualHeight : AdornedFE.Height;
                 if (logicalW <= 0 || logicalH <= 0)
