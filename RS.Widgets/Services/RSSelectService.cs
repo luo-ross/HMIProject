@@ -49,6 +49,18 @@ namespace RS.Widgets.Services
             UpdateSingleSelectStatus();
         }
 
+        public void AddSelect(T item)
+        {
+            if (item == null) return;
+
+            if (!SelectedItemsInternal.Contains(item))
+            {
+                SelectedItemsInternal.Add(item);
+                item.IsSelect = true;
+                UpdateSingleSelectStatus();
+            }
+        }
+
         public void ClearSelect()
         {
             foreach (var item in SelectedItemsInternal)

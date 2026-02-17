@@ -160,12 +160,24 @@ namespace RS.Widgets.Adorners
             double dx = delta.X / (scaleX > 0 ? scaleX : 1.0);
             double dy = delta.Y / (scaleY > 0 ? scaleY : 1.0);
 
-            if (parent is Canvas)
+            if (parent is Canvas canvas)
             {
-                var x = TransformHelper.GetCanvasX(AdornedElement);
-                var y = TransformHelper.GetCanvasY(AdornedElement);
-                TransformHelper.SetCanvasX(AdornedElement, x + dx);
-                TransformHelper.SetCanvasY(AdornedElement, y + dy);
+                double left = Canvas.GetLeft(AdornedElement);
+                if (double.IsNaN(left))
+                {
+                     Point p = AdornedElement.TranslatePoint(new Point(0, 0), canvas);
+                     left = p.X;
+                }
+
+                double top = Canvas.GetTop(AdornedElement);
+                if (double.IsNaN(top))
+                {
+                     Point p = AdornedElement.TranslatePoint(new Point(0, 0), canvas);
+                     top = p.Y;
+                }
+
+                TransformHelper.SetCanvasX(AdornedElement, left + dx);
+                TransformHelper.SetCanvasY(AdornedElement, top + dy);
             }
             else
             {

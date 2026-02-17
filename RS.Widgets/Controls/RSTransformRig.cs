@@ -1,4 +1,5 @@
 using RS.Widgets.CustomEventArgs;
+using System.Linq;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
 using RS.Widgets.Services;
@@ -246,13 +247,10 @@ namespace RS.Widgets.Controls
         {
             var window = Window.GetWindow(this);
             if (window == null) return;
-            var allRigs = VisualHelper.FindVisualChildren<RSTransformRig>(window);
+            var allRigs = VisualHelper.FindVisualChildren<RSTransformRig>(window).ToList();
             foreach (var rig in allRigs)
             {
-                if (!rig.IsSelect)
-                {
-                    SelectionService.MultiSelect(rig);
-                }
+                SelectionService.AddSelect(rig);
             }
         }
         
@@ -743,6 +741,14 @@ namespace RS.Widgets.Controls
 
         private void ProcessResize(ResizeGripDirection direction, Vector delta)
         {
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.PerformResize(direction, delta);
+            }
+        }
+
+        private void PerformResize(ResizeGripDirection direction, Vector delta)
+        {
             ResizeRequested?.Invoke(this, new ResizeEventArgs(direction, delta));
             ApplySelfResize(direction, delta);
         }
@@ -913,19 +919,46 @@ namespace RS.Widgets.Controls
 
         private void ProcessMove(Vector screenDelta)
         {
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.PerformMove(screenDelta);
+            }
+        }
+
+        private void PerformMove(Vector screenDelta)
+        {
             TranslationRequested?.Invoke(this, screenDelta);
             if (this.IsAutonomous && VisualTreeHelper.GetParent(this) is Canvas canvas)
             {
-                double left = Canvas.GetLeft(this);
-                double top = Canvas.GetTop(this);
-                if (double.IsNaN(left))
+                // 如果 Canvas.Left/Top 显式设置了，优先使用显式设置的值
+                double canvasLeft = Canvas.GetLeft(this);
+                double canvasTop = Canvas.GetTop(this);
+                double left;
+                double top;
+
+                if (!double.IsNaN(canvasLeft))
                 {
-                    left = 0;
+                    left = canvasLeft;
                 }
-                if (double.IsNaN(top))
+                else
                 {
-                    top = 0;
+                    // 如果没有设置 Canvas.Left，说明可能通过 RenderTransform 或 Margin 定位
+                    // 使用 TranslatePoint 获取相对于 Canvas 的实际视觉位置
+                    // 这样即使 RenderTransform 稍后被重置（如果发生的话），位置也已经 Bake 到了 Canvas.Left 中
+                    Point currentPos = this.TranslatePoint(new Point(0, 0), canvas);
+                    left = currentPos.X;
                 }
+
+                if (!double.IsNaN(canvasTop))
+                {
+                    top = canvasTop;
+                }
+                else
+                {
+                    Point currentPos = this.TranslatePoint(new Point(0, 0), canvas);
+                    top = currentPos.Y;
+                }
+
                 Canvas.SetLeft(this, left + screenDelta.X);
                 Canvas.SetTop(this, top + screenDelta.Y);
             }
@@ -1084,20 +1117,28 @@ namespace RS.Widgets.Controls
 
             // 获取相对于父容器的左上角位置
             double left = 0, top = 0;
-            if (parentElement is Canvas)
+            if (parentElement is Canvas canvas)
             {
-                left = Canvas.GetLeft(this);
-                top = Canvas.GetTop(this);
-            }
+                var l = Canvas.GetLeft(this);
+                var t = Canvas.GetTop(this);
 
-            if (double.IsNaN(left))
-            {
-                left = 0;
-            }
+                if (!double.IsNaN(l))
+                {
+                    left = l;
+                }
+                else
+                {
+                    left = this.TranslatePoint(new Point(0, 0), canvas).X;
+                }
 
-            if (double.IsNaN(top))
-            {
-                top = 0;
+                if (!double.IsNaN(t))
+                {
+                    top = t;
+                }
+                else
+                {
+                    top = this.TranslatePoint(new Point(0, 0), canvas).Y;
+                }
             }
 
             Point center = new Point(left + this.Width / 2, top + this.Height / 2);
@@ -1251,11 +1292,31 @@ namespace RS.Widgets.Controls
                 finalRotation += 360;
             }
 
-            // 更新本地属性以进行视觉反馈
-            this.RotationAngle = finalRotation;
+            // 计算角度增量
+            double delta = finalRotation - this.RotationAngle;
+            // 处理跨越 0/360 度的边界情况
+            if (delta > 180) delta -= 360;
+            if (delta < -180) delta += 360;
 
-            // 通知监听器 (TransformAdorner) 更新实际元素
-            this.RotationRequested?.Invoke(this, finalRotation);
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                double newAngle;
+                if (item == this)
+                {
+                    newAngle = finalRotation;
+                }
+                else
+                {
+                    newAngle = (item.RotationAngle + delta) % 360;
+                    if (newAngle < 0) newAngle += 360;
+                }
+
+                // 更新本地属性以进行视觉反馈
+                item.RotationAngle = newAngle;
+
+                // 通知监听器 (TransformAdorner) 更新实际元素
+                item.RotationRequested?.Invoke(item, newAngle);
+            }
         }
 
 
@@ -1269,8 +1330,16 @@ namespace RS.Widgets.Controls
             if (sender is Thumb thumb)
             {
                 var direction = GetDirection(thumb);
-                ResizeStarted?.Invoke(this, direction);
+                foreach (var item in SelectionService.SelectedItems)
+                {
+                    item.PerformResizeStart(direction);
+                }
             }
+        }
+
+        public void PerformResizeStart(ResizeGripDirection direction)
+        {
+            ResizeStarted?.Invoke(this, direction);
         }
 
         private void Resize_DragCompleted(object sender, DragCompletedEventArgs e)
@@ -1278,8 +1347,16 @@ namespace RS.Widgets.Controls
             if (sender is Thumb thumb)
             {
                 var direction = GetDirection(thumb);
-                ResizeCompleted?.Invoke(this, direction);
+                foreach (var item in SelectionService.SelectedItems)
+                {
+                    item.PerformResizeComplete(direction);
+                }
             }
+        }
+
+        public void PerformResizeComplete(ResizeGripDirection direction)
+        {
+            ResizeCompleted?.Invoke(this, direction);
         }
 
         private ResizeGripDirection GetDirection(Thumb thumb)
