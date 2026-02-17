@@ -184,6 +184,11 @@ namespace RS.Widgets.Controls
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (!this.IsSelect || Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                return;
+            }
+
             base.OnKeyDown(e);
 
             double step = 10.0; // 粗调
@@ -560,6 +565,11 @@ namespace RS.Widgets.Controls
 
         private void HandleResize(object sender, DragDeltaEventArgs e)
         {
+            if (!this.IsSelect || Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                return;
+            }
+
             if (sender is Thumb thumb)
             {
                 ProcessResize(GetDirection(thumb), GetLocalDelta(e));
@@ -728,6 +738,11 @@ namespace RS.Widgets.Controls
 
         private void PART_MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (!this.IsSelect || Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                return;
+            }
+
             // 对于平移，我们希望它是屏幕对齐的（鼠标往右滑，元素往右走）。
             // 由于 MoveThumb 是 PART_Root（已旋转环境）的子级，其 DragDelta 是局部坐标。
             // 我们需要将其转回父级（直立）空间。
@@ -1049,6 +1064,11 @@ namespace RS.Widgets.Controls
 
         private void Rotation_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            if (!this.IsSelect || Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                return;
+            }
+
             var parent = VisualTreeHelper.GetParent(this) as UIElement;
             if (parent == null)
             {
