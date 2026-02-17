@@ -105,7 +105,6 @@ namespace RS.Widgets.Adorners
             }
 
 
-
             double step = 10.0; // 粗调
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {

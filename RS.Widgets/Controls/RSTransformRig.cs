@@ -58,7 +58,7 @@ namespace RS.Widgets.Controls
         #endregion
 
         private Point _mouseDownPosition;
-        private bool _wasAnySelectedInStack;
+        private bool AnySelectedInStack;
 
 
         private static readonly CursorData BaseRotationCursorData;
@@ -141,9 +141,9 @@ namespace RS.Widgets.Controls
 
             // var window = Window.GetWindow(this);
             var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
-            _wasAnySelectedInStack = hitList.Any(r => r.IsSelect);
+            AnySelectedInStack = hitList.Any(r => r.IsSelect);
 
-            if (this.IsAutonomous && !_wasAnySelectedInStack)
+            if (this.IsAutonomous && !AnySelectedInStack)
             {
                 Select(e);
             }
@@ -156,7 +156,7 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            if (this.IsAutonomous && _wasAnySelectedInStack)
+            if (this.IsAutonomous && AnySelectedInStack)
             {
                 var window = Window.GetWindow(this);
                 var pos = e.GetPosition(window);
