@@ -361,6 +361,17 @@
                         Maximum="100"
                         Minimum="0"
                         Value="0" />
+
+                    <CheckBox
+                        Margin="0,10,0,0"
+                        x:Name="CkIsDirectionEnabled"
+                        Content="启用方向箭头 (IsDirectionEnabled)" />
+
+                    <CheckBox
+                        Margin="0,10,0,0"
+                        x:Name="CkIsRotationEnabled"
+                        IsChecked="True"
+                        Content="启用旋转 (IsRotationEnabled)" />
                 </StackPanel>
             </Grid>
             <Border
@@ -381,23 +392,29 @@
                     <Button
                         Width="{Binding ElementName=Test1, Path=Value}"
                         rs:TransformHelper.IsEditable="True"
+                        rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
+                        rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
                         BorderThickness="1"
-                        Content="测试"
+                        Content="测试按钮 1"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
 
 
                     <Button
                         Width="{Binding ElementName=Test1, Path=Value}"
                         rs:TransformHelper.IsEditable="True"
+                        rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
+                        rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
                         BorderThickness="1"
-                        Content="测试"
+                        Content="测试按钮 2"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
 
                     <Button
                         Width="{Binding ElementName=Test1, Path=Value}"
                         rs:TransformHelper.IsEditable="True"
+                        rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
+                        rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
                         BorderThickness="1"
-                        Content="测试"
+                        Content="测试按钮 3"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
 
 

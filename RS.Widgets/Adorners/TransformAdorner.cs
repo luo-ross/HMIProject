@@ -117,6 +117,34 @@ namespace RS.Widgets.Adorners
             Visuals = new VisualCollection(this) { TransformVisual };
 
             this.Focusable = true;
+            this.Loaded += TransformAdorner_Loaded;
+        }
+
+        private void TransformAdorner_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.IsSelect)
+            {
+                BringToFront();
+            }
+
+            var window = Window.GetWindow(this);
+            if (window != null)
+            {
+                window.MouseLeftButtonUp -= Window_MouseLeftButtonUp;
+                window.MouseLeftButtonUp += Window_MouseLeftButtonUp;
+            }
+        }
+
+        private static void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectionService.SelectedItems.Count > 0 && sender is Window window)
+            {
+                Point pt = e.GetPosition(window);
+                if (VisualHelper.TryFindFromPoint<TransformAdorner>(window, pt) == null)
+                {
+                    UnselectAll();
+                }
+            }
         }
 
 
@@ -166,6 +194,28 @@ namespace RS.Widgets.Adorners
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
 
+        public bool IsDirectionEnabled
+        {
+            get { return (bool)GetValue(IsDirectionEnabledProperty); }
+            set { SetValue(IsDirectionEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDirectionEnabledProperty =
+            DependencyProperty.Register(nameof(IsDirectionEnabled), typeof(bool), typeof(TransformAdorner),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
+
+
+        public bool IsRotationEnabled
+        {
+            get { return (bool)GetValue(IsRotationEnabledProperty); }
+            set { SetValue(IsRotationEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsRotationEnabledProperty =
+            DependencyProperty.Register(nameof(IsRotationEnabled), typeof(bool), typeof(TransformAdorner),
+                new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
+
+
         private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TransformAdorner adorner)
@@ -180,6 +230,14 @@ namespace RS.Widgets.Adorners
         public void Select()
         {
             Select(null);
+        }
+
+        /// <summary>
+        /// 取消选中所有项
+        /// </summary>
+        public static void UnselectAll()
+        {
+            SelectionService.ClearSelect();
         }
 
         /// <summary>
@@ -323,7 +381,7 @@ namespace RS.Widgets.Adorners
             {
                 return;
             }
-            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, HoveredDirectionButton);
+            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, IsDirectionEnabled, HoveredDirectionButton);
         }
 
         protected override int VisualChildrenCount
@@ -346,7 +404,7 @@ namespace RS.Widgets.Adorners
         /// </summary>
         private TransformOperation HitTest(Point p)
         {
-            return TransformVisual.HitTest(p, VisualPixelSize, RectDirection);
+            return TransformVisual.HitTest(p, VisualPixelSize, RectDirection, IsDirectionEnabled, IsRotationEnabled);
         }
 
         /// <summary>
@@ -452,7 +510,7 @@ namespace RS.Widgets.Adorners
             Point pt = ToLocalPoint(e.GetPosition(this));
 
             // 检测方向按钮悬停（方向按钮在 body 外面，必须独立检测）
-            if (IsSingleSelect)
+            if (IsSingleSelect && IsDirectionEnabled)
             {
                 var hitDir = TransformVisual.HitTestDirectionButton(pt, VisualPixelSize, RectDirection);
                 RectDirection? newHover = (hitDir != RectDirection) ? hitDir : (RectDirection?)null;

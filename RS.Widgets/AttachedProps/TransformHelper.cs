@@ -56,11 +56,51 @@ namespace RS.Widgets.Controls
             UpdateTransformAdorner(frameworkElement, isEditable);
         }
 
-      
+        public static readonly DependencyProperty IsDirectionEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "IsDirectionEnabled",
+                typeof(bool),
+                typeof(TransformHelper),
+                new FrameworkPropertyMetadata(false, OnTransformBoolPropertyChanged));
 
+        public static bool GetIsDirectionEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsDirectionEnabledProperty);
+        }
+
+        public static void SetIsDirectionEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsDirectionEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsRotationEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "IsRotationEnabled",
+                typeof(bool),
+                typeof(TransformHelper),
+                new FrameworkPropertyMetadata(true, OnTransformBoolPropertyChanged));
+
+        public static bool GetIsRotationEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsRotationEnabledProperty);
+        }
+
+        public static void SetIsRotationEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsRotationEnabledProperty, value);
+        }
+
+        private static void OnTransformBoolPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = d as FrameworkElement;
+            if (element != null && element.IsLoaded && GetIsEditable(element))
+            {
+                UpdateTransformAdorner(element, true);
+            }
+        }
         public static void UpdateTransformAdorner(FrameworkElement element, bool isEditable)
         {
-            if (element==null)
+            if (element == null)
             {
                 return;
             }
@@ -73,7 +113,11 @@ namespace RS.Widgets.Controls
             RemoveTransformAdorner(adornerLayer, element);
             if (isEditable)
             {
-                var transformAdorner = new TransformAdorner(element);
+                var transformAdorner = new TransformAdorner(element)
+                {
+                    IsDirectionEnabled = GetIsDirectionEnabled(element),
+                    IsRotationEnabled = GetIsRotationEnabled(element)
+                };
                 adornerLayer.Add(transformAdorner);
             }
         }

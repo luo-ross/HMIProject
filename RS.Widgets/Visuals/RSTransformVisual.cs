@@ -55,8 +55,9 @@ namespace RS.Widgets.Visuals
         /// <param name="isSelect">元素是否被选中（边框加粗）。</param>
         /// <param name="isSingleSelect">是否显示方向按钮。</param>
         /// <param name="rectDirection">方向箭头指向的边。</param>
+        /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
         /// <param name="hoveredDirection">悬停的方向（可选）。</param>
-        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, RectDirection? hoveredDirection = null)
+        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, RectDirection? hoveredDirection = null)
         {
             if (size.Width <= 0 || size.Height <= 0)
             {
@@ -83,20 +84,23 @@ namespace RS.Widgets.Visuals
                 var pen = isSelect ? FramePenSelected : FramePen;
                 dc.DrawRectangle(Brushes.Transparent, pen, new Rect(0, 0, w, h));
 
-                // 2. 绘制方向箭头（带有柄的箭头），柄的粗细与边框一致
-                DrawDirectionArrow(dc, w, h, rectDirection, isSelect);
-
-                // 3. 绘制方向按钮（仅在单选时显示）
-                if (isSingleSelect)
+                if (isDirectionEnabled)
                 {
-                    DrawDirectionButtons(dc, w, h, rectDirection, hoveredDirection);
+                    // 2. 绘制方向箭头（带有柄的箭头），柄的粗细与边框一致
+                    DrawDirectionArrow(dc, w, h, rectDirection, isSelect);
 
-                    // 4. 在悬停的方向绘制预览箭头（使用对比色）
-                    if (hoveredDirection.HasValue && hoveredDirection.Value != rectDirection)
+                    // 3. 绘制方向按钮（仅在单选时显示）
+                    if (isSingleSelect)
                     {
-                        var contrastBrush = GetContrastBrush(BorderBrush);
-                        var contrastStemPen = new Pen(contrastBrush, isSelect ? 2.0 : 1.0);
-                        DrawDirectionArrow(dc, w, h, hoveredDirection.Value, isSelect, contrastBrush, contrastStemPen);
+                        DrawDirectionButtons(dc, w, h, rectDirection, hoveredDirection);
+
+                        // 4. 在悬停的方向绘制预览箭头（使用对比色）
+                        if (hoveredDirection.HasValue && hoveredDirection.Value != rectDirection)
+                        {
+                            var contrastBrush = GetContrastBrush(BorderBrush);
+                            var contrastStemPen = new Pen(contrastBrush, isSelect ? 2.0 : 1.0);
+                            DrawDirectionArrow(dc, w, h, hoveredDirection.Value, isSelect, contrastBrush, contrastStemPen);
+                        }
                     }
                 }
             }
@@ -361,7 +365,9 @@ namespace RS.Widgets.Visuals
         /// <param name="point">局部坐标系内的点。</param>
         /// <param name="size">被装饰元素的视觉尺寸。</param>
         /// <param name="currentDirection">当前的方向。</param>
-        public TransformOperation HitTest(Point point, Size size, RectDirection currentDirection)
+        /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
+        /// <param name="isRotationEnabled">是否启用了旋转功能。</param>
+        public TransformOperation HitTest(Point point, Size size, RectDirection currentDirection, bool isDirectionEnabled, bool isRotationEnabled = true)
         {
             double w = size.Width;
             double h = size.Height;
@@ -391,21 +397,24 @@ namespace RS.Widgets.Visuals
             }
 
             // 2. 检查旋转角点（次要优先级）
-            if (IsPointInRect(point, tl, RotateHitSize))
+            if (isRotationEnabled)
             {
-                return TransformOperation.RotateTopLeft;
-            }
-            if (IsPointInRect(point, tr, RotateHitSize))
-            {
-                return TransformOperation.RotateTopRight;
-            }
-            if (IsPointInRect(point, br, RotateHitSize))
-            {
-                return TransformOperation.RotateBottomRight;
-            }
-            if (IsPointInRect(point, bl, RotateHitSize))
-            {
-                return TransformOperation.RotateBottomLeft;
+                if (IsPointInRect(point, tl, RotateHitSize))
+                {
+                    return TransformOperation.RotateTopLeft;
+                }
+                if (IsPointInRect(point, tr, RotateHitSize))
+                {
+                    return TransformOperation.RotateTopRight;
+                }
+                if (IsPointInRect(point, br, RotateHitSize))
+                {
+                    return TransformOperation.RotateBottomRight;
+                }
+                if (IsPointInRect(point, bl, RotateHitSize))
+                {
+                    return TransformOperation.RotateBottomLeft;
+                }
             }
 
             // 3. 检查缩放边缘
@@ -427,30 +436,33 @@ namespace RS.Widgets.Visuals
             }
 
             // 4. 检查主方向箭头（用于旋转）
-            Rect? arrowRect = null;
-            double aw = ArrowWidth;
-            double ah = ArrowHeight;
-            switch (currentDirection)
+            if (isDirectionEnabled && isRotationEnabled)
             {
-                case RectDirection.Top:
-                    arrowRect = new Rect((w - aw) / 2, -ArrowMarginOffset, aw, ah);
-                    break;
+                Rect? arrowRect = null;
+                double aw = ArrowWidth;
+                double ah = ArrowHeight;
+                switch (currentDirection)
+                {
+                    case RectDirection.Top:
+                        arrowRect = new Rect((w - aw) / 2, -ArrowMarginOffset, aw, ah);
+                        break;
 
-                case RectDirection.Bottom:
-                    arrowRect = new Rect((w - aw) / 2, h + ArrowMarginOffset - ah, aw, ah);
-                    break;
+                    case RectDirection.Bottom:
+                        arrowRect = new Rect((w - aw) / 2, h + ArrowMarginOffset - ah, aw, ah);
+                        break;
 
-                case RectDirection.Left:
-                    arrowRect = new Rect(-ArrowMarginOffset, (h - aw) / 2, ah, aw);
-                    break;
+                    case RectDirection.Left:
+                        arrowRect = new Rect(-ArrowMarginOffset, (h - aw) / 2, ah, aw);
+                        break;
 
-                case RectDirection.Right:
-                    arrowRect = new Rect(w + ArrowMarginOffset - ah, (h - aw) / 2, ah, aw);
-                    break;
-            }
-            if (arrowRect.HasValue && arrowRect.Value.Contains(point))
-            {
-                return TransformOperation.Rotate;
+                    case RectDirection.Right:
+                        arrowRect = new Rect(w + ArrowMarginOffset - ah, (h - aw) / 2, ah, aw);
+                        break;
+                }
+                if (arrowRect.HasValue && arrowRect.Value.Contains(point))
+                {
+                    return TransformOperation.Rotate;
+                }
             }
 
             // 5. 检查主体内部（用于移动）
