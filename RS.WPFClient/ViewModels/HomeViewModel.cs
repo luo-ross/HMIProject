@@ -294,6 +294,11 @@ namespace RS.WPFClient.ViewModels
         }
 
 
+        public TransformData MyTransformData { get; set; } = new TransformData();
+        public TransformData MyTransformData2 { get; set; } = new TransformData();
+        public TransformData MyTransformData3 { get; set; } = new TransformData();
+
+
         #endregion
 
 

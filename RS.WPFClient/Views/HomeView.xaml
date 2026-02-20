@@ -372,6 +372,35 @@
                         x:Name="CkIsRotationEnabled"
                         IsChecked="True"
                         Content="启用旋转 (IsRotationEnabled)" />
+
+                    <Separator Margin="0,15" />
+
+                    <TextBlock Text="实时变换数据 (TransformData):" FontWeight="Bold" Foreground="#333" />
+                    <StackPanel Margin="5,10,0,0" TextBlock.FontSize="11">
+                    <TextBlock Text="{Binding MyTransformData.X, StringFormat='[1] X: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData.Y, StringFormat='[1] Y: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData.Width, StringFormat='[1] Width: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData.Height, StringFormat='[1] Height: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData.Angle, StringFormat='[1] Angle: {0:F}°'}" />
+                    <TextBlock Text="{Binding MyTransformData.TopLeft, StringFormat='[1] TL: {0:F}'}" Foreground="Blue" />
+                    <TextBlock Text="{Binding MyTransformData.TopRight, StringFormat='[1] TR: {0:F}'}" Foreground="Blue" />
+                    <TextBlock Text="{Binding MyTransformData.BottomLeft, StringFormat='[1] BL: {0:F}'}" Foreground="Blue" />
+                    <TextBlock Text="{Binding MyTransformData.BottomRight, StringFormat='[1] BR: {0:F}'}" Foreground="Blue" />
+
+                    <Separator Margin="0,5" />
+                    <TextBlock Text="{Binding MyTransformData2.X, StringFormat='[2] X: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData2.Y, StringFormat='[2] Y: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData2.Width, StringFormat='[2] Width: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData2.Height, StringFormat='[2] Height: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData2.Angle, StringFormat='[2] Angle: {0:F}°'}" />
+
+                    <Separator Margin="0,5" />
+                    <TextBlock Text="{Binding MyTransformData3.X, StringFormat='[3] X: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData3.Y, StringFormat='[3] Y: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData3.Width, StringFormat='[3] Width: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData3.Height, StringFormat='[3] Height: {0:F}'}" />
+                    <TextBlock Text="{Binding MyTransformData3.Angle, StringFormat='[3] Angle: {0:F}°'}" />
+                    </StackPanel>
                 </StackPanel>
             </Grid>
             <Border
@@ -394,6 +423,7 @@
                         rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
                         rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
+                        rs:TransformHelper.TransformData="{Binding MyTransformData}"
                         BorderThickness="1"
                         Content="测试按钮 1"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
@@ -404,6 +434,7 @@
                         rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
                         rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
+                        rs:TransformHelper.TransformData="{Binding MyTransformData2}"
                         BorderThickness="1"
                         Content="测试按钮 2"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />
@@ -413,6 +444,7 @@
                         rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
                         rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
+                        rs:TransformHelper.TransformData="{Binding MyTransformData3}"
                         BorderThickness="1"
                         Content="测试按钮 3"
                         Style="{StaticResource RSApp.Styles.DefaultButton}" />

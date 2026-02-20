@@ -2,6 +2,7 @@
 using RS.Widgets.CustomEventArgs;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
+using RS.Widgets.Models;
 using RS.Widgets.Services;
 using RS.Widgets.Structs;
 using RS.Widgets.Utilities;
@@ -215,6 +216,20 @@ namespace RS.Widgets.Adorners
             DependencyProperty.Register(nameof(IsRotationEnabled), typeof(bool), typeof(TransformAdorner),
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
+        private TransformData dataModel;
+        public TransformData DataModel
+        {
+            get
+            {
+                return dataModel;
+            }
+            set
+            {
+                dataModel = value;
+                UpdateDataModel();
+            }
+        }
+
 
         private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -382,6 +397,7 @@ namespace RS.Widgets.Adorners
                 return;
             }
             TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, IsDirectionEnabled, HoveredDirectionButton);
+            UpdateDataModel();
         }
 
         protected override int VisualChildrenCount
@@ -1008,6 +1024,7 @@ namespace RS.Widgets.Adorners
             }
 
             TranslationRequested?.Invoke(this, screenDelta);
+            UpdateDataModel();
         }
 
         #endregion
@@ -1393,6 +1410,7 @@ namespace RS.Widgets.Adorners
             }
 
             ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeDirection, localDelta));
+            UpdateDataModel();
         }
 
         private void EndResize()
@@ -1501,6 +1519,7 @@ namespace RS.Widgets.Adorners
             this.RotationAngle = newAngle;
             TransformHelper.SetRotation(AdornedElement, newAngle);
             RotationRequested?.Invoke(this, newAngle);
+            UpdateDataModel();
         }
 
         private void EndRotation()
@@ -1539,9 +1558,69 @@ namespace RS.Widgets.Adorners
             {
                 this.RectDirection = directionHit;
                 UpdateVisual();
+                UpdateDataModel();
                 return true;
             }
             return false;
+        }
+
+        #endregion
+
+        #region DataModel Sync
+
+        /// <summary>
+        /// 更新绑定的数据模型
+        /// </summary>
+        public void UpdateDataModel()
+        {
+            if (DataModel == null || AdornedFE == null)
+            {
+                return;
+            }
+
+            var parent = VisualTreeHelper.GetParent(AdornedFE) as UIElement;
+            if (parent == null)
+            {
+                return;
+            }
+
+            // 基本数据
+            DataModel.Width = AdornedFE.ActualWidth;
+            DataModel.Height = AdornedFE.ActualHeight;
+            DataModel.Angle = RotationAngle;
+            DataModel.Direction = RectDirection;
+
+            // 位置 (Canvas 或 Transform)
+            if (parent is Canvas)
+            {
+                double x_coord = Canvas.GetLeft(AdornedFE);
+                double y_coord = Canvas.GetTop(AdornedFE);
+
+                // 如果是 NaN (未设置)，尝试通过坐标转换还原
+                if (double.IsNaN(x_coord) || double.IsNaN(y_coord))
+                {
+                    Point pos = AdornedFE.TranslatePoint(new Point(0, 0), parent);
+                    if (double.IsNaN(x_coord)) x_coord = pos.X;
+                    if (double.IsNaN(y_coord)) y_coord = pos.Y;
+                }
+
+                DataModel.X = x_coord;
+                DataModel.Y = y_coord;
+            }
+            else
+            {
+                DataModel.X = TransformHelper.GetTransformX(AdornedFE);
+                DataModel.Y = TransformHelper.GetTransformY(AdornedFE);
+            }
+
+            // 四个角点坐标 (相对于父容器)
+            double w = AdornedFE.ActualWidth;
+            double h = AdornedFE.ActualHeight;
+
+            DataModel.TopLeft = AdornedFE.TranslatePoint(new Point(0, 0), parent);
+            DataModel.TopRight = AdornedFE.TranslatePoint(new Point(w, 0), parent);
+            DataModel.BottomLeft = AdornedFE.TranslatePoint(new Point(0, h), parent);
+            DataModel.BottomRight = AdornedFE.TranslatePoint(new Point(w, h), parent);
         }
 
         #endregion

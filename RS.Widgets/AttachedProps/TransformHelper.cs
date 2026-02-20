@@ -1,5 +1,6 @@
 ﻿using RS.Widgets.Adorners;
 using RS.Widgets.Converters;
+using RS.Widgets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,6 +99,47 @@ namespace RS.Widgets.Controls
                 UpdateTransformAdorner(element, true);
             }
         }
+        public static readonly DependencyProperty TransformDataProperty =
+            DependencyProperty.RegisterAttached(
+                "TransformData",
+                typeof(TransformData),
+                typeof(TransformHelper),
+                new FrameworkPropertyMetadata(null, OnTransformDataPropertyChanged));
+
+        private static void OnTransformDataPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = d as FrameworkElement;
+            if (element != null && element.IsLoaded && GetIsEditable(element))
+            {
+                var adornerLayer = AdornerLayer.GetAdornerLayer(element);
+                if (adornerLayer != null)
+                {
+                    var adorners = adornerLayer.GetAdorners(element);
+                    if (adorners != null)
+                    {
+                        foreach (var adorner in adorners)
+                        {
+                            if (adorner is TransformAdorner ta)
+                            {
+                                ta.DataModel = e.NewValue as TransformData;
+                                ta.UpdateDataModel();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static TransformData GetTransformData(DependencyObject obj)
+        {
+            return (TransformData)obj.GetValue(TransformDataProperty);
+        }
+
+        public static void SetTransformData(DependencyObject obj, TransformData value)
+        {
+            obj.SetValue(TransformDataProperty, value);
+        }
+
         public static void UpdateTransformAdorner(FrameworkElement element, bool isEditable)
         {
             if (element == null)
@@ -116,7 +158,8 @@ namespace RS.Widgets.Controls
                 var transformAdorner = new TransformAdorner(element)
                 {
                     IsDirectionEnabled = GetIsDirectionEnabled(element),
-                    IsRotationEnabled = GetIsRotationEnabled(element)
+                    IsRotationEnabled = GetIsRotationEnabled(element),
+                    DataModel = GetTransformData(element)
                 };
                 adornerLayer.Add(transformAdorner);
             }
