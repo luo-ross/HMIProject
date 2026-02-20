@@ -26,6 +26,7 @@ namespace RS.Widgets.Enums
         /// <summary>
         /// 向右开口
         /// </summary>
-        Right
+        Right,
+      
     }
 }

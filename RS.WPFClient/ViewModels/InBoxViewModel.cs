@@ -14,7 +14,7 @@ using System.Collections.ObjectModel;
 
 namespace RS.WPFClient.ViewModels
 {
-    public class InBoxViewModel : ViewModelBase
+    public class InBoxViewModel: ViewModelBase
     {
         private List<EmailModel> RawMailList = new List<EmailModel>();
         public ICommand DeleteCommand { get; }
@@ -58,6 +58,7 @@ namespace RS.WPFClient.ViewModels
             EmailSelectCommand = new RelayCommand(EmailSelect);
             EmailDetailViewModel = new EmailDetailViewModel();
 
+           
             InitTestData();
         }
 

@@ -328,11 +328,39 @@
                 <StackPanel>
                     <Button Content="收件箱" />
 
+
                     <Slider
-                        x:Name="Test"
+                        x:Name="WidthSlider"
+                        Maximum="500"
+                        Minimum="100"
+                        Value="100" />
+
+                    <Slider
+                        x:Name="HeightSlider"
+                        Maximum="300"
+                        Minimum="20"
+                        Value="20" />
+
+
+                    <Slider
+                        x:Name="ScaleSlider"
                         Maximum="20"
-                        Minimum="1"
+                        Minimum="0"
+                        SmallChange="0.1"
                         Value="1" />
+
+
+                    <Slider
+                        x:Name="RotateSlider"
+                        Maximum="360"
+                        Minimum="0"
+                        Value="0" />
+
+                    <Slider
+                        x:Name="SkewSlider"
+                        Maximum="100"
+                        Minimum="0"
+                        Value="0" />
                 </StackPanel>
             </Grid>
             <Border
@@ -342,12 +370,16 @@
                 CornerRadius="10,10,0,0">
                 <!--<ContentControl Content="{Binding ViewModelSelect}" />-->
                 <Border.LayoutTransform>
-                    <ScaleTransform ScaleX="{Binding ElementName=Test, Path=Value}" ScaleY="{Binding ElementName=Test, Path=Value}" />
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding ElementName=ScaleSlider, Path=Value}" ScaleY="{Binding ElementName=ScaleSlider, Path=Value}" />
+                        <!--<RotateTransform Angle="{Binding ElementName=RotateSlider, Path=Value}" />-->
+                        <!--<SkewTransform AngleX="{Binding ElementName=SkewSlider}" AngleY="{Binding ElementName=SkewSlider, Path=Value}" />-->
+                    </TransformGroup>
                 </Border.LayoutTransform>
 
-                <Canvas Background="AliceBlue">
-
+                <Canvas Background="AliceBlue" ClipToBounds="True">
                     <Button
+                        Width="{Binding ElementName=Test1, Path=Value}"
                         rs:TransformHelper.IsEditable="True"
                         BorderThickness="1"
                         Content="测试"
@@ -355,8 +387,14 @@
 
 
                     <Button
-                        Canvas.Left="52"
-                        Canvas.Top="43"
+                        Width="{Binding ElementName=Test1, Path=Value}"
+                        rs:TransformHelper.IsEditable="True"
+                        BorderThickness="1"
+                        Content="测试"
+                        Style="{StaticResource RSApp.Styles.DefaultButton}" />
+
+                    <Button
+                        Width="{Binding ElementName=Test1, Path=Value}"
                         rs:TransformHelper.IsEditable="True"
                         BorderThickness="1"
                         Content="测试"
@@ -381,6 +419,19 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         RectDirection="Top" />
+
+
+
+
+                    <rs:RSTransformRig
+                        Canvas.Left="237"
+                        Canvas.Top="102"
+                        Width="200"
+                        Height="200"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        RectDirection="Top" />
+
 
 
                     <rs:RSTransformRig

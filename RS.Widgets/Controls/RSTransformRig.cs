@@ -1,4 +1,4 @@
-using RS.Widgets.CustomEventArgs;
+﻿using RS.Widgets.CustomEventArgs;
 using System.Linq;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
@@ -57,7 +57,7 @@ namespace RS.Widgets.Controls
         private Thumb PART_RectDirectionArrow;
         #endregion
 
-        private Point _mouseDownPosition;
+        private Point MouseDownPosition;
         private bool AnySelectedInStack;
 
 
@@ -137,13 +137,13 @@ namespace RS.Widgets.Controls
 
             this.Focus();
             var window = Window.GetWindow(this);
-            _mouseDownPosition = e.GetPosition(window);
+            MouseDownPosition = e.GetPosition(window);
 
             // var window = Window.GetWindow(this);
             var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
             AnySelectedInStack = hitList.Any(r => r.IsSelect);
 
-            if (this.IsAutonomous && !AnySelectedInStack)
+            if (!AnySelectedInStack)
             {
                 Select(e);
             }
@@ -156,11 +156,11 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            if (this.IsAutonomous && AnySelectedInStack)
+            if (AnySelectedInStack)
             {
                 var window = Window.GetWindow(this);
                 var pos = e.GetPosition(window);
-                var diff = pos - _mouseDownPosition;
+                var diff = pos - MouseDownPosition;
                 if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
                     Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
                 {
@@ -225,8 +225,8 @@ namespace RS.Widgets.Controls
                 hitList.Sort((a, b) => Panel.GetZIndex(a).CompareTo(Panel.GetZIndex(b)));
 
                 var current = hitList.FirstOrDefault(r => r.IsSelect);
-                var nextIndex = (current != null && hitList.Count > 1) 
-                    ? (hitList.IndexOf(current) + 1) % hitList.Count 
+                var nextIndex = (current != null && hitList.Count > 1)
+                    ? (hitList.IndexOf(current) + 1) % hitList.Count
                     : hitList.Count - 1; // 默认选最上层 (Max Z)
 
                 var target = hitList[nextIndex];
@@ -246,14 +246,17 @@ namespace RS.Widgets.Controls
         public void SelectAll()
         {
             var window = Window.GetWindow(this);
-            if (window == null) return;
+            if (window == null)
+            {
+                return;
+            }
             var allRigs = VisualHelper.FindVisualChildren<RSTransformRig>(window).ToList();
             foreach (var rig in allRigs)
             {
                 SelectionService.AddSelect(rig);
             }
         }
-        
+
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -351,32 +354,12 @@ namespace RS.Widgets.Controls
         public void BringToFront()
         {
             var parent = VisualTreeHelper.GetParent(this);
-            if (parent == null) return;
-
-            // 如果是在 Adorner 中，parent 是 Adorner，再上一层是 AdornerLayer
-            if (parent is Adorner adorner)
+            if (parent == null)
             {
-                var adornerLayer = VisualTreeHelper.GetParent(adorner) as AdornerLayer;
-                if (adornerLayer != null)
-                {
-                    // 检查是否已经在最上层（VisualTree的最后一个子元素）
-                    int count = VisualTreeHelper.GetChildrenCount(adornerLayer);
-                    if (count > 0)
-                    {
-                        var lastChild = VisualTreeHelper.GetChild(adornerLayer, count - 1);
-                        if (lastChild == adorner)
-                        {
-                            return; // 已经在最前，无需操作，也防止 Remove/Add 触发 Unloaded/Loaded 导致死循环
-                        }
-                    }
-
-                    // AdornerLayer 默认按照添加顺序渲染，Panel.ZIndex 可能无效
-                    // 通过重新添加移动到最后（最上层）
-                    adornerLayer.Remove(adorner);
-                    adornerLayer.Add(adorner);
-                }
+                return;
             }
-            else if (parent is Panel panel)
+
+            if (parent is Panel panel)
             {
                 int maxZ = 0;
                 foreach (UIElement element in panel.Children)
@@ -461,24 +444,6 @@ namespace RS.Widgets.Controls
 
         public static readonly DependencyProperty ScaleYProperty =
             DependencyProperty.Register(nameof(ScaleY), typeof(double), typeof(RSTransformRig), new PropertyMetadata(1D));
-
-        public bool IsAutonomous
-        {
-            get
-            {
-                return (bool)GetValue(IsAutonomousProperty);
-            }
-            set
-            {
-                SetValue(IsAutonomousProperty, value);
-            }
-        }
-
-        public static readonly DependencyProperty IsAutonomousProperty =
-            DependencyProperty.Register(nameof(IsAutonomous), typeof(bool), typeof(RSTransformRig), new PropertyMetadata(true));
-
-
-
 
 
 
@@ -934,19 +899,12 @@ namespace RS.Widgets.Controls
 
         private void PerformMove(Vector screenDelta)
         {
-            // 非自主模式（如在 Adorner 中）：直接转发 Global Delta，由监听者（TransformAdorner）自己处理坐标系转换
-            if (!this.IsAutonomous)
-            {
-                TranslationRequested?.Invoke(this, screenDelta);
-                return;
-            }
-
             // 自主模式：需要将 Screen Delta 转换回 Parent 的本地坐标系
             if (VisualTreeHelper.GetParent(this) is Canvas canvas)
             {
                 // 获取父容器的缩放系数
                 var parentScale = GetGlobalScaleFactor(canvas);
-                
+
                 // 转换回本地 Delta
                 // 避免除以 0
                 double localDx = parentScale.X > 0 ? screenDelta.X / parentScale.X : screenDelta.X;
@@ -984,16 +942,16 @@ namespace RS.Widgets.Controls
                 Canvas.SetTop(this, top + localDy);
             }
         }
-        
+
         private Point GetGlobalScaleFactor(Visual target)
         {
-            try 
+            try
             {
                 PresentationSource source = PresentationSource.FromVisual(target);
                 if (source == null) return new Point(1, 1);
 
                 Matrix matrixScreen = source.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
-                
+
                 // 叠加从 target 到 Root 的变换
                 if (source.RootVisual is Visual root)
                 {
@@ -1122,11 +1080,6 @@ namespace RS.Widgets.Controls
 
         private void ApplySelfResize(ResizeGripDirection direction, Vector delta)
         {
-            if (!this.IsAutonomous)
-            {
-                return;
-            }
-
             // 确定在本次缩放期间应保持固定的局部锚点。
             Point anchorLocal = new Point(0, 0);
             switch (direction)
@@ -1346,8 +1299,14 @@ namespace RS.Widgets.Controls
             // 计算角度增量
             double delta = finalRotation - this.RotationAngle;
             // 处理跨越 0/360 度的边界情况
-            if (delta > 180) delta -= 360;
-            if (delta < -180) delta += 360;
+            if (delta > 180)
+            {
+                delta -= 360;
+            }
+            if (delta < -180)
+            {
+                delta += 360;
+            }
 
             foreach (var item in SelectionService.SelectedItems)
             {
@@ -1359,7 +1318,10 @@ namespace RS.Widgets.Controls
                 else
                 {
                     newAngle = (item.RotationAngle + delta) % 360;
-                    if (newAngle < 0) newAngle += 360;
+                    if (newAngle < 0)
+                    {
+                        newAngle += 360;
+                    }
                 }
 
                 // 更新本地属性以进行视觉反馈
@@ -1412,14 +1374,38 @@ namespace RS.Widgets.Controls
 
         private ResizeGripDirection GetDirection(Thumb thumb)
         {
-            if (thumb == PART_Top) { return ResizeGripDirection.Top; }
-            if (thumb == PART_Bottom) { return ResizeGripDirection.Bottom; }
-            if (thumb == PART_Left) { return ResizeGripDirection.Left; }
-            if (thumb == PART_Right) { return ResizeGripDirection.Right; }
-            if (thumb == PART_TopLeft || thumb == PART_TopLeftRotate) { return ResizeGripDirection.TopLeft; }
-            if (thumb == PART_TopRight || thumb == PART_TopRightRotate) { return ResizeGripDirection.TopRight; }
-            if (thumb == PART_BottomLeft || thumb == PART_BottomLeftRotate) { return ResizeGripDirection.BottomLeft; }
-            if (thumb == PART_BottomRight || thumb == PART_BottomRightRotate) { return ResizeGripDirection.BottomRight; }
+            if (thumb == PART_Top)
+            {
+                return ResizeGripDirection.Top;
+            }
+            if (thumb == PART_Bottom)
+            {
+                return ResizeGripDirection.Bottom;
+            }
+            if (thumb == PART_Left)
+            {
+                return ResizeGripDirection.Left;
+            }
+            if (thumb == PART_Right)
+            {
+                return ResizeGripDirection.Right;
+            }
+            if (thumb == PART_TopLeft || thumb == PART_TopLeftRotate)
+            {
+                return ResizeGripDirection.TopLeft;
+            }
+            if (thumb == PART_TopRight || thumb == PART_TopRightRotate)
+            {
+                return ResizeGripDirection.TopRight;
+            }
+            if (thumb == PART_BottomLeft || thumb == PART_BottomLeftRotate)
+            {
+                return ResizeGripDirection.BottomLeft;
+            }
+            if (thumb == PART_BottomRight || thumb == PART_BottomRightRotate)
+            {
+                return ResizeGripDirection.BottomRight;
+            }
             return ResizeGripDirection.None;
         }
     }

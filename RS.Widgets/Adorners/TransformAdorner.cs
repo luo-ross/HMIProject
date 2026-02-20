@@ -1,15 +1,11 @@
-﻿using RS.Widgets.Adorners;
-using RS.Widgets.Controls;
+﻿using RS.Widgets.Controls;
 using RS.Widgets.CustomEventArgs;
+using RS.Widgets.Enums;
+using RS.Widgets.Interfaces;
 using RS.Widgets.Services;
+using RS.Widgets.Structs;
 using RS.Widgets.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RS.Widgets.Visuals;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -17,136 +13,905 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Media.Media3D;
 using System.Windows.Shell;
-using System.Xml.Linq;
+
 
 namespace RS.Widgets.Adorners
 {
-    public class TransformAdorner : Adorner
+    public class TransformAdorner : Adorner, ISelectable
     {
-        private readonly RSTransformRig TransformRig;
-        private FrameworkElement AdornedFE
-        {
-            get { return AdornedElement as FrameworkElement; }
-        }
-        
+        private FrameworkElement AdornedFE => AdornedElement as FrameworkElement;
+
+        // 全局选中服务（所有 TransformAdorner 实例共享）
+        private static readonly RSSelectService<TransformAdorner> SelectionService = new RSSelectService<TransformAdorner>();
+
+
         private double GlobalScaleX = 1;
         private double GlobalScaleY = 1;
         private Size VisualPixelSize = new Size(0, 0);
 
+        // 用于渲染的可复用 DrawingVisual
+        private readonly RSTransformVisual TransformVisual;
+        private readonly VisualCollection Visuals;
 
-        
-        // 缩放期间的快照状态，用于消除累积误差（Capture Once Strategy）
-        private Point InitialAnchorInParent;
-        private double InitialWidth;
-        private double InitialHeight;
-        private Matrix InitialTransformMatrix;
+        // 布局边距 — 扩大 Adorner 的布局边界，
+        // 以便在 AdornedElement (负坐标) 外部绘制的区域
+        // 仍可接收来自 AdornerLayer 的鼠标命中测试事件。
+        private const double HitPadding = 10.0;
 
-        // 缩放期间锁定 GlobalScale 防止抖动
-        private bool IsResizing = false;
-        
-        // 累计拖动增量（因为 ResizeEventArgs 给的是增量，我们需要总和）
-        private Vector AccResizeDelta;
+        // 缓存的光标数据（加载一次，在实例间共享）
+        private static readonly CursorData BaseRotationCursorData;
+        private static readonly CursorData BaseResizeCursorData;
 
-        private Point _mouseDownPosition;
-        private bool _wasAnySelectedInStack;
+        // ── 鼠标 / 拖拽状态 ──
+        private bool IsMouseCaptured;         // 鼠标已被捕获（MouseDown 后）
+        private bool IsDragging;              // 已超过最小拖拽阈值，正式开始拖拽
+        private TransformOperation PendingOperation;  // MouseDown 时 hit-test 结果（拖拽操作候选）
+        private TransformOperation CurrentOperation;  // 实际拖拽中的操作
+        private Point MouseDownPosition;      // MouseDown 时在父级坐标系中的位置
+        private Point LastMouseScreen;        // 上一帧鼠标在父级坐标系中的位置
+
+        // ── 方向按钮悬停状态 ──
+        private RectDirection? HoveredDirectionButton;
+
+        // ── 旋转状态 ──
+        private double InitialRotationOffset;
+
+        // ── 缩放状态 (一次性捕获策略，与老版本一致) ──
+        private bool IsResizing;
+        private Point ResizeAnchorInParent;
+        private double ResizeInitialWidth;
+        private double ResizeInitialHeight;
+        private Matrix ResizeInitialTransformMatrix;
+        private Vector ResizeAccDelta;
+        private ResizeGripDirection ResizeDirection;
+
+
+        // ── Events (与 RSTransformRig 的签名一致) ──
+        public event EventHandler<double>? RotationRequested;
+        public event EventHandler<double>? RotationCompleted;
+        public event EventHandler<Vector>? TranslationRequested;
+        public event EventHandler<ResizeGripDirection>? ResizeStarted;
+        public event EventHandler<ResizeEventArgs>? ResizeRequested;
+        public event EventHandler<ResizeGripDirection>? ResizeCompleted;
+
 
         static TransformAdorner()
         {
+            // 加载自定义旋转光标
+            var resourceStream = Application.GetResourceStream(new Uri("pack://application:,,,/RS.Widgets;component/Assets/Rotation.cur"));
+            if (resourceStream != null)
+            {
+                BaseRotationCursorData = CursorHelper.GetCursorData(new Cursor(resourceStream.Stream));
+                BaseRotationCursorData.HotspotX = (int)(BaseRotationCursorData.Bitmap.Width / 2);
+                BaseRotationCursorData.HotspotY = (int)(BaseRotationCursorData.Bitmap.Height / 2);
+            }
+
+            // 使用系统原生的 SizeNS (上下缩放) 光标作为所有旋转缩放的基础
+            BaseResizeCursorData = CursorHelper.GetCursorData(Cursors.SizeNS);
         }
+
+
+
+
+        public Brush BorderBrush
+        {
+            get { return (Brush)GetValue(BorderBrushProperty); }
+            set { SetValue(BorderBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty BorderBrushProperty =
+            DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(TransformAdorner),
+                new PropertyMetadata(null, OnVisualPropertyChanged));
+
+
 
         public TransformAdorner(FrameworkElement adornedElement) : base(adornedElement)
         {
-            TransformRig = new RSTransformRig();
-            TransformRig.IsAutonomous = false;
-            AddVisualChild(TransformRig);
-            this.Focusable = true; // 启用焦点以支持键盘输入
+            var brush = new SolidColorBrush(ColorHelper.GetNextVibrantColor());
+            brush.Freeze();
+            this.SetCurrentValue(BorderBrushProperty, brush);
 
-            // 使用 PreviewMouseLeftButtonDown 在 Thumb 吞掉事件之前捕获焦点
-            this.PreviewMouseLeftButtonDown += TransformAdorner_PreviewMouseLeftButtonDown;
-            this.PreviewMouseLeftButtonUp += TransformAdorner_PreviewMouseLeftButtonUp;
+            TransformVisual = new RSTransformVisual();
+            Visuals = new VisualCollection(this) { TransformVisual };
 
-            // 同步旋转
-            Binding rotationBinding = new Binding();
-            rotationBinding.Source = adornedElement;
-            rotationBinding.Path = new PropertyPath(TransformHelper.RotationProperty);
-            rotationBinding.Mode = BindingMode.TwoWay;
-            BindingOperations.SetBinding(TransformRig, RSTransformRig.RotationAngleProperty, rotationBinding);
-
-            // 同步 ScaleX
-            Binding scaleXBinding = new Binding();
-            scaleXBinding.Source = adornedElement;
-            scaleXBinding.Path = new PropertyPath(TransformHelper.ScaleXProperty);
-            scaleXBinding.Mode = BindingMode.TwoWay;
-            BindingOperations.SetBinding(TransformRig, RSTransformRig.ScaleXProperty, scaleXBinding);
-
-            // 同步 ScaleY
-            Binding scaleYBinding = new Binding();
-            scaleYBinding.Source = adornedElement;
-            scaleYBinding.Path = new PropertyPath(TransformHelper.ScaleYProperty);
-            scaleYBinding.Mode = BindingMode.TwoWay;
-            BindingOperations.SetBinding(TransformRig, RSTransformRig.ScaleYProperty, scaleYBinding);
-
-            this.TransformRig.TranslationRequested += TransformRig_TranslationRequested;
-            this.TransformRig.ResizeRequested += TransformRig_ResizeRequested;
-            this.TransformRig.ResizeStarted += TransformRig_ResizeStarted;
-            this.TransformRig.ResizeCompleted += TransformRig_ResizeCompleted;
+            this.Focusable = true;
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+
+
+        #region Properties
+
+        public double RotationAngle
         {
-            base.OnKeyDown(e);
-            
+            get { return (double)GetValue(RotationAngleProperty); }
+            set { SetValue(RotationAngleProperty, value); }
+        }
+
+        public static readonly DependencyProperty RotationAngleProperty =
+            DependencyProperty.Register(nameof(RotationAngle), typeof(double), typeof(TransformAdorner),
+                new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
+
+        public RectDirection RectDirection
+        {
+            get { return (RectDirection)GetValue(RectDirectionProperty); }
+            set { SetValue(RectDirectionProperty, value); }
+        }
+
+        public static readonly DependencyProperty RectDirectionProperty =
+            DependencyProperty.Register(nameof(RectDirection), typeof(RectDirection), typeof(TransformAdorner),
+                new FrameworkPropertyMetadata(RectDirection.Top, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
+
+
+        public bool IsSelect
+        {
+            get { return (bool)GetValue(IsSelectProperty); }
+            set { SetValue(IsSelectProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsSelectProperty =
+            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(TransformAdorner),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
+
+
+        public bool IsSingleSelect
+        {
+            get { return (bool)GetValue(IsSingleSelectProperty); }
+            set { SetValue(IsSingleSelectProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsSingleSelectProperty =
+            DependencyProperty.Register(nameof(IsSingleSelect), typeof(bool), typeof(TransformAdorner),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
+
+
+        private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TransformAdorner adorner)
+            {
+                adorner.UpdateVisual();
+            }
+        }
+
+        /// <summary>
+        /// 无参数调用默认选中自身（如代码调用或键盘导航）
+        /// </summary>
+        public void Select()
+        {
+            Select(null);
+        }
+
+        /// <summary>
+        /// 处理选中逻辑：包含堆叠时的循环选择逻辑。无 Ctrl → 单选，Ctrl → 多选。
+        /// 返回最终确定的交互目标，以便将由于 AdornerLayer 层级错乱而错误拦截的鼠标事件正确转发。
+        /// </summary>
+        private TransformAdorner Select(MouseButtonEventArgs e)
+        {
+            var isMulti = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            var window = Window.GetWindow(this);
+            var hitList = e != null ? VisualHelper.FindAllFromPoint<TransformAdorner>(window, e.GetPosition(window)) : new List<TransformAdorner>();
+
+            // 保底确保至少包含当前操作项
+            if (hitList.Count == 0)
+            {
+                hitList.Add(this);
+            }
+
+            if (isMulti)
+            {
+                // 多选堆叠模式：
+                // 按 ZIndex 和 VisualTree 顺序排序 (Back -> Front)
+                hitList.Sort((a, b) => 
+                {
+                    UIElement elA = a.AdornedElement as UIElement;
+                    UIElement elB = b.AdornedElement as UIElement;
+                    if (elA == null || elB == null)
+                    {
+                        return 0;
+                    }
+                    
+                    Panel pA = VisualTreeHelper.GetParent(elA) as Panel;
+                    Panel pB = VisualTreeHelper.GetParent(elB) as Panel;
+                    if (pA != pB || pA == null)
+                    {
+                        return 0; 
+                    }
+                
+                    int zA = Panel.GetZIndex(elA);
+                    int zB = Panel.GetZIndex(elB);
+                    if (zA != zB)
+                    {
+                        return zA.CompareTo(zB);
+                    }
+                
+                    int idxA = pA.Children.IndexOf(elA);
+                    int idxB = pB.Children.IndexOf(elB);
+                    return idxA.CompareTo(idxB);
+                });
+
+                // 反转为 Front -> Back 顺序，这样找 FirstOrDefault(未选中) 时就是在从最上面往下找
+                hitList.Reverse();
+
+                if (hitList.Count > 1 && hitList.All(r => r.IsSelect))
+                {
+                    // 如果堆叠项全部已选，则执行“一键全反选”
+                    hitList.ForEach(r => SelectionService.MultiSelect(r));
+                    return this; // 多选全部取消，焦点留在此处
+                }
+                else
+                {
+                    // 按从上到下的层级，贪婪选中第一个未选中的项
+                    var target = hitList.FirstOrDefault(r => !r.IsSelect) ?? this;
+                    SelectionService.MultiSelect(target);
+                    // 多选时不自动置顶，保持原层级
+                    return target;
+                }
+            }
+            else
+            {
+                // 单选模式
+                // 按 ZIndex 和 VisualTree 顺序排序 (Back -> Front)
+                hitList.Sort((a, b) => 
+                {
+                    UIElement elA = a.AdornedElement as UIElement;
+                    UIElement elB = b.AdornedElement as UIElement;
+                    if (elA == null || elB == null)
+                    {
+                        return 0;
+                    }
+                    
+                    Panel pA = VisualTreeHelper.GetParent(elA) as Panel;
+                    Panel pB = VisualTreeHelper.GetParent(elB) as Panel;
+                    if (pA != pB || pA == null)
+                    {
+                        return 0; 
+                    }
+                
+                    int zA = Panel.GetZIndex(elA);
+                    int zB = Panel.GetZIndex(elB);
+                    if (zA != zB)
+                    {
+                        return zA.CompareTo(zB);
+                    }
+                
+                    int idxA = pA.Children.IndexOf(elA);
+                    int idxB = pB.Children.IndexOf(elB);
+                    return idxA.CompareTo(idxB);
+                });
+
+                var current = hitList.FirstOrDefault(r => r.IsSelect);
+                
+                // 找到当前选中项后，切换到其下一层；若无选中项，则选中最上层 (末尾)
+                var nextIndex = (current != null && hitList.Count > 1) 
+                    ? (hitList.IndexOf(current) + 1) % hitList.Count 
+                    : hitList.Count - 1;
+
+                var target = hitList[nextIndex];
+                SelectionService.SingleSelect(target);
+                target.BringToFront();
+                return target;
+            }
+        }
+
+        private void BringToFront()
+        {
+            // 仅提升 Adorner 本身在 AdornerLayer 中的视觉层级 (通过重新添加移到末尾)
+            // 选择操作不应该去修改被装饰元素（原数据）的 ZIndex 顺序
+            var adornerLayer = VisualTreeHelper.GetParent(this) as AdornerLayer;
+            if (adornerLayer != null)
+            {
+                int count = VisualTreeHelper.GetChildrenCount(adornerLayer);
+                if (count > 0 && VisualTreeHelper.GetChild(adornerLayer, count - 1) != this)
+                {
+                    adornerLayer.Remove(this);
+                    adornerLayer.Add(this);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Rendering (Delegated to RSTransformVisual)
+
+        /// <summary>
+        /// 重绘具有当前状态的 TransformVisual。
+        /// </summary>
+        private void UpdateVisual()
+        {
+            if (TransformVisual == null)
+            {
+                return;
+            }
+            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, HoveredDirectionButton);
+        }
+
+        protected override int VisualChildrenCount
+        {
+            get { return Visuals.Count; }
+        }
+
+        protected override Visual GetVisualChild(int index)
+        {
+            return Visuals[index];
+        }
+
+        #endregion
+
+
+        #region Hit Testing & Cursor
+
+        /// <summary>
+        /// 将命中测试委托给 TransformVisual。
+        /// </summary>
+        private TransformOperation HitTest(Point p)
+        {
+            return TransformVisual.HitTest(p, VisualPixelSize, RectDirection);
+        }
+
+        /// <summary>
+        /// 将 Adorner 坐标系的点补偿 HitPadding 后转为 Visual 本地坐标。
+        /// </summary>
+        private Point ToLocalPoint(Point adornerPoint)
+        {
+            return new Point(adornerPoint.X - HitPadding, adornerPoint.Y - HitPadding);
+        }
+
+        /// <summary>
+        /// 重写 HitTestCore 以允许命中测试超出 Adorner 布局边界的地方（如旋转把手）。
+        /// </summary>
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            Point pt = ToLocalPoint(hitTestParameters.HitPoint);
+            var op = HitTest(pt);
+            if (op != TransformOperation.None)
+            {
+                return new PointHitTestResult(this, hitTestParameters.HitPoint);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Dynamically updates cursor based on which transform zone the mouse is hovering over.
+        /// During a drag operation, the cursor stays locked to the current operation.
+        /// </summary>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            // ── 已捕获但尚未开始拖拽：检查最小拖拽阈值 ──
+            if (IsMouseCaptured && !IsDragging)
+            {
+                Point current = GetScreenPosition(e);
+                Vector diff = current - MouseDownPosition;
+
+                if (Math.Abs(diff.X) >= SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(diff.Y) >= SystemParameters.MinimumVerticalDragDistance)
+                {
+                    // 超过阈值 → 正式开始拖拽
+                    CurrentOperation = PendingOperation;
+                    IsDragging = true;
+                    LastMouseScreen = current;
+
+                    // 根据操作类型初始化
+                    if (IsResizeOperation(CurrentOperation))
+                    {
+                        BeginResize(CurrentOperation);
+                    }
+                    else if (IsRotationOperation(CurrentOperation))
+                    {
+                        BeginRotation(e);
+                    }
+                }
+                else
+                {
+                    // 如果在捕获阶段但尚未超过最小拖拽距离，锁定光标为即将进行的操作
+                    this.Cursor = GetCursorForOperation(PendingOperation);
+                }
+                e.Handled = true;
+                return;
+            }
+
+            // ── 拖拽进行中：计算增量并分发 ──
+            if (IsDragging)
+            {
+                Point currentScreen = GetScreenPosition(e);
+                Vector screenDelta = currentScreen - LastMouseScreen;
+                LastMouseScreen = currentScreen;
+
+                switch (CurrentOperation)
+                {
+                    case TransformOperation.Move:
+                        PerformMoveDelta(screenDelta);
+                        break;
+
+                    case TransformOperation.ResizeTop:
+                    case TransformOperation.ResizeBottom:
+                    case TransformOperation.ResizeLeft:
+                    case TransformOperation.ResizeRight:
+                    case TransformOperation.ResizeTopLeft:
+                    case TransformOperation.ResizeTopRight:
+                    case TransformOperation.ResizeBottomLeft:
+                    case TransformOperation.ResizeBottomRight:
+                        PerformResizeDelta(screenDelta);
+                        break;
+
+                    case TransformOperation.Rotate:
+                    case TransformOperation.RotateTopLeft:
+                    case TransformOperation.RotateTopRight:
+                    case TransformOperation.RotateBottomLeft:
+                    case TransformOperation.RotateBottomRight:
+                        PerformRotationDelta(e);
+                        break;
+                }
+                e.Handled = true;
+                return;
+            }
+
+            // ── 空闲悬停：更新光标 + 方向按钮 hover ──
+            Point pt = ToLocalPoint(e.GetPosition(this));
+
+            // 检测方向按钮悬停（方向按钮在 body 外面，必须独立检测）
+            if (IsSingleSelect)
+            {
+                var hitDir = TransformVisual.HitTestDirectionButton(pt, VisualPixelSize, RectDirection);
+                RectDirection? newHover = (hitDir != RectDirection) ? hitDir : (RectDirection?)null;
+
+                if (newHover != HoveredDirectionButton)
+                {
+                    HoveredDirectionButton = newHover;
+                    UpdateVisual();
+                }
+
+                if (HoveredDirectionButton != null)
+                {
+                    this.Cursor = Cursors.Hand;
+                    return;
+                }
+            }
+            else if (HoveredDirectionButton != null)
+            {
+                HoveredDirectionButton = null;
+                UpdateVisual();
+            }
+
+            var op = HitTest(pt);
+            this.Cursor = GetCursorForOperation(op);
+        }
+
+        /// <summary>
+        /// 当鼠标离开 Adorner 时重置光标。
+        /// </summary>
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+            if (!IsDragging)
+            {
+                this.Cursor = Cursors.Arrow;
+            }
+
+            // 清除方向按钮 hover
+            if (HoveredDirectionButton != null)
+            {
+                HoveredDirectionButton = null;
+                UpdateVisual();
+            }
+        }
+
+        /// <summary>
+        /// 将 TransformOperation 映射到相应的光标。
+        /// </summary>
+        private Cursor GetCursorForOperation(TransformOperation op)
+        {
+            if (!IsSelect)
+            {
+                return Cursors.Arrow;
+            }
+
+            switch (op)
+            {
+                case TransformOperation.Move:
+                    return Cursors.SizeAll;
+
+                // ── Resize cursors (rotated by element angle) ──
+                case TransformOperation.ResizeTop:
+                case TransformOperation.ResizeBottom:
+                    return GetResizeCursor(RotationAngle);
+
+                case TransformOperation.ResizeLeft:
+                case TransformOperation.ResizeRight:
+                    return GetResizeCursor(RotationAngle + 90);
+
+                case TransformOperation.ResizeTopLeft:
+                case TransformOperation.ResizeBottomRight:
+                    return GetResizeCursor(RotationAngle - 45);
+
+                case TransformOperation.ResizeTopRight:
+                case TransformOperation.ResizeBottomLeft:
+                    return GetResizeCursor(RotationAngle + 45);
+
+                // ── Rotation cursors (rotated by element angle + corner offset) ──
+                case TransformOperation.Rotate:
+                    switch (RectDirection)
+                    {
+                        case RectDirection.Top: 
+                            return GetRotationCursor(RotationAngle - 45);
+                        case RectDirection.Right: 
+                            return GetRotationCursor(RotationAngle + 45);
+                        case RectDirection.Bottom: 
+                            return GetRotationCursor(RotationAngle + 135);
+                        case RectDirection.Left: 
+                            return GetRotationCursor(RotationAngle + 225);
+                        default: 
+                            return GetRotationCursor(RotationAngle - 45);
+                    }
+
+                case TransformOperation.RotateTopLeft:
+                    return GetRotationCursor(RotationAngle - 90);
+
+                case TransformOperation.RotateTopRight:
+                    return GetRotationCursor(RotationAngle);
+
+                case TransformOperation.RotateBottomRight:
+                    return GetRotationCursor(RotationAngle + 90);
+
+                case TransformOperation.RotateBottomLeft:
+                    return GetRotationCursor(RotationAngle + 180);
+
+                default:
+                    return Cursors.Arrow;
+            }
+        }
+
+        /// <summary>
+        /// 创建一个动态旋转的缩放光标。
+        /// </summary>
+        private Cursor GetResizeCursor(double angle)
+        {
+            if (BaseResizeCursorData.Bitmap == null)
+            {
+                return Cursors.Arrow;
+            }
+
+            var cursorData = CursorHelper.RotateCursor(BaseResizeCursorData, angle);
+            if (cursorData.Bitmap == null)
+            {
+                return Cursors.Arrow;
+            }
+
+            return CursorHelper.CreateCursor(cursorData.Bitmap, cursorData.HotspotX, cursorData.HotspotY);
+        }
+
+        /// <summary>
+        /// 创建一个动态旋转的旋转光标。
+        /// </summary>
+        private Cursor GetRotationCursor(double angle)
+        {
+            if (BaseRotationCursorData.Bitmap == null)
+            {
+                return Cursors.Arrow;
+            }
+
+            var cursorData = CursorHelper.RotateCursor(BaseRotationCursorData, angle);
+            if (cursorData.Bitmap == null)
+            {
+                return Cursors.Arrow;
+            }
+
+            return CursorHelper.CreateCursor(cursorData.Bitmap, cursorData.HotspotX, cursorData.HotspotY);
+        }
+
+        #endregion
+
+
+
+        #region Layout & measure (Simplified)
+
+
+        protected override Size MeasureOverride(Size constraint)
+        {
+            // 扩大布局边界，使命中测试能覆盖到边距区域
+            var inflated = new Size(
+                VisualPixelSize.Width + 2 * HitPadding,
+                VisualPixelSize.Height + 2 * HitPadding);
+            return base.MeasureOverride(inflated);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var inflated = new Size(
+                VisualPixelSize.Width + 2 * HitPadding,
+                VisualPixelSize.Height + 2 * HitPadding);
+            return base.ArrangeOverride(inflated);
+        }
+
+        /// <summary>
+        /// 裁剪 adorner 使其不超出 ClipToBounds=true 的父容器边界。
+        /// </summary>
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            // 沿着被装饰元素的视觉树向上查找最近的 ClipToBounds 容器
+            var clipParent = FindClippingAncestor(AdornedElement);
+            if (clipParent == null)
+            {
+                return null; // 无裁剪
+            }
+
+            try
+            {
+                // 将裁剪容器的边界矩形转换到 Adorner 本地坐标系
+                GeneralTransform toAdorner = clipParent.TransformToVisual(this);
+                Rect clipRect = new Rect(clipParent.RenderSize);
+                Rect localClip = toAdorner.TransformBounds(clipRect);
+                return new RectangleGeometry(localClip);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 沿视觉树向上查找第一个 ClipToBounds=true 的 FrameworkElement。
+        /// </summary>
+        private static FrameworkElement FindClippingAncestor(DependencyObject element)
+        {
+            DependencyObject current = VisualTreeHelper.GetParent(element);
+            while (current != null)
+            {
+                if (current is FrameworkElement fe && fe.ClipToBounds)
+                {
+                    return fe;
+                }
+                current = VisualTreeHelper.GetParent(current);
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region Layout Infrastructure
+
+        private Matrix AdornerMatrix = Matrix.Identity;
+        public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
+        {
+            var t = transform as MatrixTransform;
+            if (t == null)
+            {
+                return transform;
+            }
+            Matrix matrix = t.Value;
+            AdornerMatrix = GetMatrixWithoutScale(matrix, out double gsx, out double gsy);
+
+            // 缩放期间锁定 GlobalScale 防止抖动
+            if (!IsResizing)
+            {
+                GlobalScaleX = gsx;
+                GlobalScaleY = gsy;
+            }
+
+            double w = AdornedFE.RenderSize.Width;
+            double h = AdornedFE.RenderSize.Height;
+            if (!double.IsNaN(AdornedFE.Width) && AdornedFE.Width > 0)
+            {
+                w = AdornedFE.Width;
+            }
+            if (!double.IsNaN(AdornedFE.Height) && AdornedFE.Height > 0)
+            {
+                h = AdornedFE.Height;
+            }
+            VisualPixelSize = new Size(w * GlobalScaleX, h * GlobalScaleY);
+
+            // 在 Adorner 的局部空间中，将原点平移 -HitPadding。
+            // 矩阵包含旋转因素 (M11/M12/M21/M22)，因此必须在应用偏移之前，将边距向量通过旋转进行变换。
+            double paddingDx = AdornerMatrix.M11 * (-HitPadding) + AdornerMatrix.M21 * (-HitPadding);
+            double paddingDy = AdornerMatrix.M12 * (-HitPadding) + AdornerMatrix.M22 * (-HitPadding);
+            AdornerMatrix.OffsetX += paddingDx;
+            AdornerMatrix.OffsetY += paddingDy;
+
+            // 将 DrawingVisual 定位在放大后的 Adorner 的内部 (HitPadding, HitPadding) 处，
+            // 以便它的 (0,0) 位置仍然与元素对齐。
+            TransformVisual.Offset = new Vector(HitPadding, HitPadding);
+
+            // 每当布局变化时更新 Visual
+            UpdateVisual();
+
+            return new MatrixTransform(AdornerMatrix);
+        }
+
+        public Matrix GetMatrixWithoutScale(Matrix originalMatrix, out double scaleX, out double scaleY)
+        {
+            scaleX = Math.Sqrt(originalMatrix.M11 * originalMatrix.M11 + originalMatrix.M12 * originalMatrix.M12);
+            scaleY = Math.Sqrt(originalMatrix.M21 * originalMatrix.M21 + originalMatrix.M22 * originalMatrix.M22);
+
+            scaleX = scaleX < 1e-6 ? 1 : scaleX;
+            scaleY = scaleY < 1e-6 ? 1 : scaleY;
+
+            double m11 = originalMatrix.M11 / scaleX;
+            double m12 = originalMatrix.M12 / scaleX;
+            double m21 = originalMatrix.M21 / scaleY;
+            double m22 = originalMatrix.M22 / scaleY;
+
+            double offsetX = originalMatrix.OffsetX;
+            double offsetY = originalMatrix.OffsetY;
+
+            return new Matrix(m11, m12, m21, m22, offsetX, offsetY);
+        }
+
+
+        #endregion
+
+        #region Mouse Interaction (replaces Thumb DragStarted / DragDelta / DragCompleted)
+
+        private bool WasAnySelectedInStack = false;
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            var window = Window.GetWindow(this);
+            var hitList = VisualHelper.FindAllFromPoint<TransformAdorner>(window, e.GetPosition(window));
+            WasAnySelectedInStack = hitList.Any(r => r.IsSelect);
+
+            TransformAdorner target = this;
+
+            // 如果没有任何元素被选中，那么我们毫不犹豫地在 MouseDown 阶段进行选中
+            if (!WasAnySelectedInStack)
+            {
+                target = Select(e);
+            }
+            else
+            {
+                // 如果已经有选中的元素了，那我们暂不循环切换，可能是想拖拽！
+                // 这时我们要返回当前选中的那个，如果有多个就返回视觉树上最靠前的那个
+                
+                // 按 ZIndex 和 VisualTree 顺序排序 (Back -> Front)
+                hitList.Sort((a, b) => 
+                {
+                    UIElement elA = a.AdornedElement as UIElement;
+                    UIElement elB = b.AdornedElement as UIElement;
+                    if (elA == null || elB == null) 
+                    {
+                        return 0;
+                    }
+                    Panel pA = VisualTreeHelper.GetParent(elA) as Panel;
+                    Panel pB = VisualTreeHelper.GetParent(elB) as Panel;
+                    if (pA != pB || pA == null) 
+                    {
+                        return 0; 
+                    }
+                    int zA = Panel.GetZIndex(elA);
+                    int zB = Panel.GetZIndex(elB);
+                    if (zA != zB) 
+                    {
+                        return zA.CompareTo(zB);
+                    }
+                    int idxA = pA.Children.IndexOf(elA);
+                    int idxB = pB.Children.IndexOf(elB);
+                    return idxA.CompareTo(idxB);
+                });
+                
+                target = hitList.LastOrDefault(r => r.IsSelect) ?? this;
+            }
+
+            if (target != null && target != this)
+            {
+                // 如果决定交互的是底下一个元素（因为 AdornerLayer 会遮挡且层级可能错误拦截），
+                // 我们直接将拖拽意图路由给目标，自身放弃处理
+                target.ProcessMouseDown(e);
+                e.Handled = true;
+                return;
+            }
+
+            ProcessMouseDown(e);
+        }
+
+        internal void ProcessMouseDown(MouseButtonEventArgs e)
+        {
+            Point pt = ToLocalPoint(e.GetPosition(this));
+            var operation = HitTest(pt);
+
+            // 方向按钮点击 → 优先判断，即使 operation == None（按钮可能在 body 和箭头判定区外）也应响应
+            if (IsSingleSelect && HandleDirectionButtonClick(pt))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (operation == TransformOperation.None)
+            {
+                return;
+            }
+
+            // 记录位置和候选操作，捕获鼠标，等待 MouseMove 判断是否为拖拽
+            PendingOperation = operation;
+            MouseDownPosition = GetScreenPosition(e);
+            LastMouseScreen = MouseDownPosition;
+            IsMouseCaptured = true;
+            IsDragging = false;
+
+            this.Cursor = GetCursorForOperation(PendingOperation);
+            this.CaptureMouse();
+            this.Focus();
+            e.Handled = true;
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+            if (IsDragging)
+            {
+                // ── 拖拽结束 ──
+                if (IsResizeOperation(CurrentOperation))
+                {
+                    EndResize();
+                }
+                else if (IsRotationOperation(CurrentOperation))
+                {
+                    EndRotation();
+                }
+
+                IsDragging = false;
+                CurrentOperation = TransformOperation.None;
+            }
+            else if (IsMouseCaptured)
+            {
+                // ── 没有发生拖拽（纯点击） → 根据预存的状态决定是否执行选中（循环切或多选Toggle） ──
+                if (WasAnySelectedInStack)
+                {
+                    Select(e);
+                }
+            }
+
+            if (IsMouseCaptured)
+            {
+                IsMouseCaptured = false;
+                PendingOperation = TransformOperation.None;
+                this.ReleaseMouseCapture();
+            }
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 获取鼠标在屏幕坐标系中的位置（设备像素），
+        /// 与 Thumb.DragDelta 的坐标基准一致。
+        /// </summary>
+        private Point GetScreenPosition(MouseEventArgs e)
+        {
+            return this.PointToScreen(e.GetPosition(this));
+        }
+
+        #endregion
+
+        #region Move
+
+        private void PerformMoveDelta(Vector screenDelta)
+        {
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyMoveDelta(screenDelta);
+            }
+        }
+
+        internal void ApplyMoveDelta(Vector screenDelta)
+        {
             if (AdornedFE == null)
             {
                 return;
             }
 
-
-            double step = 10.0; // 粗调
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-            {
-                step = 1.0; // 微调
-            }
-
-            Vector delta = new Vector(0, 0);
-            switch (e.Key)
-            {
-                case Key.Left:
-                    delta.X = -step;
-                    break;
-                case Key.Right:
-                    delta.X = step;
-                    break;
-                case Key.Up:
-                    delta.Y = -step;
-                    break;
-                case Key.Down:
-                    delta.Y = step;
-                    break;
-                default:
-                    return;
-            }
-
-            ApplyTranslation(delta);
-            e.Handled = true;
-        }
-
-        private void ApplyTranslation(Vector delta)
-        {
             var parent = VisualTreeHelper.GetParent(AdornedElement) as UIElement;
             if (parent == null)
             {
                 return;
             }
 
-            // 为了平移手感灵敏，位移比例应基于“父容器相对于屏幕的缩放”
+            // 与 TransformAdorner.ApplyTranslation 一致：
+            // 计算父容器到屏幕的完整缩放，除以它使移动速度匹配鼠标
             PresentationSource source = PresentationSource.FromVisual(parent);
             Matrix matrixScreen = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
-            
-            // 叠加父容器到根节点的物理变换
+
             GeneralTransform transformToRoot = parent.TransformToAncestor(source?.RootVisual ?? parent);
             if (transformToRoot is Transform t)
             {
@@ -156,23 +921,21 @@ namespace RS.Widgets.Adorners
             double scaleX = Math.Sqrt(matrixScreen.M11 * matrixScreen.M11 + matrixScreen.M12 * matrixScreen.M12);
             double scaleY = Math.Sqrt(matrixScreen.M21 * matrixScreen.M21 + matrixScreen.M22 * matrixScreen.M22);
 
-            double dx = delta.X / (scaleX > 0 ? scaleX : 1.0);
-            double dy = delta.Y / (scaleY > 0 ? scaleY : 1.0);
+            double dx = screenDelta.X / (scaleX > 0 ? scaleX : 1.0);
+            double dy = screenDelta.Y / (scaleY > 0 ? scaleY : 1.0);
 
-            if (parent is Canvas canvas)
+            if (parent is Canvas)
             {
                 double left = Canvas.GetLeft(AdornedElement);
                 if (double.IsNaN(left))
                 {
-                     Point p = AdornedElement.TranslatePoint(new Point(0, 0), canvas);
-                     left = p.X;
+                    left = AdornedElement.TranslatePoint(new Point(0, 0), (UIElement)parent).X;
                 }
 
                 double top = Canvas.GetTop(AdornedElement);
                 if (double.IsNaN(top))
                 {
-                     Point p = AdornedElement.TranslatePoint(new Point(0, 0), canvas);
-                     top = p.Y;
+                    top = AdornedElement.TranslatePoint(new Point(0, 0), (UIElement)parent).Y;
                 }
 
                 TransformHelper.SetCanvasX(AdornedElement, left + dx);
@@ -185,28 +948,72 @@ namespace RS.Widgets.Adorners
                 TransformHelper.SetTransformX(AdornedElement, x + dx);
                 TransformHelper.SetTransformY(AdornedElement, y + dy);
             }
+
+            TranslationRequested?.Invoke(this, screenDelta);
         }
 
-        private void TransformRig_TranslationRequested(object sender, Vector delta)
+        #endregion
+
+        #region Resize
+
+        private static bool IsResizeOperation(TransformOperation op)
         {
-            ApplyTranslation(delta);
+            return op >= TransformOperation.ResizeTopLeft && op <= TransformOperation.ResizeLeft;
         }
 
-        private void TransformRig_ResizeStarted(object sender, ResizeGripDirection direction)
+        /// <summary>
+        /// 将 TransformOperation 映射为 ResizeGripDirection。
+        /// </summary>
+        private static ResizeGripDirection ToResizeDirection(TransformOperation op)
+        {
+            switch (op)
+            {
+                case TransformOperation.ResizeTop: 
+                    return ResizeGripDirection.Top;
+                case TransformOperation.ResizeBottom: 
+                    return ResizeGripDirection.Bottom;
+                case TransformOperation.ResizeLeft: 
+                    return ResizeGripDirection.Left;
+                case TransformOperation.ResizeRight: 
+                    return ResizeGripDirection.Right;
+                case TransformOperation.ResizeTopLeft: 
+                    return ResizeGripDirection.TopLeft;
+                case TransformOperation.ResizeTopRight: 
+                    return ResizeGripDirection.TopRight;
+                case TransformOperation.ResizeBottomLeft: 
+                    return ResizeGripDirection.BottomLeft;
+                case TransformOperation.ResizeBottomRight: 
+                    return ResizeGripDirection.BottomRight;
+                default: 
+                    return ResizeGripDirection.None;
+            }
+        }
+
+        /// <summary>
+        /// Capture Once — 在拖拽开始时快照锚点和初始尺寸 (同 TransformAdorner.TransformRig_ResizeStarted)。
+        /// </summary>
+        private void BeginResize(TransformOperation op)
+        {
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyBeginResize(op);
+            }
+        }
+
+        internal void ApplyBeginResize(TransformOperation op)
         {
             if (AdornedFE == null)
             {
                 return;
             }
 
-            // 锁定缩放状态，防止 UpdateVisualScale 在拖动过程中重新计算 GlobalScale
             IsResizing = true;
-            AccResizeDelta = new Vector(0, 0);
-            UpdateVisualScale();
+            ResizeAccDelta = new Vector(0, 0);
+            ResizeDirection = ToResizeDirection(op);
 
-            // 1. 确定锚点（缩放期间保持不动的逻辑点）
+            // 确定锚点
             Point anchorLocal;
-            switch (direction)
+            switch (ResizeDirection)
             {
                 case ResizeGripDirection.TopLeft:
                     anchorLocal = new Point(AdornedFE.ActualWidth, AdornedFE.ActualHeight);
@@ -236,7 +1043,6 @@ namespace RS.Widgets.Adorners
                     return;
             }
 
-            // 2. 捕获初始快照
             var parent = VisualTreeHelper.GetParent(AdornedFE) as UIElement;
             if (parent == null)
             {
@@ -244,24 +1050,31 @@ namespace RS.Widgets.Adorners
             }
 
             GeneralTransform transformToParent = AdornedFE.TransformToVisual(parent);
-            InitialAnchorInParent = transformToParent.Transform(anchorLocal);
-            InitialWidth = double.IsNaN(AdornedFE.Width) ? AdornedFE.ActualWidth : AdornedFE.Width;
-            InitialHeight = double.IsNaN(AdornedFE.Height) ? AdornedFE.ActualHeight : AdornedFE.Height;
-            
-            // 捕获不含偏移的变换矩阵，用于后续推算中心点
+            ResizeAnchorInParent = transformToParent.Transform(anchorLocal);
+            ResizeInitialWidth = double.IsNaN(AdornedFE.Width) ? AdornedFE.ActualWidth : AdornedFE.Width;
+            ResizeInitialHeight = double.IsNaN(AdornedFE.Height) ? AdornedFE.ActualHeight : AdornedFE.Height;
+
             Matrix mat = (transformToParent as Transform)?.Value ?? Matrix.Identity;
             mat.OffsetX = 0;
             mat.OffsetY = 0;
-            InitialTransformMatrix = mat;
+            ResizeInitialTransformMatrix = mat;
+
+            ResizeStarted?.Invoke(this, ResizeDirection);
         }
 
-        private void TransformRig_ResizeCompleted(object sender, ResizeGripDirection e)
+        /// <summary>
+        /// 处理每帧的缩放增量 (同 TransformAdorner.TransformRig_ResizeRequested)。
+        /// screenDelta 是父容器坐标系的位移。
+        /// </summary>
+        private void PerformResizeDelta(Vector screenDelta)
         {
-            IsResizing = false;
-            UpdateVisualScale();
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyResizeDelta(screenDelta);
+            }
         }
 
-        private void TransformRig_ResizeRequested(object sender, ResizeEventArgs e)
+        internal void ApplyResizeDelta(Vector screenDelta)
         {
             if (AdornedFE == null)
             {
@@ -274,118 +1087,134 @@ namespace RS.Widgets.Adorners
                 return;
             }
 
-            // 累加 Delta
-            AccResizeDelta += e.Delta;
+            // screenDelta 是屏幕设备像素。GlobalScaleX/Y 已经包含父容器的缩放，
+            // 所以只需要除以 DPI 转换为 WPF DIPs，GlobalScale 再负责 DIPs → 逻辑坐标。
+            PresentationSource source = PresentationSource.FromVisual(parent);
+            Matrix dpiMatrix = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
+            double dpiScaleX = Math.Sqrt(dpiMatrix.M11 * dpiMatrix.M11 + dpiMatrix.M12 * dpiMatrix.M12);
+            double dpiScaleY = Math.Sqrt(dpiMatrix.M21 * dpiMatrix.M21 + dpiMatrix.M22 * dpiMatrix.M22);
 
-            // 1. 根据总 Delta 计算新尺寸（相对于初始快照）
+            Vector dipsDelta = new Vector(
+                screenDelta.X / (dpiScaleX > 0 ? dpiScaleX : 1.0),
+                screenDelta.Y / (dpiScaleY > 0 ? dpiScaleY : 1.0));
+
+            // 反旋转到元素本地空间
+            Matrix invRot = Matrix.Identity;
+            invRot.Rotate(-RotationAngle);
+            Vector localDelta = invRot.Transform(dipsDelta);
+
+            // 累加
+            ResizeAccDelta += localDelta;
+
+            // 根据方向计算 dw / dh
             double dw = 0, dh = 0;
-            switch (e.Direction)
+            switch (ResizeDirection)
             {
                 case ResizeGripDirection.TopLeft:
-                    dw = -AccResizeDelta.X;
-                    dh = -AccResizeDelta.Y;
+                    dw = -ResizeAccDelta.X;
+                    dh = -ResizeAccDelta.Y;
                     break;
                 case ResizeGripDirection.Top:
-                    dh = -AccResizeDelta.Y;
+                    dh = -ResizeAccDelta.Y;
                     break;
                 case ResizeGripDirection.TopRight:
-                    dw = AccResizeDelta.X;
-                    dh = -AccResizeDelta.Y;
+                    dw = ResizeAccDelta.X;
+                    dh = -ResizeAccDelta.Y;
                     break;
                 case ResizeGripDirection.Left:
-                    dw = -AccResizeDelta.X;
+                    dw = -ResizeAccDelta.X;
                     break;
                 case ResizeGripDirection.Right:
-                    dw = AccResizeDelta.X;
+                    dw = ResizeAccDelta.X;
                     break;
                 case ResizeGripDirection.BottomLeft:
-                    dw = -AccResizeDelta.X;
-                    dh = AccResizeDelta.Y;
+                    dw = -ResizeAccDelta.X;
+                    dh = ResizeAccDelta.Y;
                     break;
                 case ResizeGripDirection.Bottom:
-                    dh = AccResizeDelta.Y;
+                    dh = ResizeAccDelta.Y;
                     break;
                 case ResizeGripDirection.BottomRight:
-                    dw = AccResizeDelta.X;
-                    dh = AccResizeDelta.Y;
+                    dw = ResizeAccDelta.X;
+                    dh = ResizeAccDelta.Y;
                     break;
             }
 
+            // Delta 是像素坐标，转换为逻辑坐标
             double dw_logical = dw / GlobalScaleX;
             double dh_logical = dh / GlobalScaleY;
 
-            double newW = InitialWidth + dw_logical;
-            double newH = InitialHeight + dh_logical;
+            double newW = ResizeInitialWidth + dw_logical;
+            double newH = ResizeInitialHeight + dh_logical;
 
-            if (newW < 1)
-            {
-                newW = 1;
+            // 限制尺寸
+            if (newW < 1) 
+            { 
+                newW = 1; 
             }
-            if (newH < 1)
-            {
-                newH = 1;
+            if (newH < 1) 
+            { 
+                newH = 1; 
             }
-
-            if (newW < AdornedFE.MinWidth)
-            {
-                newW = AdornedFE.MinWidth;
+            if (newW < AdornedFE.MinWidth) 
+            { 
+                newW = AdornedFE.MinWidth; 
             }
-            if (newW > AdornedFE.MaxWidth)
-            {
-                newW = AdornedFE.MaxWidth;
+            if (newW > AdornedFE.MaxWidth) 
+            { 
+                newW = AdornedFE.MaxWidth; 
             }
-            if (newH < AdornedFE.MinHeight)
-            {
-                newH = AdornedFE.MinHeight;
+            if (newH < AdornedFE.MinHeight) 
+            { 
+                newH = AdornedFE.MinHeight; 
             }
-            if (newH > AdornedFE.MaxHeight)
-            {
-                newH = AdornedFE.MaxHeight;
+            if (newH > AdornedFE.MaxHeight) 
+            { 
+                newH = AdornedFE.MaxHeight; 
             }
 
             AdornedFE.Width = newW;
             AdornedFE.Height = newH;
 
-            // 修正 AccResizeDelta 以匹配受限后的尺寸
-            // 这样当用户反向拖动时，会立即响应，而不是先“走完”超出的虚空距离
-            double clamped_dw = (newW - InitialWidth) * GlobalScaleX;
-            double clamped_dh = (newH - InitialHeight) * GlobalScaleY;
+            // 修正 AccDelta 以匹配受限后的尺寸
+            double clamped_dw = (newW - ResizeInitialWidth) * GlobalScaleX;
+            double clamped_dh = (newH - ResizeInitialHeight) * GlobalScaleY;
 
-            switch (e.Direction)
+            switch (ResizeDirection)
             {
                 case ResizeGripDirection.TopLeft:
-                    AccResizeDelta.X = -clamped_dw;
-                    AccResizeDelta.Y = -clamped_dh;
+                    ResizeAccDelta.X = -clamped_dw;
+                    ResizeAccDelta.Y = -clamped_dh;
                     break;
                 case ResizeGripDirection.Top:
-                    AccResizeDelta.Y = -clamped_dh;
+                    ResizeAccDelta.Y = -clamped_dh;
                     break;
                 case ResizeGripDirection.TopRight:
-                    AccResizeDelta.X = clamped_dw;
-                    AccResizeDelta.Y = -clamped_dh;
+                    ResizeAccDelta.X = clamped_dw;
+                    ResizeAccDelta.Y = -clamped_dh;
                     break;
                 case ResizeGripDirection.Left:
-                    AccResizeDelta.X = -clamped_dw;
+                    ResizeAccDelta.X = -clamped_dw;
                     break;
                 case ResizeGripDirection.Right:
-                    AccResizeDelta.X = clamped_dw;
+                    ResizeAccDelta.X = clamped_dw;
                     break;
                 case ResizeGripDirection.BottomLeft:
-                    AccResizeDelta.X = -clamped_dw;
-                    AccResizeDelta.Y = clamped_dh;
+                    ResizeAccDelta.X = -clamped_dw;
+                    ResizeAccDelta.Y = clamped_dh;
                     break;
                 case ResizeGripDirection.Bottom:
-                    AccResizeDelta.Y = clamped_dh;
+                    ResizeAccDelta.Y = clamped_dh;
                     break;
                 case ResizeGripDirection.BottomRight:
-                    AccResizeDelta.X = clamped_dw;
-                    AccResizeDelta.Y = clamped_dh;
+                    ResizeAccDelta.X = clamped_dw;
+                    ResizeAccDelta.Y = clamped_dh;
                     break;
             }
 
-            // 2. 重新计算布局中心，确保锚点绝对不动
+            // 基于初始矩阵推导新中心点，确保锚点不动
             Point anchorLocalNew;
-            switch (e.Direction)
+            switch (ResizeDirection)
             {
                 case ResizeGripDirection.TopLeft:
                     anchorLocalNew = new Point(newW, newH);
@@ -415,201 +1244,216 @@ namespace RS.Widgets.Adorners
                     return;
             }
 
-            // 基于初始矩阵推导新中心点
-            Point centerRelAnchorLocalNew = new Point(newW / 2 - anchorLocalNew.X, newH / 2 - anchorLocalNew.Y);
-            Vector offsetToCenterInParent = InitialTransformMatrix.Transform(new Vector(centerRelAnchorLocalNew.X, centerRelAnchorLocalNew.Y));
+            Point centerRelAnchorNew = new Point(newW / 2 - anchorLocalNew.X, newH / 2 - anchorLocalNew.Y);
+            Vector offsetToCenter = ResizeInitialTransformMatrix.Transform(new Vector(centerRelAnchorNew.X, centerRelAnchorNew.Y));
+            Point centerNew = new Point(ResizeAnchorInParent.X + offsetToCenter.X, ResizeAnchorInParent.Y + offsetToCenter.Y);
 
-            Point centerInParentNew = new Point(InitialAnchorInParent.X + offsetToCenterInParent.X, InitialAnchorInParent.Y + offsetToCenterInParent.Y);
-
-            // 更新布局
             if (parent is Canvas)
             {
-                TransformHelper.SetCanvasX(AdornedFE, centerInParentNew.X - newW / 2 - AdornedFE.Margin.Left);
-                TransformHelper.SetCanvasY(AdornedFE, centerInParentNew.Y - newH / 2 - AdornedFE.Margin.Top);
+                TransformHelper.SetCanvasX(AdornedFE, centerNew.X - newW / 2 - AdornedFE.Margin.Left);
+                TransformHelper.SetCanvasY(AdornedFE, centerNew.Y - newH / 2 - AdornedFE.Margin.Top);
             }
             else
             {
-                TransformHelper.SetTransformX(AdornedFE, centerInParentNew.X - newW / 2 - AdornedFE.Margin.Left);
-                TransformHelper.SetTransformY(AdornedFE, centerInParentNew.Y - newH / 2 - AdornedFE.Margin.Top);
+                TransformHelper.SetTransformX(AdornedFE, centerNew.X - newW / 2 - AdornedFE.Margin.Left);
+                TransformHelper.SetTransformY(AdornedFE, centerNew.Y - newH / 2 - AdornedFE.Margin.Top);
+            }
+
+            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeDirection, localDelta));
+        }
+
+        private void EndResize()
+        {
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyEndResize();
             }
         }
 
-        protected override int VisualChildrenCount
+        internal void ApplyEndResize()
         {
-            get { return 1; }
+            IsResizing = false;
+            ResizeCompleted?.Invoke(this, ResizeDirection);
         }
 
-        protected override Visual GetVisualChild(int index)
+        #endregion
+
+        #region Rotation
+
+        private static bool IsRotationOperation(TransformOperation op)
         {
-            return this.TransformRig;
+            return op == TransformOperation.Rotate || (op >= TransformOperation.RotateTopLeft && op <= TransformOperation.RotateBottomLeft);
         }
 
-        public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
+        /// <summary>
+        /// 在旋转开始时捕获鼠标角度偏移 (同 RSTransformRig.Rotation_DragStarted)。
+        /// </summary>
+        private void BeginRotation(MouseEventArgs e)
         {
-            if (AdornedFE == null)
+            var parent = VisualTreeHelper.GetParent(AdornedElement) as UIElement;
+            if (parent == null)
             {
-                return transform;
+                return;
             }
 
-            // 获取元素的中心点坐标（相对于元素自身）
-            // 在 Resize 过程中，RenderSize 可能会滞后于 actual Width/Height，导致中心点计算偏差，
-            // Adorner 的位置出现漂移。如果 Width/Height 已设置，优先使用它们。
-            double w = AdornedFE.RenderSize.Width;
-            double h = AdornedFE.RenderSize.Height;
+            // 计算元素中心在父坐标系中的位置
+            Point centerLocal = new Point(AdornedFE.ActualWidth / 2, AdornedFE.ActualHeight / 2);
+            Point centerInParent = AdornedFE.TranslatePoint(centerLocal, parent);
+            Point mousePos = e.GetPosition(parent);
 
-            if (!double.IsNaN(AdornedFE.Width) && AdornedFE.Width > 0)
-            {
-                w = AdornedFE.Width;
-            }
-            if (!double.IsNaN(AdornedFE.Height) && AdornedFE.Height > 0)
-            {
-                h = AdornedFE.Height;
-            }
-            
-            Point centerLocal = new Point(w / 2, h / 2);
+            double radians = Math.Atan2(mousePos.Y - centerInParent.Y, mousePos.X - centerInParent.X);
+            double currentMouseAngle = radians * (180 / Math.PI);
 
-            // transform (通常是 MatrixTransform) 包含了从被装饰元素到装饰层的完整变换（含旋转、缩放等）
-            if (transform is Transform t)
-            {
-                // 获取元素中心在装饰层坐标系（直立空间）下的位置
-                Point centerInParent = t.Transform(centerLocal);
-
-                // 我们希望 RSTransformRig 的中心对准 centerInParent。
-                // 由于 RSTransformRig 的排列尺寸 is VisualPixelSize，它的中心偏移应该是 VisualPixelSize / 2。
-                double offsetX = centerInParent.X - VisualPixelSize.Width / 2;
-                double offsetY = centerInParent.Y - VisualPixelSize.Height / 2;
-
-                return new MatrixTransform(new Matrix(1, 0, 0, 1, offsetX, offsetY));
-            }
-
-            return transform;
+            // 捕获绝对鼠标角度与当前 RotationAngle 之间的偏移量
+            InitialRotationOffset = (currentMouseAngle + 90) - this.RotationAngle;
         }
 
-        protected override Size MeasureOverride(Size constraint)
+        /// <summary>
+        /// 处理每帧的旋转增量 (同 RSTransformRig.Rotation_DragDelta)。
+        /// </summary>
+        private void PerformRotationDelta(MouseEventArgs e)
         {
-            UpdateVisualScale();
-            this.TransformRig.Measure(VisualPixelSize);
-            return AdornedFE?.RenderSize ?? Size.Empty;
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            UpdateVisualScale();
-            this.TransformRig.Arrange(new Rect(new Point(0, 0), VisualPixelSize));
-            return finalSize;
-        }
-
-
-
-
-        private void TransformAdorner_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            this.Focus();
-            var window = Window.GetWindow(this);
-            _mouseDownPosition = e.GetPosition(window);
-
-            // var window = Window.GetWindow(this); // window already retrieved
-            var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
-            _wasAnySelectedInStack = hitList.Any(r => r.IsSelect);
-
-            if (!_wasAnySelectedInStack)
+            var parent = VisualTreeHelper.GetParent(AdornedElement) as UIElement;
+            if (parent == null)
             {
-                this.TransformRig.Select(e);
+                return;
             }
 
-            this.InvalidateVisual();
+            // 计算元素中心
+            Point centerLocal = new Point(AdornedFE.ActualWidth / 2, AdornedFE.ActualHeight / 2);
+            Point centerInParent = AdornedFE.TranslatePoint(centerLocal, parent);
+            Point mousePos = e.GetPosition(parent);
+
+            double radians = Math.Atan2(mousePos.Y - centerInParent.Y, mousePos.X - centerInParent.X);
+            double currentMouseAngle = radians * (180 / Math.PI);
+
+            double finalRotation = (currentMouseAngle + 90 - InitialRotationOffset) % 360;
+            if (finalRotation < 0)
+            {
+                finalRotation += 360;
+            }
+
+            double delta = finalRotation - this.RotationAngle;
+            if (delta > 180) 
+            {
+                delta -= 360;
+            }
+            if (delta < -180) 
+            {
+                delta += 360;
+            }
+
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyRotationChange(delta, this == item ? finalRotation : (double?)null);
+            }
         }
 
-        private void TransformAdorner_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        internal void ApplyRotationChange(double delta, double? finalRotationOverride)
         {
-            if (_wasAnySelectedInStack)
+            double newAngle;
+            if (finalRotationOverride.HasValue)
             {
-                var window = Window.GetWindow(this);
-                var pos = e.GetPosition(window);
-                var diff = pos - _mouseDownPosition;
-                if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
-                    Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
+                newAngle = finalRotationOverride.Value;
+            }
+            else
+            {
+                newAngle = (this.RotationAngle + delta) % 360;
+                if (newAngle < 0) 
                 {
-                    this.TransformRig.Select(e);
-                    this.InvalidateVisual();
+                    newAngle += 360;
                 }
             }
+
+            this.RotationAngle = newAngle;
+            TransformHelper.SetRotation(AdornedElement, newAngle);
+            RotationRequested?.Invoke(this, newAngle);
         }
 
-        private void UpdateVisualScale()
+        private void EndRotation()
         {
-            if (AdornedFE == null)
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyEndRotation();
+            }
+        }
+
+        internal void ApplyEndRotation()
+        {
+            RotationCompleted?.Invoke(this, this.RotationAngle);
+        }
+
+        #endregion
+
+        #region Direction Button Click
+
+        /// <summary>
+        /// 检测点击是否落在方向按钮的三角区域上。
+        /// 如果是，则更新 RectDirection 并返回 true。
+        /// </summary>
+        private bool HandleDirectionButtonClick(Point localPoint)
+        {
+            if (!IsSingleSelect)
+            {
+                return false;
+            }
+
+            // 方向按钮由 RSTransformVisual.DrawDirectionButtons 绘制
+            // 使用 RSTransformVisual 的 HitTest 已包含 Move/Resize/Rotate 区域
+            // 但方向按钮区域需要单独处理（它们绘制在 DirectionHost 区域内）
+            var directionHit = TransformVisual.HitTestDirectionButton(localPoint, VisualPixelSize, RectDirection);
+            if (directionHit != RectDirection)
+            {
+                this.RectDirection = directionHit;
+                UpdateVisual();
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Keyboard
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (!IsSelect || AdornedFE == null)
             {
                 return;
             }
 
-            Visual? root = null;
-            PresentationSource source = PresentationSource.FromVisual(AdornedFE);
-            if (source != null)
+            double step = 10.0;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
-                root = source.RootVisual;
+                step = 1.0;
             }
 
-            if (root == null)
+            Vector delta = new Vector(0, 0);
+            switch (e.Key)
             {
-                root = AdornedFE.TryFindParent<Visual>();
-            }
-
-            if (root == null || root == AdornedFE)
-            {
-                return;
-            }
-
-            // 如果正在拖动缩放，则锁定 Scale 不变，只更新 PixelSize
-            // 这样可以避免布局浮点数引起的抖动
-            if (IsResizing)
-            {
-                double logicalW = double.IsNaN(AdornedFE.Width) ? AdornedFE.ActualWidth : AdornedFE.Width;
-                double logicalH = double.IsNaN(AdornedFE.Height) ? AdornedFE.ActualHeight : AdornedFE.Height;
-                if (logicalW > 0 && logicalH > 0)
-                {
-                    VisualPixelSize = new Size(logicalW * GlobalScaleX, logicalH * GlobalScaleY);
-                }
-                return;
-            }
-
-            GeneralTransform elementTransform = AdornedFE.TransformToAncestor(root);
-            if (elementTransform != null)
-            {
-                // 计算 GlobalScale 时避开 RenderSize 陷阱。
-                // 我们直接计算 (0,0) 和 (Width, Height) 在物理屏幕上的真实跨度。
-                double logicalW = double.IsNaN(AdornedFE.Width) ? AdornedFE.ActualWidth : AdornedFE.Width;
-                double logicalH = double.IsNaN(AdornedFE.Height) ? AdornedFE.ActualHeight : AdornedFE.Height;
-                if (logicalW <= 0 || logicalH <= 0)
-                {
+                case Key.Left:
+                    delta.X = -step;
+                    break;
+                case Key.Right:
+                    delta.X = step;
+                    break;
+                case Key.Up:
+                    delta.Y = -step;
+                    break;
+                case Key.Down:
+                    delta.Y = step;
+                    break;
+                default:
                     return;
-                }
-
-                Point p0 = new Point(0, 0);
-                Point pW = new Point(logicalW, 0);
-                Point pH = new Point(0, logicalH);
-
-                Point tp0 = elementTransform.Transform(p0);
-                Point tpW = elementTransform.Transform(pW);
-                Point tpH = elementTransform.Transform(pH);
-
-                double pixelWidth = Math.Sqrt(Math.Pow(tpW.X - tp0.X, 2) + Math.Pow(tpW.Y - tp0.Y, 2));
-                double pixelHeight = Math.Sqrt(Math.Pow(tpH.X - tp0.X, 2) + Math.Pow(tpH.Y - tp0.Y, 2));
-
-                if (pixelWidth > 0 && pixelHeight > 0)
-                {
-                    if (Math.Abs(VisualPixelSize.Width - pixelWidth) > 1e-6 || Math.Abs(VisualPixelSize.Height - pixelHeight) > 1e-6)
-                    {
-                        VisualPixelSize = new Size(pixelWidth, pixelHeight);
-                        
-                        // GlobalScale 定义：每一逻辑单位 Width/Height 对应多少物理像素。
-                        GlobalScaleX = pixelWidth / logicalW;
-                        GlobalScaleY = pixelHeight / logicalH;
-
-                        TransformRig.LayoutTransform = Transform.Identity;
-                    }
-                }
             }
+
+            PerformMoveDelta(delta);
+            e.Handled = true;
         }
+
+        #endregion
     }
 }
+
