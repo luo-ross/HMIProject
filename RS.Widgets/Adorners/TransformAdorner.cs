@@ -1205,69 +1205,144 @@ namespace RS.Widgets.Adorners
             double newW = ResizeInitialWidth + dw_logical;
             double newH = ResizeInitialHeight + dh_logical;
 
+            bool isShift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+
+            // ── 等比例缩放 (Shift) ──
+            if (isShift && ResizeInitialWidth > 0 && ResizeInitialHeight > 0)
+            {
+                double aspectRatio = ResizeInitialWidth / ResizeInitialHeight;
+
+                switch (ResizeDirection)
+                {
+                    case ResizeGripDirection.TopLeft:
+                    case ResizeGripDirection.TopRight:
+                    case ResizeGripDirection.BottomLeft:
+                    case ResizeGripDirection.BottomRight:
+                        // 角点缩放：取变化比例较大的轴作为基准
+                        double ratioW = Math.Abs(dw_logical) / Math.Max(1, ResizeInitialWidth);
+                        double ratioH = Math.Abs(dh_logical) / Math.Max(1, ResizeInitialHeight);
+
+                        if (ratioW > ratioH)
+                        {
+                            newH = newW / aspectRatio;
+                        }
+                        else
+                        {
+                            newW = newH * aspectRatio;
+                        }
+                        break;
+
+                    case ResizeGripDirection.Left:
+                    case ResizeGripDirection.Right:
+                        // 左右边缘：始终固定高度比例
+                        newH = newW / aspectRatio;
+                        break;
+
+                    case ResizeGripDirection.Top:
+                    case ResizeGripDirection.Bottom:
+                        // 上下边缘：始终固定宽度比例
+                        newW = newH * aspectRatio;
+                        break;
+                }
+            }
+
             // 限制尺寸
             if (newW < 1) 
             { 
                 newW = 1; 
+                if (isShift) 
+                {
+                    newH = newW / (ResizeInitialWidth / ResizeInitialHeight);
+                }
             }
             if (newH < 1) 
             { 
                 newH = 1; 
+                if (isShift) 
+                {
+                    newW = newH * (ResizeInitialWidth / ResizeInitialHeight);
+                }
             }
+
+            // 再次检查 Min/Max 限制，并在等比例模式下保持比例
             if (newW < AdornedFE.MinWidth) 
             { 
                 newW = AdornedFE.MinWidth; 
+                if (isShift)
+                {
+                    newH = newW / (ResizeInitialWidth / ResizeInitialHeight);
+                }
             }
             if (newW > AdornedFE.MaxWidth) 
             { 
                 newW = AdornedFE.MaxWidth; 
+                if (isShift)
+                {
+                    newH = newW / (ResizeInitialWidth / ResizeInitialHeight);
+                }
             }
             if (newH < AdornedFE.MinHeight) 
             { 
                 newH = AdornedFE.MinHeight; 
+                if (isShift)
+                {
+                    newW = newH * (ResizeInitialWidth / ResizeInitialHeight);
+                }
             }
             if (newH > AdornedFE.MaxHeight) 
             { 
                 newH = AdornedFE.MaxHeight; 
+                if (isShift)
+                {
+                    newW = newH * (ResizeInitialWidth / ResizeInitialHeight);
+                }
             }
 
             AdornedFE.Width = newW;
             AdornedFE.Height = newH;
 
-            // 修正 AccDelta 以匹配受限后的尺寸
-            double clamped_dw = (newW - ResizeInitialWidth) * GlobalScaleX;
-            double clamped_dh = (newH - ResizeInitialHeight) * GlobalScaleY;
+            // 修正 AccDelta 以匹配实际尺寸（防止死区）
+            // 优化：在等比例缩放 (Shift) 时，如果不触碰物理边界限制，我们不强制同步 AccDelta。
+            // 这样鼠标可以自由在对角线附近晃动而不会因为每帧的修剪产生步进感（丝滑的关键）。
+            bool hitPhysicalLimit = (newW <= 1) || (newW <= AdornedFE.MinWidth) || (newW >= AdornedFE.MaxWidth) ||
+                                   (newH <= 1) || (newH <= AdornedFE.MinHeight) || (newH >= AdornedFE.MaxHeight);
 
-            switch (ResizeDirection)
+            if (!isShift || hitPhysicalLimit)
             {
-                case ResizeGripDirection.TopLeft:
-                    ResizeAccDelta.X = -clamped_dw;
-                    ResizeAccDelta.Y = -clamped_dh;
-                    break;
-                case ResizeGripDirection.Top:
-                    ResizeAccDelta.Y = -clamped_dh;
-                    break;
-                case ResizeGripDirection.TopRight:
-                    ResizeAccDelta.X = clamped_dw;
-                    ResizeAccDelta.Y = -clamped_dh;
-                    break;
-                case ResizeGripDirection.Left:
-                    ResizeAccDelta.X = -clamped_dw;
-                    break;
-                case ResizeGripDirection.Right:
-                    ResizeAccDelta.X = clamped_dw;
-                    break;
-                case ResizeGripDirection.BottomLeft:
-                    ResizeAccDelta.X = -clamped_dw;
-                    ResizeAccDelta.Y = clamped_dh;
-                    break;
-                case ResizeGripDirection.Bottom:
-                    ResizeAccDelta.Y = clamped_dh;
-                    break;
-                case ResizeGripDirection.BottomRight:
-                    ResizeAccDelta.X = clamped_dw;
-                    ResizeAccDelta.Y = clamped_dh;
-                    break;
+                double clamped_dw_pix = (newW - ResizeInitialWidth) * GlobalScaleX;
+                double clamped_dh_pix = (newH - ResizeInitialHeight) * GlobalScaleY;
+
+                switch (ResizeDirection)
+                {
+                    case ResizeGripDirection.TopLeft:
+                        ResizeAccDelta.X = -clamped_dw_pix;
+                        ResizeAccDelta.Y = -clamped_dh_pix;
+                        break;
+                    case ResizeGripDirection.Top:
+                        ResizeAccDelta.Y = -clamped_dh_pix;
+                        break;
+                    case ResizeGripDirection.TopRight:
+                        ResizeAccDelta.X = clamped_dw_pix;
+                        ResizeAccDelta.Y = -clamped_dh_pix;
+                        break;
+                    case ResizeGripDirection.Left:
+                        ResizeAccDelta.X = -clamped_dw_pix;
+                        break;
+                    case ResizeGripDirection.Right:
+                        ResizeAccDelta.X = clamped_dw_pix;
+                        break;
+                    case ResizeGripDirection.BottomLeft:
+                        ResizeAccDelta.X = -clamped_dw_pix;
+                        ResizeAccDelta.Y = clamped_dh_pix;
+                        break;
+                    case ResizeGripDirection.Bottom:
+                        ResizeAccDelta.Y = clamped_dh_pix;
+                        break;
+                    case ResizeGripDirection.BottomRight:
+                        ResizeAccDelta.X = clamped_dw_pix;
+                        ResizeAccDelta.Y = clamped_dh_pix;
+                        break;
+                }
             }
 
             // 基于初始矩阵推导新中心点，确保锚点不动
