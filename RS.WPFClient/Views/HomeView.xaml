@@ -32,12 +32,8 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.InputBindings>
-        <KeyBinding
-            Gesture="Ctrl+Z"
-            Command="{x:Static rs:TransformHelper.UndoCommand}" />
-        <KeyBinding
-            Gesture="Ctrl+Y"
-            Command="{x:Static rs:TransformHelper.RedoCommand}" />
+        <KeyBinding Command="{x:Static rs:TransformHelper.UndoCommand}" Gesture="Ctrl+Z" />
+        <KeyBinding Command="{x:Static rs:TransformHelper.RedoCommand}" Gesture="Ctrl+Y" />
     </Window.InputBindings>
     <rs:RSWindow.Resources>
         <ResourceDictionary>
@@ -371,51 +367,65 @@
                         Value="0" />
 
                     <CheckBox
-                        Margin="0,10,0,0"
                         x:Name="CkIsDirectionEnabled"
+                        Margin="0,10,0,0"
                         Content="启用方向箭头 (IsDirectionEnabled)" />
 
                     <CheckBox
-                        Margin="0,10,0,0"
                         x:Name="CkIsRotationEnabled"
-                        IsChecked="True"
-                        Content="启用旋转 (IsRotationEnabled)" />
+                        Margin="0,10,0,0"
+                        Content="启用旋转 (IsRotationEnabled)"
+                        IsChecked="True" />
 
                     <Separator Margin="0,15" />
 
-                    <TextBlock Text="操作历史:" FontWeight="Bold" Foreground="#333" />
-                    <UniformGrid Columns="2" Margin="0,5">
-                        <Button Content="撤销" Command="{x:Static rs:TransformHelper.UndoCommand}" Margin="2" Style="{StaticResource RSApp.Styles.DefaultButton}" />
-                        <Button Content="重做" Command="{x:Static rs:TransformHelper.RedoCommand}" Margin="2" Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="#333"
+                        Text="操作历史:" />
+                    <UniformGrid Margin="0,5" Columns="2">
+                        <Button
+                            Margin="2"
+                            Command="{x:Static rs:TransformHelper.UndoCommand}"
+                            Content="撤销"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                        <Button
+                            Margin="2"
+                            Command="{x:Static rs:TransformHelper.RedoCommand}"
+                            Content="重做"
+                            Style="{StaticResource RSApp.Styles.DefaultButton}" />
                     </UniformGrid>
 
                     <Separator Margin="0,15" />
 
-                    <TextBlock Text="实时变换数据 (TransformData):" FontWeight="Bold" Foreground="#333" />
+                    <TextBlock
+                        FontWeight="Bold"
+                        Foreground="#333"
+                        Text="实时变换数据 (TransformData):" />
                     <StackPanel Margin="5,10,0,0" TextBlock.FontSize="11">
-                    <TextBlock Text="{Binding MyTransformData.X, StringFormat='[1] X: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData.Y, StringFormat='[1] Y: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData.Width, StringFormat='[1] Width: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData.Height, StringFormat='[1] Height: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData.Angle, StringFormat='[1] Angle: {0:F}°'}" />
-                    <TextBlock Text="{Binding MyTransformData.TopLeft, StringFormat='[1] TL: {0:F}'}" Foreground="Blue" />
-                    <TextBlock Text="{Binding MyTransformData.TopRight, StringFormat='[1] TR: {0:F}'}" Foreground="Blue" />
-                    <TextBlock Text="{Binding MyTransformData.BottomLeft, StringFormat='[1] BL: {0:F}'}" Foreground="Blue" />
-                    <TextBlock Text="{Binding MyTransformData.BottomRight, StringFormat='[1] BR: {0:F}'}" Foreground="Blue" />
+                        <TextBlock Text="{Binding MyTransformData.X, StringFormat='[1] X: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData.Y, StringFormat='[1] Y: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData.Width, StringFormat='[1] Width: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData.Height, StringFormat='[1] Height: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData.Angle, StringFormat='[1] Angle: {0:F}°'}" />
+                        <TextBlock Foreground="Blue" Text="{Binding MyTransformData.TopLeft, StringFormat='[1] TL: {0:F}'}" />
+                        <TextBlock Foreground="Blue" Text="{Binding MyTransformData.TopRight, StringFormat='[1] TR: {0:F}'}" />
+                        <TextBlock Foreground="Blue" Text="{Binding MyTransformData.BottomLeft, StringFormat='[1] BL: {0:F}'}" />
+                        <TextBlock Foreground="Blue" Text="{Binding MyTransformData.BottomRight, StringFormat='[1] BR: {0:F}'}" />
 
-                    <Separator Margin="0,5" />
-                    <TextBlock Text="{Binding MyTransformData2.X, StringFormat='[2] X: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData2.Y, StringFormat='[2] Y: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData2.Width, StringFormat='[2] Width: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData2.Height, StringFormat='[2] Height: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData2.Angle, StringFormat='[2] Angle: {0:F}°'}" />
+                        <Separator Margin="0,5" />
+                        <TextBlock Text="{Binding MyTransformData2.X, StringFormat='[2] X: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData2.Y, StringFormat='[2] Y: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData2.Width, StringFormat='[2] Width: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData2.Height, StringFormat='[2] Height: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData2.Angle, StringFormat='[2] Angle: {0:F}°'}" />
 
-                    <Separator Margin="0,5" />
-                    <TextBlock Text="{Binding MyTransformData3.X, StringFormat='[3] X: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData3.Y, StringFormat='[3] Y: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData3.Width, StringFormat='[3] Width: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData3.Height, StringFormat='[3] Height: {0:F}'}" />
-                    <TextBlock Text="{Binding MyTransformData3.Angle, StringFormat='[3] Angle: {0:F}°'}" />
+                        <Separator Margin="0,5" />
+                        <TextBlock Text="{Binding MyTransformData3.X, StringFormat='[3] X: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData3.Y, StringFormat='[3] Y: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData3.Width, StringFormat='[3] Width: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData3.Height, StringFormat='[3] Height: {0:F}'}" />
+                        <TextBlock Text="{Binding MyTransformData3.Angle, StringFormat='[3] Angle: {0:F}°'}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

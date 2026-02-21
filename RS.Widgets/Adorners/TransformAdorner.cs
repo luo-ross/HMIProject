@@ -1501,8 +1501,12 @@ namespace RS.Widgets.Adorners
                 // 将裁剪容器的边界矩形转换到 Adorner 本地坐标系
                 GeneralTransform toAdorner = clipParent.TransformToVisual(this);
                 Rect clipRect = new Rect(clipParent.RenderSize);
-                Rect localClip = toAdorner.TransformBounds(clipRect);
-                return new RectangleGeometry(localClip);
+                
+                // 修复 bug: 不能使用 TransformBounds，因为它返回的是轴对齐包围盒，
+                // 在旋转时会导致裁剪区域比实际大。应该直接变换几何体。
+                var geometry = new RectangleGeometry(clipRect);
+                geometry.Transform = toAdorner as Transform;
+                return geometry;
             }
             catch
             {
