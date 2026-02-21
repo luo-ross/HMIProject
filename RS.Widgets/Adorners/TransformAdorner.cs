@@ -293,7 +293,7 @@ namespace RS.Widgets.Adorners
 
             if (isMulti)
             {
-                SortAdornersByZIndex(hitList);
+                SortAdornersByStableIndex(hitList);
                 hitList.Reverse();
                 if (hitList.Count > 1 && hitList.All(r => r.IsSelect))
                 {
@@ -309,7 +309,7 @@ namespace RS.Widgets.Adorners
             }
             else
             {
-                SortAdornersByZIndex(hitList);
+                SortAdornersByStableIndex(hitList);
                 var current = hitList.FirstOrDefault(r => r.IsSelect);
                 
                 TransformAdorner target;
@@ -336,6 +336,7 @@ namespace RS.Widgets.Adorners
 
         private void BringToFront()
         {
+            // 仅在 AdornerLayer 置顶装饰器，不改变被装饰元素的 Panel.ZIndex
             var adornerLayer = VisualTreeHelper.GetParent(this) as AdornerLayer;
             if (adornerLayer != null)
             {
@@ -344,24 +345,6 @@ namespace RS.Widgets.Adorners
                 {
                     adornerLayer.Remove(this);
                     adornerLayer.Add(this);
-                }
-            }
-
-            var ui = AdornedElement as UIElement;
-            if (ui != null)
-            {
-                var parentPanel = VisualTreeHelper.GetParent(ui) as Panel;
-                if (parentPanel != null)
-                {
-                    int maxZ = 0;
-                    foreach (UIElement child in parentPanel.Children)
-                    {
-                        if (child != ui)
-                        {
-                            maxZ = Math.Max(maxZ, Panel.GetZIndex(child));
-                        }
-                    }
-                    Panel.SetZIndex(ui, maxZ + 1);
                 }
             }
         }
@@ -378,7 +361,7 @@ namespace RS.Widgets.Adorners
             var hitList = VisualHelper.FindAllFromPoint<TransformAdorner>(window, e.GetPosition(window));
             WasAnySelectedInStack = hitList.Any(r => r.IsSelect);
             TransformAdorner target;
-            SortAdornersByZIndex(hitList);
+            SortAdornersByStableIndex(hitList);
             target = hitList.LastOrDefault(r => r.IsSelect) ?? hitList.LastOrDefault() ?? this;
 
             if (target != null && target != this)
@@ -1608,7 +1591,7 @@ namespace RS.Widgets.Adorners
             currentUndoAction = null;
         }
 
-        private static void SortAdornersByZIndex(List<TransformAdorner> hitList)
+        private static void SortAdornersByStableIndex(List<TransformAdorner> hitList)
         {
             hitList.Sort((a, b) => 
             {
@@ -1626,10 +1609,15 @@ namespace RS.Widgets.Adorners
                     return 0;
                 }
             
+                // 首先按 ZIndex 排序（如果有）
                 int zA = Panel.GetZIndex(elA);
                 int zB = Panel.GetZIndex(elB);
-                if (zA != zB) return zA.CompareTo(zB);
+                if (zA != zB) 
+                {
+                    return zA.CompareTo(zB);
+                }
             
+                // 然后按子元素索引排序（稳定且非侵入）
                 int idxA = pA.Children.IndexOf(elA);
                 int idxB = pB.Children.IndexOf(elB);
                 return idxA.CompareTo(idxB);

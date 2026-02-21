@@ -220,16 +220,39 @@ namespace RS.Widgets.Controls
             else
             {
                 // 单选模式：在堆叠中寻找当前活跃项，执行循环切换；若没找到则选中最顶层
-                // 按 ZIndex 升序排序 (Back -> Front)，确保循环顺序符合视觉直觉 (Front -> Back -> Front ...)
-                // 当最顶层 (Front) 选中时，Next 是最底层 (Back)
-                hitList.Sort((a, b) => Panel.GetZIndex(a).CompareTo(Panel.GetZIndex(b)));
+                // 按层级索引排序 (Back -> Front)
+                hitList.Sort((a, b) =>
+                {
+                    var parent = VisualTreeHelper.GetParent(a) as Panel;
+                    if (parent == null) return 0;
+                    
+                    int za = Panel.GetZIndex(a);
+                    int zb = Panel.GetZIndex(b);
+                    if (za != zb) return za.CompareTo(zb);
+                    
+                    return parent.Children.IndexOf(a).CompareTo(parent.Children.IndexOf(b));
+                });
 
                 var current = hitList.FirstOrDefault(r => r.IsSelect);
-                var nextIndex = (current != null && hitList.Count > 1)
-                    ? (hitList.IndexOf(current) + 1) % hitList.Count
-                    : hitList.Count - 1; // 默认选最上层 (Max Z)
+                int targetIndex;
 
-                var target = hitList[nextIndex];
+                if (current != null && hitList.Count > 1)
+                {
+                    // 循环：从前往前 (Front-to-Back: 4 -> 3 -> 2 -> 1)
+                    int currentIndex = hitList.IndexOf(current);
+                    targetIndex = currentIndex - 1;
+                    if (targetIndex < 0)
+                    {
+                        targetIndex = hitList.Count - 1;
+                    }
+                }
+                else
+                {
+                    // 初始点击：选择视觉上最顶层
+                    targetIndex = hitList.Count - 1;
+                }
+
+                var target = hitList[targetIndex];
                 SelectionService.SingleSelect(target);
                 target.BringToFront();
             }
@@ -353,24 +376,8 @@ namespace RS.Widgets.Controls
 
         public void BringToFront()
         {
-            var parent = VisualTreeHelper.GetParent(this);
-            if (parent == null)
-            {
-                return;
-            }
-
-            if (parent is Panel panel)
-            {
-                int maxZ = 0;
-                foreach (UIElement element in panel.Children)
-                {
-                    if (element != this)
-                    {
-                        maxZ = Math.Max(maxZ, Panel.GetZIndex(element));
-                    }
-                }
-                Panel.SetZIndex(this, maxZ + 1);
-            }
+            // 非侵入式：不再通过改变 Panel.ZIndex 来置顶控件。
+            // 如果在 AdornerLayer 中使用，TransformAdorner 负责置顶逻辑。
         }
 
         public bool IsSingleSelect
