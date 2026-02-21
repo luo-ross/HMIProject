@@ -1,6 +1,6 @@
 namespace RS.Widgets.Enums
 {
-    public enum TransformOperation
+    public enum VisualOperation
     {
         None,
         Move,
@@ -16,6 +16,10 @@ namespace RS.Widgets.Enums
         ResizeBottomRight,
         ResizeBottom,
         ResizeBottomLeft,
-        ResizeLeft
+        ResizeLeft,
+        ChangeDirectionTop,
+        ChangeDirectionRight,
+        ChangeDirectionBottom,
+        ChangeDirectionLeft
     }
 }

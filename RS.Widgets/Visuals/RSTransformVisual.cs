@@ -57,7 +57,7 @@ namespace RS.Widgets.Visuals
         /// <param name="rectDirection">方向箭头指向的边。</param>
         /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
         /// <param name="hoveredDirection">悬停的方向（可选）。</param>
-        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, RectDirection? hoveredDirection = null)
+        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, VisualOperation hoveredDirection = VisualOperation.None)
         {
             if (size.Width <= 0 || size.Height <= 0)
             {
@@ -95,11 +95,21 @@ namespace RS.Widgets.Visuals
                         DrawDirectionButtons(dc, w, h, rectDirection, hoveredDirection);
 
                         // 4. 在悬停的方向绘制预览箭头（使用对比色）
-                        if (hoveredDirection.HasValue && hoveredDirection.Value != rectDirection)
+                        if (hoveredDirection != VisualOperation.None)
                         {
-                            var contrastBrush = GetContrastBrush(BorderBrush);
-                            var contrastStemPen = new Pen(contrastBrush, isSelect ? 2.0 : 1.0);
-                            DrawDirectionArrow(dc, w, h, hoveredDirection.Value, isSelect, contrastBrush, contrastStemPen);
+                            RectDirection preDir = hoveredDirection switch {
+                                VisualOperation.ChangeDirectionTop => RectDirection.Top,
+                                VisualOperation.ChangeDirectionBottom => RectDirection.Bottom,
+                                VisualOperation.ChangeDirectionLeft => RectDirection.Left,
+                                VisualOperation.ChangeDirectionRight => RectDirection.Right,
+                                _ => rectDirection
+                            };
+                            if (preDir != rectDirection)
+                            {
+                                var contrastBrush = GetContrastBrush(BorderBrush);
+                                var contrastStemPen = new Pen(contrastBrush, isSelect ? 2.0 : 1.0);
+                                DrawDirectionArrow(dc, w, h, preDir, isSelect, contrastBrush, contrastStemPen);
+                            }
                         }
                     }
                 }
@@ -240,7 +250,7 @@ namespace RS.Widgets.Visuals
         /// 绘制 4 个方向的三角按钮。
         /// 与当前方向匹配的按钮将被隐藏。
         /// </summary>
-        private void DrawDirectionButtons(DrawingContext dc, double w, double h, RectDirection direction, RectDirection? hoveredDirection)
+        private void DrawDirectionButtons(DrawingContext dc, double w, double h, RectDirection direction, VisualOperation hoveredDirection)
         {
             var brush = BorderBrush ?? Brushes.DodgerBlue;
             double cellSize = DirectionHostSize / 3.0;
@@ -278,7 +288,7 @@ namespace RS.Widgets.Visuals
             {
                 DrawSmallTriangle(dc, brush,
                     new Point(left + cellSize * 1.5, top + cellSize * 0.5), 0,
-                    hoveredDirection == RectDirection.Top);
+                    hoveredDirection == VisualOperation.ChangeDirectionTop);
             }
 
             // 左侧三角形按钮
@@ -286,7 +296,7 @@ namespace RS.Widgets.Visuals
             {
                 DrawSmallTriangle(dc, brush,
                     new Point(left + cellSize * 0.5, top + cellSize * 1.5), -90,
-                    hoveredDirection == RectDirection.Left);
+                    hoveredDirection == VisualOperation.ChangeDirectionLeft);
             }
 
             // 右侧三角形按钮
@@ -294,7 +304,7 @@ namespace RS.Widgets.Visuals
             {
                 DrawSmallTriangle(dc, brush,
                     new Point(left + cellSize * 2.5, top + cellSize * 1.5), 90,
-                    hoveredDirection == RectDirection.Right);
+                    hoveredDirection == VisualOperation.ChangeDirectionRight);
             }
 
             // 下方三角形按钮
@@ -302,7 +312,7 @@ namespace RS.Widgets.Visuals
             {
                 DrawSmallTriangle(dc, brush,
                     new Point(left + cellSize * 1.5, top + cellSize * 2.5), 180,
-                    hoveredDirection == RectDirection.Bottom);
+                    hoveredDirection == VisualOperation.ChangeDirectionBottom);
             }
         }
 
@@ -367,7 +377,7 @@ namespace RS.Widgets.Visuals
         /// <param name="currentDirection">当前的方向。</param>
         /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
         /// <param name="isRotationEnabled">是否启用了旋转功能。</param>
-        public TransformOperation HitTest(Point point, Size size, RectDirection currentDirection, bool isDirectionEnabled, bool isRotationEnabled = true)
+        public VisualOperation GetVisualOperation(Point point, Size size, RectDirection currentDirection, bool isDirectionEnabled, bool isRotationEnabled = true)
         {
             double w = size.Width;
             double h = size.Height;
@@ -381,19 +391,19 @@ namespace RS.Widgets.Visuals
             // 1. 检查缩放角点（高优先级）
             if (IsPointInRect(point, tl, ResizeHitSize))
             {
-                return TransformOperation.ResizeTopLeft;
+                return VisualOperation.ResizeTopLeft;
             }
             if (IsPointInRect(point, tr, ResizeHitSize))
             {
-                return TransformOperation.ResizeTopRight;
+                return VisualOperation.ResizeTopRight;
             }
             if (IsPointInRect(point, br, ResizeHitSize))
             {
-                return TransformOperation.ResizeBottomRight;
+                return VisualOperation.ResizeBottomRight;
             }
             if (IsPointInRect(point, bl, ResizeHitSize))
             {
-                return TransformOperation.ResizeBottomLeft;
+                return VisualOperation.ResizeBottomLeft;
             }
 
             // 2. 检查旋转角点（次要优先级）
@@ -401,38 +411,38 @@ namespace RS.Widgets.Visuals
             {
                 if (IsPointInRect(point, tl, RotateHitSize))
                 {
-                    return TransformOperation.RotateTopLeft;
+                    return VisualOperation.RotateTopLeft;
                 }
                 if (IsPointInRect(point, tr, RotateHitSize))
                 {
-                    return TransformOperation.RotateTopRight;
+                    return VisualOperation.RotateTopRight;
                 }
                 if (IsPointInRect(point, br, RotateHitSize))
                 {
-                    return TransformOperation.RotateBottomRight;
+                    return VisualOperation.RotateBottomRight;
                 }
                 if (IsPointInRect(point, bl, RotateHitSize))
                 {
-                    return TransformOperation.RotateBottomLeft;
+                    return VisualOperation.RotateBottomLeft;
                 }
             }
 
             // 3. 检查缩放边缘
             if (Math.Abs(point.Y) <= ResizeHitSize / 2 && point.X > 0 && point.X < w)
             {
-                return TransformOperation.ResizeTop;
+                return VisualOperation.ResizeTop;
             }
             if (Math.Abs(point.Y - h) <= ResizeHitSize / 2 && point.X > 0 && point.X < w)
             {
-                return TransformOperation.ResizeBottom;
+                return VisualOperation.ResizeBottom;
             }
             if (Math.Abs(point.X) <= ResizeHitSize / 2 && point.Y > 0 && point.Y < h)
             {
-                return TransformOperation.ResizeLeft;
+                return VisualOperation.ResizeLeft;
             }
             if (Math.Abs(point.X - w) <= ResizeHitSize / 2 && point.Y > 0 && point.Y < h)
             {
-                return TransformOperation.ResizeRight;
+                return VisualOperation.ResizeRight;
             }
 
             // 4. 检查主方向箭头（用于旋转）
@@ -461,17 +471,17 @@ namespace RS.Widgets.Visuals
                 }
                 if (arrowRect.HasValue && arrowRect.Value.Contains(point))
                 {
-                    return TransformOperation.Rotate;
+                    return VisualOperation.Rotate;
                 }
             }
 
             // 5. 检查主体内部（用于移动）
             if (point.X >= 0 && point.X <= w && point.Y >= 0 && point.Y <= h)
             {
-                return TransformOperation.Move;
+                return VisualOperation.Move;
             }
 
-            return TransformOperation.None;
+            return VisualOperation.None;
         }
 
         private static bool IsPointInRect(Point p, Point center, double size)
@@ -483,9 +493,9 @@ namespace RS.Widgets.Visuals
 
         /// <summary>
         /// 针对 4 个方向的按钮进行命中测试。
-        /// 返回命中的方向，如果未命中则返回当前的方向。
+        /// 返回命中的 VisualOperation，如果未命中则返回 VisualOperation.None。
         /// </summary>
-        public RectDirection HitTestDirectionButton(Point point, Size size, RectDirection currentDirection)
+        public VisualOperation GetDirectionButtonOperation(Point point, Size size, RectDirection currentDirection)
         {
             double w = size.Width;
             double h = size.Height;
@@ -526,7 +536,7 @@ namespace RS.Widgets.Visuals
                 Point center = new Point(left + cellSize * 1.5, top + cellSize * 0.5);
                 if (IsPointInRect(point, center, hitRadius))
                 {
-                    return RectDirection.Top;
+                    return VisualOperation.ChangeDirectionTop;
                 }
             }
 
@@ -536,7 +546,7 @@ namespace RS.Widgets.Visuals
                 Point center = new Point(left + cellSize * 0.5, top + cellSize * 1.5);
                 if (IsPointInRect(point, center, hitRadius))
                 {
-                    return RectDirection.Left;
+                    return VisualOperation.ChangeDirectionLeft;
                 }
             }
 
@@ -546,7 +556,7 @@ namespace RS.Widgets.Visuals
                 Point center = new Point(left + cellSize * 2.5, top + cellSize * 1.5);
                 if (IsPointInRect(point, center, hitRadius))
                 {
-                    return RectDirection.Right;
+                    return VisualOperation.ChangeDirectionRight;
                 }
             }
 
@@ -556,11 +566,11 @@ namespace RS.Widgets.Visuals
                 Point center = new Point(left + cellSize * 1.5, top + cellSize * 2.5);
                 if (IsPointInRect(point, center, hitRadius))
                 {
-                    return RectDirection.Bottom;
+                    return VisualOperation.ChangeDirectionBottom;
                 }
             }
 
-            return currentDirection;
+            return VisualOperation.None;
         }
 
         #endregion
