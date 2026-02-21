@@ -59,6 +59,7 @@ namespace RS.Widgets.Controls
 
         private Point MouseDownPosition;
         private bool AnySelectedInStack;
+        private bool PendingSelectionCycle = false;
 
 
         private static readonly CursorData BaseRotationCursorData;
@@ -138,14 +139,28 @@ namespace RS.Widgets.Controls
             this.Focus();
             var window = Window.GetWindow(this);
             MouseDownPosition = e.GetPosition(window);
+            PendingSelectionCycle = false;
 
-            // var window = Window.GetWindow(this);
             var hitList = VisualHelper.FindAllFromPoint<RSTransformRig>(window, e.GetPosition(window));
+            SortAdornersByStableIndex(hitList);
             AnySelectedInStack = hitList.Any(r => r.IsSelect);
 
-            if (!AnySelectedInStack)
+            if (hitList.Count > 0)
             {
-                Select(e);
+                var target = hitList.LastOrDefault(r => r.IsSelect) ?? hitList.LastOrDefault();
+                if (target != null)
+                {
+                    if (!target.IsSelect)
+                    {
+                        // 目标未选中，立即选中
+                        target.Select(e);
+                    }
+                    else
+                    {
+                        // 目标已选中，标记待循环（在 MouseUp 中处理，以免干扰拖拽）
+                        PendingSelectionCycle = true;
+                    }
+                }
             }
         }
 
@@ -156,7 +171,7 @@ namespace RS.Widgets.Controls
                 return;
             }
 
-            if (AnySelectedInStack)
+            if (PendingSelectionCycle)
             {
                 var window = Window.GetWindow(this);
                 var pos = e.GetPosition(window);
@@ -167,6 +182,7 @@ namespace RS.Widgets.Controls
                     Select(e);
                 }
             }
+            PendingSelectionCycle = false;
         }
 
         private bool IsDirectionButton(object source)
@@ -1414,6 +1430,33 @@ namespace RS.Widgets.Controls
                 return ResizeGripDirection.BottomRight;
             }
             return ResizeGripDirection.None;
+        }
+        private static void SortAdornersByStableIndex(List<RSTransformRig> hitList)
+        {
+            hitList.Sort((a, b) => 
+            {
+                if (a == null || b == null) return 0;
+                
+                Panel pA = VisualTreeHelper.GetParent(a) as Panel;
+                Panel pB = VisualTreeHelper.GetParent(b) as Panel;
+                if (pA != pB || pA == null) 
+                {
+                    return 0;
+                }
+            
+                // 首先按 ZIndex 排序（如果有）
+                int zA = Panel.GetZIndex(a);
+                int zB = Panel.GetZIndex(b);
+                if (zA != zB) 
+                {
+                    return zA.CompareTo(zB);
+                }
+            
+                // 然后按子元素索引排序（稳定且非侵入）
+                int idxA = pA.Children.IndexOf(a);
+                int idxB = pB.Children.IndexOf(b);
+                return idxA.CompareTo(idxB);
+            });
         }
     }
 }

@@ -75,6 +75,7 @@ namespace RS.Widgets.Adorners
 
         private Matrix AdornerMatrix = Matrix.Identity;
         private bool WasAnySelectedInStack = false;
+        private bool PendingSelectionCycle = false;
 
         #endregion
 
@@ -280,6 +281,21 @@ namespace RS.Widgets.Adorners
             SelectionService.ClearSelect();
         }
 
+        public void SelectAll()
+        {
+            var window = Window.GetWindow(this);
+            if (window == null)
+            {
+                return;
+            }
+
+            var allAdorners = VisualHelper.FindVisualChildren<TransformAdorner>(window).ToList();
+            foreach (var adorner in allAdorners)
+            {
+                SelectionService.AddSelect(adorner);
+            }
+        }
+
         private TransformAdorner Select(MouseEventArgs e)
         {
             var isMulti = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
@@ -359,18 +375,24 @@ namespace RS.Widgets.Adorners
 
             var window = Window.GetWindow(this);
             var hitList = VisualHelper.FindAllFromPoint<TransformAdorner>(window, e.GetPosition(window));
-            WasAnySelectedInStack = hitList.Any(r => r.IsSelect);
-            TransformAdorner target;
             SortAdornersByStableIndex(hitList);
+            
+            WasAnySelectedInStack = hitList.Any(r => r.IsSelect);
+            
+            PendingSelectionCycle = false;
+            TransformAdorner target;
+
+            // 路由决策：优先命中已选中项（为了拖拽），否则命中顶层项
             target = hitList.LastOrDefault(r => r.IsSelect) ?? hitList.LastOrDefault() ?? this;
 
-            if (target != null && target != this)
+            if (target != this)
             {
                 target.ProcessMouseDown(e);
                 e.Handled = true;
                 return;
             }
 
+            // 自己处理
             ProcessMouseDown(e);
         }
 
@@ -405,6 +427,21 @@ namespace RS.Widgets.Adorners
             LastMouseScreen = MouseDownPosition;
             this.CaptureMouse(); 
             IsDragging = false;
+
+            // 选择逻辑改进：
+            // 如果点击的是背景(Move) 且 操作项未选中，则立即选中（提升反馈感）
+            // 如果操作项已选中，则标记为待循环（在 MouseUp 中处理，以免干扰拖拽）
+            if (PendingOperation == VisualOperation.Move)
+            {
+                if (!this.IsSelect)
+                {
+                    Select(e);
+                }
+                else if (WasAnySelectedInStack)
+                {
+                    PendingSelectionCycle = true;
+                }
+            }
 
             this.Cursor = GetCursorForOperation(PendingOperation);
             this.Focus();
@@ -449,11 +486,14 @@ namespace RS.Widgets.Adorners
                     return;
                 }
 
-                if (this.IsMouseCaptured)
+                // 如果存在待处理的循环请求，则执行循环
+                if (PendingSelectionCycle && this.IsMouseCaptured)
                 {
                     Select(e);
                 }
             }
+
+            PendingSelectionCycle = false;
 
             if (this.IsMouseCaptured)
             {
@@ -527,6 +567,7 @@ namespace RS.Widgets.Adorners
 
                     CurrentOperation = PendingOperation;
                     IsDragging = true;
+                    PendingSelectionCycle = false; // 一旦开始拖拽，取消循环选择标记
                     LastMouseScreen = currentScreen;
 
                     if (IsResizeOperation(CurrentOperation)) 
@@ -599,6 +640,16 @@ namespace RS.Widgets.Adorners
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                if (e.Key == Key.A)
+                {
+                    SelectAll();
+                    e.Handled = true;
+                    return;
+                }
+            }
 
             if (!IsSelect || AdornedFE == null)
             {
@@ -1383,6 +1434,8 @@ namespace RS.Widgets.Adorners
                 }
 
                 RotationAngle = DataModel.Angle;
+                TransformHelper.SetRotation(AdornedFE, DataModel.Angle);
+                RectDirection = DataModel.Direction;
                 UpdateVisual();
             }
             finally
