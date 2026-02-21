@@ -12,7 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Xml.Linq;
+using System.Windows.Input;
+using RS.Widgets.Services;
 
 namespace RS.Widgets.Controls
 {
@@ -138,6 +139,98 @@ namespace RS.Widgets.Controls
         public static void SetTransformData(DependencyObject obj, TransformData value)
         {
             obj.SetValue(TransformDataProperty, value);
+        }
+
+
+        // ── 命令支持 ──
+
+        public static readonly DependencyProperty MoveStartedCommandProperty =
+            DependencyProperty.RegisterAttached("MoveStartedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+        public static ICommand GetMoveStartedCommand(DependencyObject obj) => (ICommand)obj.GetValue(MoveStartedCommandProperty);
+        public static void SetMoveStartedCommand(DependencyObject obj, ICommand value) => obj.SetValue(MoveStartedCommandProperty, value);
+
+        public static readonly DependencyProperty MoveCompletedCommandProperty =
+            DependencyProperty.RegisterAttached("MoveCompletedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+        public static ICommand GetMoveCompletedCommand(DependencyObject obj) => (ICommand)obj.GetValue(MoveCompletedCommandProperty);
+        public static void SetMoveCompletedCommand(DependencyObject obj, ICommand value) => obj.SetValue(MoveCompletedCommandProperty, value);
+
+        public static readonly DependencyProperty ResizeStartedCommandProperty =
+            DependencyProperty.RegisterAttached("ResizeStartedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+        public static ICommand GetResizeStartedCommand(DependencyObject obj) => (ICommand)obj.GetValue(ResizeStartedCommandProperty);
+        public static void SetResizeStartedCommand(DependencyObject obj, ICommand value) => obj.SetValue(ResizeStartedCommandProperty, value);
+
+        public static readonly DependencyProperty ResizeCompletedCommandProperty =
+            DependencyProperty.RegisterAttached("ResizeCompletedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+        public static ICommand GetResizeCompletedCommand(DependencyObject obj) => (ICommand)obj.GetValue(ResizeCompletedCommandProperty);
+        public static void SetResizeCompletedCommand(DependencyObject obj, ICommand value) => obj.SetValue(ResizeCompletedCommandProperty, value);
+
+        public static readonly DependencyProperty RotationStartedCommandProperty =
+            DependencyProperty.RegisterAttached("RotationStartedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+        public static ICommand GetRotationStartedCommand(DependencyObject obj) => (ICommand)obj.GetValue(RotationStartedCommandProperty);
+        public static void SetRotationStartedCommand(DependencyObject obj, ICommand value) => obj.SetValue(RotationStartedCommandProperty, value);
+
+        public static readonly DependencyProperty RotationCompletedCommandProperty =
+            DependencyProperty.RegisterAttached("RotationCompletedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+        public static ICommand GetRotationCompletedCommand(DependencyObject obj) => (ICommand)obj.GetValue(RotationCompletedCommandProperty);
+        public static void SetRotationCompletedCommand(DependencyObject obj, ICommand value) => obj.SetValue(RotationCompletedCommandProperty, value);
+
+        // ── 全局撤销/重做命令 ──
+
+        private static RelayCommand _undoCommand;
+        public static ICommand UndoCommand
+        {
+            get
+            {
+                if (_undoCommand == null)
+                {
+                    _undoCommand = new RelayCommand(
+                        _ => TransformAdorner.UndoService.Undo(),
+                        _ => TransformAdorner.UndoService.CanUndo
+                    );
+                    TransformAdorner.UndoService.StateChanged += (s, e) => _undoCommand.RaiseCanExecuteChanged();
+                }
+                return _undoCommand;
+            }
+        }
+
+        private static RelayCommand _redoCommand;
+        public static ICommand RedoCommand
+        {
+            get
+            {
+                if (_redoCommand == null)
+                {
+                    _redoCommand = new RelayCommand(
+                        _ => TransformAdorner.UndoService.Redo(),
+                        _ => TransformAdorner.UndoService.CanRedo
+                    );
+                    TransformAdorner.UndoService.StateChanged += (s, e) => _redoCommand.RaiseCanExecuteChanged();
+                }
+                return _redoCommand;
+            }
+        }
+
+        /// <summary>
+        /// 简易 RelayCommand 实现，避免库依赖过多
+        /// </summary>
+        private class RelayCommand : ICommand
+        {
+            private readonly Action<object> _execute;
+            private readonly Func<object, bool> _canExecute;
+
+            public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+            {
+                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+                _canExecute = canExecute;
+            }
+
+            public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
+
+            public void Execute(object parameter) => _execute(parameter);
+
+            public event EventHandler CanExecuteChanged;
+
+            public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public static void UpdateTransformAdorner(FrameworkElement element, bool isEditable)

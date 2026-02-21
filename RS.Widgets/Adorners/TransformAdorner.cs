@@ -7,6 +7,7 @@ using RS.Widgets.Services;
 using RS.Widgets.Structs;
 using RS.Widgets.Utilities;
 using RS.Widgets.Visuals;
+using RS.Widgets.UndoActions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -26,6 +27,9 @@ namespace RS.Widgets.Adorners
 
         // 全局选中服务（所有 TransformAdorner 实例共享）
         private static readonly RSSelectService<TransformAdorner> SelectionService = new RSSelectService<TransformAdorner>();
+
+        // 全局撤销服务 (该服务实例仅供 TransformAdorner 系统使用，独立于外部全局服务)
+        internal static readonly IUndoService UndoService = new UndoService();
 
 
         private double GlobalScaleX = 1;
@@ -53,6 +57,9 @@ namespace RS.Widgets.Adorners
         private Point MouseDownPosition;      // MouseDown 时在父级坐标系中的位置
         private Point LastMouseScreen;        // 上一帧鼠标在父级坐标系中的位置
 
+        // ── 撤销/重做状态 ──
+        private static TransformUndoAction currentUndoAction;
+
         // ── 方向按钮悬停状态 ──
         private RectDirection? HoveredDirectionButton;
 
@@ -67,12 +74,16 @@ namespace RS.Widgets.Adorners
         private Matrix ResizeInitialTransformMatrix;
         private Vector ResizeAccDelta;
         private ResizeGripDirection ResizeDirection;
+        private bool _isInternalSync;
 
 
         // ── Events (与 RSTransformRig 的签名一致) ──
+        public event EventHandler<double>? RotationStarted;
         public event EventHandler<double>? RotationRequested;
         public event EventHandler<double>? RotationCompleted;
+        public event EventHandler? TranslationStarted;
         public event EventHandler<Vector>? TranslationRequested;
+        public event EventHandler? TranslationCompleted;
         public event EventHandler<ResizeGripDirection>? ResizeStarted;
         public event EventHandler<ResizeEventArgs>? ResizeRequested;
         public event EventHandler<ResizeGripDirection>? ResizeCompleted;
@@ -225,9 +236,25 @@ namespace RS.Widgets.Adorners
             }
             set
             {
+                if (dataModel != null)
+                {
+                    dataModel.PropertyChanged -= OnDataModelPropertyChanged;
+                }
                 dataModel = value;
+                if (dataModel != null)
+                {
+                    dataModel.PropertyChanged += OnDataModelPropertyChanged;
+                }
                 UpdateDataModel();
             }
+        }
+
+        private void OnDataModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_isInternalSync) return;
+
+            // 当模型属性（例如经由撤销/重做）改变时，同步回元素
+            SyncModelToElement();
         }
 
 
@@ -475,6 +502,10 @@ namespace RS.Widgets.Adorners
                     else if (IsRotationOperation(CurrentOperation))
                     {
                         BeginRotation(e);
+                    }
+                    else if (CurrentOperation == TransformOperation.Move)
+                    {
+                        BeginMove();
                     }
                 }
                 else
@@ -882,6 +913,11 @@ namespace RS.Widgets.Adorners
 
         internal void ProcessMouseDown(MouseButtonEventArgs e)
         {
+            if (AdornedElement is UIElement ui)
+            {
+                ui.Focus();
+            }
+
             Point pt = ToLocalPoint(e.GetPosition(this));
             var operation = HitTest(pt);
 
@@ -924,6 +960,10 @@ namespace RS.Widgets.Adorners
                 else if (IsRotationOperation(CurrentOperation))
                 {
                     EndRotation();
+                }
+                else if (CurrentOperation == TransformOperation.Move)
+                {
+                    EndMove();
                 }
 
                 IsDragging = false;
@@ -1027,6 +1067,56 @@ namespace RS.Widgets.Adorners
             UpdateDataModel();
         }
 
+        private void BeginMove()
+        {
+            currentUndoAction = new TransformUndoAction { Name = "移动" };
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                var memento = TransformMemento.Capture(item.DataModel);
+                if (memento != null)
+                {
+                    currentUndoAction.Changes.Add((item.DataModel, memento, null));
+                }
+                item.ApplyBeginMove();
+            }
+        }
+
+        internal void ApplyBeginMove()
+        {
+            TranslationStarted?.Invoke(this, EventArgs.Empty);
+            ExecuteAttachedCommand(TransformHelper.MoveStartedCommandProperty, DataModel);
+        }
+
+        private void EndMove()
+        {
+            if (currentUndoAction != null)
+            {
+                foreach (var item in SelectionService.SelectedItems)
+                {
+                    var memento = TransformMemento.Capture(item.DataModel);
+                    var entry = currentUndoAction.Changes.FirstOrDefault(c => c.target == item.DataModel);
+                    if (entry != default && memento != null)
+                    {
+                        var index = currentUndoAction.Changes.IndexOf(entry);
+                        currentUndoAction.Changes[index] = (entry.target, entry.before, memento);
+                    }
+                }
+                UndoService.AddAction(currentUndoAction);
+                currentUndoAction = null;
+            }
+
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyEndMove();
+            }
+        }
+
+        internal void ApplyEndMove()
+        {
+            TranslationCompleted?.Invoke(this, EventArgs.Empty);
+            ExecuteAttachedCommand(TransformHelper.MoveCompletedCommandProperty, DataModel);
+        }
+
         #endregion
 
         #region Resize
@@ -1069,8 +1159,14 @@ namespace RS.Widgets.Adorners
         /// </summary>
         private void BeginResize(TransformOperation op)
         {
+            currentUndoAction = new TransformUndoAction { Name = "缩放" };
             foreach (var item in SelectionService.SelectedItems)
             {
+                var memento = TransformMemento.Capture(item.DataModel);
+                if (memento != null)
+                {
+                    currentUndoAction.Changes.Add((item.DataModel, memento, null));
+                }
                 item.ApplyBeginResize(op);
             }
         }
@@ -1135,6 +1231,7 @@ namespace RS.Widgets.Adorners
             ResizeInitialTransformMatrix = mat;
 
             ResizeStarted?.Invoke(this, ResizeDirection);
+            ExecuteAttachedCommand(TransformHelper.ResizeStartedCommandProperty, DataModel);
         }
 
         /// <summary>
@@ -1415,6 +1512,22 @@ namespace RS.Widgets.Adorners
 
         private void EndResize()
         {
+            if (currentUndoAction != null)
+            {
+                foreach (var item in SelectionService.SelectedItems)
+                {
+                    var memento = TransformMemento.Capture(item.DataModel);
+                    var entry = currentUndoAction.Changes.FirstOrDefault(c => c.target == item.DataModel);
+                    if (entry != default && memento != null)
+                    {
+                        var index = currentUndoAction.Changes.IndexOf(entry);
+                        currentUndoAction.Changes[index] = (entry.target, entry.before, memento);
+                    }
+                }
+                UndoService.AddAction(currentUndoAction);
+                currentUndoAction = null;
+            }
+
             foreach (var item in SelectionService.SelectedItems)
             {
                 item.ApplyEndResize();
@@ -1425,6 +1538,7 @@ namespace RS.Widgets.Adorners
         {
             IsResizing = false;
             ResizeCompleted?.Invoke(this, ResizeDirection);
+            ExecuteAttachedCommand(TransformHelper.ResizeCompletedCommandProperty, DataModel);
         }
 
         #endregion
@@ -1457,6 +1571,23 @@ namespace RS.Widgets.Adorners
 
             // 捕获绝对鼠标角度与当前 RotationAngle 之间的偏移量
             InitialRotationOffset = (currentMouseAngle + 90) - this.RotationAngle;
+
+            currentUndoAction = new TransformUndoAction { Name = "旋转" };
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                var memento = TransformMemento.Capture(item.DataModel);
+                if (memento != null)
+                {
+                    currentUndoAction.Changes.Add((item.DataModel, memento, null));
+                }
+                item.ApplyBeginRotation();
+            }
+        }
+
+        internal void ApplyBeginRotation()
+        {
+            RotationStarted?.Invoke(this, this.RotationAngle);
+            ExecuteAttachedCommand(TransformHelper.RotationStartedCommandProperty, DataModel);
         }
 
         /// <summary>
@@ -1524,6 +1655,22 @@ namespace RS.Widgets.Adorners
 
         private void EndRotation()
         {
+            if (currentUndoAction != null)
+            {
+                foreach (var item in SelectionService.SelectedItems)
+                {
+                    var memento = TransformMemento.Capture(item.DataModel);
+                    var entry = currentUndoAction.Changes.FirstOrDefault(c => c.target == item.DataModel);
+                    if (entry != default && memento != null)
+                    {
+                        var index = currentUndoAction.Changes.IndexOf(entry);
+                        currentUndoAction.Changes[index] = (entry.target, entry.before, memento);
+                    }
+                }
+                UndoService.AddAction(currentUndoAction);
+                currentUndoAction = null;
+            }
+
             foreach (var item in SelectionService.SelectedItems)
             {
                 item.ApplyEndRotation();
@@ -1533,6 +1680,7 @@ namespace RS.Widgets.Adorners
         internal void ApplyEndRotation()
         {
             RotationCompleted?.Invoke(this, this.RotationAngle);
+            ExecuteAttachedCommand(TransformHelper.RotationCompletedCommandProperty, DataModel);
         }
 
         #endregion
@@ -1573,16 +1721,19 @@ namespace RS.Widgets.Adorners
         /// </summary>
         public void UpdateDataModel()
         {
-            if (DataModel == null || AdornedFE == null)
+            if (DataModel == null || AdornedFE == null || _isInternalSync)
             {
                 return;
             }
 
-            var parent = VisualTreeHelper.GetParent(AdornedFE) as UIElement;
-            if (parent == null)
+            _isInternalSync = true;
+            try
             {
-                return;
-            }
+                var parent = VisualTreeHelper.GetParent(AdornedFE) as UIElement;
+                if (parent == null)
+                {
+                    return;
+                }
 
             // 基本数据
             DataModel.Width = AdornedFE.ActualWidth;
@@ -1621,6 +1772,44 @@ namespace RS.Widgets.Adorners
             DataModel.TopRight = AdornedFE.TranslatePoint(new Point(w, 0), parent);
             DataModel.BottomLeft = AdornedFE.TranslatePoint(new Point(0, h), parent);
             DataModel.BottomRight = AdornedFE.TranslatePoint(new Point(w, h), parent);
+            }
+            finally
+            {
+                _isInternalSync = false;
+            }
+        }
+
+        public void SyncModelToElement()
+        {
+            if (AdornedFE == null || DataModel == null || _isInternalSync) return;
+
+            _isInternalSync = true;
+            try
+            {
+                var parent = VisualTreeHelper.GetParent(AdornedFE) as UIElement;
+                if (parent == null) return;
+
+                if (parent is Canvas)
+                {
+                    TransformHelper.SetCanvasX(AdornedFE, DataModel.X);
+                    TransformHelper.SetCanvasY(AdornedFE, DataModel.Y);
+                }
+                else
+                {
+                    TransformHelper.SetTransformX(AdornedFE, DataModel.X);
+                    TransformHelper.SetTransformY(AdornedFE, DataModel.Y);
+                }
+
+                if (DataModel.Width > 0) AdornedFE.Width = DataModel.Width;
+                if (DataModel.Height > 0) AdornedFE.Height = DataModel.Height;
+
+                RotationAngle = DataModel.Angle;
+                UpdateVisual();
+            }
+            finally
+            {
+                _isInternalSync = false;
+            }
         }
 
         #endregion
@@ -1661,8 +1850,24 @@ namespace RS.Widgets.Adorners
                     return;
             }
 
+            BeginMove();
             PerformMoveDelta(delta);
+            EndMove();
             e.Handled = true;
+        }
+
+        #endregion
+
+        #region Helper
+
+        private void ExecuteAttachedCommand(DependencyProperty commandProperty, object parameter)
+        {
+            if (AdornedElement == null) return;
+            var command = AdornedElement.GetValue(commandProperty) as ICommand;
+            if (command != null && command.CanExecute(parameter))
+            {
+                command.Execute(parameter);
+            }
         }
 
         #endregion

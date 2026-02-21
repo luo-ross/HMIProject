@@ -5,6 +5,8 @@ using RS.Commons.Attributs;
 using RS.Widgets.Enums;
 using RS.Widgets.Interfaces;
 using RS.Widgets.Models;
+using RS.Widgets.Services;
+using RS.WPFClient.IServices;
 using RS.WPFClient.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -297,7 +299,6 @@ namespace RS.WPFClient.ViewModels
         public TransformData MyTransformData { get; set; } = new TransformData();
         public TransformData MyTransformData2 { get; set; } = new TransformData();
         public TransformData MyTransformData3 { get; set; } = new TransformData();
-
 
         #endregion
 

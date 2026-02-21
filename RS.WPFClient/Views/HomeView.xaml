@@ -31,6 +31,14 @@
     WinBtnCommandMargin="0,0,10,0"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <Window.InputBindings>
+        <KeyBinding
+            Gesture="Ctrl+Z"
+            Command="{x:Static rs:TransformHelper.UndoCommand}" />
+        <KeyBinding
+            Gesture="Ctrl+Y"
+            Command="{x:Static rs:TransformHelper.RedoCommand}" />
+    </Window.InputBindings>
     <rs:RSWindow.Resources>
         <ResourceDictionary>
             <rs:ForegroundColorConverter x:Key="ForegroundColorConverter" />
@@ -375,6 +383,14 @@
 
                     <Separator Margin="0,15" />
 
+                    <TextBlock Text="操作历史:" FontWeight="Bold" Foreground="#333" />
+                    <UniformGrid Columns="2" Margin="0,5">
+                        <Button Content="撤销" Command="{x:Static rs:TransformHelper.UndoCommand}" Margin="2" Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                        <Button Content="重做" Command="{x:Static rs:TransformHelper.RedoCommand}" Margin="2" Style="{StaticResource RSApp.Styles.DefaultButton}" />
+                    </UniformGrid>
+
+                    <Separator Margin="0,15" />
+
                     <TextBlock Text="实时变换数据 (TransformData):" FontWeight="Bold" Foreground="#333" />
                     <StackPanel Margin="5,10,0,0" TextBlock.FontSize="11">
                     <TextBlock Text="{Binding MyTransformData.X, StringFormat='[1] X: {0:F}'}" />
@@ -420,8 +436,8 @@
                 <Canvas Background="AliceBlue" ClipToBounds="True">
                     <Button
                         Width="{Binding ElementName=Test1, Path=Value}"
-                        rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
+                        rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
                         rs:TransformHelper.TransformData="{Binding MyTransformData}"
                         BorderThickness="1"
@@ -431,8 +447,8 @@
 
                     <Button
                         Width="{Binding ElementName=Test1, Path=Value}"
-                        rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
+                        rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
                         rs:TransformHelper.TransformData="{Binding MyTransformData2}"
                         BorderThickness="1"
@@ -441,8 +457,8 @@
 
                     <Button
                         Width="{Binding ElementName=Test1, Path=Value}"
-                        rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsDirectionEnabled="{Binding ElementName=CkIsDirectionEnabled, Path=IsChecked}"
+                        rs:TransformHelper.IsEditable="True"
                         rs:TransformHelper.IsRotationEnabled="{Binding ElementName=CkIsRotationEnabled, Path=IsChecked}"
                         rs:TransformHelper.TransformData="{Binding MyTransformData3}"
                         BorderThickness="1"
