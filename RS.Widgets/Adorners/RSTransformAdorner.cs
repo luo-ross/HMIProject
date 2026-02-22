@@ -21,16 +21,14 @@ using System.Windows.Shell;
 
 namespace RS.Widgets.Adorners
 {
-    public class TransformAdorner : Adorner, ISelectable
+    public class RSTransformAdorner : Adorner, ISelectable
     {
         #region Fields
 
         private FrameworkElement AdornedFE => AdornedElement as FrameworkElement;
 
-        // 全局选中服务（所有 TransformAdorner 实例共享）
-        private static readonly SelectService<TransformAdorner> SelectionService = new SelectService<TransformAdorner>();
+        private static readonly SelectService<RSTransformAdorner> SelectionService = new SelectService<RSTransformAdorner>();
 
-        // 全局撤销服务 (该服务实例仅供 TransformAdorner 系统使用，独立于外部全局服务)
         internal static readonly IUndoService UndoService = new UndoService();
 
 
@@ -38,13 +36,11 @@ namespace RS.Widgets.Adorners
         private double GlobalScaleY = 1;
         private Size VisualPixelSize = new Size(0, 0);
 
-        // 用于渲染的可复用 DrawingVisual
         private readonly RSTransformVisual TransformVisual;
         private readonly VisualCollection Visuals;
 
         // 布局边距 — 扩大 Adorner 的布局边界，
         // 以便在 AdornedElement (负坐标) 外部绘制的区域
-        // 仍可接收来自 AdornerLayer 的鼠标命中测试事件。
         private const double HitPadding = 10.0;
 
         // 缓存的光标数据（加载一次，在实例间共享）
@@ -99,7 +95,7 @@ namespace RS.Widgets.Adorners
 
         private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TransformAdorner adorner)
+            if (d is RSTransformAdorner adorner)
             {
                 adorner.UpdateVisual();
             }
@@ -111,7 +107,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty BorderBrushProperty =
-            DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(RSTransformAdorner),
                 new PropertyMetadata(null, OnVisualPropertyChanged));
 
 
@@ -122,7 +118,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty RotationAngleProperty =
-            DependencyProperty.Register(nameof(RotationAngle), typeof(double), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(RotationAngle), typeof(double), typeof(RSTransformAdorner),
                 new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
         public RectDirection RectDirection
@@ -132,7 +128,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty RectDirectionProperty =
-            DependencyProperty.Register(nameof(RectDirection), typeof(RectDirection), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(RectDirection), typeof(RectDirection), typeof(RSTransformAdorner),
                 new FrameworkPropertyMetadata(RectDirection.Top, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
 
@@ -143,7 +139,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty IsSelectProperty =
-            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(IsSelect), typeof(bool), typeof(RSTransformAdorner),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
 
@@ -154,7 +150,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty IsSingleSelectProperty =
-            DependencyProperty.Register(nameof(IsSingleSelect), typeof(bool), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(IsSingleSelect), typeof(bool), typeof(RSTransformAdorner),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
 
@@ -165,7 +161,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty IsDirectionEnabledProperty =
-            DependencyProperty.Register(nameof(IsDirectionEnabled), typeof(bool), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(IsDirectionEnabled), typeof(bool), typeof(RSTransformAdorner),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
 
@@ -176,7 +172,7 @@ namespace RS.Widgets.Adorners
         }
 
         public static readonly DependencyProperty IsRotationEnabledProperty =
-            DependencyProperty.Register(nameof(IsRotationEnabled), typeof(bool), typeof(TransformAdorner),
+            DependencyProperty.Register(nameof(IsRotationEnabled), typeof(bool), typeof(RSTransformAdorner),
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnVisualPropertyChanged));
 
         #endregion
@@ -218,7 +214,7 @@ namespace RS.Widgets.Adorners
 
         #region Constructor & Initialization
 
-        static TransformAdorner()
+        static RSTransformAdorner()
         {
             // 加载自定义旋转光标
             var resourceStream = Application.GetResourceStream(new Uri("pack://application:,,,/RS.Widgets;component/Assets/Rotation.cur"));
@@ -233,7 +229,7 @@ namespace RS.Widgets.Adorners
             BaseResizeCursorData = CursorHelper.GetCursorData(Cursors.SizeNS);
         }
 
-        public TransformAdorner(FrameworkElement adornedElement) : base(adornedElement)
+        public RSTransformAdorner(FrameworkElement adornedElement) : base(adornedElement)
         {
             var brush = new SolidColorBrush(ColorHelper.GetNextVibrantColor());
             brush.Freeze();
@@ -306,7 +302,7 @@ namespace RS.Widgets.Adorners
             if (SelectionService.SelectedItems.Count > 0 && sender is Window window)
             {
                 Point pt = e.GetPosition(window);
-                if (VisualHelper.TryFindFromPoint<TransformAdorner>(window, pt) == null)
+                if (VisualHelper.TryFindFromPoint<RSTransformAdorner>(window, pt) == null)
                 {
                     UnselectAll();
                 }
@@ -331,18 +327,18 @@ namespace RS.Widgets.Adorners
                 return;
             }
 
-            var allAdorners = VisualHelper.FindVisualChildren<TransformAdorner>(window).ToList();
+            var allAdorners = VisualHelper.FindVisualChildren<RSTransformAdorner>(window).ToList();
             foreach (var adorner in allAdorners)
             {
                 SelectionService.AddSelect(adorner);
             }
         }
 
-        private TransformAdorner Select(MouseEventArgs e)
+        private RSTransformAdorner Select(MouseEventArgs e)
         {
             var isMulti = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
             var window = Window.GetWindow(this);
-            var hitList = e != null ? VisualHelper.FindAllFromPoint<TransformAdorner>(window, e.GetPosition(window)) : new List<TransformAdorner>();
+            var hitList = e != null ? VisualHelper.FindAllFromPoint<RSTransformAdorner>(window, e.GetPosition(window)) : new List<RSTransformAdorner>();
 
             if (hitList.Count == 0)
             {
@@ -370,7 +366,7 @@ namespace RS.Widgets.Adorners
                 SortAdornersByStableIndex(hitList);
                 var current = hitList.FirstOrDefault(r => r.IsSelect);
                 
-                TransformAdorner target;
+                RSTransformAdorner target;
                 if (current != null && hitList.Count > 1)
                 {
                     int currentIndex = hitList.IndexOf(current);
@@ -416,13 +412,13 @@ namespace RS.Widgets.Adorners
             base.OnMouseLeftButtonDown(e);
 
             var window = Window.GetWindow(this);
-            var hitList = VisualHelper.FindAllFromPoint<TransformAdorner>(window, e.GetPosition(window));
+            var hitList = VisualHelper.FindAllFromPoint<RSTransformAdorner>(window, e.GetPosition(window));
             SortAdornersByStableIndex(hitList);
             
             WasAnySelectedInStack = hitList.Any(r => r.IsSelect);
             
             PendingSelectionCycle = false;
-            TransformAdorner target;
+            RSTransformAdorner target;
 
             target = hitList.LastOrDefault(r => r.IsSelect) ?? hitList.LastOrDefault() ?? this;
 
@@ -1687,7 +1683,7 @@ namespace RS.Widgets.Adorners
             currentUndoAction = null;
         }
 
-        private static void SortAdornersByStableIndex(List<TransformAdorner> hitList)
+        private static void SortAdornersByStableIndex(List<RSTransformAdorner> hitList)
         {
             hitList.Sort((a, b) => 
             {

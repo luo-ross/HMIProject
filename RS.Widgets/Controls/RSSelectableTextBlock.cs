@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +16,7 @@ namespace RS.Widgets.Controls
     {
         private TextPointer StartPositionField;
         private TextPointer EndPositionField;
-        private SelectionAdorner Adorner;
+        private RSSelectionAdorner Adorner;
         private bool IsSelecting;
 
         static RSSelectableTextBlock()
@@ -40,7 +40,7 @@ namespace RS.Widgets.Controls
             var layer = AdornerLayer.GetAdornerLayer(this);
             if (layer != null)
             {
-                Adorner = new SelectionAdorner(this);
+                Adorner = new RSSelectionAdorner(this);
                 layer.Add(Adorner);
             }
         }

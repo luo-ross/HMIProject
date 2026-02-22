@@ -121,7 +121,7 @@ namespace RS.Widgets.Controls
                     {
                         foreach (var adorner in adorners)
                         {
-                            if (adorner is TransformAdorner ta)
+                            if (adorner is RSTransformAdorner ta)
                             {
                                 ta.DataModel = e.NewValue as TransformData;
                                 ta.UpdateDataModel();
@@ -159,12 +159,23 @@ namespace RS.Widgets.Controls
             RemoveTransformAdorner(adornerLayer, element);
             if (isEditable)
             {
-                var transformAdorner = new TransformAdorner(element)
+                var transformAdorner = new RSTransformAdorner(element);
+                transformAdorner.IsDirectionEnabled = GetIsDirectionEnabled(element);
+                transformAdorner.IsRotationEnabled = GetIsRotationEnabled(element);
+
+                // 恢复当前状态，防止重建时重置为默认值
+                var model = GetTransformData(element);
+                if (model != null)
                 {
-                    IsDirectionEnabled = GetIsDirectionEnabled(element),
-                    IsRotationEnabled = GetIsRotationEnabled(element),
-                    DataModel = GetTransformData(element)
-                };
+                    transformAdorner.RotationAngle = model.Angle;
+                    transformAdorner.RectDirection = model.Direction;
+                }
+                else
+                {
+                    transformAdorner.RotationAngle = GetRotation(element);
+                }
+
+                transformAdorner.DataModel = model;
                 adornerLayer.Add(transformAdorner);
             }
         }
@@ -181,7 +192,7 @@ namespace RS.Widgets.Controls
             {
                 foreach (var adorner in adorners)
                 {
-                    if (adorner is TransformAdorner)
+                    if (adorner is RSTransformAdorner)
                     {
                         adornerLayer.Remove(adorner);
                     }
@@ -323,7 +334,18 @@ namespace RS.Widgets.Controls
             translateTransform.Y = y;
 
             // 强制更新装饰器层，以应对 RenderTransform 变化导致的装饰器不同步
-            AdornerLayer.GetAdornerLayer(element)?.Update(element);
+            var layer = AdornerLayer.GetAdornerLayer(element);
+            if (layer != null)
+            {
+                var adorners = layer.GetAdorners(element);
+                if (adorners != null)
+                {
+                    if (adorners.Length > 0)
+                    {
+                        layer.Update(element);
+                    }
+                }
+            }
         }
 
         #endregion
@@ -403,8 +425,8 @@ namespace RS.Widgets.Controls
 
         static TransformHelper()
         {
-            TransformAdorner.UndoService.Undone += OnUndoServiceUndone;
-            TransformAdorner.UndoService.Redone += OnUndoServiceRedone;
+            RSTransformAdorner.UndoService.Undone += OnUndoServiceUndone;
+            RSTransformAdorner.UndoService.Redone += OnUndoServiceRedone;
         }
 
         private static void OnUndoServiceUndone(object sender, EventArgs e)
@@ -525,7 +547,7 @@ namespace RS.Widgets.Controls
                 if (undoCommand == null)
                 {
                     undoCommand = new RelayCommand(ExecuteUndo, CanExecuteUndo);
-                    TransformAdorner.UndoService.StateChanged += OnUndoServiceStateChanged;
+                    RSTransformAdorner.UndoService.StateChanged += OnUndoServiceStateChanged;
                 }
                 return undoCommand;
             }
@@ -545,12 +567,12 @@ namespace RS.Widgets.Controls
 
         private static void ExecuteUndo()
         {
-            TransformAdorner.UndoService.Undo();
+            RSTransformAdorner.UndoService.Undo();
         }
 
         private static bool CanExecuteUndo()
         {
-            return TransformAdorner.UndoService.CanUndo;
+            return RSTransformAdorner.UndoService.CanUndo;
         }
 
         private static RelayCommand redoCommand;
@@ -568,12 +590,12 @@ namespace RS.Widgets.Controls
 
         private static void ExecuteRedo()
         {
-            TransformAdorner.UndoService.Redo();
+            RSTransformAdorner.UndoService.Redo();
         }
 
         private static bool CanExecuteRedo()
         {
-            return TransformAdorner.UndoService.CanRedo;
+            return RSTransformAdorner.UndoService.CanRedo;
         }
 
     }

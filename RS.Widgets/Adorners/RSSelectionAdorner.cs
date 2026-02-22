@@ -1,4 +1,4 @@
-using RS.Widgets.Controls;
+﻿using RS.Widgets.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ using System.Windows.Media;
 
 namespace RS.Widgets.Adorners
 {
-    public class SelectionAdorner : Adorner
+    public class RSSelectionAdorner : Adorner
     {
         private RSSelectableTextBlock Control;
 
-        public SelectionAdorner(RSSelectableTextBlock adornedElement) : base(adornedElement)
+        public RSSelectionAdorner(RSSelectableTextBlock adornedElement) : base(adornedElement)
         {
             Control = adornedElement;
             this.IsHitTestVisible = false;
