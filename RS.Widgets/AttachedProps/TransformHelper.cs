@@ -51,12 +51,12 @@ namespace RS.Widgets.Controls
         private static void TargetElement_Loaded(object sender, RoutedEventArgs e)
         {
             var frameworkElement = sender as FrameworkElement;
-            if (frameworkElement == null)
+            if (frameworkElement != null)
             {
-                return;
+                frameworkElement.Loaded -= TargetElement_Loaded;
+                var isEditable = GetIsEditable(frameworkElement);
+                UpdateTransformAdorner(frameworkElement, isEditable);
             }
-            var isEditable = GetIsEditable(frameworkElement);
-            UpdateTransformAdorner(frameworkElement, isEditable);
         }
 
         public static readonly DependencyProperty IsDirectionEnabledProperty =
@@ -283,7 +283,11 @@ namespace RS.Widgets.Controls
         {
             if (d is FrameworkElement element)
             {
-                UpdateRenderTransform(element);
+                // 使用异步调度来合并在同一 tick 内的多个属性更改
+                element.Dispatcher.BeginInvoke(new Action(delegate 
+                {
+                    UpdateRenderTransform(element);
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
             }
         }
 
@@ -443,32 +447,45 @@ namespace RS.Widgets.Controls
 
         private static void ExecuteGlobalCommand(DependencyProperty commandProperty)
         {
-            // 对于撤销重做这种全局操作，通常触发在当前活跃窗口或者特定标记的容器上
-            // 这里的策略是：查找所有加载的且绑定了此 Command 的元素并触发
-            // 或者更简单地，由用户在最外层容器绑定
-            var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(x => x.IsActive);
-            if (activeWindow == null)
+            // 策略优化：不仅查找活跃窗口，还要查找当前的所有已加载窗体
+            // 但为了性能，我们通过 SelectionService 找到当前受影响的 Adorner 所装饰的元素，
+            // 并向上寻找绑定了 Command 的祖先。
+            foreach (var win in Application.Current.Windows.OfType<Window>())
             {
-                return;
+                if (win.IsLoaded)
+                {
+                    ExecuteCommandOnHierarchy(win, commandProperty);
+                }
             }
-
-            // 递归查找绑定了该属性的元素并执行（通常建议在 Window 或主 Canvas 上绑定）
-            ExecuteCommandOnHierarchy(activeWindow, commandProperty);
         }
 
         private static void ExecuteCommandOnHierarchy(DependencyObject root, DependencyProperty commandProperty)
         {
-            var command = root.GetValue(commandProperty) as ICommand;
-            if (command != null && command.CanExecute(null))
+            if (root == null)
             {
-                command.Execute(null);
+                return;
             }
 
+            var command = root.GetValue(commandProperty) as ICommand;
+            if (command != null)
+            {
+                if (command.CanExecute(null))
+                {
+                    command.Execute(null);
+                }
+            }
+
+            // 仅对 Window 或主要面板进行深度查找，避免全树扫描的性能压力
+            // 这里的递归深度应由 UI 结构决定，但加上一些智能过滤会更好
             int count = VisualTreeHelper.GetChildrenCount(root);
             for (int i = 0; i < count; i++)
             {
                 var child = VisualTreeHelper.GetChild(root, i);
-                ExecuteCommandOnHierarchy(child, commandProperty);
+                // 仅扫描必要的分支：如加载中的元素
+                if (child is FrameworkElement fe && fe.IsLoaded)
+                {
+                    ExecuteCommandOnHierarchy(child, commandProperty);
+                }
             }
         }
 

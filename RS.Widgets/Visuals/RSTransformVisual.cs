@@ -95,7 +95,7 @@ namespace RS.Widgets.Visuals
         /// <param name="rectDirection">方向箭头指向的边。</param>
         /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
         /// <param name="hoveredDirection">悬停的方向（可选）。</param>
-        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, VisualOperation hoveredDirection = VisualOperation.None)
+        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, VisualOperation hoveredDirection = VisualOperation.None, bool showRotationCenter = false)
         {
             if (size.Width <= 0 || size.Height <= 0)
             {
@@ -169,6 +169,11 @@ namespace RS.Widgets.Visuals
                             }
                         }
                     }
+                }
+
+                if (showRotationCenter)
+                {
+                    DrawRotationCenter(dc, w, h);
                 }
             }
         }
@@ -575,6 +580,33 @@ namespace RS.Widgets.Visuals
             }
         }
 
+        private void DrawRotationCenter(DrawingContext dc, double w, double h)
+        {
+            double cx = w / 2;
+            double cy = h / 2;
+            double radius = 5.0;
+            double crossSize = 8.0;
+
+            // 绘制一个带有十字线的小圆圈来表示中心点
+            Brush brush = BorderBrush ?? Brushes.DodgerBlue;
+            Pen pen = new Pen(brush, 1.0);
+            pen.Freeze();
+
+            // 背景光环 (半透明，提高可见度)
+            Brush shadowBrush = new SolidColorBrush(Color.FromArgb(100, 255, 255, 255));
+            shadowBrush.Freeze();
+            dc.DrawEllipse(shadowBrush, null, new Point(cx, cy), radius + 2, radius + 2);
+
+            // 中心圆点
+            dc.DrawEllipse(brush, null, new Point(cx, cy), 2, 2);
+
+            // 十字架线
+            dc.DrawLine(pen, new Point(cx - crossSize / 2, cy), new Point(cx + crossSize / 2, cy));
+            dc.DrawLine(pen, new Point(cx, cy - crossSize / 2), new Point(cx, cy + crossSize / 2));
+
+            // 外圈
+            dc.DrawEllipse(null, pen, new Point(cx, cy), radius, radius);
+        }
         #endregion
     }
 }

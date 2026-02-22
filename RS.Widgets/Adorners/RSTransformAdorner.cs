@@ -246,6 +246,18 @@ namespace RS.Widgets.Adorners
 
             this.Focusable = true;
             this.Loaded += OnTransformAdornerLoaded;
+            this.Unloaded += OnTransformAdornerUnloaded;
+        }
+
+        private void OnTransformAdornerUnloaded(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null)
+            {
+                window.MouseLeftButtonUp -= Window_MouseLeftButtonUp;
+            }
+            this.Loaded -= OnTransformAdornerLoaded;
+            this.Unloaded -= OnTransformAdornerUnloaded;
         }
 
         private void OnTransformAdornerLoaded(object sender, RoutedEventArgs e)
@@ -264,6 +276,8 @@ namespace RS.Widgets.Adorners
                 if (!HookedWindows.Contains(window))
                 {
                     window.PreviewKeyDown += Window_PreviewKeyDown;
+                    window.SizeChanged += Window_SizeChanged;
+                    window.LocationChanged += Window_LocationChanged;
                     window.Unloaded += Window_Unloaded;
                     HookedWindows.Add(window);
                 }
@@ -275,8 +289,33 @@ namespace RS.Widgets.Adorners
             if (sender is Window window)
             {
                 window.PreviewKeyDown -= Window_PreviewKeyDown;
+                window.SizeChanged -= Window_SizeChanged;
+                window.LocationChanged -= Window_LocationChanged;
                 window.Unloaded -= Window_Unloaded;
                 HookedWindows.Remove(window);
+            }
+        }
+
+        private static void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateAdornersForWindow(sender as Window);
+        }
+
+        private static void Window_LocationChanged(object sender, EventArgs e)
+        {
+            UpdateAdornersForWindow(sender as Window);
+        }
+
+        private static void UpdateAdornersForWindow(Window window)
+        {
+            if (window == null)
+            {
+                return;
+            }
+            var layer = AdornerLayer.GetAdornerLayer(window);
+            if (layer != null)
+            {
+                layer.Update();
             }
         }
 
@@ -1538,6 +1577,9 @@ namespace RS.Widgets.Adorners
             DataModel.TopRight = AdornedFE.TranslatePoint(new Point(w, 0), parent);
             DataModel.BottomLeft = AdornedFE.TranslatePoint(new Point(0, h), parent);
             DataModel.BottomRight = AdornedFE.TranslatePoint(new Point(w, h), parent);
+            
+            // 旋转中心 (Pivot) 坐标反馈
+            DataModel.Pivot = AdornedFE.TranslatePoint(new Point(w / 2, h / 2), parent);
             }
             finally
             {
@@ -1604,10 +1646,17 @@ namespace RS.Widgets.Adorners
             {
                 return;
             }
-            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, IsDirectionEnabled, HoveredDirectionButton);
+
+            bool showRotationCenter = (CurrentOperation == VisualOperation.Rotate || 
+                                     CurrentOperation == VisualOperation.RotateTopLeft || 
+                                     CurrentOperation == VisualOperation.RotateTopRight || 
+                                     CurrentOperation == VisualOperation.RotateBottomLeft || 
+                                     CurrentOperation == VisualOperation.RotateBottomRight);
+
+            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, IsDirectionEnabled, HoveredDirectionButton, showRotationCenter);
             UpdateDataModel();
         }
-
+ 
         protected override int VisualChildrenCount
         {
             get { return Visuals.Count; }
