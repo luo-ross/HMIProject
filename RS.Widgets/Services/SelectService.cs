@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RS.Widgets.Services
 {
-    public class RSSelectService<T> where T : class, ISelectable
+    public class SelectService<T> where T : class, ISelectable
     {
         private readonly HashSet<T> SelectedItemsInternal = new HashSet<T>();
 

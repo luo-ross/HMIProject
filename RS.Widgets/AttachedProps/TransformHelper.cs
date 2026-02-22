@@ -374,7 +374,81 @@ namespace RS.Widgets.Controls
 
         #endregion
 
+        public static event EventHandler UndoPerformed;
+        public static event EventHandler RedoPerformed;
 
+        public static readonly DependencyProperty UndoneCommandProperty =
+            DependencyProperty.RegisterAttached("UndoneCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+
+        public static ICommand GetUndoneCommand(DependencyObject obj)
+        {
+            return (ICommand)obj.GetValue(UndoneCommandProperty);
+        }
+        public static void SetUndoneCommand(DependencyObject obj, ICommand value)
+        {
+            obj.SetValue(UndoneCommandProperty, value);
+        }
+
+        public static readonly DependencyProperty RedoneCommandProperty =
+            DependencyProperty.RegisterAttached("RedoneCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
+
+        public static ICommand GetRedoneCommand(DependencyObject obj)
+        {
+            return (ICommand)obj.GetValue(RedoneCommandProperty);
+        }
+        public static void SetRedoneCommand(DependencyObject obj, ICommand value)
+        {
+            obj.SetValue(RedoneCommandProperty, value);
+        }
+
+        static TransformHelper()
+        {
+            TransformAdorner.UndoService.Undone += OnUndoServiceUndone;
+            TransformAdorner.UndoService.Redone += OnUndoServiceRedone;
+        }
+
+        private static void OnUndoServiceUndone(object sender, EventArgs e)
+        {
+            UndoPerformed?.Invoke(null, EventArgs.Empty);
+            ExecuteGlobalCommand(UndoneCommandProperty);
+        }
+
+        private static void OnUndoServiceRedone(object sender, EventArgs e)
+        {
+            RedoPerformed?.Invoke(null, EventArgs.Empty);
+            ExecuteGlobalCommand(RedoneCommandProperty);
+        }
+
+        private static void ExecuteGlobalCommand(DependencyProperty commandProperty)
+        {
+            // 对于撤销重做这种全局操作，通常触发在当前活跃窗口或者特定标记的容器上
+            // 这里的策略是：查找所有加载的且绑定了此 Command 的元素并触发
+            // 或者更简单地，由用户在最外层容器绑定
+            var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(x => x.IsActive);
+            if (activeWindow == null)
+            {
+                return;
+            }
+
+            // 递归查找绑定了该属性的元素并执行（通常建议在 Window 或主 Canvas 上绑定）
+            ExecuteCommandOnHierarchy(activeWindow, commandProperty);
+        }
+
+        private static void ExecuteCommandOnHierarchy(DependencyObject root, DependencyProperty commandProperty)
+        {
+            var command = root.GetValue(commandProperty) as ICommand;
+            if (command != null && command.CanExecute(null))
+            {
+                command.Execute(null);
+            }
+
+            int count = VisualTreeHelper.GetChildrenCount(root);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                ExecuteCommandOnHierarchy(child, commandProperty);
+            }
+        }
 
         public static readonly DependencyProperty MoveStartedCommandProperty =
             DependencyProperty.RegisterAttached("MoveStartedCommand", typeof(ICommand), typeof(TransformHelper), new PropertyMetadata(null));
@@ -450,16 +524,33 @@ namespace RS.Widgets.Controls
             {
                 if (undoCommand == null)
                 {
-                    undoCommand = new RelayCommand(() => TransformAdorner.UndoService.Undo(),
-                        () => TransformAdorner.UndoService.CanUndo
-                    );
-                    TransformAdorner.UndoService.StateChanged += (s, e) =>
-                    {
-                        undoCommand.NotifyCanExecuteChanged();
-                    };
+                    undoCommand = new RelayCommand(ExecuteUndo, CanExecuteUndo);
+                    TransformAdorner.UndoService.StateChanged += OnUndoServiceStateChanged;
                 }
                 return undoCommand;
             }
+        }
+
+        private static void OnUndoServiceStateChanged(object sender, EventArgs e)
+        {
+            if (undoCommand != null)
+            {
+                undoCommand.NotifyCanExecuteChanged();
+            }
+            if (redoCommand != null)
+            {
+                redoCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        private static void ExecuteUndo()
+        {
+            TransformAdorner.UndoService.Undo();
+        }
+
+        private static bool CanExecuteUndo()
+        {
+            return TransformAdorner.UndoService.CanUndo;
         }
 
         private static RelayCommand redoCommand;
@@ -469,16 +560,20 @@ namespace RS.Widgets.Controls
             {
                 if (redoCommand == null)
                 {
-                    redoCommand = new RelayCommand(() => TransformAdorner.UndoService.Redo(),
-                        () => TransformAdorner.UndoService.CanRedo
-                    );
-                    TransformAdorner.UndoService.StateChanged += (s, e) =>
-                    {
-                        redoCommand.NotifyCanExecuteChanged();
-                    };
+                    redoCommand = new RelayCommand(ExecuteRedo, CanExecuteRedo);
                 }
                 return redoCommand;
             }
+        }
+
+        private static void ExecuteRedo()
+        {
+            TransformAdorner.UndoService.Redo();
+        }
+
+        private static bool CanExecuteRedo()
+        {
+            return TransformAdorner.UndoService.CanRedo;
         }
 
     }

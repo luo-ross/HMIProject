@@ -28,7 +28,7 @@ namespace RS.Widgets.Adorners
         private FrameworkElement AdornedFE => AdornedElement as FrameworkElement;
 
         // 全局选中服务（所有 TransformAdorner 实例共享）
-        private static readonly RSSelectService<TransformAdorner> SelectionService = new RSSelectService<TransformAdorner>();
+        private static readonly SelectService<TransformAdorner> SelectionService = new SelectService<TransformAdorner>();
 
         // 全局撤销服务 (该服务实例仅供 TransformAdorner 系统使用，独立于外部全局服务)
         internal static readonly IUndoService UndoService = new UndoService();
@@ -76,6 +76,8 @@ namespace RS.Widgets.Adorners
         private Matrix AdornerMatrix = Matrix.Identity;
         private bool WasAnySelectedInStack = false;
         private bool PendingSelectionCycle = false;
+
+        private static readonly HashSet<Window> HookedWindows = new HashSet<Window>();
 
         #endregion
 
@@ -256,6 +258,46 @@ namespace RS.Widgets.Adorners
             {
                 window.MouseLeftButtonUp -= Window_MouseLeftButtonUp;
                 window.MouseLeftButtonUp += Window_MouseLeftButtonUp;
+
+                if (!HookedWindows.Contains(window))
+                {
+                    window.PreviewKeyDown += Window_PreviewKeyDown;
+                    window.Unloaded += Window_Unloaded;
+                    HookedWindows.Add(window);
+                }
+            }
+        }
+
+        private static void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Window window)
+            {
+                window.PreviewKeyDown -= Window_PreviewKeyDown;
+                window.Unloaded -= Window_Unloaded;
+                HookedWindows.Remove(window);
+            }
+        }
+
+        private static void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                if (e.Key == Key.Z)
+                {
+                    if (UndoService.CanUndo)
+                    {
+                        UndoService.Undo();
+                        e.Handled = true;
+                    }
+                }
+                else if (e.Key == Key.Y || (e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)))
+                {
+                    if (UndoService.CanRedo)
+                    {
+                        UndoService.Redo();
+                        e.Handled = true;
+                    }
+                }
             }
         }
 
@@ -382,7 +424,6 @@ namespace RS.Widgets.Adorners
             PendingSelectionCycle = false;
             TransformAdorner target;
 
-            // 路由决策：优先命中已选中项（为了拖拽），否则命中顶层项
             target = hitList.LastOrDefault(r => r.IsSelect) ?? hitList.LastOrDefault() ?? this;
 
             if (target != this)
@@ -391,8 +432,6 @@ namespace RS.Widgets.Adorners
                 e.Handled = true;
                 return;
             }
-
-            // 自己处理
             ProcessMouseDown(e);
         }
 
@@ -1674,7 +1713,6 @@ namespace RS.Widgets.Adorners
                     return zA.CompareTo(zB);
                 }
             
-                // 然后按子元素索引排序（稳定且非侵入）
                 int idxA = pA.Children.IndexOf(elA);
                 int idxB = pB.Children.IndexOf(elB);
                 return idxA.CompareTo(idxB);

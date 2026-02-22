@@ -17,7 +17,7 @@ namespace RS.Widgets.Controls
 {
     public class RSTransformRig : Control, ISelectable
     {
-        private static readonly RSSelectService<RSTransformRig> SelectionService = new RSSelectService<RSTransformRig>();
+        private static readonly SelectService<RSTransformRig> SelectionService = new SelectService<RSTransformRig>();
 
         #region Move
         private Thumb? PART_MoveThumb;
