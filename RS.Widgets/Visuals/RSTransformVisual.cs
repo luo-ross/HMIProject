@@ -24,19 +24,6 @@ namespace RS.Widgets.Visuals
         private const double DirectionHostOffset = 10.0;// 方向按钮容器的边距偏移
 
 
-        // 静态图标几何图形 (来自 Controls.Icons.xaml)
-        private static readonly Geometry UpArrowGeo;
-
-        static RSTransformVisual()
-        {
-            // 向上的箭头几何图形
-            UpArrowGeo = Geometry.Parse(
-                "M506.123 361.692L131.357 736.459c-12.497 12.496-32.758 12.496-45.255 0" +
-                "-12.497-12.497-12.497-32.759 0-45.255l403.05-403.051c12.498-12.497 32.759" +
-                "-12.497 45.256 0l403.05 403.05c12.497 12.497 12.497 32.759 0 45.256-12.496" +
-                " 12.496-32.758 12.496-45.254 0L517.437 361.692a8 8 0 0 0-11.314 0z");
-            UpArrowGeo.Freeze();
-        }
 
 
         // 缓存的渲染资源
@@ -45,6 +32,57 @@ namespace RS.Widgets.Visuals
         private Pen StemPen;
         private Pen HoverStrokePen;
         private Brush BorderBrush;
+
+        // 缓存的几何图形
+        private static readonly StreamGeometry TriangleTop;
+        private static readonly StreamGeometry TriangleBottom;
+        private static readonly StreamGeometry TriangleLeft;
+        private static readonly StreamGeometry TriangleRight;
+
+        static RSTransformVisual()
+        {
+            TriangleTop = CreateTriangleGeometry(0);
+            TriangleBottom = CreateTriangleGeometry(180);
+            TriangleLeft = CreateTriangleGeometry(-90);
+            TriangleRight = CreateTriangleGeometry(90);
+        }
+
+        private static StreamGeometry CreateTriangleGeometry(double angleDeg)
+        {
+            double halfBase = DirectionTriSize / 2.0;
+            double height = DirectionTriSize * 0.866;
+
+            // 基础三角形向上 (中心点在原点)
+            Point tip = new Point(0, -height / 2);
+            Point bl = new Point(-halfBase, height / 2);
+            Point br = new Point(halfBase, height / 2);
+
+            // 旋转逻辑
+            double rad = angleDeg * Math.PI / 180.0;
+            double cos = Math.Cos(rad);
+            double sin = Math.Sin(rad);
+
+            Point RotatePoint(Point p)
+            {
+                return new Point(
+                    p.X * cos - p.Y * sin,
+                    p.Y * cos + p.X * sin);
+            }
+
+            Point r0 = RotatePoint(tip);
+            Point r1 = RotatePoint(bl);
+            Point r2 = RotatePoint(br);
+
+            var geometry = new StreamGeometry();
+            using (var ctx = geometry.Open())
+            {
+                ctx.BeginFigure(r0, true, true);
+                ctx.LineTo(r1, true, false);
+                ctx.LineTo(r2, true, false);
+            }
+            geometry.Freeze();
+            return geometry;
+        }
 
 
         /// <summary>
@@ -81,7 +119,15 @@ namespace RS.Widgets.Visuals
             using (var dc = RenderOpen())
             {
                 // 1. 带有透明填充的矩形边框（提供移动命中测试区域和边框）
-                var pen = isSelect ? FramePenSelected : FramePen;
+                Pen pen;
+                if (isSelect)
+                {
+                    pen = FramePenSelected;
+                }
+                else
+                {
+                    pen = FramePen;
+                }
                 dc.DrawRectangle(Brushes.Transparent, pen, new Rect(0, 0, w, h));
 
                 if (isDirectionEnabled)
@@ -97,17 +143,28 @@ namespace RS.Widgets.Visuals
                         // 4. 在悬停的方向绘制预览箭头（使用对比色）
                         if (hoveredDirection != VisualOperation.None)
                         {
-                            RectDirection preDir = hoveredDirection switch {
-                                VisualOperation.ChangeDirectionTop => RectDirection.Top,
-                                VisualOperation.ChangeDirectionBottom => RectDirection.Bottom,
-                                VisualOperation.ChangeDirectionLeft => RectDirection.Left,
-                                VisualOperation.ChangeDirectionRight => RectDirection.Right,
-                                _ => rectDirection
-                            };
+                            RectDirection preDir = rectDirection;
+                            switch (hoveredDirection)
+                            {
+                                case VisualOperation.ChangeDirectionTop:
+                                    preDir = RectDirection.Top;
+                                    break;
+                                case VisualOperation.ChangeDirectionBottom:
+                                    preDir = RectDirection.Bottom;
+                                    break;
+                                case VisualOperation.ChangeDirectionLeft:
+                                    preDir = RectDirection.Left;
+                                    break;
+                                case VisualOperation.ChangeDirectionRight:
+                                    preDir = RectDirection.Right;
+                                    break;
+                            }
+
                             if (preDir != rectDirection)
                             {
                                 var contrastBrush = GetContrastBrush(BorderBrush);
                                 var contrastStemPen = new Pen(contrastBrush, isSelect ? 2.0 : 1.0);
+                                contrastStemPen.Freeze();
                                 DrawDirectionArrow(dc, w, h, preDir, isSelect, contrastBrush, contrastStemPen);
                             }
                         }
@@ -170,60 +227,69 @@ namespace RS.Widgets.Visuals
         private void DrawDirectionArrow(DrawingContext dc, double w, double h, RectDirection direction, bool isSelect, Brush brushOverride = null, Pen stemPenOverride = null)
         {
             var brush = brushOverride ?? BorderBrush ?? Brushes.DodgerBlue;
-            var stemPen = stemPenOverride ?? (isSelect ? FramePenSelected : FramePen);
+            Pen stemPen;
+            if (stemPenOverride != null)
+            {
+                stemPen = stemPenOverride;
+            }
+            else
+            {
+                if (isSelect)
+                {
+                    stemPen = FramePenSelected;
+                }
+                else
+                {
+                    stemPen = FramePen;
+                }
+            }
 
             // 箭头局部区域：20宽 × 32高，在局部空间中箭头指向“上方”。
             // 对于每个方向，我们进行平移和旋转以正确定位。
-            double cx;
-            double cy;
-            double rotation;
+            double cx = 0;
+            double cy = 0;
+            double rotation = 0;
 
             switch (direction)
             {
                 case RectDirection.Top:
-                    // 居中靠上，箭头延伸至上边缘上方
                     cx = w / 2;
                     cy = -ArrowMarginOffset + ArrowHeight / 2;
                     rotation = 0;
                     break;
-
                 case RectDirection.Bottom:
-                    // 居中靠下，箭头延伸至下边缘下方
                     cx = w / 2;
                     cy = h + ArrowMarginOffset - ArrowHeight / 2;
                     rotation = 180;
                     break;
-
                 case RectDirection.Left:
-                    // 靠左居中，箭头延伸至左边缘左侧
                     cx = -ArrowMarginOffset + ArrowHeight / 2;
-                    cy = h / 2;
                     rotation = -90;
-                    break;
-
-                case RectDirection.Right:
-                    // 靠右居中，箭头延伸至右边缘右侧
-                    cx = w + ArrowMarginOffset - ArrowHeight / 2;
                     cy = h / 2;
-                    rotation = 90;
                     break;
-
+                case RectDirection.Right:
+                    cx = w + ArrowMarginOffset - ArrowHeight / 2;
+                    rotation = 90;
+                    cy = h / 2;
+                    break;
                 default:
                     return;
             }
 
-            // 变换：平移至中心，然后旋转
-            dc.PushTransform(new TranslateTransform(cx, cy));
+            // 变换：合并为一个 MatrixTransform 减少 Push 调用
+            Matrix mat = Matrix.Identity;
             if (rotation != 0)
             {
-                dc.PushTransform(new RotateTransform(rotation));
+                mat.Rotate(rotation);
             }
+            mat.Translate(cx, cy);
+            dc.PushTransform(new MatrixTransform(mat));
 
             // ── 在局部空间进行绘制 (指向上方，以原点为中心) ──
             double halfW = ArrowWidth / 2;
             double halfH = ArrowHeight / 2;
 
-            // 1. 箭头柄：2像素宽，占据整个高度，水平居中
+            // 1. 箭头柄：占据整个高度，水平居中
             dc.DrawLine(stemPen, new Point(0, -halfH), new Point(0, halfH));
 
             // 2. 箭头顶部倒 V 型
@@ -234,11 +300,6 @@ namespace RS.Widgets.Visuals
             dc.DrawLine(stemPen, chevronLeft, chevronTip);
             dc.DrawLine(stemPen, chevronTip, chevronRight);
 
-            // 恢复变换
-            if (rotation != 0)
-            {
-                dc.Pop();
-            }
             dc.Pop();
         }
 
@@ -255,110 +316,52 @@ namespace RS.Widgets.Visuals
             var brush = BorderBrush ?? Brushes.DodgerBlue;
             double cellSize = DirectionHostSize / 3.0;
 
-            // 根据当前方向计算容器中心点
-            Point hostCenter;
-            switch (direction)
-            {
-                case RectDirection.Top:
-                    hostCenter = new Point(w / 2, -DirectionHostOffset + DirectionHostSize / 2);
-                    break;
-
-                case RectDirection.Bottom:
-                    hostCenter = new Point(w / 2, h + DirectionHostOffset - DirectionHostSize / 2);
-                    break;
-
-                case RectDirection.Left:
-                    hostCenter = new Point(-DirectionHostOffset + DirectionHostSize / 2, h / 2);
-                    break;
-
-                case RectDirection.Right:
-                    hostCenter = new Point(w + DirectionHostOffset - DirectionHostSize / 2, h / 2);
-                    break;
-
-                default:
-                    hostCenter = new Point(w / 2, -DirectionHostOffset + DirectionHostSize / 2);
-                    break;
-            }
+            Point hostCenter = GetDirectionHostCenter(w, h, direction);
 
             double left = hostCenter.X - DirectionHostSize / 2;
             double top = hostCenter.Y - DirectionHostSize / 2;
 
-            // 上方三角形按钮
             if (direction != RectDirection.Top)
             {
-                DrawSmallTriangle(dc, brush,
-                    new Point(left + cellSize * 1.5, top + cellSize * 0.5), 0,
-                    hoveredDirection == VisualOperation.ChangeDirectionTop);
+                bool isHovered = hoveredDirection == VisualOperation.ChangeDirectionTop;
+                Point center = new Point(left + cellSize * 1.5, top + cellSize * 0.5);
+                DrawTriangle(dc, TriangleTop, brush, center, isHovered);
             }
 
-            // 左侧三角形按钮
             if (direction != RectDirection.Left)
             {
-                DrawSmallTriangle(dc, brush,
-                    new Point(left + cellSize * 0.5, top + cellSize * 1.5), -90,
-                    hoveredDirection == VisualOperation.ChangeDirectionLeft);
+                bool isHovered = hoveredDirection == VisualOperation.ChangeDirectionLeft;
+                Point center = new Point(left + cellSize * 0.5, top + cellSize * 1.5);
+                DrawTriangle(dc, TriangleLeft, brush, center, isHovered);
             }
 
-            // 右侧三角形按钮
             if (direction != RectDirection.Right)
             {
-                DrawSmallTriangle(dc, brush,
-                    new Point(left + cellSize * 2.5, top + cellSize * 1.5), 90,
-                    hoveredDirection == VisualOperation.ChangeDirectionRight);
+                bool isHovered = hoveredDirection == VisualOperation.ChangeDirectionRight;
+                Point center = new Point(left + cellSize * 2.5, top + cellSize * 1.5);
+                DrawTriangle(dc, TriangleRight, brush, center, isHovered);
             }
 
-            // 下方三角形按钮
             if (direction != RectDirection.Bottom)
             {
-                DrawSmallTriangle(dc, brush,
-                    new Point(left + cellSize * 1.5, top + cellSize * 2.5), 180,
-                    hoveredDirection == VisualOperation.ChangeDirectionBottom);
+                bool isHovered = hoveredDirection == VisualOperation.ChangeDirectionBottom;
+                Point center = new Point(left + cellSize * 1.5, top + cellSize * 2.5);
+                DrawTriangle(dc, TriangleBottom, brush, center, isHovered);
             }
         }
 
-
-        /// <summary>
-        /// 绘制一个小巧的实心等边三角形，并进行指定角度的旋转。
-        /// </summary>
-        private void DrawSmallTriangle(DrawingContext dc, Brush brush, Point center, double angleDeg, bool isHovered = false)
+        private void DrawTriangle(DrawingContext dc, StreamGeometry geometry, Brush brush, Point center, bool isHovered)
         {
-            double halfBase = DirectionTriSize / 2.0;
-            double height = DirectionTriSize * 0.866;
-
-            // 基础三角形向上
-            Point tip = new Point(0, -height / 2);
-            Point bl = new Point(-halfBase, height / 2);
-            Point br = new Point(halfBase, height / 2);
-
-            // 旋转逻辑
-            double rad = angleDeg * Math.PI / 180.0;
-            double cos = Math.Cos(rad);
-            double sin = Math.Sin(rad);
-
-            Point RotatePoint(Point p)
+            dc.PushTransform(new TranslateTransform(center.X, center.Y));
+            Pen strokePen = null;
+            if (isHovered)
             {
-                return new Point(
-                    center.X + p.X * cos - p.Y * sin,
-                    center.Y + p.X * sin + p.Y * cos);
+                strokePen = HoverStrokePen;
             }
-
-            Point r0 = RotatePoint(tip);
-            Point r1 = RotatePoint(bl);
-            Point r2 = RotatePoint(br);
-
-            var geometry = new StreamGeometry();
-            using (var ctx = geometry.Open())
-            {
-                ctx.BeginFigure(r0, true, true);
-                ctx.LineTo(r1, true, false);
-                ctx.LineTo(r2, true, false);
-            }
-            geometry.Freeze();
-
-            // 如果处于悬停状态，则绘制对比色的边框
-            Pen strokePen = isHovered ? HoverStrokePen : null;
             dc.DrawGeometry(brush, strokePen, geometry);
+            dc.Pop();
         }
+
 
         #endregion
 
@@ -503,29 +506,7 @@ namespace RS.Widgets.Visuals
             double hitRadius = cellSize;
 
             // 计算容器中心点
-            Point hostCenter;
-            switch (currentDirection)
-            {
-                case RectDirection.Top:
-                    hostCenter = new Point(w / 2, -DirectionHostOffset + DirectionHostSize / 2);
-                    break;
-
-                case RectDirection.Bottom:
-                    hostCenter = new Point(w / 2, h + DirectionHostOffset - DirectionHostSize / 2);
-                    break;
-
-                case RectDirection.Left:
-                    hostCenter = new Point(-DirectionHostOffset + DirectionHostSize / 2, h / 2);
-                    break;
-
-                case RectDirection.Right:
-                    hostCenter = new Point(w + DirectionHostOffset - DirectionHostSize / 2, h / 2);
-                    break;
-
-                default:
-                    hostCenter = new Point(w / 2, -DirectionHostOffset + DirectionHostSize / 2);
-                    break;
-            }
+            Point hostCenter = GetDirectionHostCenter(w, h, currentDirection);
 
             double left = hostCenter.X - DirectionHostSize / 2;
             double top = hostCenter.Y - DirectionHostSize / 2;
@@ -571,6 +552,27 @@ namespace RS.Widgets.Visuals
             }
 
             return VisualOperation.None;
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private static Point GetDirectionHostCenter(double w, double h, RectDirection direction)
+        {
+            switch (direction)
+            {
+                case RectDirection.Top:
+                    return new Point(w / 2, -DirectionHostOffset + DirectionHostSize / 2);
+                case RectDirection.Bottom:
+                    return new Point(w / 2, h + DirectionHostOffset - DirectionHostSize / 2);
+                case RectDirection.Left:
+                    return new Point(-DirectionHostOffset + DirectionHostSize / 2, h / 2);
+                case RectDirection.Right:
+                    return new Point(w + DirectionHostOffset - DirectionHostSize / 2, h / 2);
+                default:
+                    return new Point(w / 2, -DirectionHostOffset + DirectionHostSize / 2);
+            }
         }
 
         #endregion

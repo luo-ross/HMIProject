@@ -25,7 +25,13 @@ namespace RS.Widgets.Adorners
     {
         #region Fields
 
-        private FrameworkElement AdornedFE => AdornedElement as FrameworkElement;
+        private FrameworkElement AdornedFE
+        {
+            get
+            {
+                return AdornedElement as FrameworkElement;
+            }
+        }
 
         private static readonly SelectService<RSTransformAdorner> SelectionService = new SelectService<RSTransformAdorner>();
 
@@ -239,10 +245,10 @@ namespace RS.Widgets.Adorners
             Visuals = new VisualCollection(this) { TransformVisual };
 
             this.Focusable = true;
-            this.Loaded += TransformAdorner_Loaded;
+            this.Loaded += OnTransformAdornerLoaded;
         }
 
-        private void TransformAdorner_Loaded(object sender, RoutedEventArgs e)
+        private void OnTransformAdornerLoaded(object sender, RoutedEventArgs e)
         {
             if (this.IsSelect)
             {
@@ -334,39 +340,71 @@ namespace RS.Widgets.Adorners
             }
         }
 
-        private RSTransformAdorner Select(MouseEventArgs e)
+        public RSTransformAdorner Select(MouseEventArgs e)
         {
-            var isMulti = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
             var window = Window.GetWindow(this);
-            var hitList = e != null ? VisualHelper.FindAllFromPoint<RSTransformAdorner>(window, e.GetPosition(window)) : new List<RSTransformAdorner>();
+            var hitList = VisualHelper.FindAllFromPoint<RSTransformAdorner>(window, e.GetPosition(window));
 
-            if (hitList.Count == 0)
+            bool isMulti = Keyboard.Modifiers.HasFlag(ModifierKeys.Control) || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+
+            if (!hitList.Contains(this))
             {
                 hitList.Add(this);
             }
+
+            RSTransformAdorner target = this;
 
             if (isMulti)
             {
                 SortAdornersByStableIndex(hitList);
                 hitList.Reverse();
-                if (hitList.Count > 1 && hitList.All(r => r.IsSelect))
+
+                bool allSelected = true;
+                foreach (var r in hitList)
                 {
-                    hitList.ForEach(r => SelectionService.MultiSelect(r)); 
-                    return this; 
+                    if (!r.IsSelect)
+                    {
+                        allSelected = false;
+                        break;
+                    }
+                }
+
+                if (hitList.Count > 1 && allSelected)
+                {
+                    foreach (var r in hitList)
+                    {
+                        SelectionService.MultiSelect(r);
+                    }
+                    target = this;
                 }
                 else
                 {
-                    var target = hitList.FirstOrDefault(r => !r.IsSelect) ?? this;
+                    target = this;
+                    foreach (var r in hitList)
+                    {
+                        if (!r.IsSelect)
+                        {
+                            target = r;
+                            break;
+                        }
+                    }
                     SelectionService.MultiSelect(target);
-                    return target;
                 }
             }
             else
             {
                 SortAdornersByStableIndex(hitList);
-                var current = hitList.FirstOrDefault(r => r.IsSelect);
                 
-                RSTransformAdorner target;
+                RSTransformAdorner current = null;
+                foreach (var r in hitList)
+                {
+                    if (r.IsSelect)
+                    {
+                        current = r;
+                        break;
+                    }
+                }
+                
                 if (current != null && hitList.Count > 1)
                 {
                     int currentIndex = hitList.IndexOf(current);
@@ -379,13 +417,13 @@ namespace RS.Widgets.Adorners
                 }
                 else
                 {
-                    target = hitList.LastOrDefault() ?? this;
+                    target = hitList[hitList.Count - 1];
                 }
 
                 SelectionService.SingleSelect(target);
-                target.BringToFront();
-                return target;
             }
+            target.BringToFront();
+            return target;
         }
 
         private void BringToFront()
@@ -413,14 +451,40 @@ namespace RS.Widgets.Adorners
 
             var window = Window.GetWindow(this);
             var hitList = VisualHelper.FindAllFromPoint<RSTransformAdorner>(window, e.GetPosition(window));
-            SortAdornersByStableIndex(hitList);
-            
-            WasAnySelectedInStack = hitList.Any(r => r.IsSelect);
+            bool anySelected = false;
+            foreach (var r in hitList)
+            {
+                if (r.IsSelect)
+                {
+                    anySelected = true;
+                    break;
+                }
+            }
+            WasAnySelectedInStack = anySelected;
             
             PendingSelectionCycle = false;
-            RSTransformAdorner target;
+            RSTransformAdorner target = null;
 
-            target = hitList.LastOrDefault(r => r.IsSelect) ?? hitList.LastOrDefault() ?? this;
+            for (int i = hitList.Count - 1; i >= 0; i--)
+            {
+                if (hitList[i].IsSelect)
+                {
+                    target = hitList[i];
+                    break;
+                }
+            }
+
+            if (target == null)
+            {
+                if (hitList.Count > 0)
+                {
+                    target = hitList[hitList.Count - 1];
+                }
+                else
+                {
+                    target = this;
+                }
+            }
 
             if (target != this)
             {
@@ -428,7 +492,7 @@ namespace RS.Widgets.Adorners
                 e.Handled = true;
                 return;
             }
-            ProcessMouseDown(e);
+           ProcessMouseDown(e);
         }
 
         internal void ProcessMouseDown(MouseButtonEventArgs e)
@@ -465,7 +529,6 @@ namespace RS.Widgets.Adorners
 
             // 选择逻辑改进：
             // 如果点击的是背景(Move) 且 操作项未选中，则立即选中（提升反馈感）
-            // 如果操作项已选中，则标记为待循环（在 MouseUp 中处理，以免干扰拖拽）
             if (PendingOperation == VisualOperation.Move)
             {
                 if (!this.IsSelect)
@@ -474,6 +537,7 @@ namespace RS.Widgets.Adorners
                 }
                 else if (WasAnySelectedInStack)
                 {
+                    // 如果操作项已选中，则标记为待循环（在 MouseUp 中处理，以免干扰拖拽）
                     PendingSelectionCycle = true;
                 }
             }
@@ -542,6 +606,29 @@ namespace RS.Widgets.Adorners
         private Point GetScreenPosition(MouseEventArgs e)
         {
             return this.PointToScreen(e.GetPosition(this));
+        }
+
+        private Vector GetParentScale()
+        {
+            var parent = VisualTreeHelper.GetParent(AdornedElement) as UIElement;
+            if (parent == null)
+            {
+                return new Vector(1, 1);
+            }
+
+            PresentationSource source = PresentationSource.FromVisual(parent);
+            Matrix matrixScreen = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
+
+            GeneralTransform transformToRoot = parent.TransformToAncestor(source?.RootVisual ?? parent);
+            if (transformToRoot is Transform t)
+            {
+                matrixScreen.Append(t.Value);
+            }
+
+            double scaleX = Math.Sqrt(matrixScreen.M11 * matrixScreen.M11 + matrixScreen.M12 * matrixScreen.M12);
+            double scaleY = Math.Sqrt(matrixScreen.M21 * matrixScreen.M21 + matrixScreen.M22 * matrixScreen.M22);
+
+            return new Vector(scaleX > 0 ? scaleX : 1.0, scaleY > 0 ? scaleY : 1.0);
         }
      
         protected override void OnMouseMove(MouseEventArgs e)
@@ -746,20 +833,9 @@ namespace RS.Widgets.Adorners
                 return;
             }
 
-            PresentationSource source = PresentationSource.FromVisual(parent);
-            Matrix matrixScreen = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
-
-            GeneralTransform transformToRoot = parent.TransformToAncestor(source?.RootVisual ?? parent);
-            if (transformToRoot is Transform t)
-            {
-                matrixScreen.Append(t.Value);
-            }
-
-            double scaleX = Math.Sqrt(matrixScreen.M11 * matrixScreen.M11 + matrixScreen.M12 * matrixScreen.M12);
-            double scaleY = Math.Sqrt(matrixScreen.M21 * matrixScreen.M21 + matrixScreen.M22 * matrixScreen.M22);
-
-            double dx = screenDelta.X / (scaleX > 0 ? scaleX : 1.0);
-            double dy = screenDelta.Y / (scaleY > 0 ? scaleY : 1.0);
+            Vector parentScale = GetParentScale();
+            double dx = screenDelta.X / parentScale.X;
+            double dy = screenDelta.Y / parentScale.Y;
 
             if (parent is Canvas)
             {
@@ -786,14 +862,20 @@ namespace RS.Widgets.Adorners
                 TransformHelper.SetTransformY(AdornedElement, y + dy);
             }
 
-            TranslationRequested?.Invoke(this, screenDelta);
+            if (TranslationRequested != null)
+            {
+                TranslationRequested.Invoke(this, screenDelta);
+            }
             UpdateDataModel();
         }
 
         private void BeginMove()
         {
             BeginUndoAction("移动");
-            foreach (var item in SelectionService.SelectedItems) item.ApplyBeginMove();
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyBeginMove();
+            }
         }
 
         internal void ApplyBeginMove()
@@ -805,7 +887,10 @@ namespace RS.Widgets.Adorners
         private void EndMove()
         {
             CommitUndoAction();
-            foreach (var item in SelectionService.SelectedItems) item.ApplyEndMove();
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyEndMove();
+            }
         }
 
         internal void ApplyEndMove()
@@ -847,7 +932,10 @@ namespace RS.Widgets.Adorners
         private void BeginResize(VisualOperation op)
         {
             BeginUndoAction("缩放");
-            foreach (var item in SelectionService.SelectedItems) item.ApplyBeginResize(op);
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyBeginResize(op);
+            }
         }
 
         internal void ApplyBeginResize(VisualOperation op)
@@ -905,16 +993,12 @@ namespace RS.Widgets.Adorners
                 return;
             }
 
-            // screenDelta 是屏幕设备像素。GlobalScaleX/Y 已经包含父容器的缩放，
-            // 所以只需要除以 DPI 转换为 WPF DIPs，GlobalScale 再负责 DIPs → 逻辑坐标。
-            PresentationSource source = PresentationSource.FromVisual(parent);
-            Matrix dpiMatrix = source?.CompositionTarget?.TransformToDevice ?? Matrix.Identity;
-            double dpiScaleX = Math.Sqrt(dpiMatrix.M11 * dpiMatrix.M11 + dpiMatrix.M12 * dpiMatrix.M12);
-            double dpiScaleY = Math.Sqrt(dpiMatrix.M21 * dpiMatrix.M21 + dpiMatrix.M22 * dpiMatrix.M22);
+            // screenDelta 是屏幕设备像素。GetParentScale() 获取全路径缩放。
+            Vector parentScale = GetParentScale();
 
             Vector dipsDelta = new Vector(
-                screenDelta.X / (dpiScaleX > 0 ? dpiScaleX : 1.0),
-                screenDelta.Y / (dpiScaleY > 0 ? dpiScaleY : 1.0));
+                screenDelta.X / parentScale.X,
+                screenDelta.Y / parentScale.Y);
 
             // 反旋转到元素本地空间
             Matrix invRot = Matrix.Identity;
@@ -1119,14 +1203,20 @@ namespace RS.Widgets.Adorners
                 TransformHelper.SetTransformY(AdornedFE, centerNew.Y - newH / 2 - AdornedFE.Margin.Top);
             }
 
-            ResizeRequested?.Invoke(this, new ResizeEventArgs(ResizeDirection, localDelta));
+            if (ResizeRequested != null)
+            {
+                ResizeRequested.Invoke(this, new ResizeEventArgs(ResizeDirection, localDelta));
+            }
             UpdateDataModel();
         }
 
         private void EndResize()
         {
             CommitUndoAction();
-            foreach (var item in SelectionService.SelectedItems) item.ApplyEndResize();
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyEndResize();
+            }
         }
 
         internal void ApplyEndResize()
@@ -1161,14 +1251,21 @@ namespace RS.Widgets.Adorners
             InitialRotationOffset = (currentMouseAngle + 90) - this.RotationAngle;
 
             BeginUndoAction("旋转");
-            foreach (var item in SelectionService.SelectedItems) item.ApplyBeginRotation();
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyBeginRotation();
+            }
         }
 
         internal void ApplyBeginRotation()
         {
-            RotationStarted?.Invoke(this, this.RotationAngle);
+            if (RotationStarted != null)
+            {
+                RotationStarted.Invoke(this, this.RotationAngle);
+            }
             ExecuteAttachedCommand(TransformHelper.RotationStartedCommandProperty, DataModel);
         }
+        
 
   
         private void PerformRotationDelta(MouseEventArgs e)
@@ -1227,19 +1324,28 @@ namespace RS.Widgets.Adorners
 
             this.RotationAngle = newAngle;
             TransformHelper.SetRotation(AdornedElement, newAngle);
-            RotationRequested?.Invoke(this, newAngle);
+            if (RotationRequested != null)
+            {
+                RotationRequested.Invoke(this, newAngle);
+            }
             UpdateDataModel();
         }
 
         private void EndRotation()
         {
             CommitUndoAction();
-            foreach (var item in SelectionService.SelectedItems) item.ApplyEndRotation();
+            foreach (var item in SelectionService.SelectedItems)
+            {
+                item.ApplyEndRotation();
+            }
         }
 
         internal void ApplyEndRotation()
         {
-            RotationCompleted?.Invoke(this, this.RotationAngle);
+            if (RotationCompleted != null)
+            {
+                RotationCompleted.Invoke(this, this.RotationAngle);
+            }
             ExecuteAttachedCommand(TransformHelper.RotationCompletedCommandProperty, DataModel);
         }
       
@@ -1253,14 +1359,21 @@ namespace RS.Widgets.Adorners
             var directionHit = TransformVisual.GetDirectionButtonOperation(localPoint, VisualPixelSize, RectDirection);
             if (directionHit != VisualOperation.None)
             {
-                this.RectDirection = directionHit switch
+                switch (directionHit)
                 {
-                    VisualOperation.ChangeDirectionTop => RectDirection.Top,
-                    VisualOperation.ChangeDirectionBottom => RectDirection.Bottom,
-                    VisualOperation.ChangeDirectionLeft => RectDirection.Left,
-                    VisualOperation.ChangeDirectionRight => RectDirection.Right,
-                    _ => this.RectDirection
-                };
+                    case VisualOperation.ChangeDirectionTop:
+                        this.RectDirection = RectDirection.Top;
+                        break;
+                    case VisualOperation.ChangeDirectionBottom:
+                        this.RectDirection = RectDirection.Bottom;
+                        break;
+                    case VisualOperation.ChangeDirectionLeft:
+                        this.RectDirection = RectDirection.Left;
+                        break;
+                    case VisualOperation.ChangeDirectionRight:
+                        this.RectDirection = RectDirection.Right;
+                        break;
+                }
                 UpdateVisual();
                 UpdateDataModel();
                 return true;
@@ -1636,18 +1749,27 @@ namespace RS.Widgets.Adorners
 
         private static Point GetResizeAnchorPoint(ResizeGripDirection direction, double width, double height)
         {
-            return direction switch
+            switch (direction)
             {
-                ResizeGripDirection.TopLeft => new Point(width, height),
-                ResizeGripDirection.Top => new Point(width / 2, height),
-                ResizeGripDirection.TopRight => new Point(0, height),
-                ResizeGripDirection.Left => new Point(width, height / 2),
-                ResizeGripDirection.Right => new Point(0, height / 2),
-                ResizeGripDirection.BottomLeft => new Point(width, 0),
-                ResizeGripDirection.Bottom => new Point(width / 2, 0),
-                ResizeGripDirection.BottomRight => new Point(0, 0),
-                _ => new Point()
-            };
+                case ResizeGripDirection.TopLeft:
+                    return new Point(width, height);
+                case ResizeGripDirection.Top:
+                    return new Point(width / 2, height);
+                case ResizeGripDirection.TopRight:
+                    return new Point(0, height);
+                case ResizeGripDirection.Left:
+                    return new Point(width, height / 2);
+                case ResizeGripDirection.Right:
+                    return new Point(0, height / 2);
+                case ResizeGripDirection.BottomLeft:
+                    return new Point(width, 0);
+                case ResizeGripDirection.Bottom:
+                    return new Point(width / 2, 0);
+                case ResizeGripDirection.BottomRight:
+                    return new Point(0, 0);
+                default:
+                    return new Point();
+            }
         }
 
         private static void BeginUndoAction(string actionName)
@@ -1672,7 +1794,18 @@ namespace RS.Widgets.Adorners
             foreach (var item in SelectionService.SelectedItems)
             {
                 var memento = TransformMemento.Capture(item.DataModel);
-                var entry = currentUndoAction.Changes.FirstOrDefault(c => c.target == item.DataModel);
+                TransformData target = item.DataModel;
+                
+                (TransformData target, TransformMemento before, TransformMemento after) entry = default;
+                foreach (var c in currentUndoAction.Changes)
+                {
+                    if (c.target == target)
+                    {
+                        entry = c;
+                        break;
+                    }
+                }
+                
                 if (entry != default && memento != null)
                 {
                     var index = currentUndoAction.Changes.IndexOf(entry);
@@ -1685,47 +1818,54 @@ namespace RS.Widgets.Adorners
 
         private static void SortAdornersByStableIndex(List<RSTransformAdorner> hitList)
         {
-            hitList.Sort((a, b) => 
+            hitList.Sort(CompareAdorners);
+        }
+
+        private static int CompareAdorners(RSTransformAdorner a, RSTransformAdorner b)
+        {
+            UIElement elA = a.AdornedElement as UIElement;
+            UIElement elB = b.AdornedElement as UIElement;
+            if (elA == null || elB == null)
             {
-                UIElement elA = a.AdornedElement as UIElement;
-                UIElement elB = b.AdornedElement as UIElement;
-                if (elA == null || elB == null) 
-                {
-                    return 0;
-                }
-                
-                Panel pA = VisualTreeHelper.GetParent(elA) as Panel;
-                Panel pB = VisualTreeHelper.GetParent(elB) as Panel;
-                if (pA != pB || pA == null) 
-                {
-                    return 0;
-                }
-            
-                // 首先按 ZIndex 排序（如果有）
-                int zA = Panel.GetZIndex(elA);
-                int zB = Panel.GetZIndex(elB);
-                if (zA != zB) 
-                {
-                    return zA.CompareTo(zB);
-                }
-            
-                int idxA = pA.Children.IndexOf(elA);
-                int idxB = pB.Children.IndexOf(elB);
-                return idxA.CompareTo(idxB);
-            });
+                return 0;
+            }
+
+            Panel pA = VisualTreeHelper.GetParent(elA) as Panel;
+            Panel pB = VisualTreeHelper.GetParent(elB) as Panel;
+            if (pA != pB || pA == null)
+            {
+                return 0;
+            }
+
+            // 首先按 ZIndex 排序（如果有）
+            int zA = Panel.GetZIndex(elA);
+            int zB = Panel.GetZIndex(elB);
+            if (zA != zB)
+            {
+                return zA.CompareTo(zB);
+            }
+
+            int idxA = pA.Children.IndexOf(elA);
+            int idxB = pB.Children.IndexOf(elB);
+            return idxA.CompareTo(idxB);
         }
 
         private void ExecuteAttachedCommand(DependencyProperty commandProperty, object parameter)
         {
-            if (AdornedElement == null) return;
-            var command = AdornedElement.GetValue(commandProperty) as ICommand;
-            if (command != null && command.CanExecute(parameter))
+            if (AdornedElement == null)
             {
-                command.Execute(parameter);
+                return;
+            }
+            var command = AdornedElement.GetValue(commandProperty) as ICommand;
+            if (command != null)
+            {
+                if (command.CanExecute(parameter))
+                {
+                    command.Execute(parameter);
+                }
             }
         }
         #endregion
 
     }
 }
-
