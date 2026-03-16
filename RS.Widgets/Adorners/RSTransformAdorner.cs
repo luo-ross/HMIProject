@@ -78,6 +78,7 @@ namespace RS.Widgets.Adorners
         private Matrix AdornerMatrix = Matrix.Identity;
         private bool WasAnySelectedInStack = false;
         private bool PendingSelectionCycle = false;
+        private bool _isPivotVisible = false;
 
         private static readonly HashSet<Window> HookedWindows = new HashSet<Window>();
 
@@ -702,8 +703,10 @@ namespace RS.Widgets.Adorners
                     case VisualOperation.RotateBottomRight:
                         PerformRotationDelta(e);
                         break;
+                    case VisualOperation.MovePivot:
+                        PerformPivotDelta(screenDelta);
+                        break;
                 }
-
                 e.Handled = true;
                 return;
             }
@@ -779,7 +782,25 @@ namespace RS.Widgets.Adorners
                 UpdateVisual();
             }
 
-            var op = GetVisualOperation(pt);
+            // 更新旋转中心显示逻辑
+            double px = DataModel != null ? DataModel.PivotX : 0.5;
+            double py = DataModel != null ? DataModel.PivotY : 0.5;
+
+            var opPre = GetVisualOperation(pt, true); 
+            bool isRotationHover = IsRotationOperation(opPre);
+            bool isPivotHoverNow = TransformVisual.IsPointInPivot(pt, VisualPixelSize, px, py);
+
+            bool shouldShowPivot = isRotationHover || 
+                                  (IsDragging && (IsRotationOperation(CurrentOperation) || CurrentOperation == VisualOperation.MovePivot)) ||
+                                  (_isPivotVisible && isPivotHoverNow);
+
+            if (shouldShowPivot != _isPivotVisible)
+            {
+                _isPivotVisible = shouldShowPivot;
+                UpdateVisual();
+            }
+
+            var op = GetVisualOperation(pt, false);
             this.Cursor = GetCursorForOperation(op);
         }
 
@@ -901,6 +922,7 @@ namespace RS.Widgets.Adorners
                 TransformHelper.SetTransformY(AdornedElement, y + dy);
             }
 
+            UpdatePivotFeedback(); // Added this line
             if (TranslationRequested != null)
             {
                 TranslationRequested.Invoke(this, screenDelta);
@@ -1225,23 +1247,39 @@ namespace RS.Widgets.Adorners
                 }
             }
 
-            Point anchorLocalNew = GetResizeAnchorPoint(ResizeDirection, newW, newH);
+            // 关键修复：使用更通用的锚点同步逻辑，确保在有旋转/自定义中心时 Resize 依然稳定
+            double px = DataModel != null ? DataModel.PivotX : 0.5;
+            double py = DataModel != null ? DataModel.PivotY : 0.5;
+            double sx = TransformHelper.GetScaleX(AdornedFE);
+            double sy = TransformHelper.GetScaleY(AdornedFE);
+            double rotation = this.RotationAngle;
 
-            Point centerRelAnchorNew = new Point(newW / 2 - anchorLocalNew.X, newH / 2 - anchorLocalNew.Y);
-            Vector offsetToCenter = ResizeInitialTransformMatrix.Transform(new Vector(centerRelAnchorNew.X, centerRelAnchorNew.Y));
-            Point centerNew = new Point(ResizeAnchorInParent.X + offsetToCenter.X, ResizeAnchorInParent.Y + offsetToCenter.Y);
+            // 1. 计算新尺寸下的局部变换矩阵（不含位移）
+            Matrix mLocalNew = Matrix.Identity;
+            mLocalNew.ScaleAt(sx, sy, newW * px, newH * py);
+            mLocalNew.RotateAt(rotation, newW * px, newH * py);
+
+            // 2. 将锚点(在旋转坐标系中应保持不动)在新的局部坐标系中进行变换
+            Point anchorLocalNew = GetResizeAnchorPoint(ResizeDirection, newW, newH);
+            Point anchorInParentNew = mLocalNew.Transform(anchorLocalNew);
+
+            // 3. 补偿位移，使锚点的世界坐标保持为捕捉到的 ResizeAnchorInParent
+            double newX = ResizeAnchorInParent.X - anchorInParentNew.X;
+            double newY = ResizeAnchorInParent.Y - anchorInParentNew.Y;
 
             if (parent is Canvas)
             {
-                TransformHelper.SetCanvasX(AdornedFE, centerNew.X - newW / 2 - AdornedFE.Margin.Left);
-                TransformHelper.SetCanvasY(AdornedFE, centerNew.Y - newH / 2 - AdornedFE.Margin.Top);
+                TransformHelper.SetCanvasX(AdornedFE, newX - AdornedFE.Margin.Left);
+                TransformHelper.SetCanvasY(AdornedFE, newY - AdornedFE.Margin.Top);
             }
             else
             {
-                TransformHelper.SetTransformX(AdornedFE, centerNew.X - newW / 2 - AdornedFE.Margin.Left);
-                TransformHelper.SetTransformY(AdornedFE, centerNew.Y - newH / 2 - AdornedFE.Margin.Top);
+                TransformHelper.SetTransformX(AdornedFE, newX - AdornedFE.Margin.Left);
+                TransformHelper.SetTransformY(AdornedFE, newY - AdornedFE.Margin.Top);
             }
 
+            UpdateDataModel();
+            UpdatePivotFeedback(); 
             if (ResizeRequested != null)
             {
                 ResizeRequested.Invoke(this, new ResizeEventArgs(ResizeDirection, localDelta));
@@ -1278,8 +1316,10 @@ namespace RS.Widgets.Adorners
                 return;
             }
 
-            // 计算元素中心在父坐标系中的位置
-            Point centerLocal = new Point(AdornedFE.ActualWidth / 2, AdornedFE.ActualHeight / 2);
+            // 计算元素中心 (使用动态 Pivot)
+            double px = DataModel != null ? DataModel.PivotX : 0.5;
+            double py = DataModel != null ? DataModel.PivotY : 0.5;
+            Point centerLocal = new Point(AdornedFE.ActualWidth * px, AdornedFE.ActualHeight * py);
             Point centerInParent = AdornedFE.TranslatePoint(centerLocal, parent);
             Point mousePos = e.GetPosition(parent);
 
@@ -1316,7 +1356,9 @@ namespace RS.Widgets.Adorners
             }
 
             // 计算元素中心
-            Point centerLocal = new Point(AdornedFE.ActualWidth / 2, AdornedFE.ActualHeight / 2);
+            double px = DataModel != null ? DataModel.PivotX : 0.5;
+            double py = DataModel != null ? DataModel.PivotY : 0.5;
+            Point centerLocal = new Point(AdornedFE.ActualWidth * px, AdornedFE.ActualHeight * py);
             Point centerInParent = AdornedFE.TranslatePoint(centerLocal, parent);
             Point mousePos = e.GetPosition(parent);
 
@@ -1345,6 +1387,71 @@ namespace RS.Widgets.Adorners
             }
         }
 
+        private void PerformPivotDelta(Vector screenDelta)
+        {
+            if (AdornedFE == null || DataModel == null)
+            {
+                return;
+            }
+
+            double w = AdornedFE.ActualWidth;
+            double h = AdornedFE.ActualHeight;
+            if (w <= 0 || h <= 0)
+            {
+                return;
+            }
+
+            // 1. 获取当前的变换参数
+            double rotation = this.RotationAngle;
+            double sx = TransformHelper.GetScaleX(AdornedFE);
+            double sy = TransformHelper.GetScaleY(AdornedFE);
+            double oldPx = DataModel.PivotX;
+            double oldPy = DataModel.PivotY;
+
+            // 2. 记录旧中心在局部变换空间（不含平移）下的位置
+            Matrix mOld = Matrix.Identity;
+            mOld.ScaleAt(sx, sy, w * oldPx, h * oldPy);
+            mOld.RotateAt(rotation, w * oldPx, h * oldPy);
+            Point originInParentOld = mOld.Transform(new Point(0, 0));
+
+            // 3. 计算新 Pivot (限制在边界内 0.0 - 1.0)
+            Point pt = ToLocalPoint(Mouse.GetPosition(this));
+            double newPx = Math.Max(0, Math.Min(1.0, pt.X / w));
+            double newPy = Math.Max(0, Math.Min(1.0, pt.Y / h));
+
+            // 4. 计算新中心在局部变换空间下的位置
+            Matrix mNew = Matrix.Identity;
+            mNew.ScaleAt(sx, sy, w * newPx, h * newPy);
+            mNew.RotateAt(rotation, w * newPx, h * newPy);
+            Point originInParentNew = mNew.Transform(new Point(0, 0));
+
+            // 5. 补偿位移，使控件视觉位置保持不动
+            double dx = originInParentOld.X - originInParentNew.X;
+            double dy = originInParentOld.Y - originInParentNew.Y;
+
+            DataModel.X += dx;
+            DataModel.Y += dy;
+            DataModel.PivotX = newPx;
+            DataModel.PivotY = newPy;
+
+            // 同步外部坐标反馈
+            UpdatePivotFeedback();
+
+            // 立即应用到元素，以便旋转实时生效
+            if (AdornedFE.Parent is Canvas)
+            {
+                TransformHelper.SetCanvasX(AdornedFE, DataModel.X);
+                TransformHelper.SetCanvasY(AdornedFE, DataModel.Y);
+            }
+            else
+            {
+                TransformHelper.SetTransformX(AdornedFE, DataModel.X);
+                TransformHelper.SetTransformY(AdornedFE, DataModel.Y);
+            }
+
+            TransformHelper.UpdateRenderTransform(AdornedFE);
+            UpdateVisual();
+        }
         internal void ApplyRotationChange(double delta, double? finalRotationOverride)
         {
             double newAngle;
@@ -1363,6 +1470,7 @@ namespace RS.Widgets.Adorners
 
             this.RotationAngle = newAngle;
             TransformHelper.SetRotation(AdornedElement, newAngle);
+            UpdatePivotFeedback(); // Added this line
             if (RotationRequested != null)
             {
                 RotationRequested.Invoke(this, newAngle);
@@ -1423,11 +1531,13 @@ namespace RS.Widgets.Adorners
         /// <summary>
         /// 获取给定点对应的 VisualOperation 测试结果。
         /// </summary>
-        private VisualOperation GetVisualOperation(Point p)
+        private VisualOperation GetVisualOperation(Point p, bool forceHidePivot = false)
         {
-            return TransformVisual.GetVisualOperation(p, VisualPixelSize, RectDirection, IsDirectionEnabled, IsRotationEnabled);
+            double px = DataModel != null ? DataModel.PivotX : 0.5;
+            double py = DataModel != null ? DataModel.PivotY : 0.5;
+            bool showPivot = _isPivotVisible && !forceHidePivot;
+            return TransformVisual.GetVisualOperation(p, VisualPixelSize, RectDirection, IsDirectionEnabled, IsRotationEnabled, px, py, showPivot);
         }
-
         /// <summary>
         /// 将 Adorner 坐标系的点补偿 HitPadding 后转为 Visual 本地坐标。
         /// </summary>
@@ -1500,6 +1610,9 @@ namespace RS.Widgets.Adorners
 
                 case VisualOperation.RotateBottomLeft:
                     return GetRotatedCursor(BaseRotationCursorData, RotationAngle + 180);
+
+                case VisualOperation.MovePivot:
+                    return Cursors.Cross;
 
                 default:
                     return Cursors.Arrow;
@@ -1577,13 +1690,28 @@ namespace RS.Widgets.Adorners
             DataModel.TopRight = AdornedFE.TranslatePoint(new Point(w, 0), parent);
             DataModel.BottomLeft = AdornedFE.TranslatePoint(new Point(0, h), parent);
             DataModel.BottomRight = AdornedFE.TranslatePoint(new Point(w, h), parent);
-            
-            // 旋转中心 (Pivot) 坐标反馈
-            DataModel.Pivot = AdornedFE.TranslatePoint(new Point(w / 2, h / 2), parent);
+
+            UpdatePivotFeedback();
             }
             finally
             {
                 IsInternalSync = false;
+            }
+        }
+
+        private void UpdatePivotFeedback()
+        {
+            if (DataModel == null || AdornedFE == null)
+            {
+                return;
+            }
+
+            var parent = VisualTreeHelper.GetParent(AdornedFE) as UIElement;
+            if (parent != null)
+            {
+                double px = DataModel.PivotX;
+                double py = DataModel.PivotY;
+                DataModel.Pivot = AdornedFE.TranslatePoint(new Point(AdornedFE.ActualWidth * px, AdornedFE.ActualHeight * py), parent);
             }
         }
 
@@ -1626,6 +1754,9 @@ namespace RS.Widgets.Adorners
                 RotationAngle = DataModel.Angle;
                 TransformHelper.SetRotation(AdornedFE, DataModel.Angle);
                 RectDirection = DataModel.Direction;
+                
+                // 确保同步旋转中心
+                TransformHelper.UpdateRenderTransform(AdornedFE);
                 UpdateVisual();
             }
             finally
@@ -1651,9 +1782,13 @@ namespace RS.Widgets.Adorners
                                      CurrentOperation == VisualOperation.RotateTopLeft || 
                                      CurrentOperation == VisualOperation.RotateTopRight || 
                                      CurrentOperation == VisualOperation.RotateBottomLeft || 
-                                     CurrentOperation == VisualOperation.RotateBottomRight);
+                                     CurrentOperation == VisualOperation.RotateBottomRight ||
+                                     CurrentOperation == VisualOperation.MovePivot);
 
-            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, IsDirectionEnabled, HoveredDirectionButton, showRotationCenter);
+            double px = DataModel != null ? DataModel.PivotX : 0.5;
+            double py = DataModel != null ? DataModel.PivotY : 0.5;
+
+            TransformVisual.Render(VisualPixelSize, BorderBrush, IsSelect, IsSingleSelect, RectDirection, IsDirectionEnabled, HoveredDirectionButton, _isPivotVisible, px, py);
             UpdateDataModel();
         }
  
@@ -1763,7 +1898,7 @@ namespace RS.Widgets.Adorners
             AdornerMatrix.OffsetX += paddingDx;
             AdornerMatrix.OffsetY += paddingDy;
 
-            // 将 DrawingVisual 定位在放大后的 Adorner 的内部 (HitPadding, HitPadding) 处，
+            // 将 DrawingVisual 定位在放大后的 Adorner 的内部 (HitPadding, HitPadding)处，
             // 以便它的 (0,0) 位置仍然与元素对齐。
             TransformVisual.Offset = new Vector(HitPadding, HitPadding);
 

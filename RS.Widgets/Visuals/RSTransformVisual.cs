@@ -95,7 +95,7 @@ namespace RS.Widgets.Visuals
         /// <param name="rectDirection">方向箭头指向的边。</param>
         /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
         /// <param name="hoveredDirection">悬停的方向（可选）。</param>
-        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, VisualOperation hoveredDirection = VisualOperation.None, bool showRotationCenter = false)
+        public void Render(Size size, Brush borderBrush, bool isSelect, bool isSingleSelect, RectDirection rectDirection, bool isDirectionEnabled, VisualOperation hoveredDirection = VisualOperation.None, bool showRotationCenter = false, double pivotX = 0.5, double pivotY = 0.5)
         {
             if (size.Width <= 0 || size.Height <= 0)
             {
@@ -173,7 +173,7 @@ namespace RS.Widgets.Visuals
 
                 if (showRotationCenter)
                 {
-                    DrawRotationCenter(dc, w, h);
+                    DrawRotationCenter(dc, w, h, pivotX, pivotY);
                 }
             }
         }
@@ -385,7 +385,7 @@ namespace RS.Widgets.Visuals
         /// <param name="currentDirection">当前的方向。</param>
         /// <param name="isDirectionEnabled">是否启用了方向功能。</param>
         /// <param name="isRotationEnabled">是否启用了旋转功能。</param>
-        public VisualOperation GetVisualOperation(Point point, Size size, RectDirection currentDirection, bool isDirectionEnabled, bool isRotationEnabled = true)
+        public VisualOperation GetVisualOperation(Point point, Size size, RectDirection currentDirection, bool isDirectionEnabled, bool isRotationEnabled = true, double pivotX = 0.5, double pivotY = 0.5, bool showPivot = true)
         {
             double w = size.Width;
             double h = size.Height;
@@ -483,7 +483,16 @@ namespace RS.Widgets.Visuals
                 }
             }
 
-            // 5. 检查主体内部（用于移动）
+            // 5. 检查旋转中心 (MovePivot)
+            if (isRotationEnabled && showPivot)
+            {
+                if (IsPointInRect(point, new Point(w * pivotX, h * pivotY), RotateHitSize))
+                {
+                    return VisualOperation.MovePivot;
+                }
+            }
+
+            // 6. 检查主体内部（用于移动）
             if (point.X >= 0 && point.X <= w && point.Y >= 0 && point.Y <= h)
             {
                 return VisualOperation.Move;
@@ -580,10 +589,15 @@ namespace RS.Widgets.Visuals
             }
         }
 
-        private void DrawRotationCenter(DrawingContext dc, double w, double h)
+        public bool IsPointInPivot(Point point, Size size, double pivotX, double pivotY)
         {
-            double cx = w / 2;
-            double cy = h / 2;
+            return IsPointInRect(point, new Point(size.Width * pivotX, size.Height * pivotY), RotateHitSize);
+        }
+
+        private void DrawRotationCenter(DrawingContext dc, double w, double h, double pivotX, double pivotY)
+        {
+            double cx = w * pivotX;
+            double cy = h * pivotY;
             double radius = 5.0;
             double crossSize = 8.0;
 

@@ -20,6 +20,7 @@ namespace RS.Widgets.Enums
         ChangeDirectionTop,
         ChangeDirectionRight,
         ChangeDirectionBottom,
-        ChangeDirectionLeft
+        ChangeDirectionLeft,
+        MovePivot
     }
 }

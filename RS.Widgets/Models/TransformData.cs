@@ -143,6 +143,32 @@ namespace RS.Widgets.Models
             }
         }
 
+        private double pivotX = 0.5;
+        public double PivotX
+        {
+            get
+            {
+                return pivotX;
+            }
+            set
+            {
+                SetProperty(ref pivotX, value);
+            }
+        }
+
+        private double pivotY = 0.5;
+        public double PivotY
+        {
+            get
+            {
+                return pivotY;
+            }
+            set
+            {
+                SetProperty(ref pivotY, value);
+            }
+        }
+
         private Point pivot;
         public Point Pivot
         {

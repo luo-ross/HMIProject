@@ -291,53 +291,61 @@ namespace RS.Widgets.Controls
             }
         }
 
-        private static void UpdateRenderTransform(FrameworkElement element)
+        public static void UpdateRenderTransform(FrameworkElement element)
         {
-            var rotation = GetRotation(element);
-            var x = GetTransformX(element);
-            var y = GetTransformY(element);
+            var data = GetTransformData(element);
+            var rotation = data != null ? data.Angle : GetRotation(element);
+            var x = data != null ? data.X : GetTransformX(element);
+            var y = data != null ? data.Y : GetTransformY(element);
             var sx = GetScaleX(element);
             var sy = GetScaleY(element);
 
-            var group = element.RenderTransform as TransformGroup;
-            if (group == null)
+            // 使用矩阵计算以获得最高的稳定性，避免 RenderTransformOrigin 与 Translate/Rotate 冲突
+            double w = element.ActualWidth;
+            double h = element.ActualHeight;
+
+            // 如果 ActualSize 为 0，尝试使用 Width/Height 属性
+            if (w <= 0 && !double.IsNaN(element.Width)) w = element.Width;
+            if (h <= 0 && !double.IsNaN(element.Height)) h = element.Height;
+
+            double px = data != null ? data.PivotX : 0.5;
+            double py = data != null ? data.PivotY : 0.5;
+
+            // 旋转中心像素坐标
+            double cx = w * px;
+            double cy = h * py;
+
+            Matrix m = Matrix.Identity;
+            
+            // 1. 缩放
+            m.ScaleAt(sx, sy, cx, cy);
+            
+            // 2. 旋转
+            m.RotateAt(rotation, cx, cy);
+            
+            // 3. 平移 - 关键修复：逻辑隔离
+            // 如果元素在 Canvas 中，位置由 Canvas.Left/Top 控制，RenderTransform 应保持 (0,0) 平移
+            // 如果元素不在 Canvas 中，则通过 RenderTransform 的矩阵进行平移
+            var parent = VisualTreeHelper.GetParent(element) as UIElement;
+            if (!(parent is Canvas))
             {
-                group = new TransformGroup();
-                if (element.RenderTransform != null && element.RenderTransform != Transform.Identity)
-                {
-                    group.Children.Add(element.RenderTransform);
-                }
-                element.RenderTransform = group;
-                element.RenderTransformOrigin = new Point(0.5, 0.5);
+                m.Translate(x, y);
             }
 
-            var rotateTransform = group.Children.OfType<RotateTransform>().FirstOrDefault();
-            if (rotateTransform == null)
+            // 应用变换
+            var matrixTransform = element.RenderTransform as MatrixTransform;
+            if (matrixTransform == null || matrixTransform.IsFrozen)
             {
-                rotateTransform = new RotateTransform(0);
-                group.Children.Add(rotateTransform);
+                element.RenderTransform = new MatrixTransform(m);
             }
-            rotateTransform.Angle = rotation;
-
-            var scaleTransform = group.Children.OfType<ScaleTransform>().FirstOrDefault();
-            if (scaleTransform == null)
+            else
             {
-                scaleTransform = new ScaleTransform(1, 1);
-                group.Children.Add(scaleTransform);
+                matrixTransform.Matrix = m;
             }
-            scaleTransform.ScaleX = sx;
-            scaleTransform.ScaleY = sy;
 
-            var translateTransform = group.Children.OfType<TranslateTransform>().FirstOrDefault();
-            if (translateTransform == null)
-            {
-                translateTransform = new TranslateTransform(0, 0);
-                group.Children.Add(translateTransform);
-            }
-            translateTransform.X = x;
-            translateTransform.Y = y;
-
-            // 强制更新装饰器层，以应对 RenderTransform 变化导致的装饰器不同步
+            // 重置 RenderTransformOrigin 为 (0,0)，因为我们已经通过矩阵处理了中心点
+            element.RenderTransformOrigin = new Point(0, 0);
+          // 强制更新装饰器层，以应对 RenderTransform 变化导致的装饰器不同步
             var layer = AdornerLayer.GetAdornerLayer(element);
             if (layer != null)
             {
