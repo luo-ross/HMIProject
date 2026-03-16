@@ -1,26 +1,79 @@
-﻿using RS.SetupApp.Views;
-using System.Configuration;
-using System.Data;
-using System.Windows;
+using RS.SetupApp.Core;
+using RS.SetupApp.Services;
+using RS.SetupApp.ViewModels;
 
-namespace RS.SetupApp
+namespace RS.SetupApp;
+
+public partial class App : System.Windows.Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    protected override async void OnStartup(System.Windows.StartupEventArgs e)
     {
-        public App()
+        ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+        base.OnStartup(e);
+
+        SetupServices services = SetupServicesFactory.Create();
+        SetupEngine engine = new(services);
+        string[] args = e.Args;
+
+        if (args.Length > 0)
         {
-                
+            RuntimeOptions options = RuntimeArgumentParser.Parse(args);
+
+            try
+            {
+                if (await ElevationLauncher.TryRelaunchElevatedAsync(options, args, CancellationToken.None).ConfigureAwait(true))
+                {
+                    Shutdown();
+                    return;
+                }
+
+                if (await SelfWorkerLauncher.TryRelaunchAsync(options, args, CancellationToken.None).ConfigureAwait(true))
+                {
+                    Shutdown();
+                    return;
+                }
+
+                if (options.Silent)
+                {
+                    SetupOperationResult result = await engine.ExecuteAsync(options, cancellationToken: CancellationToken.None).ConfigureAwait(true);
+                    Environment.ExitCode = result.Succeeded ? 0 : 1;
+                    Shutdown();
+                    return;
+                }
+
+                ShowMainWindow(services, engine, options);
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (options.Silent)
+                {
+                    Environment.ExitCode = 1;
+                    Shutdown();
+                    return;
+                }
+
+                System.Windows.MessageBox.Show(ex.Message, "Setup", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                Shutdown();
+                return;
+            }
         }
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            System.Windows.FrameworkCompatibilityPreferences.KeepTextBoxDisplaySynchronizedWithTextProperty = false;
-            base.OnStartup(e);
-            var homeView=new HomeView();
-            homeView.Show();
-        }
+
+        ShowMainWindow(services, engine, startupOptions: null);
     }
 
+    protected override void OnExit(System.Windows.ExitEventArgs e)
+    {
+        SelfWorkerLauncher.TryCleanupCurrentWorkerDirectory();
+        base.OnExit(e);
+    }
+
+    private void ShowMainWindow(SetupServices services, SetupEngine engine, RuntimeOptions? startupOptions)
+    {
+        MainWindowViewModel viewModel = new(services, engine, startupOptions);
+        MainWindow window = new(viewModel);
+        MainWindow = window;
+        ShutdownMode = System.Windows.ShutdownMode.OnMainWindowClose;
+        window.Show();
+    }
 }

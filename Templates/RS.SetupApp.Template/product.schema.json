@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RS.SetupApp Product Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "productId",
+    "displayName",
+    "publisher",
+    "mainExecutable"
+  ],
+  "properties": {
+    "productId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "displayNameLocalized": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "type": "string"
+        },
+        "enUs": {
+          "type": "string"
+        },
+        "zhCn": {
+          "type": "string"
+        }
+      }
+    },
+    "publisher": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mainExecutable": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mainProcessName": {
+      "type": "string"
+    },
+    "upgradeCode": {
+      "type": "string"
+    },
+    "supportUrl": {
+      "type": "string"
+    },
+    "updateInfoUrl": {
+      "type": "string"
+    },
+    "branding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accentColor": {
+          "type": "string"
+        },
+        "iconPath": {
+          "type": "string"
+        },
+        "licensePath": {
+          "type": "string"
+        },
+        "welcomeText": {
+          "type": "string"
+        },
+        "welcomeTextLocalized": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "default": {
+              "type": "string"
+            },
+            "enUs": {
+              "type": "string"
+            },
+            "zhCn": {
+              "type": "string"
+            }
+          }
+        },
+        "supportLinkText": {
+          "type": "string"
+        },
+        "supportLinkTextLocalized": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "default": {
+              "type": "string"
+            },
+            "enUs": {
+              "type": "string"
+            },
+            "zhCn": {
+              "type": "string"
+            }
+          }
+        },
+        "updateLinkText": {
+          "type": "string"
+        },
+        "updateLinkTextLocalized": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "default": {
+              "type": "string"
+            },
+            "enUs": {
+              "type": "string"
+            },
+            "zhCn": {
+              "type": "string"
+            }
+          }
+        },
+        "termsUrl": {
+          "type": "string"
+        },
+        "privacyUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "installDefaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultScope": {
+          "type": "string",
+          "enum": [
+            "CurrentUser",
+            "AllUsers"
+          ]
+        },
+        "defaultInstallDirectoryOverride": {
+          "type": "string"
+        },
+        "userInstallDirectoryTemplate": {
+          "type": "string"
+        },
+        "machineInstallDirectoryTemplate": {
+          "type": "string"
+        },
+        "createShortcutsByDefault": {
+          "type": "boolean"
+        },
+        "enableAutoStartByDefault": {
+          "type": "boolean"
+        },
+        "allowSilentInstall": {
+          "type": "boolean"
+        },
+        "allowRepair": {
+          "type": "boolean"
+        },
+        "allowOverwrite": {
+          "type": "boolean"
+        },
+        "allowMachineInstall": {
+          "type": "boolean"
+        },
+        "minimumFreeSpaceBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "update": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowOnlineUpdate": {
+          "type": "boolean"
+        },
+        "channel": {
+          "type": "string"
+        },
+        "manifestUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "uninstall": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowPurgeData": {
+          "type": "boolean"
+        },
+        "purgeDataByDefault": {
+          "type": "boolean"
+        }
+      }
+    },
+    "shortcuts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "location"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string",
+            "enum": [
+              "Desktop",
+              "StartMenuRoot",
+              "StartMenuPrograms"
+            ]
+          },
+          "enabledByDefault": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "iconPath": {
+            "type": "string"
+          },
+          "arguments": {
+            "type": "string"
+          },
+          "folderName": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fileAssociations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "extension",
+          "progId"
+        ],
+        "properties": {
+          "extension": {
+            "type": "string",
+            "minLength": 2
+          },
+          "progId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "friendlyName": {
+            "type": "string"
+          },
+          "iconPath": {
+            "type": "string"
+          },
+          "commandTemplate": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dataDirectories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "scope",
+          "relativePath"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "UserLocal",
+              "CommonAppData"
+            ]
+          },
+          "relativePath": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assemblyPath",
+          "typeName"
+        ],
+        "properties": {
+          "assemblyPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "typeName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "optional": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

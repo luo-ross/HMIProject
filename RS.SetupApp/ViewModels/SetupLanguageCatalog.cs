@@ -1,0 +1,164 @@
+using System.Globalization;
+
+namespace RS.SetupApp.ViewModels;
+
+public static class SetupLanguageCatalog
+{
+    public static UiLanguage ResolveDefaultLanguage()
+    {
+        return string.Equals(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, "zh", StringComparison.OrdinalIgnoreCase)
+            ? UiLanguage.ChineseSimplified
+            : UiLanguage.English;
+    }
+
+    public static SetupLanguageResources Get(UiLanguage language)
+    {
+        return language == UiLanguage.ChineseSimplified ? CreateChineseResources() : CreateEnglishResources();
+    }
+
+    private static SetupLanguageResources CreateEnglishResources()
+    {
+        return new SetupLanguageResources
+        {
+            LanguageSwitcherLabel = "Language",
+            InstallerHeadline = "Professional installer runtime",
+            RuntimeStatusTitle = "Runtime status",
+            UpdateStatusTemplate = "Update status: {0}",
+            WelcomeTitle = "Welcome",
+            WelcomeIntroText = "This installer shell is built for real product delivery. Review the payload, confirm deployment preferences, and let the setup engine handle install, repair, update, and rollback.",
+            WelcomeChecklistTitle = "What happens next",
+            WelcomeChecklistStepOne = "1. Review the license agreement if your product ships one.",
+            WelcomeChecklistStepTwo = "2. Choose the install scope, destination, and user-facing integration options.",
+            WelcomeChecklistStepThree = "3. Apply the operation with rollback-safe deployment and maintenance runtime support.",
+            ContinueButtonText = "Continue",
+            LicenseTitle = "License agreement",
+            AcceptLicenseText = "I have read and accept the license terms",
+            BackButtonText = "Back",
+            InstallOptionsTitle = "Install options",
+            InstallOptionsSubtitle = "Choose where the application should be installed and which integrations should be enabled for end users.",
+            InstallScopeLabel = "Install scope",
+            InstallScopeCurrentUserTitle = "Only for me",
+            InstallScopeCurrentUserDescription = "Installs into the current user profile without requesting administrator privileges.",
+            InstallScopeAllUsersTitle = "For all users on this machine",
+            InstallScopeAllUsersDescription = "Installs into a shared location and registers machine-wide integrations when elevation is allowed.",
+            InstallDirectoryLabel = "Install directory",
+            BrowseButtonText = "Browse",
+            ResetButtonText = "Default",
+            InstallDirectoryEditableHint = "Choose a destination folder that matches your deployment policy.",
+            InstallDirectoryLockedHint = "The product is already installed. Maintenance operations continue to use the current install directory.",
+            CreateShortcutsText = "Create shortcuts",
+            EnableAutoStartText = "Enable auto start",
+            InstallButtonText = "Install",
+            ApplyChangesButtonText = "Apply changes",
+            ApplyingSetupTitle = "Applying setup",
+            ApplyingSetupDescription = "The setup engine is validating manifests, preparing rollback, and applying the requested operation.",
+            CompletedTitle = "Completed",
+            LaunchAppButtonText = "Launch app",
+            FinishButtonText = "Finish",
+            MaintenanceTitle = "Maintenance",
+            MaintenanceDescription = "This product is already installed. Choose the maintenance action that best matches what you need next.",
+            InstalledVersionTemplate = "Installed version: {0}",
+            RepairButtonText = "Repair",
+            CheckUpdateButtonText = "Check update",
+            OpenUpdateButtonText = "Open update",
+            InstallOptionsButtonText = "Install options",
+            UninstallButtonText = "Uninstall",
+            UpdateTitle = "Update",
+            AvailableVersionTemplate = "Available version: {0}",
+            UpdateNowButtonText = "Update now",
+            UninstallTitle = "Uninstall",
+            UninstallDescription = "Application files and system integrations will be removed. User data is preserved by default unless you explicitly choose to purge it.",
+            PurgeDataText = "Also delete user data",
+            SelectFolderDialogDescription = "Select an installation folder",
+            ErrorDialogTitle = "Setup",
+            DefaultWelcomeTemplate = "Install, repair, update, and uninstall {0} from one reusable and branded setup runtime.",
+            SupportLinkFallbackText = "Support",
+            UpdateLinkFallbackText = "Release notes",
+            NotInstalledStatusText = "Not installed",
+            NotCheckedStatusText = "Not checked",
+            NoUpdatesStatusText = "No updates",
+            CheckFailedStatusText = "Check failed",
+            ReadyStatusText = "Ready.",
+            NoUpdateAvailableStatusText = "No update is available.",
+            UpdateAvailableStatusTemplate = "Update {0} is available.",
+            RunningOperationTemplate = "Running {0}...",
+            InstallVerb = "install",
+            RepairVerb = "repair",
+            UpdateVerb = "update",
+            UninstallVerb = "uninstall"
+        };
+    }
+
+    private static SetupLanguageResources CreateChineseResources()
+    {
+        return new SetupLanguageResources
+        {
+            LanguageSwitcherLabel = "语言",
+            InstallerHeadline = "专业级安装与维护运行时",
+            RuntimeStatusTitle = "运行状态",
+            UpdateStatusTemplate = "更新状态：{0}",
+            WelcomeTitle = "欢迎",
+            WelcomeIntroText = "这是面向正式产品交付的安装器外壳。确认发布内容和安装偏好后，安装引擎会负责安装、修复、更新以及失败回滚。",
+            WelcomeChecklistTitle = "接下来会发生什么",
+            WelcomeChecklistStepOne = "1. 如果产品带有许可证，请先阅读许可证内容。",
+            WelcomeChecklistStepTwo = "2. 选择安装范围、目标路径以及用户侧集成功能。",
+            WelcomeChecklistStepThree = "3. 由安装引擎执行部署，并自动处理维护运行时和回滚保护。",
+            ContinueButtonText = "继续",
+            LicenseTitle = "许可协议",
+            AcceptLicenseText = "我已阅读并接受许可协议",
+            BackButtonText = "返回",
+            InstallOptionsTitle = "安装选项",
+            InstallOptionsSubtitle = "选择程序的安装位置，并决定是否启用快捷方式和开机启动等集成功能。",
+            InstallScopeLabel = "安装范围",
+            InstallScopeCurrentUserTitle = "仅为当前用户安装",
+            InstallScopeCurrentUserDescription = "安装到当前用户目录中，通常不需要管理员权限。",
+            InstallScopeAllUsersTitle = "为这台机器上的所有用户安装",
+            InstallScopeAllUsersDescription = "安装到共享位置，并在允许提权时写入系统级集成配置。",
+            InstallDirectoryLabel = "安装路径",
+            BrowseButtonText = "浏览",
+            ResetButtonText = "恢复默认",
+            InstallDirectoryEditableHint = "请为产品选择符合部署规范的目标文件夹。",
+            InstallDirectoryLockedHint = "产品已经安装。维护操作会继续使用当前安装路径，不能在这里直接迁移目录。",
+            CreateShortcutsText = "创建快捷方式",
+            EnableAutoStartText = "启用开机自启动",
+            InstallButtonText = "开始安装",
+            ApplyChangesButtonText = "应用更改",
+            ApplyingSetupTitle = "正在应用安装任务",
+            ApplyingSetupDescription = "安装引擎正在校验清单、准备回滚保护，并执行当前请求的操作。",
+            CompletedTitle = "已完成",
+            LaunchAppButtonText = "启动应用",
+            FinishButtonText = "完成",
+            MaintenanceTitle = "维护",
+            MaintenanceDescription = "该产品已经安装。请选择你接下来需要执行的维护操作。",
+            InstalledVersionTemplate = "当前版本：{0}",
+            RepairButtonText = "修复",
+            CheckUpdateButtonText = "检查更新",
+            OpenUpdateButtonText = "打开更新页",
+            InstallOptionsButtonText = "查看安装选项",
+            UninstallButtonText = "卸载",
+            UpdateTitle = "更新",
+            AvailableVersionTemplate = "可用版本：{0}",
+            UpdateNowButtonText = "立即更新",
+            UninstallTitle = "卸载",
+            UninstallDescription = "程序文件和系统集成项会被移除。除非你明确选择彻底清理，否则用户数据默认会被保留。",
+            PurgeDataText = "同时删除用户数据",
+            SelectFolderDialogDescription = "选择安装文件夹",
+            ErrorDialogTitle = "安装程序",
+            DefaultWelcomeTemplate = "通过这一套可复用且可品牌化的安装运行时，完成 {0} 的安装、修复、更新和卸载。",
+            SupportLinkFallbackText = "技术支持",
+            UpdateLinkFallbackText = "发行说明",
+            NotInstalledStatusText = "尚未安装",
+            NotCheckedStatusText = "未检查",
+            NoUpdatesStatusText = "没有更新",
+            CheckFailedStatusText = "检查失败",
+            ReadyStatusText = "准备就绪。",
+            NoUpdateAvailableStatusText = "当前没有可用更新。",
+            UpdateAvailableStatusTemplate = "发现可用更新：{0}。",
+            RunningOperationTemplate = "正在执行{0}...",
+            InstallVerb = "安装",
+            RepairVerb = "修复",
+            UpdateVerb = "更新",
+            UninstallVerb = "卸载"
+        };
+    }
+}

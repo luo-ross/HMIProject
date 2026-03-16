@@ -1,0 +1,70 @@
+{
+  "productId": "sample-desktop-app",
+  "displayName": "Sample Desktop App",
+  "displayNameLocalized": {
+    "enUs": "Sample Desktop App",
+    "zhCn": "示例桌面应用"
+  },
+  "publisher": "Contoso",
+  "mainExecutable": "SampleDesktopApp.exe",
+  "supportUrl": "https://example.com/support",
+  "updateInfoUrl": "https://example.com/releases",
+  "branding": {
+    "accentColor": "#0F766E",
+    "iconPath": "assets/icon.ico",
+    "licensePath": "LICENSE.txt",
+    "welcomeText": "Replace this manifest and the payload directory to ship your own desktop app.",
+    "welcomeTextLocalized": {
+      "enUs": "Replace this manifest and the payload directory to ship your own desktop app.",
+      "zhCn": "替换这个清单和发布目录后，你就可以生成自己的品牌化安装程序。"
+    },
+    "supportLinkText": "Support",
+    "supportLinkTextLocalized": {
+      "enUs": "Support",
+      "zhCn": "技术支持"
+    },
+    "updateLinkText": "Release notes",
+    "updateLinkTextLocalized": {
+      "enUs": "Release notes",
+      "zhCn": "发行说明"
+    }
+  },
+  "installDefaults": {
+    "defaultScope": "CurrentUser",
+    "createShortcutsByDefault": true,
+    "enableAutoStartByDefault": false,
+    "allowSilentInstall": true,
+    "allowRepair": true,
+    "allowOverwrite": true,
+    "allowMachineInstall": true,
+    "minimumFreeSpaceBytes": 209715200
+  },
+  "update": {
+    "allowOnlineUpdate": false,
+    "channel": "stable",
+    "manifestUrl": "https://example.com/downloads/latest.json"
+  },
+  "uninstall": {
+    "allowPurgeData": true,
+    "purgeDataByDefault": false
+  },
+  "shortcuts": [
+    {
+      "location": "Desktop",
+      "enabledByDefault": true
+    },
+    {
+      "location": "StartMenuPrograms",
+      "enabledByDefault": true,
+      "folderName": "Sample Desktop App"
+    }
+  ],
+  "dataDirectories": [
+    {
+      "key": "userData",
+      "scope": "UserLocal",
+      "relativePath": "Contoso\\SampleDesktopApp"
+    }
+  ],
+  "extensions": []
+}

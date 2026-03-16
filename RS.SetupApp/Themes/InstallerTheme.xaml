@@ -1,0 +1,319 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="CanvasBrush" Color="#E8EEF4" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#F7FAFC" />
+    <SolidColorBrush x:Key="SurfaceSoftBrush" Color="#F2F7FB" />
+    <SolidColorBrush x:Key="TextStrongBrush" Color="#0F172A" />
+    <SolidColorBrush x:Key="TextBodyBrush" Color="#475569" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#64748B" />
+    <SolidColorBrush x:Key="StrokeBrush" Color="#D9E2EC" />
+    <SolidColorBrush x:Key="StrokeStrongBrush" Color="#C2CEDC" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#0F766E" />
+    <SolidColorBrush x:Key="SelectionSurfaceBrush" Color="#ECF8F5" />
+    <DropShadowEffect
+        x:Key="WindowShadowEffect"
+        BlurRadius="44"
+        Opacity="0.18"
+        ShadowDepth="0"
+        Color="#0F172A" />
+    <DropShadowEffect
+        x:Key="CardShadowEffect"
+        BlurRadius="24"
+        Opacity="0.08"
+        ShadowDepth="0"
+        Color="#0F172A" />
+
+    <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="#0F172A" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="18,10" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="RootBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="12">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.94" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.85" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="SecondaryButtonStyle"
+        BasedOn="{StaticResource PrimaryButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+    </Style>
+
+    <Style
+        x:Key="CompactPrimaryButtonStyle"
+        BasedOn="{StaticResource PrimaryButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style
+        x:Key="CompactSecondaryButtonStyle"
+        BasedOn="{StaticResource SecondaryButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style
+        x:Key="GhostButtonStyle"
+        BasedOn="{StaticResource PrimaryButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+        <Setter Property="Background" Value="{StaticResource SurfaceSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+        <Setter Property="Padding" Value="14,8" />
+    </Style>
+
+    <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Padding" Value="13,11" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border
+                        x:Name="TextBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="12">
+                        <ScrollViewer
+                            x:Name="PART_ContentHost"
+                            Margin="{TemplateBinding Padding}"
+                            VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="TextBorder" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="TextBorder" Property="Opacity" Value="0.65" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="CompactTextBoxStyle"
+        BasedOn="{StaticResource ModernTextBoxStyle}"
+        TargetType="TextBox">
+        <Setter Property="Padding" Value="11,9" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style x:Key="ModernCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            x:Name="CheckBorder"
+                            Width="18"
+                            Height="18"
+                            Margin="0,1,10,0"
+                            Background="White"
+                            BorderBrush="{StaticResource StrokeStrongBrush}"
+                            BorderThickness="1.5"
+                            CornerRadius="5">
+                            <Path
+                                x:Name="CheckGlyph"
+                                Width="11"
+                                Height="8"
+                                Data="M 1 4 L 4 7 L 10 1"
+                                Stroke="White"
+                                StrokeEndLineCap="Round"
+                                StrokeLineJoin="Round"
+                                StrokeStartLineCap="Round"
+                                StrokeThickness="2.2"
+                                Visibility="Collapsed" />
+                        </Border>
+                        <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="OptionCardRadioButtonStyle" TargetType="RadioButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border
+                        x:Name="OptionRoot"
+                        Padding="15"
+                        Background="{StaticResource SurfaceBrush}"
+                        BorderBrush="{StaticResource StrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Width="20"
+                                Height="20"
+                                Margin="0,2,12,0">
+                                <Ellipse
+                                    x:Name="OuterCircle"
+                                    Stroke="{StaticResource StrokeStrongBrush}"
+                                    StrokeThickness="1.5" />
+                                <Ellipse
+                                    x:Name="InnerCircle"
+                                    Width="10"
+                                    Height="10"
+                                    Fill="{StaticResource SelectionBrush}"
+                                    Visibility="Collapsed" />
+                            </Grid>
+                            <ContentPresenter Grid.Column="1" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="OptionRoot" Property="Background" Value="{StaticResource SelectionSurfaceBrush}" />
+                            <Setter TargetName="OptionRoot" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="OuterCircle" Property="Stroke" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="InnerCircle" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OptionRoot" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CompactOptionCardRadioButtonStyle" TargetType="RadioButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border
+                        x:Name="OptionRoot"
+                        Padding="12"
+                        Background="{StaticResource SurfaceBrush}"
+                        BorderBrush="{StaticResource StrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid
+                                Width="18"
+                                Height="18"
+                                Margin="0,1,10,0">
+                                <Ellipse
+                                    x:Name="OuterCircle"
+                                    Stroke="{StaticResource StrokeStrongBrush}"
+                                    StrokeThickness="1.5" />
+                                <Ellipse
+                                    x:Name="InnerCircle"
+                                    Width="9"
+                                    Height="9"
+                                    Fill="{StaticResource SelectionBrush}"
+                                    Visibility="Collapsed" />
+                            </Grid>
+                            <ContentPresenter Grid.Column="1" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="OptionRoot" Property="Background" Value="{StaticResource SelectionSurfaceBrush}" />
+                            <Setter TargetName="OptionRoot" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="OuterCircle" Property="Stroke" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="InnerCircle" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OptionRoot" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LanguageToggleStyle" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="#7C8EA3" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border
+                        x:Name="LanguageBorder"
+                        Padding="12,7"
+                        Background="Transparent"
+                        CornerRadius="10">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="LanguageBorder" Property="Background" Value="#FFFFFF" />
+                            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
