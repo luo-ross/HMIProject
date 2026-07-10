@@ -7,8 +7,40 @@ namespace RS.SetupApp.Tests.Services;
 [TestClass]
 public sealed class SetupPathSafetyPolicyTests
 {
+    [TestMethod]
+    public void ValidateInstallTarget_ShouldFailClosed_WhenExistsHidesUnauthorizedTarget()
+    {
+        using TempDirectoryScope temp = new();
+        string installDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "target")).FullName;
+        bool IsTarget(string path) => string.Equals(
+            Path.GetFullPath(path),
+            installDirectory,
+            StringComparison.OrdinalIgnoreCase);
+        FaultingFileSystem fileSystem = new(new PhysicalFileSystem())
+        {
+            FileExistsOverride = path => IsTarget(path) ? false : null,
+            DirectoryExistsOverride = path => IsTarget(path) ? false : null,
+            FailureFactory = (operation, path) =>
+                operation == nameof(IFileSystem.GetAttributes) && IsTarget(path)
+                    ? new UnauthorizedAccessException("Target attributes are not readable.")
+                    : null
+        };
+        SetupPathSafetyPolicy policy = new(
+            fileSystem,
+            new InstallationOwnershipService(fileSystem, new JsonManifestSerializer()));
+
+        InstallTargetValidationResult result = policy.ValidateInstallTarget(
+            installDirectory,
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            installedState: null);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.ReparsePointNotTrusted, result.FailureCode);
+    }
+
     [DataTestMethod]
-    [DataRow(nameof(IFileSystem.DirectoryExists))]
+    [DataRow(nameof(IFileSystem.EnumerateFiles))]
     [DataRow(nameof(IFileSystem.GetAttributes))]
     [DataRow(nameof(IFileSystem.EnumerateDirectories))]
     public void ValidateInstallTarget_ShouldReturnStructuredFailure_WhenFileSystemProbeFails(string failingOperation)
@@ -20,7 +52,7 @@ public sealed class SetupPathSafetyPolicyTests
             FailureFactory = (operation, _) => operation == failingOperation
                 ? failingOperation switch
                 {
-                    nameof(IFileSystem.DirectoryExists) => new IOException("Probe failed."),
+                    nameof(IFileSystem.EnumerateFiles) => new IOException("Probe failed."),
                     nameof(IFileSystem.GetAttributes) => new UnauthorizedAccessException("Probe denied."),
                     _ => new System.Security.SecurityException("Probe blocked.")
                 }

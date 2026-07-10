@@ -130,7 +130,24 @@ public sealed class SetupPathSafetyPolicy
                 "The install target is below an untrusted reparse point.");
         }
 
-        if (_fileSystem.FileExists(normalizedPath))
+        if (!TryGetAttributes(normalizedPath, out FileAttributes targetAttributes))
+        {
+            return new InstallTargetValidationResult(
+                true,
+                normalizedPath,
+                InstallTargetFailureCode.None,
+                "The install target is safe.");
+        }
+
+        if ((targetAttributes & FileAttributes.ReparsePoint) != 0)
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ReparsePointNotTrusted,
+                "The install target is an untrusted reparse point.");
+        }
+
+        if ((targetAttributes & FileAttributes.Directory) == 0)
         {
             return Failure(
                 normalizedPath,
@@ -138,7 +155,7 @@ public sealed class SetupPathSafetyPolicy
                 "The install target is an existing file.");
         }
 
-        if (_fileSystem.DirectoryExists(normalizedPath) && ContainsReparsePointInTree(normalizedPath))
+        if (ContainsReparsePointInTree(normalizedPath))
         {
             return Failure(
                 normalizedPath,
@@ -146,7 +163,7 @@ public sealed class SetupPathSafetyPolicy
                 "The install target contains an untrusted reparse point.");
         }
 
-        if (_fileSystem.DirectoryExists(normalizedPath) && !IsDirectoryEmpty(normalizedPath))
+        if (!IsDirectoryEmpty(normalizedPath))
         {
             InstallationOwnershipMarker? marker;
             try
@@ -322,18 +339,37 @@ public sealed class SetupPathSafetyPolicy
 
         foreach (string component in components)
         {
-            if (!_fileSystem.DirectoryExists(component) && !_fileSystem.FileExists(component))
+            if (!TryGetAttributes(component, out FileAttributes attributes))
             {
                 break;
             }
 
-            if ((_fileSystem.GetAttributes(component) & FileAttributes.ReparsePoint) != 0)
+            if ((attributes & FileAttributes.ReparsePoint) != 0)
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private bool TryGetAttributes(string path, out FileAttributes attributes)
+    {
+        try
+        {
+            attributes = _fileSystem.GetAttributes(path);
+            return true;
+        }
+        catch (FileNotFoundException)
+        {
+            attributes = default;
+            return false;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            attributes = default;
+            return false;
+        }
     }
 
     private bool ContainsReparsePointInTree(string rootDirectory)

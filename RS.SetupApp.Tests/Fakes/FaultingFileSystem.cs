@@ -6,15 +6,31 @@ public sealed class FaultingFileSystem(IFileSystem inner) : IFileSystem
 {
     public Func<string, string, Exception?>? FailureFactory { get; set; }
 
+    public Func<string, bool?>? FileExistsOverride { get; set; }
+
+    public Func<string, bool?>? DirectoryExistsOverride { get; set; }
+
     public bool FileExists(string path)
     {
         ThrowIfRequested(nameof(FileExists), path);
+        bool? overridden = FileExistsOverride?.Invoke(path);
+        if (overridden.HasValue)
+        {
+            return overridden.Value;
+        }
+
         return inner.FileExists(path);
     }
 
     public bool DirectoryExists(string path)
     {
         ThrowIfRequested(nameof(DirectoryExists), path);
+        bool? overridden = DirectoryExistsOverride?.Invoke(path);
+        if (overridden.HasValue)
+        {
+            return overridden.Value;
+        }
+
         return inner.DirectoryExists(path);
     }
 
