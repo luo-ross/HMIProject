@@ -38,7 +38,12 @@ public static class SetupTestDataFactory
         return schemaPath;
     }
 
-    public static string WriteProductManifest(string directoryPath, string productId, string mainExecutable, string? manifestUrl = null)
+    public static string WriteProductManifest(
+        string directoryPath,
+        string productId,
+        string mainExecutable,
+        string? manifestUrl = null,
+        bool allowOverwrite = false)
     {
         JsonManifestSerializer serializer = new();
         string manifestPath = Path.Combine(directoryPath, SetupRuntimeDefaults.ProductManifestFileName);
@@ -58,7 +63,7 @@ public static class SetupTestDataFactory
             {
                 DefaultScope = InstallScope.CurrentUser,
                 AllowSilentInstall = true,
-                AllowOverwrite = true,
+                AllowOverwrite = allowOverwrite,
                 AllowRepair = true,
                 AllowMachineInstall = true,
                 MinimumFreeSpaceBytes = 0

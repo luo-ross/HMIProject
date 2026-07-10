@@ -11,6 +11,13 @@ public sealed class WriteInstalledStateStep : ISetupStep, IRollbackStep
         InstalledStateManifest state = context.ResultState ?? throw new InvalidOperationException("Installed state has not been prepared.");
         state.LastSuccessfulInstallAtUtc = DateTimeOffset.UtcNow;
         context.Services.Serializer.Save(state.StateManifestPath, state);
+        context.Services.OwnershipService.Write(state.InstallDirectory, new InstallationOwnershipMarker
+        {
+            ProductId = state.ProductId,
+            InstallationId = state.InstallationId,
+            InstallScope = state.InstallScope,
+            CreatedAtUtc = state.InstalledAtUtc
+        });
         return Task.CompletedTask;
     }
 
@@ -19,6 +26,7 @@ public sealed class WriteInstalledStateStep : ISetupStep, IRollbackStep
         cancellationToken.ThrowIfCancellationRequested();
 
         InstalledStateManifest state = context.ResultState ?? throw new InvalidOperationException("Installed state has not been prepared.");
+        context.Services.OwnershipService.Delete(state.InstallDirectory);
         context.Services.FileSystem.DeleteFile(state.StateManifestPath);
         return Task.CompletedTask;
     }

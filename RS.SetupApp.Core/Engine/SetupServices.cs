@@ -18,5 +18,9 @@ public sealed class SetupServices
 
     public required ISystemPaths Paths { get; init; }
 
+    public required SetupPathSafetyPolicy PathSafetyPolicy { get; init; }
+
+    public required InstallationOwnershipService OwnershipService { get; init; }
+
     public required Func<string, ISetupLogger> LoggerFactory { get; init; }
 }

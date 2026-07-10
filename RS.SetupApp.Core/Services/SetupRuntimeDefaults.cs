@@ -8,4 +8,5 @@ public static class SetupRuntimeDefaults
     public const string UpdateManifestFileName = "latest.json";
     public const string DefaultPayloadFolderName = "payload";
     public const string MaintenanceFolderName = "InstallerBundle";
+    public const string OwnershipMarkerFileName = ".rs-setup-owner.json";
 }

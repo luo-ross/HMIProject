@@ -30,6 +30,8 @@ public sealed class SetupExecutionContext
 
     public string? InstallDirectory { get; set; }
 
+    public InstallTargetValidationResult? InstallTargetValidation { get; set; }
+
     public bool RequiresOnlinePackage { get; set; }
 
     public List<ISetupExtension> Extensions { get; } = new();

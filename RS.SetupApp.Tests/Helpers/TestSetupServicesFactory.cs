@@ -12,16 +12,21 @@ public static class TestSetupServicesFactory
         FakeProcessService processes,
         FakeDownloadService downloads)
     {
+        PhysicalFileSystem fileSystem = new();
+        JsonManifestSerializer serializer = new();
+        InstallationOwnershipService ownershipService = new(fileSystem, serializer);
         return new SetupServices
         {
-            FileSystem = new PhysicalFileSystem(),
-            Serializer = new JsonManifestSerializer(),
+            FileSystem = fileSystem,
+            Serializer = serializer,
             Registry = registry,
             Shortcuts = shortcuts,
             Processes = processes,
             Downloads = downloads,
             Hasher = new DefaultFileHasher(),
             Paths = paths,
+            PathSafetyPolicy = new SetupPathSafetyPolicy(fileSystem, ownershipService),
+            OwnershipService = ownershipService,
             LoggerFactory = path => new FileSetupLogger(path)
         };
     }

@@ -38,12 +38,20 @@ public sealed class ValidateInstallTargetStep : ISetupStep
             }
         }
 
-        if (context.ExistingState == null &&
-            context.Services.FileSystem.DirectoryExists(installDirectory) &&
-            !product.InstallDefaults.AllowOverwrite)
+        InstallTargetValidationResult validation = context.Services.PathSafetyPolicy.ValidateInstallTarget(
+            installDirectory,
+            product,
+            context.EffectiveScope,
+            context.ExistingState);
+        context.InstallTargetValidation = validation;
+        if (!validation.IsValid)
         {
-            throw new InvalidOperationException("The install directory already exists and overwrite is disabled.");
+            throw new SetupSafetyException(validation.FailureCode, validation.Message);
         }
+
+        installDirectory = validation.NormalizedPath
+            ?? throw new SetupSafetyException(InstallTargetFailureCode.InvalidPath, "The install target path is invalid.");
+        context.InstallDirectory = installDirectory;
 
         string extractedMainExecutable = Path.Combine(context.ExtractionDirectory ?? throw new InvalidOperationException("Extraction directory has not been prepared."), package.MainExecutable);
         if (!context.Services.FileSystem.FileExists(extractedMainExecutable))

@@ -54,6 +54,9 @@ public static class SetupPipelineHelper
         InstalledStateManifest state = new()
         {
             ProductId = product.ProductId,
+            InstallationId = existingState?.InstallationId is { } installationId && installationId != Guid.Empty
+                ? installationId
+                : Guid.NewGuid(),
             DisplayName = product.DisplayName,
             Publisher = product.Publisher,
             Version = package.Version,

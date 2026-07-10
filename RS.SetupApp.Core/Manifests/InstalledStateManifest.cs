@@ -4,6 +4,8 @@ public sealed class InstalledStateManifest
 {
     public string ProductId { get; set; } = string.Empty;
 
+    public Guid InstallationId { get; set; }
+
     public string DisplayName { get; set; } = string.Empty;
 
     public string Publisher { get; set; } = string.Empty;

@@ -35,7 +35,7 @@
     "enableAutoStartByDefault": false,
     "allowSilentInstall": true,
     "allowRepair": true,
-    "allowOverwrite": true,
+    "allowOverwrite": false,
     "allowMachineInstall": true,
     "minimumFreeSpaceBytes": 209715200
   },

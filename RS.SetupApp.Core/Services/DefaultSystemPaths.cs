@@ -36,6 +36,20 @@ public sealed class DefaultSystemPaths : ISystemPaths
         return Path.Combine(root, "RS.SetupApp", "InstalledProducts", SetupPathUtility.SanitizePathSegment(productId), "installed-state.json");
     }
 
+    public string GetRecoveryRoot(string productId, InstallScope scope)
+    {
+        string root = scope == InstallScope.AllUsers
+            ? Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+            : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        return Path.Combine(root, "RS.SetupApp", "Recovery", SetupPathUtility.SanitizePathSegment(productId));
+    }
+
+    public string GetRecoveryDirectory(string productId, Guid operationId, InstallScope scope)
+    {
+        return Path.Combine(GetRecoveryRoot(productId, scope), operationId.ToString("N"));
+    }
+
     public string GetLogFilePath(string productId, InstallScope scope)
     {
         string root = scope == InstallScope.AllUsers

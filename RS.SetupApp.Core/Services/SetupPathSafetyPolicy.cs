@@ -1,0 +1,286 @@
+namespace RS.SetupApp.Core;
+
+public sealed class SetupPathSafetyPolicy
+{
+    private static readonly StringComparer PathComparer = StringComparer.OrdinalIgnoreCase;
+
+    private readonly IFileSystem _fileSystem;
+    private readonly InstallationOwnershipService _ownershipService;
+
+    public SetupPathSafetyPolicy(
+        IFileSystem fileSystem,
+        InstallationOwnershipService ownershipService)
+    {
+        _fileSystem = fileSystem;
+        _ownershipService = ownershipService;
+    }
+
+    public InstallTargetValidationResult ValidateInstallTarget(
+        string installDirectory,
+        ProductManifest product,
+        InstallScope scope,
+        InstalledStateManifest? installedState)
+    {
+        if (string.IsNullOrWhiteSpace(installDirectory))
+        {
+            return InvalidPath();
+        }
+
+        string normalizedPath;
+        try
+        {
+            normalizedPath = Path.GetFullPath(installDirectory);
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or NotSupportedException or System.Security.SecurityException)
+        {
+            return InvalidPath();
+        }
+
+        string? driveRoot = Path.GetPathRoot(normalizedPath);
+        if (!string.IsNullOrWhiteSpace(driveRoot) && PathsEqual(normalizedPath, driveRoot))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.DriveRoot,
+                "A drive root cannot be used as the install target.");
+        }
+
+        string windowsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        if (!string.IsNullOrWhiteSpace(windowsDirectory) && IsPathUnderRootOrEqual(normalizedPath, windowsDirectory))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.WindowsDirectory,
+                "The Windows directory tree cannot be used as the install target.");
+        }
+
+        if (GetSpecialFolderRoots().Any(root => PathsEqual(normalizedPath, root)))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.SpecialFolderRoot,
+                "A special-folder root cannot be used as the install target.");
+        }
+
+        if (scope == InstallScope.AllUsers && !IsAllowedMachineTarget(normalizedPath))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ScopeMismatch,
+                "An all-users install target must be below Program Files.");
+        }
+
+        if (_fileSystem.FileExists(normalizedPath))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.InvalidPath,
+                "The install target is an existing file.");
+        }
+
+        if (_fileSystem.DirectoryExists(normalizedPath) && ContainsReparsePoint(normalizedPath))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ReparsePointNotTrusted,
+                "The install target contains an untrusted reparse point.");
+        }
+
+        if (_fileSystem.DirectoryExists(normalizedPath) && !IsDirectoryEmpty(normalizedPath))
+        {
+            InstallationOwnershipMarker? marker;
+            try
+            {
+                marker = _ownershipService.Load(normalizedPath);
+            }
+            catch (Exception)
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.OwnershipMismatch,
+                    "The install target ownership marker cannot be read.");
+            }
+
+            if (marker == null)
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.NonEmptyUnownedDirectory,
+                    "The non-empty install target is not owned by this product.");
+            }
+
+            if (installedState == null ||
+                !string.Equals(marker.ProductId, product.ProductId, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(installedState.ProductId, product.ProductId, StringComparison.OrdinalIgnoreCase))
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.OwnershipMismatch,
+                    "The install target ownership does not match this product.");
+            }
+
+            if (marker.InstallScope != scope ||
+                installedState.InstallScope != scope ||
+                marker.InstallScope != installedState.InstallScope)
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.ScopeMismatch,
+                    "The install target ownership scope does not match the requested scope.");
+            }
+
+            if (marker.InstallationId == Guid.Empty ||
+                installedState.InstallationId == Guid.Empty ||
+                marker.InstallationId != installedState.InstallationId)
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.OwnershipMismatch,
+                    "The install target ownership does not match this installation.");
+            }
+
+            if (!NormalizedPathsEqual(normalizedPath, installedState.InstallDirectory))
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.OwnershipMismatch,
+                    "The installed-state directory does not match the install target.");
+            }
+
+            if (!product.InstallDefaults.AllowOverwrite)
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.OverwriteDisabled,
+                    "Replacing the owned install target is disabled for this product.");
+            }
+        }
+
+        return new InstallTargetValidationResult(
+            true,
+            normalizedPath,
+            InstallTargetFailureCode.None,
+            "The install target is safe.");
+    }
+
+    private static InstallTargetValidationResult InvalidPath()
+    {
+        return new InstallTargetValidationResult(
+            false,
+            null,
+            InstallTargetFailureCode.InvalidPath,
+            "The install target path is invalid.");
+    }
+
+    private static InstallTargetValidationResult Failure(
+        string normalizedPath,
+        InstallTargetFailureCode failureCode,
+        string message)
+    {
+        return new InstallTargetValidationResult(false, normalizedPath, failureCode, message);
+    }
+
+    private static bool PathsEqual(string left, string right)
+    {
+        return PathComparer.Equals(
+            Path.TrimEndingDirectorySeparator(left),
+            Path.TrimEndingDirectorySeparator(right));
+    }
+
+    private static bool NormalizedPathsEqual(string normalizedPath, string otherPath)
+    {
+        if (string.IsNullOrWhiteSpace(otherPath))
+        {
+            return false;
+        }
+
+        try
+        {
+            return PathsEqual(normalizedPath, Path.GetFullPath(otherPath));
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or NotSupportedException or System.Security.SecurityException)
+        {
+            return false;
+        }
+    }
+
+    private static bool IsPathUnderRootOrEqual(string candidatePath, string rootPath)
+    {
+        string candidate = Path.TrimEndingDirectorySeparator(Path.GetFullPath(candidatePath));
+        string root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(rootPath));
+        if (PathComparer.Equals(candidate, root))
+        {
+            return true;
+        }
+
+        string rootWithSeparator = root.EndsWith(Path.DirectorySeparatorChar)
+            ? root
+            : $"{root}{Path.DirectorySeparatorChar}";
+        return candidate.StartsWith(rootWithSeparator, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static IEnumerable<string> GetSpecialFolderRoots()
+    {
+        string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string[] candidates =
+        [
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            userProfile,
+            Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            string.IsNullOrWhiteSpace(userProfile) ? string.Empty : Path.Combine(userProfile, "Downloads"),
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments)
+        ];
+
+        return candidates
+            .Where(static path => !string.IsNullOrWhiteSpace(path))
+            .Select(Path.GetFullPath)
+            .Distinct(PathComparer);
+    }
+
+    private static bool IsAllowedMachineTarget(string normalizedPath)
+    {
+        string[] machineRoots =
+        [
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
+        ];
+
+        return machineRoots
+            .Where(static root => !string.IsNullOrWhiteSpace(root))
+            .Any(root => IsPathUnderRootOrEqual(normalizedPath, root));
+    }
+
+    private bool ContainsReparsePoint(string rootDirectory)
+    {
+        Stack<string> pending = new();
+        pending.Push(rootDirectory);
+
+        while (pending.Count > 0)
+        {
+            string directory = pending.Pop();
+            if ((_fileSystem.GetAttributes(directory) & FileAttributes.ReparsePoint) != 0)
+            {
+                return true;
+            }
+
+            foreach (string child in _fileSystem.EnumerateDirectories(directory, "*", SearchOption.TopDirectoryOnly))
+            {
+                pending.Push(child);
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsDirectoryEmpty(string directory)
+    {
+        return !_fileSystem.EnumerateFiles(directory, "*", SearchOption.TopDirectoryOnly).Any() &&
+               !_fileSystem.EnumerateDirectories(directory, "*", SearchOption.TopDirectoryOnly).Any();
+    }
+}

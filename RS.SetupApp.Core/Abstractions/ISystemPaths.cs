@@ -10,6 +10,10 @@ public interface ISystemPaths
 
     string GetStateManifestPath(string productId, InstallScope scope);
 
+    string GetRecoveryRoot(string productId, InstallScope scope);
+
+    string GetRecoveryDirectory(string productId, Guid operationId, InstallScope scope);
+
     string GetLogFilePath(string productId, InstallScope scope);
 
     string GetDataDirectory(ProductManifest product, InstallScope installScope, DataDirectoryManifest directory);

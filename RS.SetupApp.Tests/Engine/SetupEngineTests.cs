@@ -31,6 +31,10 @@ public sealed class SetupEngineTests
         FakeProcessService processes = new();
         FakeDownloadService downloads = new();
         SetupEngine engine = new(TestSetupServicesFactory.Create(paths, registry, shortcuts, processes, downloads));
+        string installDirectory = paths.GetDefaultInstallDirectory(
+            serializer.Load<ProductManifest>(manifestPath),
+            InstallScope.CurrentUser);
+        Directory.CreateDirectory(installDirectory);
 
         SetupOperationResult installResult = await engine.ExecuteAsync(new RuntimeOptions
         {
@@ -39,12 +43,23 @@ public sealed class SetupEngineTests
             ProductManifestPath = manifestPath,
             PackageManifestPath = Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName),
             PackagePath = Path.Combine(packageDirectory, package.ArchiveFileName),
-            InstallDirectory = paths.GetDefaultInstallDirectory(serializer.Load<ProductManifest>(manifestPath), InstallScope.CurrentUser)
+            InstallDirectory = installDirectory
         }).ConfigureAwait(false);
 
         Assert.IsTrue(installResult.Succeeded);
         Assert.IsNotNull(installResult.InstalledState);
         Assert.IsTrue(File.Exists(installResult.InstalledState.MainExecutablePath));
+        Assert.AreNotEqual(Guid.Empty, installResult.InstalledState.InstallationId);
+        string ownershipMarkerPath = Path.Combine(
+            installResult.InstalledState.InstallDirectory,
+            SetupRuntimeDefaults.OwnershipMarkerFileName);
+        Assert.IsTrue(File.Exists(ownershipMarkerPath));
+        InstallationOwnershipMarker ownershipMarker = serializer.Load<InstallationOwnershipMarker>(ownershipMarkerPath);
+        InstalledStateManifest persistedState = serializer.Load<InstalledStateManifest>(installResult.InstalledState.StateManifestPath);
+        Assert.AreEqual(installResult.InstalledState.InstallationId, ownershipMarker.InstallationId);
+        Assert.AreEqual(installResult.InstalledState.InstallationId, persistedState.InstallationId);
+        Assert.AreEqual(installResult.InstalledState.ProductId, ownershipMarker.ProductId);
+        Assert.AreEqual(installResult.InstalledState.InstallScope, ownershipMarker.InstallScope);
         Assert.AreEqual(1, registry.RegisterCallCount);
         Assert.AreEqual(1, shortcuts.CreateCallCount);
         CollectionAssert.Contains(processes.ClosedProcesses, "DemoApp");
@@ -75,7 +90,11 @@ public sealed class SetupEngineTests
         string productDirectory = Path.Combine(temp.DirectoryPath, "product");
         Directory.CreateDirectory(productDirectory);
         SetupTestDataFactory.WriteProductSchema(productDirectory);
-        string manifestPath = SetupTestDataFactory.WriteProductManifest(productDirectory, "demo-app", "DemoApp.exe");
+        string manifestPath = SetupTestDataFactory.WriteProductManifest(
+            productDirectory,
+            "demo-app",
+            "DemoApp.exe",
+            allowOverwrite: true);
 
         string v1PublishDirectory = SetupTestDataFactory.CreatePublishDirectory(temp.DirectoryPath, "DemoApp.exe", "1.0.0", "v1.txt");
         string v1PackageDirectory = await SetupTestDataFactory.CreatePackageAsync(
@@ -136,6 +155,7 @@ public sealed class SetupEngineTests
 
         Assert.IsTrue(updateResult.Succeeded);
         Assert.AreEqual("2.0.0", updateResult.InstalledState?.Version);
+        Assert.AreEqual(installResult.InstalledState?.InstallationId, updateResult.InstalledState?.InstallationId);
     }
 
     [TestMethod]

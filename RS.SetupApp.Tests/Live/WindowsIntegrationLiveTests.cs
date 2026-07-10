@@ -40,9 +40,11 @@ public sealed class WindowsIntegrationLiveTests
         PackageManifest package = serializer.Load<PackageManifest>(Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName));
 
         TestSystemPaths paths = new(temp.DirectoryPath);
+        PhysicalFileSystem fileSystem = new();
+        InstallationOwnershipService ownershipService = new(fileSystem, serializer);
         SetupServices services = new()
         {
-            FileSystem = new PhysicalFileSystem(),
+            FileSystem = fileSystem,
             Serializer = serializer,
             Registry = new WindowsRegistryService(),
             Shortcuts = new ShellShortcutService(paths),
@@ -50,6 +52,8 @@ public sealed class WindowsIntegrationLiveTests
             Downloads = new HttpDownloadService(),
             Hasher = new DefaultFileHasher(),
             Paths = paths,
+            PathSafetyPolicy = new SetupPathSafetyPolicy(fileSystem, ownershipService),
+            OwnershipService = ownershipService,
             LoggerFactory = path => new FileSetupLogger(path)
         };
 

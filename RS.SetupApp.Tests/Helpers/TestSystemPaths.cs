@@ -32,6 +32,16 @@ public sealed class TestSystemPaths : ISystemPaths
         return Path.Combine(RootPath, "state", scope.ToString(), productId, "installed-state.json");
     }
 
+    public string GetRecoveryRoot(string productId, InstallScope scope)
+    {
+        return Path.Combine(RootPath, "recovery", scope.ToString(), productId);
+    }
+
+    public string GetRecoveryDirectory(string productId, Guid operationId, InstallScope scope)
+    {
+        return Path.Combine(GetRecoveryRoot(productId, scope), operationId.ToString("N"));
+    }
+
     public string GetLogFilePath(string productId, InstallScope scope)
     {
         return Path.Combine(RootPath, "logs", scope.ToString(), $"{productId}.jsonl");
