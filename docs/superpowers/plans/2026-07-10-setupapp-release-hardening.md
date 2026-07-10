@@ -6,7 +6,7 @@
 
 **Architecture:** Keep policy and transactional behavior in `RS.SetupApp.Core`, keep publishing/signing in `RS.SetupApp.Builder`, and make `RS.SetupApp` a thin WPF shell over structured engine state. Every destructive path is authorized from normalized product-owned roots, every mutation is journaled before execution, and every UI operation owns a cancellation source that cannot cancel recovery.
 
-**Tech Stack:** .NET 9, C# 13, WPF/XAML, MSTest, `System.Security.Cryptography`, JSON manifests, PowerShell smoke automation.
+**Tech Stack:** .NET 9, C# 13, WPF/XAML, MSTest, FlaUI/UIA3, `System.Security.Cryptography`, JSON manifests, PowerShell smoke automation, GitHub Actions on Windows.
 
 ## Global Constraints
 
@@ -15,7 +15,7 @@
 - Never use the user cancellation token for rollback or crash recovery.
 - Keep private signing keys outside templates, output bundles, logs, and Git.
 - Add a failing test before each production behavior change, run the narrow test, implement only enough to pass, then run the relevant project suite.
-- Use unique temporary roots and fake registry, shortcut, process, download, and system-path services in tests. No automated test may touch real Program Files, ProgramData, user profile data, or production registry keys.
+- Core/unit/integration tests use unique temporary roots and fake registry, shortcut, process, download, and system-path services. The explicit bundled-UI automation fixture may use only its generated product id, a caller-supplied temporary install root, its exact LocalAppData state directory, and its exact HKCU uninstall key; its `finally` cleanup must remove only those generated targets. No test may touch Program Files, ProgramData, unrelated user profile data, or production registry keys.
 - Treat `docs/superpowers/specs/2026-07-10-setupapp-release-hardening-design.md` as the source of truth when a detail is not repeated here.
 - Commit after each completed task with the exact scope described below; do not combine unrelated repository changes.
 
@@ -39,8 +39,12 @@
 - Modify: `RS.SetupApp.Core/Steps/ValidateInstallTargetStep.cs`
 - Modify: `RS.SetupApp.Core/Steps/WriteInstalledStateStep.cs`
 - Modify: `RS.SetupApp.Core/Engine/SetupServices.cs`
+- Modify: `RS.SetupApp.Core/Engine/SetupExecutionContext.cs`
+- Modify: `RS.SetupApp.Core/Abstractions/ISystemPaths.cs`
+- Modify: `RS.SetupApp.Core/Services/DefaultSystemPaths.cs`
 - Modify: `RS.SetupApp/Services/SetupServicesFactory.cs`
 - Modify: `RS.SetupApp.Tests/Helpers/TestSetupServicesFactory.cs`
+- Modify: `RS.SetupApp.Tests/Helpers/TestSystemPaths.cs`
 - Modify: `RS.SetupApp.Tests/Helpers/SetupTestDataFactory.cs`
 - Create: `RS.SetupApp.Tests/Services/SetupPathSafetyPolicyTests.cs`
 - Create: `RS.SetupApp.Tests/Services/InstallationOwnershipServiceTests.cs`
@@ -77,6 +81,8 @@ public sealed record InstallTargetValidationResult(
 
 - [ ] Extend `IFileSystem`/`PhysicalFileSystem` with `GetAttributes`, recursive directory enumeration, overwrite-capable file move, and `WriteAllTextAtomic`. Atomic writes create and flush a same-directory temporary file before replace/move; a failed replacement must leave the previous file readable.
 
+- [ ] Add `ISystemPaths.GetRecoveryRoot(productId, scope)` and `GetRecoveryDirectory(productId, operationId, scope)` now, before uninstall validation consumes them. Current-user recovery lives below LocalAppData; all-users recovery lives below ProgramData; fake paths stay inside their unique test root.
+
 - [ ] Implement `SetupPathSafetyPolicy.ValidateInstallTarget(...)`. Normalize with `Path.GetFullPath`, compare with `StringComparer.OrdinalIgnoreCase`, reject dangerous roots before inspecting ownership, and reject untrusted reparse points. A non-empty target passes only when the marker and installed state match product, scope, install directory, and installation id.
 
 - [ ] Implement `InstallationOwnershipService.Load`, `Write`, and `Delete` through `IFileSystem`/`IManifestSerializer`; write the marker only as part of the successful installed-state step and make repeated writes idempotent.
@@ -108,6 +114,8 @@ Harden setup target ownership validation
 
 - Create: `RS.SetupApp.Core/Services/InstalledStateValidationResult.cs`
 - Create: `RS.SetupApp.Core/Services/InstalledStateValidator.cs`
+- Create: `RS.SetupApp.Core/Services/LegacyInstallationClaimResult.cs`
+- Create: `RS.SetupApp.Core/Services/LegacyInstallationClaimService.cs`
 - Create: `RS.SetupApp.Core/Engine/UninstallPlan.cs`
 - Create: `RS.SetupApp.Core/Steps/ValidateInstalledStateStep.cs`
 - Modify: `RS.SetupApp.Core/Engine/SetupExecutionContext.cs`
@@ -117,10 +125,14 @@ Harden setup target ownership validation
 - Modify: `RS.SetupApp.Core/Steps/RemoveInstalledStateStep.cs`
 - Modify: `RS.SetupApp.Core/Steps/BackupCurrentInstallationStep.cs`
 - Modify: `RS.SetupApp.Core/Engine/SetupServices.cs`
+- Modify: `RS.SetupApp.Core/Manifests/RuntimeOptions.cs`
+- Modify: `RS.SetupApp.Core/CommandLine/RuntimeArgumentParser.cs`
 - Modify: `RS.SetupApp/Services/SetupServicesFactory.cs`
 - Modify: `RS.SetupApp.Tests/Helpers/TestSetupServicesFactory.cs`
 - Create: `RS.SetupApp.Tests/Services/InstalledStateValidatorTests.cs`
 - Create: `RS.SetupApp.Tests/Engine/UninstallSafetyTests.cs`
+- Create: `RS.SetupApp.Tests/Services/LegacyInstallationClaimServiceTests.cs`
+- Modify: `RS.SetupApp.Tests/CommandLine/RuntimeArgumentParserTests.cs`
 
 - [ ] Add failing tests that tamper `InstallDirectory`, `MainExecutablePath`, `MaintenanceDirectory`, `StateManifestPath`, data directories, and pending/last backup directories toward a sibling directory, `..`, a special root, and a reparse point. Assert no filesystem mutation method is called when validation fails.
 
@@ -148,6 +160,10 @@ public sealed record InstalledStateValidationResult(
 
 - [ ] Restrict legacy `PendingBackupDirectory`/`LastBackupDirectory` cleanup to the product recovery root. Invalid legacy values are logged and ignored, never deleted.
 
+- [ ] Implement explicit one-time legacy ownership claim. `LegacyInstallationClaimService.ClaimAsync(product, state, cancellationToken)` may write a new marker only when state ProductId/scope/version are valid, the canonical install root matches state, the declared main executable exists below it, and no conflicting marker exists. Add `RuntimeOptions.ClaimLegacyInstallation` and `--claim-legacy`; never claim implicitly. `ValidateInstalledStateStep` performs the claim first only when this explicit option is present, then runs normal validation.
+
+- [ ] Add tests proving a valid legacy install can be claimed once, repeated claim is idempotent, and mismatched product/scope/version/executable/path or an existing conflicting marker performs zero writes.
+
 - [ ] Make uninstall fail closed on product, marker, installation-id, scope, or path mismatch. First-install bootstrap remains valid when no existing state exists.
 
 - [ ] Run:
@@ -170,16 +186,23 @@ Guard uninstall with canonical state paths
 **Files:**
 
 - Create: `RS.SetupApp.Core/Enums/SetupTransactionPhase.cs`
+- Create: `RS.SetupApp.Core/Enums/SetupCompensationKind.cs`
 - Create: `RS.SetupApp.Core/Manifests/SetupTransactionJournal.cs`
+- Create: `RS.SetupApp.Core/Manifests/SetupCompensationRecord.cs`
 - Create: `RS.SetupApp.Core/Services/ISetupTransactionStore.cs`
 - Create: `RS.SetupApp.Core/Services/JsonSetupTransactionStore.cs`
+- Create: `RS.SetupApp.Core/Services/ISetupTransactionCoordinator.cs`
+- Create: `RS.SetupApp.Core/Services/SetupTransactionCoordinator.cs`
 - Create: `RS.SetupApp.Core/Engine/SetupStepRunResult.cs`
 - Modify: `RS.SetupApp.Core/Abstractions/ISystemPaths.cs`
 - Modify: `RS.SetupApp.Core/Services/DefaultSystemPaths.cs`
 - Modify: `RS.SetupApp.Core/Engine/SetupServices.cs`
 - Modify: `RS.SetupApp.Core/Engine/SetupExecutionContext.cs`
 - Modify: `RS.SetupApp.Core/Engine/SetupStepRunner.cs`
-- Modify: `RS.SetupApp.Core/Steps/BackupCurrentInstallationStep.cs`
+- Modify: `RS.SetupApp.Core/Abstractions/IRegistryService.cs`
+- Modify: `RS.SetupApp.Core/Abstractions/IShortcutService.cs`
+- Modify: `RS.SetupApp.Core/Services/WindowsRegistryService.cs`
+- Modify: `RS.SetupApp.Core/Services/ShellShortcutService.cs`
 - Modify: `RS.SetupApp.Core/Steps/ApplySystemIntegrationsStep.cs`
 - Modify: `RS.SetupApp.Core/Steps/BackupCurrentInstallationStep.cs`
 - Modify: `RS.SetupApp.Core/Steps/DeployApplicationFilesStep.cs`
@@ -189,17 +212,62 @@ Guard uninstall with canonical state paths
 - Modify: `RS.SetupApp.Core/Steps/RemoveInstalledFilesStep.cs`
 - Modify: `RS.SetupApp.Core/Steps/RemoveDataDirectoriesStep.cs`
 - Modify: `RS.SetupApp.Core/Steps/RemoveInstalledStateStep.cs`
+- Modify: `RS.SetupApp.Core/Steps/RemoveSystemIntegrationsStep.cs`
+- Modify: `RS.SetupApp.Core/Services/SetupPipelineHelper.cs`
 - Modify: `RS.SetupApp.Tests/Helpers/TestSystemPaths.cs`
 - Modify: `RS.SetupApp.Tests/Helpers/TestSetupServicesFactory.cs`
+- Modify: `RS.SetupApp.Tests/Fakes/FakeRegistryService.cs`
+- Modify: `RS.SetupApp.Tests/Fakes/FakeShortcutService.cs`
 - Create: `RS.SetupApp.Tests/Engine/SetupStepRunnerTests.cs`
 - Create: `RS.SetupApp.Tests/Services/JsonSetupTransactionStoreTests.cs`
 - Create: `RS.SetupApp.Tests/Fakes/FaultInjectingFileSystem.cs`
 
 - [ ] Write failing runner tests proving that: rollback is registered before forward execution; a step that mutates then throws receives rollback; a pre-cancelled user token does not cancel rollback; rollback continues after one recovery failure; the primary exception is preserved; and recovery errors are returned in reverse step order.
 
-- [ ] Add `ISystemPaths.GetRecoveryDirectory(productId, operationId, scope)` and `GetRecoveryRoot(productId, scope)`. Current-user recovery lives below LocalAppData; all-users recovery lives below ProgramData. Update fake paths to stay inside their unique temporary root.
-
 - [ ] Implement an atomic `JsonSetupTransactionStore` (`journal.tmp` then replace/move) with `LoadIncomplete`, `Save`, and `Delete`. Persist the exact phases from the design spec and update `UpdatedAtUtc` on every save.
+
+```csharp
+public interface ISetupTransactionStore
+{
+    Task SaveAsync(SetupTransactionJournal journal, CancellationToken token);
+    Task<IReadOnlyList<SetupTransactionJournal>> LoadIncompleteAsync(
+        string productId, InstallScope scope, CancellationToken token);
+    Task DeleteAsync(SetupTransactionJournal journal, CancellationToken token);
+}
+```
+
+`SetupTransactionJournal` includes `List<SetupCompensationRecord> Compensations` in registration order in addition to the fields and phases specified by the design.
+
+- [ ] Give crash recovery a stable, data-driven compensation contract rather than relying on runtime step instances:
+
+```csharp
+public enum SetupCompensationKind
+{
+    RestoreDirectory, DeleteDirectory, RestoreFile, DeleteFile,
+    RestoreRegistryValue, DeleteRegistryValue,
+    RestoreShortcut, DeleteShortcut
+}
+
+public sealed class SetupCompensationRecord
+{
+    public required Guid Id { get; init; }
+    public required SetupCompensationKind Kind { get; init; }
+    public required string Target { get; init; }
+    public string? Backup { get; init; }
+    public Dictionary<string, string> Metadata { get; init; } = [];
+    public bool Applied { get; set; }
+    public bool Reverted { get; set; }
+}
+
+public interface ISetupTransactionCoordinator
+{
+    Task<Guid> RegisterBeforeMutationAsync(SetupCompensationRecord record, CancellationToken token);
+    Task MarkAppliedAsync(Guid recordId, CancellationToken token);
+    Task<IReadOnlyList<string>> RollbackAsync(SetupTransactionJournal journal, CancellationToken recoveryToken);
+}
+```
+
+Every mutating step must persist a fully populated record before the mutation, mark it applied afterward, and use idempotent kind-specific handlers. Journal records are reversed by record order after a crash; no recovery behavior depends on localized step names.
 
 - [ ] Extend `SetupExecutionContext` with `OperationId`, `Journal`, `RecoveryDirectory`, `RecoveryErrors`, and canonical deletion paths.
 
@@ -214,9 +282,15 @@ public async Task<SetupStepRunResult> RunAsync(
     CancellationToken recoveryToken = default);
 ```
 
+`SetupStepRunResult` contains `bool Completed`, `Exception? PrimaryError`, and `IReadOnlyList<string> RecoveryErrors`; it never replaces the primary exception with a rollback exception.
+
 - [ ] Move backups from `WorkingDirectory/backup` to the persistent recovery directory. Make every rollback implementation idempotent: missing backup, shortcut, registry value, deployed directory, or state file is a successful no-op.
 
 - [ ] Make uninstall transactional: move validated install/state/data targets into operation-owned quarantine below the recovery directory before commit, and make the removal steps rollback-capable by moving them back. Do not recursively delete original targets before the journal reaches `Committed`.
+
+- [ ] Refactor apply/remove system integrations so each shortcut, autorun value, uninstall key, and file-association mutation registers its own compensation record before execution. A mid-loop failure must reverse earlier items, and crash recovery must reconstruct the same actions solely from journal metadata.
+
+- [ ] Extend the registry/shortcut abstractions and production/fake services with serializable capture-and-restore snapshots. Compensation metadata must contain the exact previous value/file snapshot or an explicit “did not exist” marker; rollback may not guess previous integration state from the new manifest.
 
 - [ ] Ensure cleanup never deletes recovery data while journal phase is `RecoveryFailed` or another nonterminal phase.
 
@@ -276,7 +350,28 @@ public sealed class SetupOperationResult
 
 - [ ] Add transaction lifecycle steps to install/update/repair/uninstall pipelines. Commit only after deployed files, ownership marker, installed state, and package verification have succeeded. Cleanup journal/recovery only after `Committed` or `RolledBack` is durably saved.
 
-- [ ] Implement `SetupRecoveryCoordinator.FindIncompleteAsync` and `RecoverAsync`; `SetupEngine.RecoverIncompleteTransactionsAsync` runs before a new operation. Recovery failures return `RecoveryFailed` and block new destructive work.
+- [ ] Implement the fixed recovery contract below; `SetupEngine.RecoverIncompleteTransactionsAsync` runs before a new operation. `FindIncompleteAsync` scans the requested scope, or both product-supported scopes when none was supplied. `RecoverAsync` reverses the journal's persisted compensation records through `ISetupTransactionCoordinator`, saves `RollingBack`/`RolledBack` atomically, and retains journal/snapshot on any error.
+
+```csharp
+public sealed record SetupRecoveryResult(
+    bool Succeeded,
+    SetupTransactionJournal Journal,
+    IReadOnlyList<string> Errors);
+
+public sealed class SetupRecoveryCoordinator
+{
+    public Task<IReadOnlyList<SetupTransactionJournal>> FindIncompleteAsync(
+        string productId,
+        IReadOnlyCollection<InstallScope> scopes,
+        CancellationToken token);
+
+    public Task<SetupRecoveryResult> RecoverAsync(
+        SetupTransactionJournal journal,
+        CancellationToken recoveryToken);
+}
+```
+
+Recovery failures return `RecoveryFailed` and block new destructive work. `Committed`/`RolledBack` journals are cleanup-only and never replay compensation.
 
 - [ ] Invoke recovery after the product manifest is loaded and validated but before `LoadInstalledStateStep`, so a half-written crash state is never treated as the authoritative installed state.
 
@@ -345,6 +440,7 @@ Recover interrupted setup operations
 - Create: `RS.SetupApp.UI.Tests/RS.SetupApp.UI.Tests.csproj`
 - Create: `RS.SetupApp.UI.Tests/ViewModels/MainWindowViewModelTests.cs`
 - Create: `RS.SetupApp.UI.Tests/ViewModels/AsyncCommandTests.cs`
+- Create: `RS.SetupApp.UI.Tests/ViewModels/LegacyOwnershipClaimViewModelTests.cs`
 - Modify: `MultiVerseKit.sln`
 
 - [ ] Add the Windows-targeted MSTest project (`net9.0-windows`, `UseWPF=true`) referencing `RS.SetupApp`. Write failing tests for legal state transitions, command re-entry prevention, cancel request, rollback display, recovery retry, and close authorization.
@@ -363,9 +459,13 @@ public Task<bool> RequestCloseAsync(Func<Task<bool>> confirmCancellationAsync);
 public Task RecoverAsync();
 ```
 
+- [ ] `MaintenanceViewModel` detects the exact legacy condition “valid external installed state, no ownership marker” and exposes an explicit `ClaimLegacyInstallationCommand`. The confirmation names the canonical install directory; the command executes with `--claim-legacy`, refreshes state, and enables repair/update/uninstall only after claim succeeds. It is never auto-run on page load.
+
 - [ ] `RequestCloseAsync` returns immediately in idle/terminal states, prompts while running, requests cancellation when confirmed, and returns `false` throughout rollback/recovery. It never calls `Application.Shutdown` or closes the window itself.
 
 - [ ] Rebuild `MainWindow` as a custom-titlebar shell with a left step rail and one `ContentControl`. Use DataTemplates to map page ViewModels/kinds to independent UserControls; do not retain visibility-stacked page grids.
+
+- [ ] Give every interactive control a stable `AutomationProperties.AutomationId` and localized accessible name. IDs are language-independent and are the selectors consumed by Task 8's FlaUI suite.
 
 - [ ] Apply the approved Fluent Workbench visual language: slate navigation rail, white content surface, teal accent from branding, 12px surface radius, restrained elevation, 140–180ms fade/translate page transition, visible keyboard focus, disabled motion under the system animation setting, high-DPI layout, and localized automation names.
 
@@ -462,7 +562,13 @@ Sign and secure online setup updates
 - Create: `RS.SetupApp.Tests/Fixtures/TestPayloadApp/product.test.json`
 - Create: `RS.SetupApp.Tests/EndToEnd/SetupLifecycleTests.cs`
 - Create: `scripts/Test-SetupAppEndToEnd.ps1`
+- Create: `scripts/Test-SetupAppUi.ps1`
+- Create: `RS.SetupApp.AutomationTests/RS.SetupApp.AutomationTests.csproj`
+- Create: `RS.SetupApp.AutomationTests/InstallerLifecycleUiTests.cs`
+- Create: `RS.SetupApp.AutomationTests/InstallerAutomationFixture.cs`
+- Create: `.github/workflows/setupapp.yml`
 - Modify: `RS.SetupApp.Tests/RS.SetupApp.Tests.csproj`
+- Modify: `MultiVerseKit.sln`
 - Modify: `RS.SetupApp/README.md`
 - Modify: root `README.md`
 
@@ -472,6 +578,12 @@ Sign and secure online setup updates
 
 - [ ] Make `scripts/Test-SetupAppEndToEnd.ps1` create its own disposable root, build the fixture and Setup bundle, run the same silent lifecycle with exit-code assertions, print artifact/log paths, and preserve the root only on failure. Add a `-KeepArtifacts` switch for diagnosis.
 
+- [ ] Add `RS.SetupApp.AutomationTests` as a Windows-targeted MSTest project with `FlaUI.Core` and `FlaUI.UIA3`. `InstallerAutomationFixture` starts the generated bundled `Setup.exe`, attaches UIA3, selects controls only by stable automation id, records screenshots/logs, and in `finally` removes only the generated fixture's install root, LocalAppData state/recovery roots, and exact HKCU uninstall key.
+
+- [ ] Make `scripts/Test-SetupAppUi.ps1` build a fixture bundle, export its path/product id/temp roots to the FlaUI test process, run `InstallerLifecycleUiTests`, and preserve artifacts only on failure or `-KeepArtifacts`. The UI test covers welcome → license → options → review → progress → completion, maintenance/repair, update cancellation/rollback, recovery-page retry from a pre-seeded interrupted journal, and uninstall.
+
+- [ ] Add `.github/workflows/setupapp.yml` on `windows-latest`. It restores once, builds Core/Builder/WPF in Release, runs Core and WPF ViewModel tests, runs the silent lifecycle script, then runs the FlaUI smoke script with uploaded failure screenshots/logs. No signing private key is stored in workflow files; tests generate ephemeral keys at runtime.
+
 - [ ] Document exact development and release commands, signing-key handling, legacy ownership migration, recovery directories, exit codes, and how to run the live UI smoke test.
 
 - [ ] Run:
@@ -479,6 +591,7 @@ Sign and secure online setup updates
 ```powershell
 dotnet test RS.SetupApp.Tests/RS.SetupApp.Tests.csproj --filter "FullyQualifiedName~SetupLifecycleTests"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Test-SetupAppEndToEnd.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Test-SetupAppUi.ps1
 ```
 
 Expected: install → repair → cancelled update rollback → update → hostile uninstall rejection → uninstall all pass under the disposable root.
@@ -506,13 +619,14 @@ dotnet build RS.SetupApp/RS.SetupApp.csproj -c Release
 dotnet test RS.SetupApp.Tests/RS.SetupApp.Tests.csproj -c Release
 dotnet test RS.SetupApp.UI.Tests/RS.SetupApp.UI.Tests.csproj -c Release
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Test-SetupAppEndToEnd.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Test-SetupAppUi.ps1
 ```
 
 Expected: every command exits 0 and reports zero failed tests.
 
 - [ ] Build a bundled test installer from the disposable payload with `RS.SetupApp.Builder build-installer`; launch that generated `Setup.exe`, not merely the developer output shell.
 
-- [ ] Using Windows UI automation, perform the user-visible paths in order: switch Chinese/English, keyboard-only navigation, review/install, cancel during an update and watch rollback complete, reopen maintenance, repair, apply update, open log details, uninstall with data-choice confirmation, and close. At every destructive confirmation, verify the displayed install path is the disposable test root.
+- [ ] Run the reproducible FlaUI suite first, then mirror its visible path with Codex Windows computer control for the live demonstration: switch Chinese/English, keyboard-only navigation, review/install, cancel during an update and watch rollback complete, reopen maintenance, repair, apply update, open log details, uninstall with data-choice confirmation, and close. At every destructive confirmation, verify the displayed install path is the disposable test root.
 
 - [ ] Deliberately select a non-empty unowned sentinel directory and verify the Review/Install path is blocked before mutation. Deliberately interrupt a disposable operation after the journal is written, relaunch Setup, and verify the Recovery page restores the prior version.
 
