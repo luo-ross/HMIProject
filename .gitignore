@@ -403,3 +403,4 @@ FodyWeavers.xsd
 /RS.HMIServer/Keys-Repository/key-FFD06E4F-0219-4C2F-AABC-0F97BAFF4792.bin
 /RS.Python/runs/detect/test-detect2
 /.superpowers/
+/.worktrees/
