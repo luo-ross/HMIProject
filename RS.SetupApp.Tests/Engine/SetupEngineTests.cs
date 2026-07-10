@@ -9,6 +9,95 @@ namespace RS.SetupApp.Tests.Engine;
 public sealed class SetupEngineTests
 {
     [TestMethod]
+    public async Task ResolveAndValidate_ShouldThrowTypedScopeMismatch()
+    {
+        using TempDirectoryScope temp = new();
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        string installDirectory = Path.Combine(temp.DirectoryPath, "empty-target");
+        Directory.CreateDirectory(installDirectory);
+        SetupExecutionContext context = new()
+        {
+            Options = new RuntimeOptions { Scope = InstallScope.CurrentUser },
+            Services = TestSetupServicesFactory.Create(
+                paths,
+                new FakeRegistryService(),
+                new FakeShortcutService(),
+                new FakeProcessService(),
+                new FakeDownloadService()),
+            ProductManifestPath = Path.Combine(temp.DirectoryPath, "product.json"),
+            PayloadDirectory = temp.DirectoryPath,
+            Product = new ProductManifest
+            {
+                ProductId = "demo-app",
+                InstallDefaults = new InstallDefaultsManifest { AllowOverwrite = true }
+            },
+            Package = new PackageManifest { Version = "2.0.0" },
+            ExistingState = new InstalledStateManifest
+            {
+                ProductId = "demo-app",
+                InstallationId = Guid.NewGuid(),
+                InstallScope = InstallScope.AllUsers,
+                InstallDirectory = installDirectory,
+                Version = "1.0.0"
+            }
+        };
+
+        await new ResolveOperationStateStep().ExecuteAsync(context, CancellationToken.None);
+        SetupSafetyException exception = await Assert.ThrowsExceptionAsync<SetupSafetyException>(
+            () => new ValidateInstallTargetStep().ExecuteAsync(context, CancellationToken.None));
+
+        Assert.AreEqual(InstallScope.CurrentUser, context.EffectiveScope);
+        Assert.AreEqual(InstallTargetFailureCode.ScopeMismatch, exception.FailureCode);
+        Assert.AreEqual(InstallTargetFailureCode.ScopeMismatch, context.InstallTargetValidation?.FailureCode);
+    }
+
+    [TestMethod]
+    public async Task ResolveAndValidate_ShouldPrioritizeTypedScopeMismatch_OverMachineInstallPolicy()
+    {
+        using TempDirectoryScope temp = new();
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        string installDirectory = Path.Combine(temp.DirectoryPath, "empty-target");
+        Directory.CreateDirectory(installDirectory);
+        SetupExecutionContext context = new()
+        {
+            Options = new RuntimeOptions { Scope = InstallScope.AllUsers },
+            Services = TestSetupServicesFactory.Create(
+                paths,
+                new FakeRegistryService(),
+                new FakeShortcutService(),
+                new FakeProcessService(),
+                new FakeDownloadService()),
+            ProductManifestPath = Path.Combine(temp.DirectoryPath, "product.json"),
+            PayloadDirectory = temp.DirectoryPath,
+            Product = new ProductManifest
+            {
+                ProductId = "demo-app",
+                InstallDefaults = new InstallDefaultsManifest
+                {
+                    AllowMachineInstall = false,
+                    AllowOverwrite = true
+                }
+            },
+            Package = new PackageManifest { Version = "2.0.0" },
+            ExistingState = new InstalledStateManifest
+            {
+                ProductId = "demo-app",
+                InstallationId = Guid.NewGuid(),
+                InstallScope = InstallScope.CurrentUser,
+                InstallDirectory = installDirectory,
+                Version = "1.0.0"
+            }
+        };
+
+        await new ResolveOperationStateStep().ExecuteAsync(context, CancellationToken.None);
+        SetupSafetyException exception = await Assert.ThrowsExceptionAsync<SetupSafetyException>(
+            () => new ValidateInstallTargetStep().ExecuteAsync(context, CancellationToken.None));
+
+        Assert.AreEqual(InstallTargetFailureCode.ScopeMismatch, exception.FailureCode);
+        StringAssert.Contains(context.InstallTargetValidation?.Message, "installed-state scope");
+    }
+
+    [TestMethod]
     public async Task ExecuteAsync_ShouldInstallAndUninstallUsingOfflinePackage()
     {
         using TempDirectoryScope temp = new();

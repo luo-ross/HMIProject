@@ -1,4 +1,5 @@
 using RS.SetupApp.Core;
+using RS.SetupApp.Tests.Fakes;
 using RS.SetupApp.Tests.Helpers;
 
 namespace RS.SetupApp.Tests.Services;
@@ -6,6 +7,144 @@ namespace RS.SetupApp.Tests.Services;
 [TestClass]
 public sealed class SetupPathSafetyPolicyTests
 {
+    [DataTestMethod]
+    [DataRow(nameof(IFileSystem.DirectoryExists))]
+    [DataRow(nameof(IFileSystem.GetAttributes))]
+    [DataRow(nameof(IFileSystem.EnumerateDirectories))]
+    public void ValidateInstallTarget_ShouldReturnStructuredFailure_WhenFileSystemProbeFails(string failingOperation)
+    {
+        using TempDirectoryScope temp = new();
+        string installDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "target")).FullName;
+        FaultingFileSystem fileSystem = new(new PhysicalFileSystem())
+        {
+            FailureFactory = (operation, _) => operation == failingOperation
+                ? failingOperation switch
+                {
+                    nameof(IFileSystem.DirectoryExists) => new IOException("Probe failed."),
+                    nameof(IFileSystem.GetAttributes) => new UnauthorizedAccessException("Probe denied."),
+                    _ => new System.Security.SecurityException("Probe blocked.")
+                }
+                : null
+        };
+        SetupPathSafetyPolicy policy = new(
+            fileSystem,
+            new InstallationOwnershipService(fileSystem, new JsonManifestSerializer()));
+
+        InstallTargetValidationResult result = policy.ValidateInstallTarget(
+            installDirectory,
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            installedState: null);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.ReparsePointNotTrusted, result.FailureCode);
+    }
+
+    [TestMethod]
+    public void ValidateInstallTarget_ShouldRejectStateScopeMismatch_WhenTargetIsEmpty()
+    {
+        using TempDirectoryScope temp = new();
+        string installDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "empty-target")).FullName;
+        SetupPathSafetyPolicy policy = CreatePolicy();
+
+        InstallTargetValidationResult result = policy.ValidateInstallTarget(
+            installDirectory,
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            CreateState(installDirectory, InstallScope.AllUsers));
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.ScopeMismatch, result.FailureCode);
+    }
+
+    [TestMethod]
+    public void ValidateInstallTarget_ShouldRejectStateScopeMismatch_WhenTargetDoesNotExist()
+    {
+        using TempDirectoryScope temp = new();
+        string installDirectory = Path.Combine(temp.DirectoryPath, "missing-target");
+        SetupPathSafetyPolicy policy = CreatePolicy();
+
+        InstallTargetValidationResult result = policy.ValidateInstallTarget(
+            installDirectory,
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            CreateState(installDirectory, InstallScope.AllUsers));
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.ScopeMismatch, result.FailureCode);
+    }
+
+    [DataTestMethod]
+    [DataRow("product")]
+    [DataRow("installation-id")]
+    [DataRow("install-directory")]
+    public void ValidateInstallTarget_ShouldRejectInvalidState_WhenTargetIsEmpty(string conflict)
+    {
+        using TempDirectoryScope temp = new();
+        string installDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "empty-target")).FullName;
+        InstalledStateManifest state = CreateState(installDirectory, InstallScope.CurrentUser);
+        switch (conflict)
+        {
+            case "product":
+                state.ProductId = "another-product";
+                break;
+            case "installation-id":
+                state.InstallationId = Guid.Empty;
+                break;
+            case "install-directory":
+                state.InstallDirectory = Path.Combine(temp.DirectoryPath, "different-target");
+                break;
+        }
+
+        InstallTargetValidationResult result = CreatePolicy().ValidateInstallTarget(
+            installDirectory,
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            state);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.OwnershipMismatch, result.FailureCode);
+    }
+
+    [TestMethod]
+    public void ValidateInstallTarget_ShouldRejectExistingTargetBelowReparsePointParent()
+    {
+        using TempDirectoryScope temp = new();
+        string realParent = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "real-parent")).FullName;
+        Directory.CreateDirectory(Path.Combine(realParent, "existing-target"));
+        string linkedParent = Path.Combine(temp.DirectoryPath, "linked-parent");
+        Directory.CreateSymbolicLink(linkedParent, realParent);
+        SetupPathSafetyPolicy policy = CreatePolicy();
+
+        InstallTargetValidationResult result = policy.ValidateInstallTarget(
+            Path.Combine(linkedParent, "existing-target"),
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            installedState: null);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.ReparsePointNotTrusted, result.FailureCode);
+    }
+
+    [TestMethod]
+    public void ValidateInstallTarget_ShouldRejectMissingTargetBelowReparsePointParent()
+    {
+        using TempDirectoryScope temp = new();
+        string realParent = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "real-parent")).FullName;
+        string linkedParent = Path.Combine(temp.DirectoryPath, "linked-parent");
+        Directory.CreateSymbolicLink(linkedParent, realParent);
+        SetupPathSafetyPolicy policy = CreatePolicy();
+
+        InstallTargetValidationResult result = policy.ValidateInstallTarget(
+            Path.Combine(linkedParent, "missing-target"),
+            CreateProduct(),
+            InstallScope.CurrentUser,
+            installedState: null);
+
+        Assert.IsFalse(result.IsValid);
+        Assert.AreEqual(InstallTargetFailureCode.ReparsePointNotTrusted, result.FailureCode);
+    }
+
     [TestMethod]
     public void ValidateInstallTarget_ShouldRejectUnreadableOwnershipMarker()
     {
@@ -408,6 +547,17 @@ public sealed class SetupPathSafetyPolicyTests
             {
                 AllowOverwrite = allowOverwrite
             }
+        };
+    }
+
+    private static InstalledStateManifest CreateState(string installDirectory, InstallScope scope)
+    {
+        return new InstalledStateManifest
+        {
+            ProductId = "demo-app",
+            InstallationId = Guid.NewGuid(),
+            InstallScope = scope,
+            InstallDirectory = installDirectory
         };
     }
 

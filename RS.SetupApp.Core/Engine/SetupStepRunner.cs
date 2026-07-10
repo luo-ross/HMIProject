@@ -32,13 +32,14 @@ public sealed class SetupStepRunner
         }
         catch
         {
+            using CancellationTokenSource recoveryCancellation = new(TimeSpan.FromMinutes(5));
             while (rollbackSteps.Count > 0)
             {
                 IRollbackStep rollbackStep = rollbackSteps.Pop();
                 try
                 {
                     context.Logger?.Warn($"Rollback: {rollbackStep.Name}");
-                    await rollbackStep.RollbackAsync(context, cancellationToken).ConfigureAwait(false);
+                    await rollbackStep.RollbackAsync(context, recoveryCancellation.Token).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

@@ -62,12 +62,72 @@ public sealed class SetupPathSafetyPolicy
                 "A special-folder root cannot be used as the install target.");
         }
 
+        if (installedState != null && installedState.InstallScope != scope)
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ScopeMismatch,
+                "The installed-state scope does not match the requested scope.");
+        }
+
+        if (installedState != null &&
+            !string.Equals(installedState.ProductId, product.ProductId, StringComparison.OrdinalIgnoreCase))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.OwnershipMismatch,
+                "The installed-state product does not match this product.");
+        }
+
+        if (installedState != null && installedState.InstallationId == Guid.Empty)
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.OwnershipMismatch,
+                "The installed state does not contain a valid installation identifier.");
+        }
+
+        if (installedState != null && !NormalizedPathsEqual(normalizedPath, installedState.InstallDirectory))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.OwnershipMismatch,
+                "The installed-state directory does not match the install target.");
+        }
+
         if (scope == InstallScope.AllUsers && !IsAllowedMachineTarget(normalizedPath))
         {
             return Failure(
                 normalizedPath,
                 InstallTargetFailureCode.ScopeMismatch,
                 "An all-users install target must be below Program Files.");
+        }
+
+        try
+        {
+            return ValidateFileSystemTarget(normalizedPath, product, scope, installedState);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ReparsePointNotTrusted,
+                "The install target could not be safely inspected.");
+        }
+    }
+
+    private InstallTargetValidationResult ValidateFileSystemTarget(
+        string normalizedPath,
+        ProductManifest product,
+        InstallScope scope,
+        InstalledStateManifest? installedState)
+    {
+        if (ContainsReparsePointInExistingPath(normalizedPath))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ReparsePointNotTrusted,
+                "The install target is below an untrusted reparse point.");
         }
 
         if (_fileSystem.FileExists(normalizedPath))
@@ -78,7 +138,7 @@ public sealed class SetupPathSafetyPolicy
                 "The install target is an existing file.");
         }
 
-        if (_fileSystem.DirectoryExists(normalizedPath) && ContainsReparsePoint(normalizedPath))
+        if (_fileSystem.DirectoryExists(normalizedPath) && ContainsReparsePointInTree(normalizedPath))
         {
             return Failure(
                 normalizedPath,
@@ -109,19 +169,7 @@ public sealed class SetupPathSafetyPolicy
                     "The non-empty install target is not owned by this product.");
             }
 
-            if (installedState == null ||
-                !string.Equals(marker.ProductId, product.ProductId, StringComparison.OrdinalIgnoreCase) ||
-                !string.Equals(installedState.ProductId, product.ProductId, StringComparison.OrdinalIgnoreCase))
-            {
-                return Failure(
-                    normalizedPath,
-                    InstallTargetFailureCode.OwnershipMismatch,
-                    "The install target ownership does not match this product.");
-            }
-
-            if (marker.InstallScope != scope ||
-                installedState.InstallScope != scope ||
-                marker.InstallScope != installedState.InstallScope)
+            if (marker.InstallScope != scope)
             {
                 return Failure(
                     normalizedPath,
@@ -129,22 +177,22 @@ public sealed class SetupPathSafetyPolicy
                     "The install target ownership scope does not match the requested scope.");
             }
 
+            if (installedState == null ||
+                !string.Equals(marker.ProductId, product.ProductId, StringComparison.OrdinalIgnoreCase))
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.OwnershipMismatch,
+                    "The install target ownership does not match this product.");
+            }
+
             if (marker.InstallationId == Guid.Empty ||
-                installedState.InstallationId == Guid.Empty ||
                 marker.InstallationId != installedState.InstallationId)
             {
                 return Failure(
                     normalizedPath,
                     InstallTargetFailureCode.OwnershipMismatch,
                     "The install target ownership does not match this installation.");
-            }
-
-            if (!NormalizedPathsEqual(normalizedPath, installedState.InstallDirectory))
-            {
-                return Failure(
-                    normalizedPath,
-                    InstallTargetFailureCode.OwnershipMismatch,
-                    "The installed-state directory does not match the install target.");
             }
 
             if (!product.InstallDefaults.AllowOverwrite)
@@ -256,7 +304,39 @@ public sealed class SetupPathSafetyPolicy
             .Any(root => IsPathUnderRootOrEqual(normalizedPath, root));
     }
 
-    private bool ContainsReparsePoint(string rootDirectory)
+    private bool ContainsReparsePointInExistingPath(string normalizedPath)
+    {
+        Stack<string> components = new();
+        string? current = normalizedPath;
+        while (!string.IsNullOrWhiteSpace(current))
+        {
+            components.Push(current);
+            string? parent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(current));
+            if (string.IsNullOrWhiteSpace(parent) || PathsEqual(parent, current))
+            {
+                break;
+            }
+
+            current = parent;
+        }
+
+        foreach (string component in components)
+        {
+            if (!_fileSystem.DirectoryExists(component) && !_fileSystem.FileExists(component))
+            {
+                break;
+            }
+
+            if ((_fileSystem.GetAttributes(component) & FileAttributes.ReparsePoint) != 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool ContainsReparsePointInTree(string rootDirectory)
     {
         Stack<string> pending = new();
         pending.Push(rootDirectory);

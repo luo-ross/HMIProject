@@ -11,12 +11,7 @@ public sealed class ResolveOperationStateStep : ISetupStep
         ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
         PackageManifest package = context.Package ?? throw new InvalidOperationException("Package manifest has not been loaded.");
 
-        if (context.ExistingState != null && context.Options.Scope.HasValue && context.Options.Scope.Value != context.ExistingState.InstallScope)
-        {
-            throw new InvalidOperationException("Cross-scope upgrades are not allowed.");
-        }
-
-        context.EffectiveScope = context.ExistingState?.InstallScope ?? context.Options.Scope ?? product.InstallDefaults.DefaultScope;
+        context.EffectiveScope = context.Options.Scope ?? context.ExistingState?.InstallScope ?? product.InstallDefaults.DefaultScope;
         context.ActualMode = context.Options.Mode switch
         {
             SetupMode.Repair => SetupMode.Repair,
