@@ -1,4 +1,4 @@
-﻿﻿﻿﻿<rs:RSWindow
+<rs:RSWindow
     x:Class="RS.WPFClient.Views.HomeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -30,9 +30,11 @@
     ResizeMode="CanResizeWithGrip"
     WinBtnCommandMargin="0,0,10,0"
     WindowStartupLocation="CenterScreen"
-    rs:TransformHelper.UndoneCommand="{Binding UndoCallbackCommand}"
-    rs:TransformHelper.RedoneCommand="{Binding RedoCallbackCommand}"
     mc:Ignorable="d">
+    <Window.InputBindings>
+        <KeyBinding Command="{x:Static rs:TransformHelper.UndoCommand}" Gesture="Ctrl+Z" />
+        <KeyBinding Command="{x:Static rs:TransformHelper.RedoCommand}" Gesture="Ctrl+Y" />
+    </Window.InputBindings>
     <rs:RSWindow.Resources>
         <ResourceDictionary>
             <rs:ForegroundColorConverter x:Key="ForegroundColorConverter" />

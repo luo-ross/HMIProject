@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NPOI.Util;
 using RS.Commons.Attributs;
@@ -99,13 +99,7 @@ namespace RS.WPFClient.ViewModels
             this.CopyEmailCommand = new RelayCommand(CopyEmail);
 
             this.ViewModelSelect=new InBoxViewModel();
-
-            this.UndoCallbackCommand = new RelayCommand(() => { /* 处理撤销后的逻辑 */ });
-            this.RedoCallbackCommand = new RelayCommand(() => { /* 处理重做后的逻辑 */ });
         }
-
-        public ICommand UndoCallbackCommand { get; }
-        public ICommand RedoCallbackCommand { get; }
 
         private void AddAccount()
         {
