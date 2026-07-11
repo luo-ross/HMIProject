@@ -59,7 +59,11 @@ public sealed class AsyncCommand : ObservableObject, ICommand
         {
             await _execute(cancellationToken).ConfigureAwait(false);
         }
-        catch (Exception exception) when (exception is not OperationCanceledException)
+        catch (OperationCanceledException exception)
+        {
+            _errorHandler?.Invoke(exception);
+        }
+        catch (Exception exception)
         {
             _errorHandler?.Invoke(exception);
         }

@@ -44,4 +44,18 @@ public sealed class AsyncCommandTests
         Assert.IsInstanceOfType<InvalidOperationException>(reported);
         Assert.AreEqual("boom", reported!.Message);
     }
+
+    [TestMethod]
+    public async Task ExecuteAsync_ReportsCancellationWithoutEscaping()
+    {
+        Exception? reported = null;
+        AsyncCommand command = new(
+            _ => Task.FromCanceled(new CancellationToken(canceled: true)),
+            exception => reported = exception);
+
+        await command.ExecuteAsync();
+
+        Assert.IsInstanceOfType<OperationCanceledException>(reported);
+        Assert.IsFalse(command.IsExecuting);
+    }
 }

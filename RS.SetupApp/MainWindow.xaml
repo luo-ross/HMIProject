@@ -62,17 +62,19 @@
                             <TextBlock Text="{Binding Publisher}" Margin="0,6,0,0" Foreground="#B8CDD1" TextWrapping="Wrap" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Margin="0,42,0,0">
-                            <TextBlock Text="01  Welcome" Foreground="#D8F1EC" Margin="0,0,0,16" />
-                            <TextBlock Text="02  Configure" Foreground="#D8F1EC" Margin="0,0,0,16" />
-                            <TextBlock Text="03  Review" Foreground="#D8F1EC" Margin="0,0,0,16" />
-                            <TextBlock Text="04  Apply" Foreground="#D8F1EC" Margin="0,0,0,16" />
-                            <TextBlock Text="05  Complete" Foreground="#D8F1EC" />
+                            <TextBlock Text="{Binding Ui.RailWelcomeLabel}" Foreground="#D8F1EC" Margin="0,0,0,16" />
+                            <TextBlock Text="{Binding Ui.RailConfigureLabel}" Foreground="#D8F1EC" Margin="0,0,0,16" />
+                            <TextBlock Text="{Binding Ui.RailReviewLabel}" Foreground="#D8F1EC" Margin="0,0,0,16" />
+                            <TextBlock Text="{Binding Ui.RailApplyLabel}" Foreground="#D8F1EC" Margin="0,0,0,16" />
+                            <TextBlock Text="{Binding Ui.RailCompleteLabel}" Foreground="#D8F1EC" />
                         </StackPanel>
                         <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Foreground="#C3D8DC" TextWrapping="Wrap" LineHeight="20" />
                     </Grid>
                 </Border>
                 <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" BorderBrush="#DFE8F0" BorderThickness="1" CornerRadius="12" Padding="34">
-                    <ContentControl Content="{Binding CurrentPage}" ContentTemplateSelector="{StaticResource WizardPageTemplateSelector}" />
+                    <ContentControl x:Name="PageHost" Content="{Binding CurrentPage}" ContentTemplateSelector="{StaticResource WizardPageTemplateSelector}" RenderTransformOrigin="0.5,0.5">
+                        <ContentControl.RenderTransform><TranslateTransform /></ContentControl.RenderTransform>
+                    </ContentControl>
                 </Border>
             </Grid>
         </Grid>

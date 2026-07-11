@@ -279,7 +279,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public bool IsBusy => UiState is SetupUiState.Preparing or SetupUiState.Running or SetupUiState.CancellationRequested or SetupUiState.RollingBack;
 
-    public bool IsCloseAllowed => UiState is SetupUiState.Idle or SetupUiState.Succeeded or SetupUiState.Failed or SetupUiState.RecoveryFailed;
+    public bool IsCloseAllowed => UiState is SetupUiState.Idle or SetupUiState.Succeeded or SetupUiState.Failed;
 
     public bool CanExecuteAction => !IsBusy && (!HasLicense || AcceptLicense);
 
@@ -640,6 +640,15 @@ public sealed class MainWindowViewModel : ObservableObject
                 CurrentPage = WizardPageKind.Completion;
             }
         }
+        catch (OperationCanceledException)
+        {
+            // Claim cancellation is safe only once the core claim workflow has returned control.
+            // Keep the legacy offer intact and return to maintenance instead of leaving a busy state.
+            StatusMessage = "Legacy installation claim cancellation completed safely.";
+            CompletionMessage = StatusMessage;
+            UiState = SetupUiState.Idle;
+            CurrentPage = WizardPageKind.Maintenance;
+        }
         finally
         {
             if (ReferenceEquals(_activeOperationCts, claimCts))
@@ -847,6 +856,12 @@ public sealed class MainWindowViewModel : ObservableObject
 
     private void ReportCommandError(Exception exception)
     {
+        if (exception is OperationCanceledException)
+        {
+            StatusMessage = "The requested operation was cancelled.";
+            return;
+        }
+
         StatusMessage = exception.Message;
         _dialogService.ShowError(exception.Message, Ui.ErrorDialogTitle);
     }

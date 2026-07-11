@@ -164,6 +164,16 @@ public sealed class SetupLanguageResources
 
     public string RecoveryErrorsAccessibleName { get; init; } = "Recovery errors";
 
+    public string RailWelcomeLabel { get; init; } = "01  Welcome";
+
+    public string RailConfigureLabel { get; init; } = "02  Configure";
+
+    public string RailReviewLabel { get; init; } = "03  Review";
+
+    public string RailApplyLabel { get; init; } = "04  Apply";
+
+    public string RailCompleteLabel { get; init; } = "05  Complete";
+
     public string FormatUpdateStatus(string value)
     {
         return string.Format(UpdateStatusTemplate, value);

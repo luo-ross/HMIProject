@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using RS.SetupApp.ViewModels;
 
 namespace RS.SetupApp;
@@ -21,6 +23,7 @@ public partial class MainWindow : Window
         PreviewKeyDown += MainWindow_PreviewKeyDown;
         _viewModel.RelaunchRequested += ViewModel_RelaunchRequested;
         _viewModel.FinishRequested += ViewModel_FinishRequested;
+        _viewModel.PropertyChanged += ViewModel_PropertyChanged;
     }
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -98,4 +101,35 @@ public partial class MainWindow : Window
     }
 
     private void ViewModel_FinishRequested(object? sender, EventArgs e) => BeginCloseRequest();
+
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainWindowViewModel.CurrentPage))
+        {
+            _ = Dispatcher.BeginInvoke(AnimatePageTransition);
+        }
+    }
+
+    private void AnimatePageTransition()
+    {
+        if (PageHost.RenderTransform is not TranslateTransform translate)
+        {
+            return;
+        }
+
+        if (!SystemParameters.ClientAreaAnimation)
+        {
+            PageHost.BeginAnimation(OpacityProperty, null);
+            translate.BeginAnimation(TranslateTransform.YProperty, null);
+            PageHost.Opacity = 1;
+            translate.Y = 0;
+            return;
+        }
+
+        Duration duration = TimeSpan.FromMilliseconds(160);
+        PageHost.Opacity = 0;
+        translate.Y = 8;
+        PageHost.BeginAnimation(OpacityProperty, new DoubleAnimation(1, duration));
+        translate.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(0, duration));
+    }
 }

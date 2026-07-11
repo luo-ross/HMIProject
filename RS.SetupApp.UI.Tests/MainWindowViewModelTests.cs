@@ -70,6 +70,7 @@ public sealed class MainWindowViewModelTests
 
         Assert.AreEqual(SetupUiState.RecoveryFailed, viewModel.UiState);
         Assert.AreEqual(WizardPageKind.Recovery, viewModel.CurrentPage);
+        Assert.IsFalse(await viewModel.RequestCloseAsync(() => Task.FromResult(true)));
 
         TaskCompletionSource<SetupOperationResult> recovery = workflow.QueueRecovery();
         Task retry = viewModel.RecoverAsync();
@@ -86,6 +87,7 @@ public sealed class MainWindowViewModelTests
 
         Assert.AreEqual(1, workflow.RecoveryCalls);
         Assert.AreEqual(SetupUiState.Succeeded, viewModel.UiState);
+        Assert.IsTrue(await viewModel.RequestCloseAsync(() => Task.FromResult(false)));
     }
 
     [TestMethod]
@@ -119,6 +121,35 @@ public sealed class MainWindowViewModelTests
         }), "--claim-legacy");
     }
 
+    [TestMethod]
+    public async Task ClaimLegacyCancellation_CompletesCommandAndReturnsToStableState()
+    {
+        FakeWorkflow workflow = new()
+        {
+            Workspace = new SetupWorkspace(
+                "C:\\payload\\product.json",
+                new ProductManifest { ProductId = "sample", DisplayName = "Sample", MainExecutable = "sample.exe" },
+                new InstalledStateManifest { InstallDirectory = "C:\\Sample", Version = "1.0.0" },
+                HasValidUnclaimedLegacyInstallation: true)
+        };
+        TaskCompletionSource<LegacyInstallationClaimResult> claim = workflow.QueueClaim();
+        MainWindowViewModel viewModel = CreateViewModel(workflow);
+        await viewModel.InitializeAsync();
+
+        Task command = viewModel.Maintenance.ClaimLegacyInstallationCommand.ExecuteAsync();
+        Assert.AreEqual(SetupUiState.Preparing, viewModel.UiState);
+
+        await viewModel.RequestCancelAsync();
+        Assert.AreEqual(SetupUiState.CancellationRequested, viewModel.UiState);
+        Assert.IsTrue(workflow.LastClaimToken.IsCancellationRequested);
+
+        await command;
+
+        Assert.AreEqual(SetupUiState.Idle, viewModel.UiState);
+        Assert.IsTrue(await viewModel.RequestCloseAsync(() => Task.FromResult(false)));
+        Assert.IsFalse(claim.Task.IsFaulted);
+    }
+
     private static MainWindowViewModel CreateViewModel(ISetupWorkflow workflow)
     {
         return new MainWindowViewModel(
@@ -138,6 +169,7 @@ public sealed class MainWindowViewModelTests
     {
         private readonly Queue<TaskCompletionSource<SetupOperationResult>> _operations = new();
         private readonly Queue<TaskCompletionSource<SetupOperationResult>> _recoveries = new();
+        private TaskCompletionSource<LegacyInstallationClaimResult>? _claim;
 
         public SetupWorkspace Workspace { get; set; } = new(
             "C:\\payload\\product.json",
@@ -146,6 +178,8 @@ public sealed class MainWindowViewModelTests
             HasValidUnclaimedLegacyInstallation: false);
 
         public CancellationToken LastOperationToken { get; private set; }
+
+        public CancellationToken LastClaimToken { get; private set; }
 
         public int ClaimCalls { get; private set; }
 
@@ -163,6 +197,12 @@ public sealed class MainWindowViewModelTests
             TaskCompletionSource<SetupOperationResult> completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
             _recoveries.Enqueue(completion);
             return completion;
+        }
+
+        public TaskCompletionSource<LegacyInstallationClaimResult> QueueClaim()
+        {
+            _claim = new TaskCompletionSource<LegacyInstallationClaimResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+            return _claim;
         }
 
         public Task<SetupWorkspace> LoadAsync(CancellationToken cancellationToken) => Task.FromResult(Workspace);
@@ -194,6 +234,13 @@ public sealed class MainWindowViewModelTests
             CancellationToken cancellationToken)
         {
             ClaimCalls++;
+            LastClaimToken = cancellationToken;
+            if (_claim != null)
+            {
+                _ = cancellationToken.Register(() => _claim.TrySetCanceled(cancellationToken));
+                return _claim.Task;
+            }
+
             Workspace = Workspace with { HasValidUnclaimedLegacyInstallation = false };
             return Task.FromResult(new LegacyInstallationClaimResult(true, true, Guid.NewGuid(), null, "Claimed."));
         }
