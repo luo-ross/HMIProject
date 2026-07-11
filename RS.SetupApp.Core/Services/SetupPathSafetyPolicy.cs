@@ -21,45 +21,133 @@ public sealed class SetupPathSafetyPolicy
         InstallScope scope,
         InstalledStateManifest? installedState)
     {
-        if (string.IsNullOrWhiteSpace(installDirectory))
+        return ValidateInstallTargetCore(
+            installDirectory,
+            product,
+            scope,
+            installedState,
+            enforceOverwritePolicy: true);
+    }
+
+    public InstallTargetValidationResult ValidateOwnedInstallTarget(
+        string installDirectory,
+        ProductManifest product,
+        InstallScope scope,
+        InstalledStateManifest installedState)
+    {
+        return ValidateInstallTargetCore(
+            installDirectory,
+            product,
+            scope,
+            installedState,
+            enforceOverwritePolicy: false);
+    }
+
+    public InstallTargetValidationResult ValidateCanonicalPath(
+        string path,
+        SetupPathPurpose purpose,
+        bool directoryTarget)
+    {
+        if (!TryNormalizePath(path, out string? normalizedCandidate))
         {
             return InvalidPath();
         }
 
-        string normalizedPath;
+        string normalizedPath = normalizedCandidate!;
+
+        InstallTargetValidationResult? prohibitedLocation = ValidateProhibitedLocation(normalizedPath);
+        if (prohibitedLocation != null)
+        {
+            return prohibitedLocation;
+        }
+
         try
         {
-            normalizedPath = Path.GetFullPath(installDirectory);
+            if (ContainsReparsePointInExistingPath(normalizedPath))
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.ReparsePointNotTrusted,
+                    $"The {purpose} path is below an untrusted reparse point.");
+            }
+
+            if (!TryGetAttributes(normalizedPath, out FileAttributes attributes))
+            {
+                return Success(normalizedPath, purpose);
+            }
+
+            bool isDirectory = (attributes & FileAttributes.Directory) != 0;
+            if (directoryTarget != isDirectory)
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.InvalidPath,
+                    $"The {purpose} path has an unexpected filesystem type.");
+            }
+
+            if (directoryTarget && ContainsReparsePointInTree(normalizedPath))
+            {
+                return Failure(
+                    normalizedPath,
+                    InstallTargetFailureCode.ReparsePointNotTrusted,
+                    $"The {purpose} path contains an untrusted reparse point.");
+            }
+
+            return Success(normalizedPath, purpose);
         }
-        catch (Exception exception) when (exception is ArgumentException or IOException or NotSupportedException or System.Security.SecurityException)
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ReparsePointNotTrusted,
+                $"The {purpose} path could not be safely inspected.");
+        }
+    }
+
+    public InstallTargetValidationResult ValidateLegacyInstallTarget(
+        string installDirectory,
+        InstallScope scope)
+    {
+        InstallTargetValidationResult validation = ValidateCanonicalPath(
+            installDirectory,
+            SetupPathPurpose.InstallRoot,
+            directoryTarget: true);
+        if (!validation.IsValid)
+        {
+            return validation;
+        }
+
+        string normalizedPath = validation.NormalizedPath
+            ?? throw new InvalidOperationException("The validated install path was not normalized.");
+        if (scope == InstallScope.AllUsers && !IsAllowedMachineTarget(normalizedPath))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.ScopeMismatch,
+                "An all-users legacy install target must be below Program Files.");
+        }
+
+        return validation;
+    }
+
+    private InstallTargetValidationResult ValidateInstallTargetCore(
+        string installDirectory,
+        ProductManifest product,
+        InstallScope scope,
+        InstalledStateManifest? installedState,
+        bool enforceOverwritePolicy)
+    {
+        if (!TryNormalizePath(installDirectory, out string? normalizedCandidate))
         {
             return InvalidPath();
         }
 
-        string? driveRoot = Path.GetPathRoot(normalizedPath);
-        if (!string.IsNullOrWhiteSpace(driveRoot) && PathsEqual(normalizedPath, driveRoot))
-        {
-            return Failure(
-                normalizedPath,
-                InstallTargetFailureCode.DriveRoot,
-                "A drive root cannot be used as the install target.");
-        }
+        string normalizedPath = normalizedCandidate!;
 
-        string windowsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-        if (!string.IsNullOrWhiteSpace(windowsDirectory) && IsPathUnderRootOrEqual(normalizedPath, windowsDirectory))
+        InstallTargetValidationResult? prohibitedLocation = ValidateProhibitedLocation(normalizedPath);
+        if (prohibitedLocation != null)
         {
-            return Failure(
-                normalizedPath,
-                InstallTargetFailureCode.WindowsDirectory,
-                "The Windows directory tree cannot be used as the install target.");
-        }
-
-        if (GetSpecialFolderRoots().Any(root => PathsEqual(normalizedPath, root)))
-        {
-            return Failure(
-                normalizedPath,
-                InstallTargetFailureCode.SpecialFolderRoot,
-                "A special-folder root cannot be used as the install target.");
+            return prohibitedLocation;
         }
 
         if (installedState != null && installedState.InstallScope != scope)
@@ -105,7 +193,12 @@ public sealed class SetupPathSafetyPolicy
 
         try
         {
-            return ValidateFileSystemTarget(normalizedPath, product, scope, installedState);
+            return ValidateFileSystemTarget(
+                normalizedPath,
+                product,
+                scope,
+                installedState,
+                enforceOverwritePolicy);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         {
@@ -120,7 +213,8 @@ public sealed class SetupPathSafetyPolicy
         string normalizedPath,
         ProductManifest product,
         InstallScope scope,
-        InstalledStateManifest? installedState)
+        InstalledStateManifest? installedState,
+        bool enforceOverwritePolicy)
     {
         if (ContainsReparsePointInExistingPath(normalizedPath))
         {
@@ -212,7 +306,7 @@ public sealed class SetupPathSafetyPolicy
                     "The install target ownership does not match this installation.");
             }
 
-            if (!product.InstallDefaults.AllowOverwrite)
+            if (enforceOverwritePolicy && !product.InstallDefaults.AllowOverwrite)
             {
                 return Failure(
                     normalizedPath,
@@ -235,6 +329,66 @@ public sealed class SetupPathSafetyPolicy
             null,
             InstallTargetFailureCode.InvalidPath,
             "The install target path is invalid.");
+    }
+
+    private static InstallTargetValidationResult Success(string normalizedPath, SetupPathPurpose purpose)
+    {
+        return new InstallTargetValidationResult(
+            true,
+            normalizedPath,
+            InstallTargetFailureCode.None,
+            $"The {purpose} path is safe.");
+    }
+
+    private static bool TryNormalizePath(string path, out string? normalizedPath)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            normalizedPath = null;
+            return false;
+        }
+
+        try
+        {
+            normalizedPath = Path.GetFullPath(path);
+            return true;
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or NotSupportedException or System.Security.SecurityException)
+        {
+            normalizedPath = null;
+            return false;
+        }
+    }
+
+    private static InstallTargetValidationResult? ValidateProhibitedLocation(string normalizedPath)
+    {
+        string? driveRoot = Path.GetPathRoot(normalizedPath);
+        if (!string.IsNullOrWhiteSpace(driveRoot) && PathsEqual(normalizedPath, driveRoot))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.DriveRoot,
+                "A drive root cannot be used as a setup target.");
+        }
+
+        string windowsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        if (!string.IsNullOrWhiteSpace(windowsDirectory) && IsPathUnderRootOrEqual(normalizedPath, windowsDirectory))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.WindowsDirectory,
+                "The Windows directory tree cannot be used as a setup target.");
+        }
+
+        if (GetSpecialFolderRoots().Any(root => PathsEqual(normalizedPath, root)))
+        {
+            return Failure(
+                normalizedPath,
+                InstallTargetFailureCode.SpecialFolderRoot,
+                "A special-folder root cannot be used as a setup target.");
+        }
+
+        return null;
     }
 
     private static InstallTargetValidationResult Failure(

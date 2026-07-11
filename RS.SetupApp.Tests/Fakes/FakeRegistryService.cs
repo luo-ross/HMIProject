@@ -10,7 +10,7 @@ public sealed class FakeRegistryService : IRegistryService
 
     public InstalledStateManifest? LastRegisteredState { get; private set; }
 
-    public InstalledStateManifest? LastRemovedState { get; private set; }
+    public UninstallPlan? LastRemovedPlan { get; private set; }
 
     public void RegisterInstallerEntries(ProductManifest product, PackageManifest package, InstalledStateManifest state)
     {
@@ -18,9 +18,9 @@ public sealed class FakeRegistryService : IRegistryService
         LastRegisteredState = state;
     }
 
-    public void RemoveInstallerEntries(ProductManifest product, InstalledStateManifest state, bool removeFileAssociations, bool removeAutorun)
+    public void RemoveInstallerEntries(ProductManifest product, UninstallPlan plan, bool removeFileAssociations, bool removeAutorun)
     {
         RemoveCallCount++;
-        LastRemovedState = state;
+        LastRemovedPlan = plan;
     }
 }

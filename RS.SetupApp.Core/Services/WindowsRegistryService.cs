@@ -15,18 +15,18 @@ public sealed class WindowsRegistryService : IRegistryService
         RegisterFileAssociations(product, state);
     }
 
-    public void RemoveInstallerEntries(ProductManifest product, InstalledStateManifest state, bool removeFileAssociations, bool removeAutorun)
+    public void RemoveInstallerEntries(ProductManifest product, UninstallPlan plan, bool removeFileAssociations, bool removeAutorun)
     {
         if (removeAutorun)
         {
-            RemoveAutorun(state);
+            RemoveAutorun(plan);
         }
 
-        RemoveUninstallEntry(product, state);
+        RemoveUninstallEntry(product, plan);
 
         if (removeFileAssociations)
         {
-            RemoveFileAssociations(product, state);
+            RemoveFileAssociations(product, plan);
         }
     }
 
@@ -46,8 +46,9 @@ public sealed class WindowsRegistryService : IRegistryService
             ?? throw new InvalidOperationException("Unable to create uninstall registry entry.");
 
         string scopeValue = state.InstallScope == InstallScope.AllUsers ? "machine" : "user";
-        string uninstallCommand = $"{SetupPathUtility.Quote(state.MaintenanceExecutablePath)} --mode uninstall --worker --scope {scopeValue} --product {SetupPathUtility.Quote(state.MaintenanceProductManifestPath)} --skip-launch";
-        string repairCommand = $"{SetupPathUtility.Quote(state.MaintenanceExecutablePath)} --mode repair --worker --scope {scopeValue} --product {SetupPathUtility.Quote(state.MaintenanceProductManifestPath)} --skip-launch";
+        string installDirectoryArgument = $"--install-dir {SetupPathUtility.Quote(state.InstallDirectory)}";
+        string uninstallCommand = $"{SetupPathUtility.Quote(state.MaintenanceExecutablePath)} --mode uninstall --worker --scope {scopeValue} --product {SetupPathUtility.Quote(state.MaintenanceProductManifestPath)} {installDirectoryArgument} --skip-launch";
+        string repairCommand = $"{SetupPathUtility.Quote(state.MaintenanceExecutablePath)} --mode repair --worker --scope {scopeValue} --product {SetupPathUtility.Quote(state.MaintenanceProductManifestPath)} {installDirectoryArgument} --skip-launch";
 
         uninstallKey.SetValue("DisplayName", product.DisplayName);
         uninstallKey.SetValue("DisplayVersion", package.Version);
@@ -67,9 +68,9 @@ public sealed class WindowsRegistryService : IRegistryService
         state.UninstallRegistryPath = $@"{GetHiveName(state.InstallScope)}\Software\Microsoft\Windows\CurrentVersion\Uninstall\{product.ProductId}";
     }
 
-    private void RemoveUninstallEntry(ProductManifest product, InstalledStateManifest state)
+    private void RemoveUninstallEntry(ProductManifest product, UninstallPlan plan)
     {
-        RegistryKey hive = GetHive(state.InstallScope);
+        RegistryKey hive = GetHive(plan.InstallScope);
         string keyPath = $@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{product.ProductId}";
         if (hive.OpenSubKey(keyPath) != null)
         {
@@ -98,16 +99,16 @@ public sealed class WindowsRegistryService : IRegistryService
         }
     }
 
-    private void RemoveAutorun(InstalledStateManifest state)
+    private void RemoveAutorun(UninstallPlan plan)
     {
-        if (string.IsNullOrWhiteSpace(state.AutorunEntryName))
+        if (string.IsNullOrWhiteSpace(plan.AutorunEntryName))
         {
             return;
         }
 
         string runPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-        using RegistryKey? runKey = GetHive(state.InstallScope).OpenSubKey(runPath, writable: true);
-        runKey?.DeleteValue(state.AutorunEntryName, throwOnMissingValue: false);
+        using RegistryKey? runKey = GetHive(plan.InstallScope).OpenSubKey(runPath, writable: true);
+        runKey?.DeleteValue(plan.AutorunEntryName, throwOnMissingValue: false);
     }
 
     private void RegisterFileAssociations(ProductManifest product, InstalledStateManifest state)
@@ -155,10 +156,10 @@ public sealed class WindowsRegistryService : IRegistryService
         }
     }
 
-    private void RemoveFileAssociations(ProductManifest product, InstalledStateManifest state)
+    private void RemoveFileAssociations(ProductManifest product, UninstallPlan plan)
     {
-        RegistryKey hive = GetHive(state.InstallScope);
-        foreach (RegisteredFileAssociationState association in state.FileAssociations)
+        RegistryKey hive = GetHive(plan.InstallScope);
+        foreach (RegisteredFileAssociationState association in plan.FileAssociations)
         {
             string extensionPath = $@"Software\Classes\{association.Extension}";
             using RegistryKey? extensionKey = hive.OpenSubKey(extensionPath, writable: true);
@@ -173,7 +174,7 @@ public sealed class WindowsRegistryService : IRegistryService
             string? currentCommand = commandKey?.GetValue(string.Empty)?.ToString();
             string? currentExecutable = SetupPathUtility.TryExtractExecutablePath(currentCommand);
             bool pointsToProduct = !string.IsNullOrWhiteSpace(currentExecutable) &&
-                string.Equals(Path.GetFullPath(currentExecutable), Path.GetFullPath(state.MainExecutablePath), StringComparison.OrdinalIgnoreCase);
+                string.Equals(Path.GetFullPath(currentExecutable), Path.GetFullPath(plan.MainExecutablePath), StringComparison.OrdinalIgnoreCase);
             if (progIdKey?.GetValue(MarkerValueName)?.ToString() == product.ProductId && pointsToProduct)
             {
                 hive.DeleteSubKeyTree(progIdPath, throwOnMissingSubKey: false);

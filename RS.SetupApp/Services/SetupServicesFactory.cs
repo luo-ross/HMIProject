@@ -10,6 +10,7 @@ public static class SetupServicesFactory
         PhysicalFileSystem fileSystem = new();
         JsonManifestSerializer serializer = new();
         InstallationOwnershipService ownershipService = new(fileSystem, serializer);
+        SetupPathSafetyPolicy pathSafetyPolicy = new(fileSystem, ownershipService);
         return new SetupServices
         {
             FileSystem = fileSystem,
@@ -20,8 +21,19 @@ public static class SetupServicesFactory
             Downloads = new HttpDownloadService(),
             Hasher = new DefaultFileHasher(),
             Paths = paths,
-            PathSafetyPolicy = new SetupPathSafetyPolicy(fileSystem, ownershipService),
+            PathSafetyPolicy = pathSafetyPolicy,
             OwnershipService = ownershipService,
+            InstalledStateValidator = new InstalledStateValidator(
+                fileSystem,
+                paths,
+                ownershipService,
+                pathSafetyPolicy),
+            LegacyInstallationClaimService = new LegacyInstallationClaimService(
+                fileSystem,
+                paths,
+                serializer,
+                ownershipService,
+                pathSafetyPolicy),
             LoggerFactory = path => new FileSetupLogger(path)
         };
     }

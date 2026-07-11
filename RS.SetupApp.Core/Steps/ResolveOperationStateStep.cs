@@ -11,7 +11,9 @@ public sealed class ResolveOperationStateStep : ISetupStep
         ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
         PackageManifest package = context.Package ?? throw new InvalidOperationException("Package manifest has not been loaded.");
 
-        context.EffectiveScope = context.Options.Scope ?? context.ExistingState?.InstallScope ?? product.InstallDefaults.DefaultScope;
+        context.EffectiveScope = context.UninstallPlan?.InstallScope
+            ?? context.Options.Scope
+            ?? product.InstallDefaults.DefaultScope;
         context.ActualMode = context.Options.Mode switch
         {
             SetupMode.Repair => SetupMode.Repair,
@@ -21,7 +23,7 @@ public sealed class ResolveOperationStateStep : ISetupStep
             _ => SetupMode.Repair
         };
 
-        context.InstallDirectory = context.ExistingState?.InstallDirectory
+        context.InstallDirectory = context.UninstallPlan?.InstallDirectory
             ?? (!string.IsNullOrWhiteSpace(context.Options.InstallDirectory)
                 ? Path.GetFullPath(context.Options.InstallDirectory)
                 : context.Services.Paths.GetDefaultInstallDirectory(product, context.EffectiveScope));

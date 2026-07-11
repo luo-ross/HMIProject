@@ -10,6 +10,8 @@ public sealed class RuntimeOptions
 
     public bool PurgeData { get; set; }
 
+    public bool ClaimLegacyInstallation { get; set; }
+
     public bool NoShortcuts { get; set; }
 
     public bool NoAutostart { get; set; }

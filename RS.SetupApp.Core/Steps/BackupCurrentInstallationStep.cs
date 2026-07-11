@@ -8,16 +8,24 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        string installDirectory = context.InstallDirectory ?? throw new InvalidOperationException("Install directory has not been resolved.");
+        string installDirectory = context.ExistingState == null
+            ? context.InstallDirectory ?? throw new InvalidOperationException("Install directory has not been resolved.")
+            : context.UninstallPlan?.InstallDirectory
+              ?? throw new InvalidOperationException("A validated uninstall plan is required for an existing installation.");
         if (!context.Services.FileSystem.DirectoryExists(installDirectory))
         {
             return Task.CompletedTask;
         }
 
-        if (!string.IsNullOrWhiteSpace(context.ExistingState?.PendingBackupDirectory) &&
-            context.Services.FileSystem.DirectoryExists(context.ExistingState.PendingBackupDirectory))
+        foreach (string legacyBackup in context.UninstallPlan?.FileSystemTargets
+                     .Where(target => target.Purpose == SetupPathPurpose.BackupRoot)
+                     .Select(target => target.Path)
+                 ?? Enumerable.Empty<string>())
         {
-            context.Services.FileSystem.DeleteDirectory(context.ExistingState.PendingBackupDirectory, recursive: true);
+            if (context.Services.FileSystem.DirectoryExists(legacyBackup))
+            {
+                context.Services.FileSystem.DeleteDirectory(legacyBackup, recursive: true);
+            }
         }
 
         context.BackupDirectory = Path.Combine(context.WorkingDirectory ?? throw new InvalidOperationException("Working directory is required."), "backup");
@@ -46,7 +54,9 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
             return Task.CompletedTask;
         }
 
-        string installDirectory = context.InstallDirectory ?? throw new InvalidOperationException("Install directory has not been resolved.");
+        string installDirectory = context.UninstallPlan?.InstallDirectory
+            ?? context.InstallDirectory
+            ?? throw new InvalidOperationException("Install directory has not been resolved.");
         if (context.Services.FileSystem.DirectoryExists(installDirectory))
         {
             context.Services.FileSystem.DeleteDirectory(installDirectory, recursive: true);

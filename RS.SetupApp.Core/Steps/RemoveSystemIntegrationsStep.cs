@@ -9,10 +9,10 @@ public sealed class RemoveSystemIntegrationsStep : ISetupStep
         cancellationToken.ThrowIfCancellationRequested();
 
         ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
-        InstalledStateManifest state = context.ExistingState ?? throw new InvalidOperationException("Installed state has not been loaded.");
+        UninstallPlan plan = context.UninstallPlan ?? throw new InvalidOperationException("A validated uninstall plan is required.");
 
-        context.Services.Shortcuts.RemoveShortcuts(state.Shortcuts);
-        context.Services.Registry.RemoveInstallerEntries(product, state, removeFileAssociations: true, removeAutorun: true);
+        context.Services.Shortcuts.RemoveShortcuts(plan.Shortcuts);
+        context.Services.Registry.RemoveInstallerEntries(product, plan, removeFileAssociations: true, removeAutorun: true);
         return Task.CompletedTask;
     }
 }

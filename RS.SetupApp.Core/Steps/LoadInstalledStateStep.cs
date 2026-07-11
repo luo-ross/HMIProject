@@ -14,7 +14,11 @@ public sealed class LoadInstalledStateStep : ISetupStep
             context.Options.Scope,
             context.Services.Paths,
             context.Services.Serializer,
-            context.Services.FileSystem);
+            context.Services.FileSystem,
+            out string? loadedManifestPath,
+            out InstallScope? loadedScope);
+        context.LoadedStateManifestPath = loadedManifestPath;
+        context.LoadedStateScope = loadedScope;
 
         return Task.CompletedTask;
     }

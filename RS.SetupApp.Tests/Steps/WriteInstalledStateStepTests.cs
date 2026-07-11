@@ -91,6 +91,7 @@ public sealed class WriteInstalledStateStepTests
     {
         TestSystemPaths paths = new(temp.DirectoryPath);
         InstallationOwnershipService ownershipService = new(fileSystem, serializer);
+        SetupPathSafetyPolicy pathSafetyPolicy = new(fileSystem, ownershipService);
         string installDirectory = Path.Combine(temp.DirectoryPath, "install", "demo-app");
         fileSystem.CreateDirectory(installDirectory);
         InstalledStateManifest state = new()
@@ -117,8 +118,19 @@ public sealed class WriteInstalledStateStepTests
                 Downloads = new FakeDownloadService(),
                 Hasher = new DefaultFileHasher(),
                 Paths = paths,
-                PathSafetyPolicy = new SetupPathSafetyPolicy(fileSystem, ownershipService),
+                PathSafetyPolicy = pathSafetyPolicy,
                 OwnershipService = ownershipService,
+                InstalledStateValidator = new InstalledStateValidator(
+                    fileSystem,
+                    paths,
+                    ownershipService,
+                    pathSafetyPolicy),
+                LegacyInstallationClaimService = new LegacyInstallationClaimService(
+                    fileSystem,
+                    paths,
+                    serializer,
+                    ownershipService,
+                    pathSafetyPolicy),
                 LoggerFactory = _ => new NullSetupLogger()
             },
             ProductManifestPath = Path.Combine(temp.DirectoryPath, "product.json"),

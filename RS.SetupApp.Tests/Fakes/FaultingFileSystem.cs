@@ -4,6 +4,8 @@ namespace RS.SetupApp.Tests.Fakes;
 
 public sealed class FaultingFileSystem(IFileSystem inner) : IFileSystem
 {
+    public List<(string Operation, string Path)> Mutations { get; } = new();
+
     public Func<string, string, Exception?>? FailureFactory { get; set; }
 
     public Func<string, bool?>? FileExistsOverride { get; set; }
@@ -43,42 +45,49 @@ public sealed class FaultingFileSystem(IFileSystem inner) : IFileSystem
     public void CreateDirectory(string path)
     {
         ThrowIfRequested(nameof(CreateDirectory), path);
+        Mutations.Add((nameof(CreateDirectory), path));
         inner.CreateDirectory(path);
     }
 
     public void DeleteDirectory(string path, bool recursive)
     {
         ThrowIfRequested(nameof(DeleteDirectory), path);
+        Mutations.Add((nameof(DeleteDirectory), path));
         inner.DeleteDirectory(path, recursive);
     }
 
     public void DeleteFile(string path)
     {
         ThrowIfRequested(nameof(DeleteFile), path);
+        Mutations.Add((nameof(DeleteFile), path));
         inner.DeleteFile(path);
     }
 
     public void MoveDirectory(string sourceDirectoryName, string destDirectoryName)
     {
         ThrowIfRequested(nameof(MoveDirectory), sourceDirectoryName);
+        Mutations.Add((nameof(MoveDirectory), sourceDirectoryName));
         inner.MoveDirectory(sourceDirectoryName, destDirectoryName);
     }
 
     public void MoveFile(string sourceFileName, string destFileName, bool overwrite)
     {
         ThrowIfRequested(nameof(MoveFile), destFileName);
+        Mutations.Add((nameof(MoveFile), destFileName));
         inner.MoveFile(sourceFileName, destFileName, overwrite);
     }
 
     public void CopyDirectory(string sourceDirectoryName, string destDirectoryName, bool overwrite)
     {
         ThrowIfRequested(nameof(CopyDirectory), destDirectoryName);
+        Mutations.Add((nameof(CopyDirectory), destDirectoryName));
         inner.CopyDirectory(sourceDirectoryName, destDirectoryName, overwrite);
     }
 
     public void CopyFile(string sourceFileName, string destFileName, bool overwrite)
     {
         ThrowIfRequested(nameof(CopyFile), destFileName);
+        Mutations.Add((nameof(CopyFile), destFileName));
         inner.CopyFile(sourceFileName, destFileName, overwrite);
     }
 
@@ -103,12 +112,14 @@ public sealed class FaultingFileSystem(IFileSystem inner) : IFileSystem
     public void WriteAllText(string path, string contents)
     {
         ThrowIfRequested(nameof(WriteAllText), path);
+        Mutations.Add((nameof(WriteAllText), path));
         inner.WriteAllText(path, contents);
     }
 
     public void WriteAllTextAtomic(string path, string contents)
     {
         ThrowIfRequested(nameof(WriteAllTextAtomic), path);
+        Mutations.Add((nameof(WriteAllTextAtomic), path));
         inner.WriteAllTextAtomic(path, contents);
     }
 

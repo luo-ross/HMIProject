@@ -8,10 +8,10 @@ public sealed class RemoveInstalledFilesStep : ISetupStep
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        InstalledStateManifest state = context.ExistingState ?? throw new InvalidOperationException("Installed state has not been loaded.");
-        if (context.Services.FileSystem.DirectoryExists(state.InstallDirectory))
+        UninstallPlan plan = context.UninstallPlan ?? throw new InvalidOperationException("A validated uninstall plan is required.");
+        if (context.Services.FileSystem.DirectoryExists(plan.InstallDirectory))
         {
-            context.Services.FileSystem.DeleteDirectory(state.InstallDirectory, recursive: true);
+            context.Services.FileSystem.DeleteDirectory(plan.InstallDirectory, recursive: true);
         }
 
         return Task.CompletedTask;

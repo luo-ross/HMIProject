@@ -54,7 +54,7 @@ public static class SetupPipelineHelper
         InstalledStateManifest state = new()
         {
             ProductId = product.ProductId,
-            InstallationId = existingState?.InstallationId is { } installationId && installationId != Guid.Empty
+            InstallationId = context.UninstallPlan?.InstallationId is { } installationId && installationId != Guid.Empty
                 ? installationId
                 : Guid.NewGuid(),
             DisplayName = product.DisplayName,
@@ -69,7 +69,7 @@ public static class SetupPipelineHelper
             MaintenanceProductManifestPath = Path.Combine(maintenanceDirectory, SetupRuntimeDefaults.DefaultPayloadFolderName, SetupRuntimeDefaults.ProductManifestFileName),
             MaintenancePackageManifestPath = Path.Combine(maintenanceDirectory, SetupRuntimeDefaults.DefaultPayloadFolderName, SetupRuntimeDefaults.PackageManifestFileName),
             MaintenancePackagePath = Path.Combine(maintenanceDirectory, SetupRuntimeDefaults.DefaultPayloadFolderName, package.ArchiveFileName),
-            AutorunEntryName = existingState?.AutorunEntryName ?? SetupPathUtility.SanitizePathSegment(product.ProductId),
+            AutorunEntryName = SetupPathUtility.SanitizePathSegment(product.ProductId),
             AutorunEnabled = context.Options.NoAutostart ? false : (existingState?.AutorunEnabled ?? product.InstallDefaults.EnableAutoStartByDefault),
             InstalledAtUtc = existingState?.InstalledAtUtc ?? DateTimeOffset.UtcNow,
             UpdatedAtUtc = DateTimeOffset.UtcNow,
@@ -78,9 +78,10 @@ public static class SetupPipelineHelper
 
         foreach (DataDirectoryManifest directory in product.DataDirectories)
         {
-            state.DataDirectories[directory.Key] = existingState != null && existingState.DataDirectories.TryGetValue(directory.Key, out string? existingPath)
-                ? existingPath
-                : context.Services.Paths.GetDataDirectory(product, context.EffectiveScope, directory);
+            state.DataDirectories[directory.Key] = context.Services.Paths.GetDataDirectory(
+                product,
+                context.EffectiveScope,
+                directory);
         }
 
         return state;

@@ -19,6 +19,7 @@ public sealed class RuntimeArgumentParserTests
             "--no-shortcuts",
             "--no-autostart",
             "--purge-data",
+            "--claim-legacy",
             "--worker",
             "--elevated",
             "--launch",
@@ -34,6 +35,7 @@ public sealed class RuntimeArgumentParserTests
         Assert.IsTrue(options.NoShortcuts);
         Assert.IsTrue(options.NoAutostart);
         Assert.IsTrue(options.PurgeData);
+        Assert.IsTrue(options.ClaimLegacyInstallation);
         Assert.IsTrue(options.Worker);
         Assert.IsTrue(options.Elevated);
         Assert.IsTrue(options.LaunchAfterInstall);

@@ -23,6 +23,9 @@ public static class RuntimeArgumentParser
                 case "--purge-data":
                     options.PurgeData = true;
                     break;
+                case "--claim-legacy":
+                    options.ClaimLegacyInstallation = true;
+                    break;
                 case "--no-shortcuts":
                     options.NoShortcuts = true;
                     break;

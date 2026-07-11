@@ -22,5 +22,9 @@ public sealed class SetupServices
 
     public required InstallationOwnershipService OwnershipService { get; init; }
 
+    public required InstalledStateValidator InstalledStateValidator { get; init; }
+
+    public required LegacyInstallationClaimService LegacyInstallationClaimService { get; init; }
+
     public required Func<string, ISetupLogger> LoggerFactory { get; init; }
 }

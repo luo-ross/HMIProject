@@ -31,11 +31,21 @@ public sealed class SetupEngine
             await _stepRunner.RunAsync(context, CreateBootstrapSteps(), progress: null, cancellationToken).ConfigureAwait(false);
             ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
 
-            InstallScope effectiveScope = context.ExistingState?.InstallScope ?? options.Scope ?? product.InstallDefaults.DefaultScope;
+            InstallScope effectiveScope = context.UninstallPlan?.InstallScope
+                ?? options.Scope
+                ?? product.InstallDefaults.DefaultScope;
             string logPath = options.LogPath ?? _services.Paths.GetLogFilePath(product.ProductId, effectiveScope);
 
             ISetupLogger logger = _services.LoggerFactory(logPath);
             context.Logger = logger;
+            if (context.InstalledStateValidation != null)
+            {
+                foreach (string warning in context.InstalledStateValidation.Warnings)
+                {
+                    logger.Warn(warning);
+                }
+            }
+
             context.Extensions.AddRange(ExtensionLoader.Load(product, productManifestPath, logger));
 
             if (options.Mode == SetupMode.Uninstall)
@@ -135,7 +145,8 @@ public sealed class SetupEngine
             new LoadProductManifestStep(),
             new ValidateProductSchemaStep(),
             new ValidateProductManifestStep(),
-            new LoadInstalledStateStep()
+            new LoadInstalledStateStep(),
+            new ValidateInstalledStateStep()
         ];
     }
 
@@ -191,6 +202,11 @@ public sealed class SetupEngine
                 Message = "Product is not installed.",
                 LogPath = context.Logger?.LogPath
             };
+        }
+
+        if (context.UninstallPlan == null)
+        {
+            throw new InvalidOperationException("A validated uninstall plan is required before uninstall can continue.");
         }
 
         await _stepRunner.RunAsync(context, CreateUninstallSteps(), progress, cancellationToken).ConfigureAwait(false);

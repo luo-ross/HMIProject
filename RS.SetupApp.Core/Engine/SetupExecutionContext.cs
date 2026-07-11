@@ -20,6 +20,14 @@ public sealed class SetupExecutionContext
 
     public InstalledStateManifest? ExistingState { get; set; }
 
+    public string? LoadedStateManifestPath { get; set; }
+
+    public InstallScope? LoadedStateScope { get; set; }
+
+    public InstalledStateValidationResult? InstalledStateValidation { get; set; }
+
+    public UninstallPlan? UninstallPlan { get; set; }
+
     public InstalledStateManifest? ResultState { get; set; }
 
     public ISetupLogger? Logger { get; set; }
