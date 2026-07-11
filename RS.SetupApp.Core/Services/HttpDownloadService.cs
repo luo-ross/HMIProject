@@ -6,9 +6,20 @@ public sealed class HttpDownloadService : IDownloadService
 {
     private readonly HttpClient _httpClient;
 
-    public HttpDownloadService(HttpClient? httpClient = null)
+    public HttpDownloadService()
+        : this(new HttpClientHandler { AllowAutoRedirect = false })
     {
-        _httpClient = httpClient ?? new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
+    }
+
+    public HttpDownloadService(HttpMessageHandler messageHandler)
+    {
+        ArgumentNullException.ThrowIfNull(messageHandler);
+        if (messageHandler is HttpClientHandler httpClientHandler)
+        {
+            httpClientHandler.AllowAutoRedirect = false;
+        }
+
+        _httpClient = new HttpClient(messageHandler, disposeHandler: true);
     }
 
     public async Task DownloadAsync(Uri uri, string destinationPath, CancellationToken cancellationToken)
