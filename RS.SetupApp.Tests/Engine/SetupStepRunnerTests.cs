@@ -162,6 +162,68 @@ public sealed class SetupStepRunnerTests
     }
 
     [TestMethod]
+    public async Task RunAsync_ShouldIgnoreCancelledOptionalRecoveryToken_AndPersistRecoveryFailed()
+    {
+        using TempDirectoryScope temp = new();
+        using CancellationTokenSource operationCancellation = new();
+        using CancellationTokenSource suppliedRecoveryCancellation = new();
+        SetupExecutionContext context = CreateContext(temp);
+        Guid operationId = Guid.NewGuid();
+        SetupTransactionJournal journal = new()
+        {
+            OperationId = operationId,
+            ProductId = "demo-app",
+            Scope = InstallScope.CurrentUser,
+            Mode = SetupMode.Install,
+            InstallDirectory = temp.DirectoryPath,
+            RecoveryDirectory = context.Services.Paths.GetRecoveryDirectory("demo-app", operationId, InstallScope.CurrentUser),
+            Phase = SetupTransactionPhase.Prepared,
+            StartedAtUtc = DateTimeOffset.UtcNow,
+            UpdatedAtUtc = DateTimeOffset.UtcNow
+        };
+        JsonSetupTransactionStore store = new(
+            context.Services.FileSystem,
+            context.Services.Serializer,
+            context.Services.Paths);
+        context.Journal = journal;
+        context.TransactionCoordinator = new SetupTransactionCoordinator(
+            journal,
+            store,
+            context.Services.FileSystem);
+        string compensationTarget = Path.Combine(temp.DirectoryPath, "must-be-compensated.txt");
+        Guid compensationId = await context.TransactionCoordinator.RegisterBeforeMutationAsync(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.DeleteFile,
+            Target = compensationTarget
+        }, CancellationToken.None);
+        File.WriteAllText(compensationTarget, "mutated");
+        await context.TransactionCoordinator.MarkAppliedAsync(compensationId, CancellationToken.None);
+        FailingRecoveryRollbackStep rollbackStep = new();
+        operationCancellation.Cancel();
+        suppliedRecoveryCancellation.Cancel();
+
+        SetupStepRunResult result = await new SetupStepRunner().RunAsync(
+            context,
+            [rollbackStep, new ThrowIfCancelledStep()],
+            progress: null,
+            operationCancellation.Token,
+            suppliedRecoveryCancellation.Token);
+
+        Assert.IsFalse(result.Completed);
+        Assert.IsTrue(rollbackStep.RollbackExecuted);
+        Assert.IsFalse(rollbackStep.RollbackToken.IsCancellationRequested);
+        Assert.IsFalse(File.Exists(compensationTarget));
+        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, journal.Phase);
+        IReadOnlyList<SetupTransactionJournal> incomplete = await store.LoadIncompleteAsync(
+            journal.ProductId,
+            journal.Scope,
+            CancellationToken.None);
+        Assert.AreEqual(1, incomplete.Count);
+        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, incomplete[0].Phase);
+    }
+
+    [TestMethod]
     public async Task BackupCurrentInstallation_ShouldUsePersistentRecoveryDirectory_AndRestoreOnRecovery()
     {
         using TempDirectoryScope temp = new();
@@ -620,10 +682,16 @@ public sealed class SetupStepRunnerTests
     {
         public string Name => "Failing recovery rollback";
 
+        public bool RollbackExecuted { get; private set; }
+
+        public CancellationToken RollbackToken { get; private set; }
+
         public Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken) => Task.CompletedTask;
 
         public Task RollbackAsync(SetupExecutionContext context, CancellationToken cancellationToken)
         {
+            RollbackExecuted = true;
+            RollbackToken = cancellationToken;
             throw new IOException("Rollback evidence must be retained.");
         }
     }

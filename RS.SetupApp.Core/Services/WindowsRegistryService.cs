@@ -178,7 +178,13 @@ public sealed class WindowsRegistryService : IRegistryService
 
     private static void RestoreKey(RegistryKey hive, RegistryKeySnapshot snapshot)
     {
-        if (hive.OpenSubKey(snapshot.Path, writable: false) != null)
+        bool exists;
+        using (RegistryKey? existing = hive.OpenSubKey(snapshot.Path, writable: false))
+        {
+            exists = existing != null;
+        }
+
+        if (exists)
         {
             hive.DeleteSubKeyTree(snapshot.Path, throwOnMissingSubKey: false);
         }

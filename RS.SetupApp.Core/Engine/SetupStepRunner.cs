@@ -9,6 +9,7 @@ public sealed class SetupStepRunner
         CancellationToken operationToken,
         CancellationToken recoveryToken = default)
     {
+        _ = recoveryToken;
         Stack<IRollbackStep> rollbackSteps = new();
 
         try
@@ -16,7 +17,7 @@ public sealed class SetupStepRunner
             if (context.Journal != null)
             {
                 context.Journal.Phase = SetupTransactionPhase.Applying;
-                await context.Services.TransactionStore.SaveAsync(context.Journal, operationToken).ConfigureAwait(false);
+                await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
             }
 
             for (int index = 0; index < steps.Count; index++)
@@ -39,14 +40,14 @@ public sealed class SetupStepRunner
                 if (context.Journal != null)
                 {
                     context.Journal.CompletedSteps.Add(step.Name);
-                    await context.Services.TransactionStore.SaveAsync(context.Journal, operationToken).ConfigureAwait(false);
+                    await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
                 }
             }
 
             if (context.Journal != null)
             {
                 context.Journal.Phase = SetupTransactionPhase.Verifying;
-                await context.Services.TransactionStore.SaveAsync(context.Journal, operationToken).ConfigureAwait(false);
+                await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
             }
 
             return new SetupStepRunResult { Completed = true };
@@ -54,9 +55,7 @@ public sealed class SetupStepRunner
         catch (Exception primaryError)
         {
             using CancellationTokenSource recoveryCancellation = new(TimeSpan.FromMinutes(5));
-            using CancellationTokenSource recoveryLinked = CancellationTokenSource.CreateLinkedTokenSource(
-                recoveryToken,
-                recoveryCancellation.Token);
+            CancellationToken independentRecoveryToken = recoveryCancellation.Token;
             List<string> recoveryErrors = [];
             while (rollbackSteps.Count > 0)
             {
@@ -64,7 +63,7 @@ public sealed class SetupStepRunner
                 try
                 {
                     context.Logger?.Warn($"Rollback: {rollbackStep.Name}");
-                    await rollbackStep.RollbackAsync(context, recoveryLinked.Token).ConfigureAwait(false);
+                    await rollbackStep.RollbackAsync(context, independentRecoveryToken).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -77,7 +76,7 @@ public sealed class SetupStepRunner
             {
                 context.Journal.PrimaryError = primaryError.ToString();
                 IReadOnlyList<string> compensationErrors = await context.TransactionCoordinator
-                    .RollbackAsync(context.Journal, recoveryLinked.Token)
+                    .RollbackAsync(context.Journal, independentRecoveryToken)
                     .ConfigureAwait(false);
                 recoveryErrors.AddRange(compensationErrors);
             }
@@ -90,7 +89,7 @@ public sealed class SetupStepRunner
                 try
                 {
                     await context.Services.TransactionStore
-                        .SaveAsync(context.Journal, recoveryLinked.Token)
+                        .SaveAsync(context.Journal, independentRecoveryToken)
                         .ConfigureAwait(false);
                 }
                 catch (Exception exception)
