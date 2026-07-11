@@ -92,6 +92,28 @@ public sealed class UninstallSafetyTests
         Assert.IsFalse(Directory.Exists(fixture.InstallDirectory));
     }
 
+    [TestMethod]
+    public async Task ExecuteAsync_ShouldNotWriteClaim_WhenExplicitInstallDirectoryMismatchesStateRoot()
+    {
+        using UninstallFixture fixture = new(writeMarker: false, installationId: Guid.Empty);
+        string originalState = File.ReadAllText(fixture.LoadedStatePath);
+        string markerPath = Path.Combine(
+            fixture.InstallDirectory,
+            SetupRuntimeDefaults.OwnershipMarkerFileName);
+        fixture.FileSystem.Mutations.Clear();
+
+        SetupOperationResult result = await fixture.ExecuteUninstallAsync(
+            claimLegacy: true,
+            installDirectory: Path.Combine(fixture.Temp.DirectoryPath, "different-install"));
+
+        Assert.IsFalse(result.Succeeded);
+        StringAssert.Contains(result.Message, "requested-install-path-mismatch");
+        Assert.AreEqual(originalState, File.ReadAllText(fixture.LoadedStatePath));
+        Assert.IsFalse(File.Exists(markerPath));
+        Assert.AreEqual(0, fixture.FileSystem.Mutations.Count(mutation =>
+            mutation.Operation == nameof(IFileSystem.WriteAllTextAtomic)));
+    }
+
     private static bool PathsEqual(string left, string right)
     {
         try
@@ -292,13 +314,16 @@ public sealed class UninstallSafetyTests
 
         public void PersistState() => _serializer.Save(LoadedStatePath, State);
 
-        public Task<SetupOperationResult> ExecuteUninstallAsync(bool claimLegacy = false)
+        public Task<SetupOperationResult> ExecuteUninstallAsync(
+            bool claimLegacy = false,
+            string? installDirectory = null)
         {
             return _engine.ExecuteAsync(new RuntimeOptions
             {
                 Mode = SetupMode.Uninstall,
                 Scope = InstallScope.CurrentUser,
                 ProductManifestPath = ProductManifestPath,
+                InstallDirectory = installDirectory,
                 PurgeData = true,
                 ClaimLegacyInstallation = claimLegacy
             });

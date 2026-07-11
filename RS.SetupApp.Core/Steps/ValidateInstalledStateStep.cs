@@ -29,7 +29,7 @@ public sealed class ValidateInstalledStateStep : ISetupStep
         if (context.Options.ClaimLegacyInstallation)
         {
             LegacyInstallationClaimResult claim = await context.Services.LegacyInstallationClaimService
-                .ClaimAsync(product, state, cancellationToken)
+                .ClaimAsync(product, state, context.Options, cancellationToken)
                 .ConfigureAwait(false);
             if (!claim.Succeeded)
             {

@@ -164,6 +164,91 @@ public sealed class LegacyInstallationClaimServiceTests
         Assert.IsNull(fixture.OwnershipService.Load(fixture.InstallDirectory));
     }
 
+    [TestMethod]
+    public async Task ClaimAsync_ShouldPreserveForeignMarkerAndState_WhenMarkerAppearsDuringWrite()
+    {
+        using ClaimFixture fixture = new();
+        string originalState = File.ReadAllText(fixture.StatePath);
+        string markerPath = Path.Combine(
+            fixture.InstallDirectory,
+            SetupRuntimeDefaults.OwnershipMarkerFileName);
+        InstallationOwnershipMarker foreignMarker = new()
+        {
+            ProductId = "foreign-product",
+            InstallationId = Guid.NewGuid(),
+            InstallScope = InstallScope.CurrentUser,
+            CreatedAtUtc = new DateTimeOffset(2026, 7, 11, 1, 2, 3, TimeSpan.Zero)
+        };
+        fixture.FileSystem.FailureFactory = (operation, path) =>
+        {
+            if (operation != nameof(IFileSystem.WriteAllTextAtomic) || !PathsEqual(path, markerPath))
+            {
+                return null;
+            }
+
+            fixture.Serializer.Save(markerPath, foreignMarker);
+            return new IOException("foreign marker won the race");
+        };
+
+        LegacyInstallationClaimResult result = await fixture.ClaimAsync();
+
+        Assert.IsFalse(result.Succeeded);
+        Assert.AreEqual(originalState, File.ReadAllText(fixture.StatePath));
+        InstallationOwnershipMarker? persistedMarker = fixture.OwnershipService.Load(fixture.InstallDirectory);
+        Assert.IsNotNull(persistedMarker);
+        Assert.AreEqual(foreignMarker.ProductId, persistedMarker.ProductId);
+        Assert.AreEqual(foreignMarker.InstallationId, persistedMarker.InstallationId);
+        Assert.AreEqual(foreignMarker.InstallScope, persistedMarker.InstallScope);
+        Assert.AreEqual(foreignMarker.CreatedAtUtc, persistedMarker.CreatedAtUtc);
+    }
+
+    [TestMethod]
+    public async Task ClaimAsync_ShouldPerformZeroWrites_WhenClaimLockTimesOut()
+    {
+        FakeLegacyInstallationClaimLockProvider lockProvider = new()
+        {
+            ShouldTimeout = true
+        };
+        using ClaimFixture fixture = new(lockProvider: lockProvider);
+        string originalState = File.ReadAllText(fixture.StatePath);
+
+        LegacyInstallationClaimResult result = await fixture.ClaimAsync();
+
+        Assert.IsFalse(result.Succeeded);
+        Assert.AreEqual("claim-lock-timeout", result.FailureCode);
+        Assert.AreEqual(originalState, File.ReadAllText(fixture.StatePath));
+        Assert.AreEqual(0, fixture.FileSystem.Mutations.Count);
+        Assert.IsNull(fixture.OwnershipService.Load(fixture.InstallDirectory));
+    }
+
+    [TestMethod]
+    public async Task ClaimAsync_ShouldRejectForeignMarker_InjectedAfterClaimLockAcquisition()
+    {
+        FakeLegacyInstallationClaimLockProvider lockProvider = new();
+        using ClaimFixture fixture = new(lockProvider: lockProvider);
+        string originalState = File.ReadAllText(fixture.StatePath);
+        InstallationOwnershipMarker foreignMarker = new()
+        {
+            ProductId = "foreign-product",
+            InstallationId = Guid.NewGuid(),
+            InstallScope = InstallScope.CurrentUser
+        };
+        lockProvider.OnAcquired = () => fixture.Serializer.Save(
+            Path.Combine(fixture.InstallDirectory, SetupRuntimeDefaults.OwnershipMarkerFileName),
+            foreignMarker);
+
+        LegacyInstallationClaimResult result = await fixture.ClaimAsync();
+
+        Assert.IsFalse(result.Succeeded);
+        Assert.AreEqual("ownership-marker-conflict", result.FailureCode);
+        Assert.AreEqual(originalState, File.ReadAllText(fixture.StatePath));
+        Assert.AreEqual(0, fixture.FileSystem.Mutations.Count);
+        InstallationOwnershipMarker? persistedMarker = fixture.OwnershipService.Load(fixture.InstallDirectory);
+        Assert.IsNotNull(persistedMarker);
+        Assert.AreEqual(foreignMarker.ProductId, persistedMarker.ProductId);
+        Assert.AreEqual(foreignMarker.InstallationId, persistedMarker.InstallationId);
+    }
+
     private static bool PathsEqual(string left, string right)
     {
         return string.Equals(
@@ -176,7 +261,8 @@ public sealed class LegacyInstallationClaimServiceTests
     {
         public ClaimFixture(
             bool useCustomInstallDirectory = false,
-            bool installRootIsReparsePoint = false)
+            bool installRootIsReparsePoint = false,
+            ILegacyInstallationClaimLockProvider? lockProvider = null)
         {
             Temp = new TempDirectoryScope();
             Paths = new TestSystemPaths(Temp.DirectoryPath);
@@ -248,7 +334,9 @@ public sealed class LegacyInstallationClaimServiceTests
                 Paths,
                 Serializer,
                 OwnershipService,
-                pathSafetyPolicy);
+                pathSafetyPolicy,
+                lockProvider,
+                TimeSpan.FromMilliseconds(50));
         }
 
         public TempDirectoryScope Temp { get; }
@@ -289,5 +377,35 @@ public sealed class LegacyInstallationClaimServiceTests
         }
 
         public void Dispose() => Temp.Dispose();
+    }
+
+    private sealed class FakeLegacyInstallationClaimLockProvider : ILegacyInstallationClaimLockProvider
+    {
+        public bool ShouldTimeout { get; init; }
+
+        public Action? OnAcquired { get; set; }
+
+        public IDisposable? TryAcquire(
+            string productId,
+            string canonicalInstallRoot,
+            TimeSpan timeout,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (ShouldTimeout)
+            {
+                return null;
+            }
+
+            OnAcquired?.Invoke();
+            return new Releaser();
+        }
+
+        private sealed class Releaser : IDisposable
+        {
+            public void Dispose()
+            {
+            }
+        }
     }
 }

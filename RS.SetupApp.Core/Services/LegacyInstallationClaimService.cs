@@ -9,19 +9,25 @@ public sealed class LegacyInstallationClaimService
     private readonly IManifestSerializer _serializer;
     private readonly InstallationOwnershipService _ownershipService;
     private readonly SetupPathSafetyPolicy _pathSafetyPolicy;
+    private readonly ILegacyInstallationClaimLockProvider _claimLockProvider;
+    private readonly TimeSpan _claimLockTimeout;
 
     public LegacyInstallationClaimService(
         IFileSystem fileSystem,
         ISystemPaths paths,
         IManifestSerializer serializer,
         InstallationOwnershipService ownershipService,
-        SetupPathSafetyPolicy pathSafetyPolicy)
+        SetupPathSafetyPolicy pathSafetyPolicy,
+        ILegacyInstallationClaimLockProvider? claimLockProvider = null,
+        TimeSpan? claimLockTimeout = null)
     {
         _fileSystem = fileSystem;
         _paths = paths;
         _serializer = serializer;
         _ownershipService = ownershipService;
         _pathSafetyPolicy = pathSafetyPolicy;
+        _claimLockProvider = claimLockProvider ?? new NamedLegacyInstallationClaimLockProvider();
+        _claimLockTimeout = claimLockTimeout ?? TimeSpan.FromSeconds(10);
     }
 
     public Task<LegacyInstallationClaimResult> ClaimAsync(
@@ -29,21 +35,107 @@ public sealed class LegacyInstallationClaimService
         InstalledStateManifest state,
         CancellationToken cancellationToken)
     {
+        return ClaimAsync(product, state, new RuntimeOptions(), cancellationToken);
+    }
+
+    public Task<LegacyInstallationClaimResult> ClaimAsync(
+        ProductManifest product,
+        InstalledStateManifest state,
+        RuntimeOptions options,
+        CancellationToken cancellationToken)
+    {
         cancellationToken.ThrowIfCancellationRequested();
+
+        LegacyInstallationClaimResult requestedRootValidation = ValidateRequestedInstallDirectory(
+            state,
+            options);
+        if (!requestedRootValidation.Succeeded)
+        {
+            return Task.FromResult(requestedRootValidation);
+        }
+
+        if (!TryGetCanonicalClaimRoot(
+                state.InstallDirectory,
+                out string? canonicalInstallRoot,
+                out LegacyInstallationClaimResult? rootFailure))
+        {
+            return Task.FromResult(rootFailure!);
+        }
+
+        IDisposable? claimLock;
+        try
+        {
+            claimLock = _claimLockProvider.TryAcquire(
+                product.ProductId,
+                canonicalInstallRoot!,
+                _claimLockTimeout,
+                cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or InvalidOperationException or
+                                           UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            return Task.FromResult(Failure(
+                "claim-lock-failed",
+                $"The legacy installation claim lock could not be acquired: {exception.Message}"));
+        }
+
+        if (claimLock == null)
+        {
+            return Task.FromResult(Failure(
+                "claim-lock-timeout",
+                "Timed out waiting for the legacy installation claim lock."));
+        }
+
+        using (claimLock)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(ClaimUnderLock(
+                product,
+                state,
+                options,
+                canonicalInstallRoot!));
+        }
+    }
+
+    private LegacyInstallationClaimResult ClaimUnderLock(
+        ProductManifest product,
+        InstalledStateManifest state,
+        RuntimeOptions options,
+        string lockedInstallDirectory)
+    {
+        LegacyInstallationClaimResult requestedRootValidation = ValidateRequestedInstallDirectory(
+            state,
+            options);
+        if (!requestedRootValidation.Succeeded ||
+            !PathMatchesCanonical(state.InstallDirectory, lockedInstallDirectory))
+        {
+            return requestedRootValidation.Succeeded
+                ? Failure(
+                    "claim-root-changed",
+                    "The legacy installed-state root changed while waiting for the claim lock.")
+                : requestedRootValidation;
+        }
+
+        string statePath = _paths.GetStateManifestPath(product.ProductId, state.InstallScope);
+        string markerPath = Path.Combine(lockedInstallDirectory, SetupRuntimeDefaults.OwnershipMarkerFileName);
+        InstallationOwnershipMarker? existingMarker = TryLoadExistingMarker(
+            markerPath,
+            lockedInstallDirectory,
+            out FileSnapshot markerPreimage,
+            out string? markerFailure);
+        if (markerFailure != null)
+        {
+            return Failure("ownership-marker-invalid", markerFailure);
+        }
 
         LegacyInstallationClaimResult validation = ValidateEvidence(product, state);
         if (!validation.Succeeded)
         {
-            return Task.FromResult(validation);
-        }
-
-        string installDirectory = Path.GetFullPath(state.InstallDirectory);
-        string statePath = _paths.GetStateManifestPath(product.ProductId, state.InstallScope);
-        string markerPath = Path.Combine(installDirectory, SetupRuntimeDefaults.OwnershipMarkerFileName);
-        InstallationOwnershipMarker? existingMarker = TryLoadExistingMarker(markerPath, installDirectory, out string? markerFailure);
-        if (markerFailure != null)
-        {
-            return Task.FromResult(Failure("ownership-marker-invalid", markerFailure));
+            return validation;
         }
 
         if (existingMarker != null)
@@ -53,55 +145,78 @@ public sealed class LegacyInstallationClaimService
                 existingMarker.InstallationId != Guid.Empty &&
                 existingMarker.InstallationId == state.InstallationId &&
                 existingMarker.InstallScope == state.InstallScope;
-            return Task.FromResult(matches
+            return matches
                 ? new LegacyInstallationClaimResult(
                     true,
                     false,
                     existingMarker.InstallationId,
                     null,
                     "The legacy installation is already claimed.")
-                : Failure("ownership-marker-conflict", "An existing ownership marker conflicts with the legacy installed state."));
+                : Failure("ownership-marker-conflict", "An existing ownership marker conflicts with the legacy installed state.");
         }
 
         if (state.InstallationId != Guid.Empty)
         {
-            return Task.FromResult(Failure(
+            return Failure(
                 "installation-id-without-marker",
-                "The installed state contains an installation identifier without a matching ownership marker."));
+                "The installed state contains an installation identifier without a matching ownership marker.");
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-
-        string originalState = _fileSystem.ReadAllText(statePath);
+        FileSnapshot statePreimage = new(statePath, true, _fileSystem.ReadAllText(statePath));
         Guid previousInstallationId = state.InstallationId;
         Guid installationId = Guid.NewGuid();
         state.InstallationId = installationId;
-
+        string serializedState;
+        string serializedMarker;
         try
         {
-            string serializedState = _serializer.Serialize(state);
-            _fileSystem.WriteAllTextAtomic(statePath, serializedState);
-            _ownershipService.Write(installDirectory, new InstallationOwnershipMarker
+            serializedState = _serializer.Serialize(state);
+            serializedMarker = _serializer.Serialize(new InstallationOwnershipMarker
             {
                 ProductId = product.ProductId,
                 InstallationId = installationId,
                 InstallScope = state.InstallScope,
                 CreatedAtUtc = state.InstalledAtUtc
             });
+        }
+        catch
+        {
+            state.InstallationId = previousInstallationId;
+            throw;
+        }
 
-            return Task.FromResult(new LegacyInstallationClaimResult(
+        try
+        {
+            if (!SnapshotStillMatches(markerPreimage, out string? markerChangeFailure))
+            {
+                state.InstallationId = previousInstallationId;
+                return Failure(
+                    "ownership-marker-conflict",
+                    markerChangeFailure ?? "The ownership marker changed before the claim write began.");
+            }
+
+            _fileSystem.WriteAllTextAtomic(statePath, serializedState);
+            if (!SnapshotStillMatches(markerPreimage, out markerChangeFailure))
+            {
+                throw new OwnershipMarkerChangedException(
+                    markerChangeFailure ?? "The ownership marker changed before it could be written.");
+            }
+
+            _fileSystem.WriteAllTextAtomic(markerPath, serializedMarker);
+
+            return new LegacyInstallationClaimResult(
                 true,
                 true,
                 installationId,
                 null,
-                "The legacy installation ownership claim was persisted."));
+                "The legacy installation ownership claim was persisted.");
         }
         catch (Exception primaryException)
         {
             state.InstallationId = previousInstallationId;
             List<Exception> recoveryErrors = new();
-            RestoreMissingFile(markerPath, recoveryErrors);
-            RestoreExistingFile(statePath, originalState, recoveryErrors);
+            RestorePreimageIfOwned(markerPreimage, serializedMarker, recoveryErrors);
+            RestorePreimageIfOwned(statePreimage, serializedState, recoveryErrors);
             if (recoveryErrors.Count > 0)
             {
                 throw new AggregateException(
@@ -109,10 +224,69 @@ public sealed class LegacyInstallationClaimService
                     new[] { primaryException }.Concat(recoveryErrors));
             }
 
-            return Task.FromResult(Failure(
-                "claim-write-failed",
-                $"The legacy installation claim could not be persisted: {primaryException.Message}"));
+            return primaryException is OwnershipMarkerChangedException
+                ? Failure("ownership-marker-conflict", primaryException.Message)
+                : Failure(
+                    "claim-write-failed",
+                    $"The legacy installation claim could not be persisted: {primaryException.Message}");
         }
+    }
+
+    private static bool TryGetCanonicalClaimRoot(
+        string? installDirectory,
+        out string? canonicalInstallRoot,
+        out LegacyInstallationClaimResult? failure)
+    {
+        canonicalInstallRoot = null;
+        failure = null;
+        if (string.IsNullOrWhiteSpace(installDirectory) ||
+            SetupPathUtility.ContainsParentTraversal(installDirectory))
+        {
+            failure = Failure("install-path-mismatch", "The legacy install root is not canonical.");
+            return false;
+        }
+
+        try
+        {
+            canonicalInstallRoot = Path.GetFullPath(installDirectory);
+            return true;
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or NotSupportedException or System.Security.SecurityException)
+        {
+            failure = Failure(
+                "install-path-mismatch",
+                $"The legacy install root could not be normalized: {exception.Message}");
+            return false;
+        }
+    }
+
+    private static LegacyInstallationClaimResult ValidateRequestedInstallDirectory(
+        InstalledStateManifest state,
+        RuntimeOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(options.InstallDirectory))
+        {
+            return new LegacyInstallationClaimResult(
+                true,
+                false,
+                state.InstallationId,
+                null,
+                "No explicit install directory was requested.");
+        }
+
+        if (!PathMatchesCanonical(state.InstallDirectory, options.InstallDirectory))
+        {
+            return Failure(
+                "requested-install-path-mismatch",
+                "The explicitly requested install directory does not match the legacy installed-state root.");
+        }
+
+        return new LegacyInstallationClaimResult(
+            true,
+            false,
+            state.InstallationId,
+            null,
+            "The explicitly requested install directory matches the legacy installed-state root.");
     }
 
     private LegacyInstallationClaimResult ValidateEvidence(
@@ -264,8 +438,10 @@ public sealed class LegacyInstallationClaimService
     private InstallationOwnershipMarker? TryLoadExistingMarker(
         string markerPath,
         string installDirectory,
+        out FileSnapshot preimage,
         out string? failure)
     {
+        preimage = new FileSnapshot(markerPath, false, null);
         failure = null;
         InstallTargetValidationResult markerPathValidation = _pathSafetyPolicy.ValidateCanonicalPath(
             markerPath,
@@ -277,21 +453,13 @@ public sealed class LegacyInstallationClaimService
             return null;
         }
 
-        try
-        {
-            _ = _fileSystem.GetAttributes(markerPath);
-        }
-        catch (FileNotFoundException)
+        if (!TryCaptureFile(markerPath, out preimage, out failure))
         {
             return null;
         }
-        catch (DirectoryNotFoundException)
+
+        if (!preimage.Existed)
         {
-            return null;
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Security.SecurityException)
-        {
-            failure = $"The ownership marker could not be authoritatively inspected: {exception.Message}";
             return null;
         }
 
@@ -309,6 +477,58 @@ public sealed class LegacyInstallationClaimService
         {
             failure = $"The ownership marker could not be read: {exception.Message}";
             return null;
+        }
+    }
+
+    private bool SnapshotStillMatches(FileSnapshot expected, out string? failure)
+    {
+        if (!TryCaptureFile(expected.Path, out FileSnapshot current, out failure))
+        {
+            return false;
+        }
+
+        bool matches = current.Existed == expected.Existed &&
+            (!current.Existed || string.Equals(current.Contents, expected.Contents, StringComparison.Ordinal));
+        if (!matches)
+        {
+            failure = $"The file '{expected.Path}' changed during the legacy claim.";
+        }
+
+        return matches;
+    }
+
+    private bool TryCaptureFile(
+        string path,
+        out FileSnapshot snapshot,
+        out string? failure)
+    {
+        snapshot = new FileSnapshot(path, false, null);
+        failure = null;
+        try
+        {
+            FileAttributes attributes = _fileSystem.GetAttributes(path);
+            if ((attributes & FileAttributes.Directory) != 0 ||
+                (attributes & FileAttributes.ReparsePoint) != 0)
+            {
+                failure = $"The file '{path}' is not a trusted regular file.";
+                return false;
+            }
+
+            snapshot = new FileSnapshot(path, true, _fileSystem.ReadAllText(path));
+            return true;
+        }
+        catch (FileNotFoundException)
+        {
+            return true;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+            failure = $"The file '{path}' could not be safely captured: {exception.Message}";
+            return false;
         }
     }
 
@@ -406,23 +626,33 @@ public sealed class LegacyInstallationClaimService
         return true;
     }
 
-    private void RestoreMissingFile(string path, ICollection<Exception> errors)
+    private void RestorePreimageIfOwned(
+        FileSnapshot preimage,
+        string contentsWrittenByClaim,
+        ICollection<Exception> errors)
     {
-        try
+        if (!TryCaptureFile(preimage.Path, out FileSnapshot current, out string? captureFailure))
         {
-            _fileSystem.DeleteFile(path);
+            errors.Add(new IOException(captureFailure));
+            return;
         }
-        catch (Exception exception)
-        {
-            errors.Add(exception);
-        }
-    }
 
-    private void RestoreExistingFile(string path, string contents, ICollection<Exception> errors)
-    {
+        if (!current.Existed ||
+            !string.Equals(current.Contents, contentsWrittenByClaim, StringComparison.Ordinal))
+        {
+            return;
+        }
+
         try
         {
-            _fileSystem.WriteAllTextAtomic(path, contents);
+            if (preimage.Existed)
+            {
+                _fileSystem.WriteAllTextAtomic(preimage.Path, preimage.Contents!);
+            }
+            else
+            {
+                _fileSystem.DeleteFile(preimage.Path);
+            }
         }
         catch (Exception exception)
         {
@@ -434,4 +664,8 @@ public sealed class LegacyInstallationClaimService
     {
         return new LegacyInstallationClaimResult(false, false, Guid.Empty, code, message);
     }
+
+    private sealed record FileSnapshot(string Path, bool Existed, string? Contents);
+
+    private sealed class OwnershipMarkerChangedException(string message) : IOException(message);
 }
