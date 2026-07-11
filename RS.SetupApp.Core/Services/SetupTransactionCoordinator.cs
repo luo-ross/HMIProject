@@ -2,6 +2,8 @@ namespace RS.SetupApp.Core;
 
 public sealed class SetupTransactionCoordinator : ISetupTransactionCoordinator
 {
+    internal const string RetainUnprovenMoveEvidenceKey = "retainUnprovenMoveEvidence";
+
     private readonly SetupTransactionJournal _journal;
     private readonly ISetupTransactionStore _store;
     private readonly IFileSystem _fileSystem;
@@ -61,6 +63,12 @@ public sealed class SetupTransactionCoordinator : ISetupTransactionCoordinator
         {
             if (record.Reverted)
             {
+                continue;
+            }
+
+            if (!record.Applied && record.Metadata.ContainsKey(RetainUnprovenMoveEvidenceKey))
+            {
+                errors.Add($"{record.Kind} '{record.Target}': unproven cross-volume move evidence was retained.");
                 continue;
             }
 

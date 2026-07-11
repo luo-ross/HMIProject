@@ -336,6 +336,72 @@ public sealed class SetupStepRunnerTests
     }
 
     [TestMethod]
+    public async Task BackupCurrentInstallation_ShouldRetainOriginalAndJournal_WhenMoveIsUnproven()
+    {
+        using TempDirectoryScope temp = new();
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        FaultingFileSystem fileSystem = new(new PhysicalFileSystem())
+        {
+            FailureFactory = (operation, _) => operation == nameof(IFileSystem.MoveDirectory)
+                ? new IOException("Cross-volume source cleanup failed.")
+                : null
+        };
+        SetupServices services = TestSetupServicesFactory.Create(
+            paths,
+            new FakeRegistryService(),
+            new FakeShortcutService(),
+            new FakeProcessService(),
+            new FakeDownloadService(),
+            fileSystem);
+        string installDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "install", "demo-app")).FullName;
+        string sourceSentinel = Path.Combine(installDirectory, "source-sentinel.txt");
+        File.WriteAllText(sourceSentinel, "source evidence");
+        Guid operationId = Guid.NewGuid();
+        SetupTransactionJournal journal = new()
+        {
+            OperationId = operationId,
+            ProductId = "demo-app",
+            Scope = InstallScope.CurrentUser,
+            Mode = SetupMode.Update,
+            InstallDirectory = installDirectory,
+            RecoveryDirectory = paths.GetRecoveryDirectory("demo-app", operationId, InstallScope.CurrentUser),
+            Phase = SetupTransactionPhase.Applying,
+            StartedAtUtc = DateTimeOffset.UtcNow,
+            UpdatedAtUtc = DateTimeOffset.UtcNow
+        };
+        SetupExecutionContext context = new()
+        {
+            Options = new RuntimeOptions(),
+            Services = services,
+            ProductManifestPath = Path.Combine(temp.DirectoryPath, "product.json"),
+            PayloadDirectory = temp.DirectoryPath,
+            ExistingState = new InstalledStateManifest
+            {
+                ProductId = "demo-app",
+                InstallScope = InstallScope.CurrentUser,
+                InstallDirectory = installDirectory
+            },
+            UninstallPlan = new UninstallPlan(installDirectory, "state.json", [], [])
+            {
+                ProductId = "demo-app",
+                InstallScope = InstallScope.CurrentUser
+            },
+            Journal = journal,
+            RecoveryDirectory = journal.RecoveryDirectory
+        };
+        context.TransactionCoordinator = new SetupTransactionCoordinator(journal, services.TransactionStore, fileSystem);
+
+        await Assert.ThrowsExceptionAsync<IOException>(() => new BackupCurrentInstallationStep().ExecuteAsync(context, CancellationToken.None));
+        IReadOnlyList<string> errors = await context.TransactionCoordinator.RollbackAsync(journal, CancellationToken.None);
+
+        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, journal.Phase);
+        Assert.AreEqual(1, errors.Count);
+        Assert.IsTrue(journal.Compensations.Single().Metadata.ContainsKey(SetupTransactionCoordinator.RetainUnprovenMoveEvidenceKey));
+        Assert.AreEqual("source evidence", File.ReadAllText(sourceSentinel));
+        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
+    }
+
+    [TestMethod]
     public async Task DeployApplicationFiles_ShouldRegisterDeletionBeforeCopy_AndRemovePartialInstallOnFailure()
     {
         using TempDirectoryScope temp = new();

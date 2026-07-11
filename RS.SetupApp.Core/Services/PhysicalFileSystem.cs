@@ -4,6 +4,9 @@ namespace RS.SetupApp.Core;
 
 public sealed class PhysicalFileSystem : IFileSystem
 {
+    // Internal test seam for proving a destination replacement between promotion and source cleanup.
+    internal Action<string>? CrossVolumeMovePromotedForTesting { get; init; }
+
     public bool FileExists(string path) => File.Exists(path);
 
     public bool DirectoryExists(string path) => Directory.Exists(path);
@@ -213,6 +216,7 @@ public sealed class PhysicalFileSystem : IFileSystem
             }
 
             Directory.Move(staging, destination);
+            CrossVolumeMovePromotedForTesting?.Invoke(destination);
         }
         catch
         {
@@ -228,16 +232,11 @@ public sealed class PhysicalFileSystem : IFileSystem
         {
             Directory.Delete(sourceDirectoryName, recursive: true);
         }
-        catch
+        catch (Exception exception)
         {
-            // This invocation promoted the staging directory, so it may attempt to undo only that
-            // destination. A pre-existing or racing destination is never recursively deleted.
-            if (Directory.Exists(destination))
-            {
-                Directory.Delete(destination, recursive: true);
-            }
-
-            throw;
+            throw new IOException(
+                "Source deletion failed after cross-volume staging promotion. The source and promoted destination were retained for recovery.",
+                exception);
         }
     }
 }

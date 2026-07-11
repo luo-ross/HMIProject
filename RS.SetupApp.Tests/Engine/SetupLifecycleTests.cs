@@ -35,9 +35,15 @@ public sealed class SetupLifecycleTests
         string root = FindRepositoryRoot();
         string fixtureScript = File.ReadAllText(Path.Combine(root, "scripts", "Setup-SetupAppFixture.ps1"));
         string uiScript = File.ReadAllText(Path.Combine(root, "scripts", "Test-SetupAppUi.ps1"));
+        string solution = File.ReadAllText(Path.Combine(root, "MultiVerseKit.sln"));
+        string workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "setupapp.yml"));
+        string fixtureProject = File.ReadAllText(Path.Combine(root, "RS.SetupApp.Tests", "Fixtures", "TestPayloadApp", "TestPayloadApp.csproj"));
 
         StringAssert.Contains(fixtureScript, "'--no-restore'");
         StringAssert.Contains(uiScript, "--no-restore");
+        StringAssert.Contains(solution, "RS.SetupApp.Tests\\Fixtures\\TestPayloadApp\\TestPayloadApp.csproj");
+        StringAssert.Contains(fixtureProject, "<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>");
+        StringAssert.Contains(workflow, "RS.SetupApp.Tests/Fixtures/TestPayloadApp/TestPayloadApp.csproj -c Release --no-restore");
     }
 
     [TestMethod]

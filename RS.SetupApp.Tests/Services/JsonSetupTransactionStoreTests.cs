@@ -82,6 +82,41 @@ public sealed class JsonSetupTransactionStoreTests
     }
 
     [TestMethod]
+    public async Task Coordinator_ShouldRetainUnprovenCrossVolumeMoveEvidence_WithoutDeletingEitherDirectory()
+    {
+        using TempDirectoryScope temp = new();
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        PhysicalFileSystem fileSystem = new();
+        JsonSetupTransactionStore store = new(fileSystem, new JsonManifestSerializer(), paths);
+        SetupTransactionJournal journal = CreateJournal(paths);
+        SetupTransactionCoordinator coordinator = new(journal, store, fileSystem);
+        string source = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "install", "demo-app")).FullName;
+        string sourceSentinel = Path.Combine(source, "source-sentinel.txt");
+        File.WriteAllText(sourceSentinel, "source evidence");
+        string backup = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "recovery-evidence")).FullName;
+        string backupSentinel = Path.Combine(backup, "external-sentinel.txt");
+        File.WriteAllText(backupSentinel, "external evidence");
+
+        SetupCompensationRecord record = new()
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.RestoreDirectory,
+            Target = source,
+            Backup = backup
+        };
+        record.Metadata[SetupTransactionCoordinator.RetainUnprovenMoveEvidenceKey] = "true";
+        await coordinator.RegisterBeforeMutationAsync(record, CancellationToken.None);
+
+        IReadOnlyList<string> errors = await coordinator.RollbackAsync(journal, CancellationToken.None);
+
+        Assert.AreEqual(1, errors.Count);
+        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, journal.Phase);
+        Assert.AreEqual("source evidence", File.ReadAllText(sourceSentinel));
+        Assert.AreEqual("external evidence", File.ReadAllText(backupSentinel));
+        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
+    }
+
+    [TestMethod]
     public async Task Coordinator_ShouldTreatMissingShortcutDeletionAsAnIdempotentSuccess()
     {
         using TempDirectoryScope temp = new();

@@ -38,6 +38,10 @@ jobs:
       - name: Restore once
         run: dotnet restore MultiVerseKit.sln
 
+      - name: Verify fixture publish uses restored assets
+        shell: pwsh
+        run: dotnet publish RS.SetupApp.Tests/Fixtures/TestPayloadApp/TestPayloadApp.csproj -c Release --no-restore -o (Join-Path $env:RUNNER_TEMP testpayload-restore-check)
+
       - name: Generate ephemeral signing material
         shell: pwsh
         run: |

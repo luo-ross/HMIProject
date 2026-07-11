@@ -2,6 +2,8 @@ namespace RS.SetupApp.Core;
 
 public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
 {
+    private bool _backupMoveCompleted;
+
     public string Name => "Backup current installation";
 
     public async Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
@@ -36,12 +38,24 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
             Guid recordId = await context.TransactionCoordinator
                 .RegisterBeforeMutationAsync(record, cancellationToken)
                 .ConfigureAwait(false);
-            context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
+            try
+            {
+                context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
+                _backupMoveCompleted = true;
+            }
+            catch
+            {
+                record.Metadata[SetupTransactionCoordinator.RetainUnprovenMoveEvidenceKey] = "true";
+                await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
+                throw;
+            }
+
             await context.TransactionCoordinator.MarkAppliedAsync(recordId, cancellationToken).ConfigureAwait(false);
         }
         else
         {
             context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
+            _backupMoveCompleted = true;
         }
 
         if (context.ResultState != null)
@@ -55,7 +69,7 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (context.TransactionCoordinator != null)
+        if (context.TransactionCoordinator != null || !_backupMoveCompleted)
         {
             return Task.CompletedTask;
         }

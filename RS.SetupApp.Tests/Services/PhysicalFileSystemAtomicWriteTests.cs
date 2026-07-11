@@ -179,6 +179,122 @@ public sealed class PhysicalFileSystemAtomicWriteTests
         }
     }
 
+    [TestMethod]
+    public void MoveDirectory_ShouldRetainPromotedDestination_WhenSourceCleanupFails()
+    {
+        string destinationRoot = Path.GetPathRoot(Path.GetTempPath()) ?? throw new InvalidOperationException("Temp root is required.");
+        string? sourceRoot = Directory.GetLogicalDrives()
+            .FirstOrDefault(root => !string.Equals(root, destinationRoot, StringComparison.OrdinalIgnoreCase) && IsWritable(root));
+        if (sourceRoot == null)
+        {
+            Assert.Inconclusive("A second writable volume is required to exercise cross-volume directory moves.");
+        }
+
+        string id = Guid.NewGuid().ToString("N");
+        string sourceContainer = Path.Combine(sourceRoot, "RS.SetupApp-Tests", id);
+        string sourceDirectory = Path.Combine(sourceContainer, "source");
+        string destinationContainer = Path.Combine(Path.GetTempPath(), "RS.SetupApp-Tests", id);
+        string destinationDirectory = Path.Combine(destinationContainer, "destination");
+        try
+        {
+            Directory.CreateDirectory(sourceDirectory);
+            string sourcePayload = Path.Combine(sourceDirectory, "payload.txt");
+            File.WriteAllText(sourcePayload, "source payload");
+            FileStream? lockedPayload = null;
+            try
+            {
+                PhysicalFileSystem fileSystem = new()
+                {
+                    CrossVolumeMovePromotedForTesting = _ => lockedPayload = new FileStream(sourcePayload, FileMode.Open, FileAccess.Read, FileShare.None)
+                };
+
+                Assert.ThrowsException<IOException>(() => fileSystem.MoveDirectory(sourceDirectory, destinationDirectory));
+            }
+            finally
+            {
+                lockedPayload?.Dispose();
+            }
+
+            Assert.IsTrue(Directory.Exists(sourceDirectory));
+            Assert.AreEqual("source payload", File.ReadAllText(sourcePayload));
+            Assert.IsTrue(Directory.Exists(destinationDirectory));
+            Assert.AreEqual("source payload", File.ReadAllText(Path.Combine(destinationDirectory, "payload.txt")));
+        }
+        finally
+        {
+            if (Directory.Exists(sourceContainer))
+            {
+                Directory.Delete(sourceContainer, recursive: true);
+            }
+
+            if (Directory.Exists(destinationContainer))
+            {
+                Directory.Delete(destinationContainer, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void MoveDirectory_ShouldRetainExternalReplacement_WhenSourceCleanupFailsAfterPromotion()
+    {
+        string destinationRoot = Path.GetPathRoot(Path.GetTempPath()) ?? throw new InvalidOperationException("Temp root is required.");
+        string? sourceRoot = Directory.GetLogicalDrives()
+            .FirstOrDefault(root => !string.Equals(root, destinationRoot, StringComparison.OrdinalIgnoreCase) && IsWritable(root));
+        if (sourceRoot == null)
+        {
+            Assert.Inconclusive("A second writable volume is required to exercise cross-volume directory moves.");
+        }
+
+        string id = Guid.NewGuid().ToString("N");
+        string sourceContainer = Path.Combine(sourceRoot, "RS.SetupApp-Tests", id);
+        string sourceDirectory = Path.Combine(sourceContainer, "source");
+        string destinationContainer = Path.Combine(Path.GetTempPath(), "RS.SetupApp-Tests", id);
+        string destinationDirectory = Path.Combine(destinationContainer, "destination");
+        try
+        {
+            Directory.CreateDirectory(sourceDirectory);
+            string sourcePayload = Path.Combine(sourceDirectory, "payload.txt");
+            File.WriteAllText(sourcePayload, "source payload");
+            FileStream? lockedPayload = null;
+            try
+            {
+                PhysicalFileSystem fileSystem = new()
+                {
+                    CrossVolumeMovePromotedForTesting = destination =>
+                    {
+                        Directory.Delete(destination, recursive: true);
+                        Directory.CreateDirectory(destination);
+                        File.WriteAllText(Path.Combine(destination, "external-sentinel.txt"), "external replacement");
+                        lockedPayload = new FileStream(sourcePayload, FileMode.Open, FileAccess.Read, FileShare.None);
+                    }
+                };
+
+                Assert.ThrowsException<IOException>(() => fileSystem.MoveDirectory(sourceDirectory, destinationDirectory));
+            }
+            finally
+            {
+                lockedPayload?.Dispose();
+            }
+
+            Assert.IsTrue(Directory.Exists(sourceDirectory));
+            Assert.AreEqual("source payload", File.ReadAllText(sourcePayload));
+            Assert.AreEqual("external replacement", File.ReadAllText(Path.Combine(destinationDirectory, "external-sentinel.txt")));
+            Assert.IsFalse(File.Exists(Path.Combine(destinationDirectory, "payload.txt")));
+        }
+        finally
+        {
+            if (Directory.Exists(sourceContainer))
+            {
+                Directory.Delete(sourceContainer, recursive: true);
+            }
+
+            if (Directory.Exists(destinationContainer))
+            {
+                Directory.Delete(destinationContainer, recursive: true);
+            }
+        }
+    }
+
     private static bool IsWritable(string root)
     {
         try
