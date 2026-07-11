@@ -104,6 +104,26 @@ public sealed class SetupPathSafetyPolicy
         }
     }
 
+    public string GetCanonicalVolumeRoot(
+        string path,
+        SetupPathPurpose purpose,
+        bool directoryTarget)
+    {
+        InstallTargetValidationResult validation = ValidateCanonicalPath(path, purpose, directoryTarget);
+        if (!validation.IsValid || string.IsNullOrWhiteSpace(validation.NormalizedPath))
+        {
+            throw new InvalidOperationException($"The {purpose} path cannot be used to determine a safe volume root: {validation.Message}");
+        }
+
+        string? volumeRoot = Path.GetPathRoot(validation.NormalizedPath);
+        if (string.IsNullOrWhiteSpace(volumeRoot))
+        {
+            throw new InvalidOperationException($"The {purpose} path does not have a canonical volume root.");
+        }
+
+        return Path.GetFullPath(volumeRoot);
+    }
+
     public InstallTargetValidationResult ValidateLegacyInstallTarget(
         string installDirectory,
         InstallScope scope)

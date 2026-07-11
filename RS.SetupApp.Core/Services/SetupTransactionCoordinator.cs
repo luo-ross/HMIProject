@@ -2,7 +2,7 @@ namespace RS.SetupApp.Core;
 
 public sealed class SetupTransactionCoordinator : ISetupTransactionCoordinator
 {
-    internal const string RetainUnprovenMoveEvidenceKey = "retainUnprovenMoveEvidence";
+    internal const string RetainEvidenceUntilAppliedKey = "retainEvidenceUntilApplied";
 
     private readonly SetupTransactionJournal _journal;
     private readonly ISetupTransactionStore _store;
@@ -66,7 +66,7 @@ public sealed class SetupTransactionCoordinator : ISetupTransactionCoordinator
                 continue;
             }
 
-            if (!record.Applied && record.Metadata.ContainsKey(RetainUnprovenMoveEvidenceKey))
+            if (ShouldRetainEvidenceUntilApplied(record))
             {
                 errors.Add($"{record.Kind} '{record.Target}': unproven cross-volume move evidence was retained.");
                 continue;
@@ -104,6 +104,14 @@ public sealed class SetupTransactionCoordinator : ISetupTransactionCoordinator
         journal.Phase = SetupTransactionPhase.RecoveryFailed;
         await TrySaveAsync(journal, recoveryToken, errors).ConfigureAwait(false);
         return errors;
+    }
+
+    private static bool ShouldRetainEvidenceUntilApplied(SetupCompensationRecord record)
+    {
+        return !record.Applied &&
+               record.Kind == SetupCompensationKind.RestoreDirectory &&
+               record.Metadata.TryGetValue(RetainEvidenceUntilAppliedKey, out string? value) &&
+               string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
     }
 
     private void Compensate(SetupCompensationRecord record)

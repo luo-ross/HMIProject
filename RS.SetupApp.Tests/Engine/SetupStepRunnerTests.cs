@@ -336,7 +336,7 @@ public sealed class SetupStepRunnerTests
     }
 
     [TestMethod]
-    public async Task BackupCurrentInstallation_ShouldRetainOriginalAndJournal_WhenMoveIsUnproven()
+    public async Task BackupCurrentInstallation_ShouldUseNormalRollback_WhenSameVolumeMoveFailsBeforeMutation()
     {
         using TempDirectoryScope temp = new();
         TestSystemPaths paths = new(temp.DirectoryPath);
@@ -394,11 +394,99 @@ public sealed class SetupStepRunnerTests
         await Assert.ThrowsExceptionAsync<IOException>(() => new BackupCurrentInstallationStep().ExecuteAsync(context, CancellationToken.None));
         IReadOnlyList<string> errors = await context.TransactionCoordinator.RollbackAsync(journal, CancellationToken.None);
 
-        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, journal.Phase);
-        Assert.AreEqual(1, errors.Count);
-        Assert.IsTrue(journal.Compensations.Single().Metadata.ContainsKey(SetupTransactionCoordinator.RetainUnprovenMoveEvidenceKey));
+        Assert.AreEqual(SetupTransactionPhase.RolledBack, journal.Phase);
+        Assert.AreEqual(0, errors.Count);
+        Assert.IsFalse(journal.Compensations.Single().Metadata.ContainsKey(SetupTransactionCoordinator.RetainEvidenceUntilAppliedKey));
         Assert.AreEqual("source evidence", File.ReadAllText(sourceSentinel));
-        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
+    }
+
+    [TestMethod]
+    public async Task BackupCurrentInstallation_ShouldRestoreAppliedCrossVolumeMoveOnRollback()
+    {
+        using TempDirectoryScope temp = new();
+        string? sourceRoot = FindSecondaryWritableVolume(temp.DirectoryPath);
+        if (sourceRoot == null)
+        {
+            Assert.Inconclusive("A second writable volume is required to exercise cross-volume backup recovery.");
+        }
+
+        string sourceContainer = Path.Combine(sourceRoot, "RS.SetupApp-Tests", Guid.NewGuid().ToString("N"));
+        string installDirectory = Path.Combine(sourceContainer, "install", "demo-app");
+        try
+        {
+            Directory.CreateDirectory(installDirectory);
+            string sourceSentinel = Path.Combine(installDirectory, "source-sentinel.txt");
+            File.WriteAllText(sourceSentinel, "source evidence");
+            (SetupExecutionContext context, SetupTransactionJournal journal) = CreateBackupContext(
+                temp.DirectoryPath,
+                new PhysicalFileSystem(),
+                installDirectory);
+
+            await new BackupCurrentInstallationStep().ExecuteAsync(context, CancellationToken.None);
+
+            SetupCompensationRecord record = journal.Compensations.Single();
+            Assert.IsTrue(record.Applied);
+            Assert.AreEqual("true", record.Metadata[SetupTransactionCoordinator.RetainEvidenceUntilAppliedKey]);
+            Assert.IsFalse(Directory.Exists(installDirectory));
+            Assert.AreEqual("source evidence", File.ReadAllText(Path.Combine(context.BackupDirectory!, "source-sentinel.txt")));
+
+            IReadOnlyList<string> errors = await context.TransactionCoordinator!.RollbackAsync(journal, CancellationToken.None);
+
+            Assert.AreEqual(0, errors.Count);
+            Assert.AreEqual(SetupTransactionPhase.RolledBack, journal.Phase);
+            Assert.AreEqual("source evidence", File.ReadAllText(sourceSentinel));
+            Assert.IsFalse(Directory.Exists(context.BackupDirectory));
+        }
+        finally
+        {
+            if (Directory.Exists(sourceContainer))
+            {
+                Directory.Delete(sourceContainer, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task BackupCurrentInstallation_ShouldNotStartCrossVolumeMove_WhenInitialRecordSaveFails()
+    {
+        using TempDirectoryScope temp = new();
+        string? sourceRoot = FindSecondaryWritableVolume(temp.DirectoryPath);
+        if (sourceRoot == null)
+        {
+            Assert.Inconclusive("A second writable volume is required to exercise cross-volume backup registration.");
+        }
+
+        string sourceContainer = Path.Combine(sourceRoot, "RS.SetupApp-Tests", Guid.NewGuid().ToString("N"));
+        string installDirectory = Path.Combine(sourceContainer, "install", "demo-app");
+        try
+        {
+            Directory.CreateDirectory(installDirectory);
+            string sourceSentinel = Path.Combine(installDirectory, "source-sentinel.txt");
+            File.WriteAllText(sourceSentinel, "source evidence");
+            FaultingFileSystem fileSystem = new(new PhysicalFileSystem())
+            {
+                FailureFactory = (operation, _) => operation == nameof(IFileSystem.WriteAllTextAtomic)
+                    ? new IOException("Initial compensation save failed.")
+                    : null
+            };
+            (SetupExecutionContext context, SetupTransactionJournal journal) = CreateBackupContext(
+                temp.DirectoryPath,
+                fileSystem,
+                installDirectory);
+
+            await Assert.ThrowsExceptionAsync<IOException>(() => new BackupCurrentInstallationStep().ExecuteAsync(context, CancellationToken.None));
+
+            Assert.IsFalse(fileSystem.Mutations.Any(item => item.Operation == nameof(IFileSystem.MoveDirectory)));
+            Assert.AreEqual("source evidence", File.ReadAllText(sourceSentinel));
+            Assert.AreEqual("true", journal.Compensations.Single().Metadata[SetupTransactionCoordinator.RetainEvidenceUntilAppliedKey]);
+        }
+        finally
+        {
+            if (Directory.Exists(sourceContainer))
+            {
+                Directory.Delete(sourceContainer, recursive: true);
+            }
+        }
     }
 
     [TestMethod]
@@ -655,6 +743,86 @@ public sealed class SetupStepRunnerTests
             ProductManifestPath = Path.Combine(temp.DirectoryPath, "product.json"),
             PayloadDirectory = temp.DirectoryPath
         };
+    }
+
+    private static (SetupExecutionContext Context, SetupTransactionJournal Journal) CreateBackupContext(
+        string root,
+        IFileSystem fileSystem,
+        string installDirectory)
+    {
+        TestSystemPaths paths = new(root);
+        SetupServices services = TestSetupServicesFactory.Create(
+            paths,
+            new FakeRegistryService(),
+            new FakeShortcutService(),
+            new FakeProcessService(),
+            new FakeDownloadService(),
+            fileSystem);
+        Guid operationId = Guid.NewGuid();
+        SetupTransactionJournal journal = new()
+        {
+            OperationId = operationId,
+            ProductId = "demo-app",
+            Scope = InstallScope.CurrentUser,
+            Mode = SetupMode.Update,
+            InstallDirectory = installDirectory,
+            RecoveryDirectory = paths.GetRecoveryDirectory("demo-app", operationId, InstallScope.CurrentUser),
+            Phase = SetupTransactionPhase.Applying,
+            StartedAtUtc = DateTimeOffset.UtcNow,
+            UpdatedAtUtc = DateTimeOffset.UtcNow
+        };
+        SetupExecutionContext context = new()
+        {
+            Options = new RuntimeOptions(),
+            Services = services,
+            ProductManifestPath = Path.Combine(root, "product.json"),
+            PayloadDirectory = root,
+            ExistingState = new InstalledStateManifest
+            {
+                ProductId = "demo-app",
+                InstallScope = InstallScope.CurrentUser,
+                InstallDirectory = installDirectory
+            },
+            UninstallPlan = new UninstallPlan(installDirectory, "state.json", [], [])
+            {
+                ProductId = "demo-app",
+                InstallScope = InstallScope.CurrentUser
+            },
+            Journal = journal,
+            RecoveryDirectory = journal.RecoveryDirectory
+        };
+        context.TransactionCoordinator = new SetupTransactionCoordinator(journal, services.TransactionStore, fileSystem);
+        return (context, journal);
+    }
+
+    private static string? FindSecondaryWritableVolume(string destinationPath)
+    {
+        string destinationRoot = Path.GetPathRoot(Path.GetFullPath(destinationPath))
+            ?? throw new InvalidOperationException("The destination volume root is required.");
+        return Directory.GetLogicalDrives().FirstOrDefault(root =>
+            !string.Equals(root, destinationRoot, StringComparison.OrdinalIgnoreCase) &&
+            IsWritable(root));
+    }
+
+    private static bool IsWritable(string root)
+    {
+        string probe = Path.Combine(root, "RS.SetupApp-Tests", $"probe-{Guid.NewGuid():N}");
+        try
+        {
+            Directory.CreateDirectory(probe);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        finally
+        {
+            if (Directory.Exists(probe))
+            {
+                Directory.Delete(probe, recursive: true);
+            }
+        }
     }
 
     private sealed class RecordingRollbackStep : ISetupStep, IRollbackStep

@@ -82,7 +82,7 @@ public sealed class JsonSetupTransactionStoreTests
     }
 
     [TestMethod]
-    public async Task Coordinator_ShouldRetainUnprovenCrossVolumeMoveEvidence_WithoutDeletingEitherDirectory()
+    public async Task Recovery_ShouldRetainPersistedUnappliedCrossVolumeMoveEvidence_WithoutDeletingEitherDirectory()
     {
         using TempDirectoryScope temp = new();
         TestSystemPaths paths = new(temp.DirectoryPath);
@@ -104,16 +104,25 @@ public sealed class JsonSetupTransactionStoreTests
             Target = source,
             Backup = backup
         };
-        record.Metadata[SetupTransactionCoordinator.RetainUnprovenMoveEvidenceKey] = "true";
+        record.Metadata[SetupTransactionCoordinator.RetainEvidenceUntilAppliedKey] = "true";
         await coordinator.RegisterBeforeMutationAsync(record, CancellationToken.None);
 
-        IReadOnlyList<string> errors = await coordinator.RollbackAsync(journal, CancellationToken.None);
+        // Reload the journal as a new process would after crashing between promotion and MarkApplied.
+        SetupTransactionJournal recoveredJournal = (await store.LoadIncompleteAsync(
+            journal.ProductId,
+            journal.Scope,
+            CancellationToken.None)).Single();
+        SetupRecoveryResult recovery = await new SetupRecoveryCoordinator(
+            store,
+            fileSystem,
+            new FakeRegistryService(),
+            new FakeShortcutService()).RecoverAsync(recoveredJournal, CancellationToken.None);
 
-        Assert.AreEqual(1, errors.Count);
-        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, journal.Phase);
+        Assert.IsFalse(recovery.Succeeded);
+        Assert.AreEqual(SetupTransactionPhase.RecoveryFailed, recoveredJournal.Phase);
         Assert.AreEqual("source evidence", File.ReadAllText(sourceSentinel));
         Assert.AreEqual("external evidence", File.ReadAllText(backupSentinel));
-        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
+        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(recoveredJournal)));
     }
 
     [TestMethod]

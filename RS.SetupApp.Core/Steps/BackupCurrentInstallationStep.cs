@@ -22,6 +22,10 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
         string recoveryDirectory = context.RecoveryDirectory
             ?? throw new InvalidOperationException("The persistent recovery directory has not been initialized.");
         context.BackupDirectory = Path.Combine(recoveryDirectory, "backup", "installation");
+        bool isCrossVolumeMove = context.TransactionCoordinator != null && IsCrossVolumeBackupMove(
+            context.Services.PathSafetyPolicy,
+            installDirectory,
+            context.BackupDirectory);
         context.Services.FileSystem.CreateDirectory(Path.GetDirectoryName(context.BackupDirectory)
             ?? throw new InvalidOperationException("The backup directory is invalid."));
 
@@ -34,22 +38,18 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
                 Target = installDirectory,
                 Backup = context.BackupDirectory
             };
+            if (isCrossVolumeMove)
+            {
+                record.Metadata[SetupTransactionCoordinator.RetainEvidenceUntilAppliedKey] = "true";
+            }
+
             context.Journal!.Phase = SetupTransactionPhase.SnapshotCreated;
             Guid recordId = await context.TransactionCoordinator
                 .RegisterBeforeMutationAsync(record, cancellationToken)
                 .ConfigureAwait(false);
-            try
-            {
-                context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
-                _backupMoveCompleted = true;
-            }
-            catch
-            {
-                record.Metadata[SetupTransactionCoordinator.RetainUnprovenMoveEvidenceKey] = "true";
-                await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
-                throw;
-            }
 
+            context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
+            _backupMoveCompleted = true;
             await context.TransactionCoordinator.MarkAppliedAsync(recordId, cancellationToken).ConfigureAwait(false);
         }
         else
@@ -89,5 +89,21 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
 
         context.Services.FileSystem.MoveDirectory(context.BackupDirectory, installDirectory);
         return Task.CompletedTask;
+    }
+
+    private static bool IsCrossVolumeBackupMove(
+        SetupPathSafetyPolicy pathSafetyPolicy,
+        string installDirectory,
+        string backupDirectory)
+    {
+        string sourceRoot = pathSafetyPolicy.GetCanonicalVolumeRoot(
+            installDirectory,
+            SetupPathPurpose.InstallRoot,
+            directoryTarget: true);
+        string backupRoot = pathSafetyPolicy.GetCanonicalVolumeRoot(
+            backupDirectory,
+            SetupPathPurpose.BackupRoot,
+            directoryTarget: true);
+        return !string.Equals(sourceRoot, backupRoot, StringComparison.OrdinalIgnoreCase);
     }
 }
