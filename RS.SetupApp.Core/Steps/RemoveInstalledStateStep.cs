@@ -12,5 +12,14 @@ public sealed class RemoveInstalledStateStep : ISetupStep
         UninstallTarget target = plan.FileSystemTargets.Single(item => item.Purpose == SetupPathPurpose.StateManifest);
         await SetupPipelineHelper.QuarantineFileAsync(context, target, "state/installed-state.json", cancellationToken)
             .ConfigureAwait(false);
+
+        string? stateRoot = Path.GetDirectoryName(target.Path);
+        if (!string.IsNullOrWhiteSpace(stateRoot) &&
+            context.Services.FileSystem.DirectoryExists(stateRoot) &&
+            !context.Services.FileSystem.EnumerateFiles(stateRoot, "*", SearchOption.TopDirectoryOnly).Any() &&
+            !context.Services.FileSystem.EnumerateDirectories(stateRoot, "*", SearchOption.TopDirectoryOnly).Any())
+        {
+            context.Services.FileSystem.DeleteDirectory(stateRoot, recursive: false);
+        }
     }
 }

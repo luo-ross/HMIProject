@@ -36,8 +36,7 @@ public partial class App : System.Windows.Application
                 if (options.Silent)
                 {
                     SetupOperationResult result = await engine.ExecuteAsync(options, cancellationToken: CancellationToken.None).ConfigureAwait(true);
-                    Environment.ExitCode = RuntimeArgumentParser.GetSilentExitCode(result);
-                    Shutdown();
+                    ExitSilent(RuntimeArgumentParser.GetSilentExitCode(result));
                     return;
                 }
 
@@ -48,8 +47,7 @@ public partial class App : System.Windows.Application
             {
                 if (options.Silent)
                 {
-                    Environment.ExitCode = 3;
-                    Shutdown();
+                    ExitSilent(3);
                     return;
                 }
 
@@ -66,6 +64,11 @@ public partial class App : System.Windows.Application
     {
         SelfWorkerLauncher.TryCleanupCurrentWorkerDirectory();
         base.OnExit(e);
+    }
+
+    private void ExitSilent(int exitCode)
+    {
+        Shutdown(exitCode);
     }
 
     private void ShowMainWindow(SetupServices services, SetupEngine engine, RuntimeOptions? startupOptions)

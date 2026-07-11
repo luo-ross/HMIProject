@@ -30,6 +30,14 @@ public sealed class PhysicalFileSystem : IFileSystem
 
     public void MoveDirectory(string sourceDirectoryName, string destDirectoryName)
     {
+        string sourceRoot = Path.GetPathRoot(Path.GetFullPath(sourceDirectoryName)) ?? string.Empty;
+        string destinationRoot = Path.GetPathRoot(Path.GetFullPath(destDirectoryName)) ?? string.Empty;
+        if (!string.Equals(sourceRoot, destinationRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            MoveDirectoryAcrossVolumes(sourceDirectoryName, destDirectoryName);
+            return;
+        }
+
         Directory.Move(sourceDirectoryName, destDirectoryName);
     }
 
@@ -183,4 +191,35 @@ public sealed class PhysicalFileSystem : IFileSystem
     public string ReadAllText(string path) => File.ReadAllText(path, Encoding.UTF8);
 
     public long GetFileLength(string path) => new FileInfo(path).Length;
+
+    private void MoveDirectoryAcrossVolumes(string sourceDirectoryName, string destDirectoryName)
+    {
+        try
+        {
+            CopyDirectory(sourceDirectoryName, destDirectoryName, overwrite: false);
+        }
+        catch
+        {
+            if (Directory.Exists(destDirectoryName))
+            {
+                Directory.Delete(destDirectoryName, recursive: true);
+            }
+
+            throw;
+        }
+
+        try
+        {
+            Directory.Delete(sourceDirectoryName, recursive: true);
+        }
+        catch
+        {
+            if (Directory.Exists(destDirectoryName))
+            {
+                Directory.Delete(destDirectoryName, recursive: true);
+            }
+
+            throw;
+        }
+    }
 }

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [ "productId", "displayName", "publisher", "mainExecutable" ],
+  "properties": {
+    "productId": { "type": "string", "minLength": 1 },
+    "displayName": { "type": "string", "minLength": 1 },
+    "publisher": { "type": "string", "minLength": 1 },
+    "mainExecutable": { "type": "string", "minLength": 1 }
+  }
+}

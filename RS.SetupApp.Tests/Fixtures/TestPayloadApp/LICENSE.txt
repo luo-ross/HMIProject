@@ -1,0 +1,1 @@
+RS.SetupApp disposable lifecycle fixture. Not for distribution.

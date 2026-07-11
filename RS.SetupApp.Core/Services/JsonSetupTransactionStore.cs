@@ -108,6 +108,16 @@ public sealed class JsonSetupTransactionStore : ISetupTransactionStore
             _fileSystem.DeleteDirectory(journal.RecoveryDirectory, recursive: true);
         }
 
+        // The product recovery root is derived from the exact generated product id.  Removing it
+        // only when empty keeps disposable fixture runs clean without reaching any sibling product.
+        string recoveryRoot = _paths.GetRecoveryRoot(journal.ProductId, journal.Scope);
+        if (_fileSystem.DirectoryExists(recoveryRoot) &&
+            !_fileSystem.EnumerateDirectories(recoveryRoot, "*", SearchOption.TopDirectoryOnly).Any() &&
+            !_fileSystem.EnumerateFiles(recoveryRoot, "*", SearchOption.TopDirectoryOnly).Any())
+        {
+            _fileSystem.DeleteDirectory(recoveryRoot, recursive: false);
+        }
+
         return Task.CompletedTask;
     }
 

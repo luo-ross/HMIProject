@@ -1,0 +1,40 @@
+{
+  "productId": "setup-lifecycle-fixture-template",
+  "displayName": "RS.SetupApp Disposable Fixture",
+  "publisher": "RS.SetupApp Tests",
+  "mainExecutable": "TestPayloadApp.exe",
+  "branding": {
+    "accentColor": "#0F766E",
+    "licensePath": "LICENSE.txt",
+    "welcomeText": "This is a disposable RS.SetupApp lifecycle fixture."
+  },
+  "installDefaults": {
+    "defaultScope": "CurrentUser",
+    "defaultInstallDirectoryOverride": "",
+    "createShortcutsByDefault": false,
+    "enableAutoStartByDefault": false,
+    "allowSilentInstall": true,
+    "allowRepair": true,
+    "allowOverwrite": true,
+    "allowMachineInstall": false,
+    "minimumFreeSpaceBytes": 0
+  },
+  "update": {
+    "allowOnlineUpdate": false,
+    "channel": "fixture"
+  },
+  "uninstall": {
+    "allowPurgeData": true,
+    "purgeDataByDefault": true
+  },
+  "shortcuts": [],
+  "fileAssociations": [],
+  "dataDirectories": [
+    {
+      "key": "fixtureData",
+      "scope": "UserLocal",
+      "relativePath": "RS.SetupApp-Fixtures\\{ProductId}"
+    }
+  ],
+  "extensions": []
+}

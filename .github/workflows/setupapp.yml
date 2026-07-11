@@ -1,0 +1,83 @@
+name: SetupApp lifecycle
+
+on:
+  pull_request:
+    paths:
+      - 'RS.SetupApp/**'
+      - 'RS.SetupApp.Core/**'
+      - 'RS.SetupApp.Builder/**'
+      - 'RS.SetupApp.Tests/**'
+      - 'RS.SetupApp.UI.Tests/**'
+      - 'RS.SetupApp.AutomationTests/**'
+      - 'scripts/**'
+      - '.github/workflows/setupapp.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'RS.SetupApp/**'
+      - 'RS.SetupApp.Core/**'
+      - 'RS.SetupApp.Builder/**'
+      - 'RS.SetupApp.Tests/**'
+      - 'RS.SetupApp.UI.Tests/**'
+      - 'RS.SetupApp.AutomationTests/**'
+      - 'scripts/**'
+      - '.github/workflows/setupapp.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore once
+        run: dotnet restore MultiVerseKit.sln
+
+      - name: Generate ephemeral signing material
+        shell: pwsh
+        run: |
+          $keyRoot = Join-Path $env:RUNNER_TEMP 'setupapp-ephemeral-keys'
+          New-Item -ItemType Directory -Path $keyRoot -Force | Out-Null
+          $rsa = [Security.Cryptography.RSA]::Create(2048)
+          try {
+            [IO.File]::WriteAllText((Join-Path $keyRoot 'update.private.pem'), $rsa.ExportRSAPrivateKeyPem())
+            [IO.File]::WriteAllText((Join-Path $keyRoot 'update.public.pem'), $rsa.ExportRSAPublicKeyPem())
+          }
+          finally {
+            $rsa.Dispose()
+          }
+
+      - name: Build SetupApp release projects
+        run: |
+          dotnet build RS.SetupApp.Core/RS.SetupApp.Core.csproj -c Release --no-restore
+          dotnet build RS.SetupApp.Builder/RS.SetupApp.Builder.csproj -c Release --no-restore
+          dotnet build RS.SetupApp/RS.SetupApp.csproj -c Release --no-restore
+
+      - name: Run Core VM tests
+        run: dotnet test RS.SetupApp.Tests/RS.SetupApp.Tests.csproj --no-restore
+
+      - name: Run UI view-model tests
+        run: dotnet test RS.SetupApp.UI.Tests/RS.SetupApp.UI.Tests.csproj --no-restore
+
+      - name: Run silent bundled lifecycle
+        shell: pwsh
+        run: ./scripts/Test-SetupAppEndToEnd.ps1
+
+      - name: Run FlaUI bundled lifecycle
+        shell: pwsh
+        env:
+          RS_SETUPAPP_REQUIRE_INTERACTIVE_UI: ${{ vars.SETUPAPP_REQUIRE_INTERACTIVE_UI || '0' }}
+        run: ./scripts/Test-SetupAppUi.ps1
+
+      - name: Upload failed SetupApp artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: setupapp-failure-artifacts
+          path: artifacts/setupapp-test
+          if-no-files-found: ignore

@@ -93,4 +93,63 @@ public sealed class PhysicalFileSystemAtomicWriteTests
         Assert.IsFalse(File.Exists(sourcePath));
         Assert.AreEqual("new", File.ReadAllText(destinationPath));
     }
+
+    [TestMethod]
+    public void MoveDirectory_ShouldCopyThenRemoveSource_WhenVolumesDiffer()
+    {
+        string destinationRoot = Path.GetPathRoot(Path.GetTempPath()) ?? throw new InvalidOperationException("Temp root is required.");
+        string? sourceRoot = Directory.GetLogicalDrives()
+            .FirstOrDefault(root => !string.Equals(root, destinationRoot, StringComparison.OrdinalIgnoreCase) && IsWritable(root));
+        if (sourceRoot == null)
+        {
+            Assert.Inconclusive("A second writable volume is required to exercise cross-volume directory moves.");
+        }
+
+        string id = Guid.NewGuid().ToString("N");
+        string sourceContainer = Path.Combine(sourceRoot, "RS.SetupApp-Tests", id);
+        string sourceDirectory = Path.Combine(sourceContainer, "source");
+        string destinationContainer = Path.Combine(Path.GetTempPath(), "RS.SetupApp-Tests", id);
+        string destinationDirectory = Path.Combine(destinationContainer, "destination");
+        try
+        {
+            Directory.CreateDirectory(sourceDirectory);
+            File.WriteAllText(Path.Combine(sourceDirectory, "payload.txt"), "fixture");
+
+            new PhysicalFileSystem().MoveDirectory(sourceDirectory, destinationDirectory);
+
+            Assert.IsFalse(Directory.Exists(sourceDirectory));
+            Assert.AreEqual("fixture", File.ReadAllText(Path.Combine(destinationDirectory, "payload.txt")));
+        }
+        finally
+        {
+            if (Directory.Exists(sourceContainer))
+            {
+                Directory.Delete(sourceContainer, recursive: true);
+            }
+
+            if (Directory.Exists(destinationContainer))
+            {
+                Directory.Delete(destinationContainer, recursive: true);
+            }
+        }
+    }
+
+    private static bool IsWritable(string root)
+    {
+        try
+        {
+            string probe = Path.Combine(root, $".rs-setup-write-probe-{Guid.NewGuid():N}");
+            Directory.CreateDirectory(probe);
+            Directory.Delete(probe);
+            return true;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
 }
