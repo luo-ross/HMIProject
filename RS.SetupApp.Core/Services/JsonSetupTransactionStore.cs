@@ -43,6 +43,23 @@ public sealed class JsonSetupTransactionStore : ISetupTransactionStore
         InstallScope scope,
         CancellationToken token)
     {
+        return LoadAsync(productId, scope, terminal: false, token);
+    }
+
+    public Task<IReadOnlyList<SetupTransactionJournal>> LoadTerminalAsync(
+        string productId,
+        InstallScope scope,
+        CancellationToken token)
+    {
+        return LoadAsync(productId, scope, terminal: true, token);
+    }
+
+    private Task<IReadOnlyList<SetupTransactionJournal>> LoadAsync(
+        string productId,
+        InstallScope scope,
+        bool terminal,
+        CancellationToken token)
+    {
         token.ThrowIfCancellationRequested();
         string root = _paths.GetRecoveryRoot(productId, scope);
         if (!_fileSystem.DirectoryExists(root))
@@ -66,7 +83,7 @@ public sealed class JsonSetupTransactionStore : ISetupTransactionStore
             if (journal == null ||
                 !string.Equals(journal.ProductId, productId, StringComparison.OrdinalIgnoreCase) ||
                 journal.Scope != scope ||
-                IsTerminal(journal.Phase))
+                IsTerminal(journal.Phase) != terminal)
             {
                 continue;
             }

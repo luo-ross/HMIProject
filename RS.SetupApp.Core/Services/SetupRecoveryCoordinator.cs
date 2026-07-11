@@ -40,6 +40,27 @@ public sealed class SetupRecoveryCoordinator
         return journals;
     }
 
+    public async Task<IReadOnlyList<SetupTransactionJournal>> FindTerminalAsync(
+        string productId,
+        IReadOnlyCollection<InstallScope> scopes,
+        CancellationToken token)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(productId);
+        ArgumentNullException.ThrowIfNull(scopes);
+
+        List<SetupTransactionJournal> journals = [];
+        foreach (InstallScope scope in scopes.Distinct())
+        {
+            token.ThrowIfCancellationRequested();
+            IReadOnlyList<SetupTransactionJournal> found = await _store
+                .LoadTerminalAsync(productId, scope, token)
+                .ConfigureAwait(false);
+            journals.AddRange(found);
+        }
+
+        return journals;
+    }
+
     public async Task<SetupRecoveryResult> RecoverAsync(
         SetupTransactionJournal journal,
         CancellationToken recoveryToken)
@@ -47,14 +68,15 @@ public sealed class SetupRecoveryCoordinator
         ArgumentNullException.ThrowIfNull(journal);
 
         List<string> errors = [];
+        List<string> cleanupWarnings = [];
+        if (journal.Phase is SetupTransactionPhase.Committed or SetupTransactionPhase.RolledBack)
+        {
+            await TryCleanupAsync(journal, recoveryToken, cleanupWarnings).ConfigureAwait(false);
+            return CreateSucceededResult(journal, cleanupWarnings);
+        }
+
         try
         {
-            if (journal.Phase is SetupTransactionPhase.Committed or SetupTransactionPhase.RolledBack)
-            {
-                await _store.DeleteAsync(journal, recoveryToken).ConfigureAwait(false);
-                return new SetupRecoveryResult(true, journal, errors);
-            }
-
             SetupTransactionCoordinator coordinator = new(
                 journal,
                 _store,
@@ -67,8 +89,8 @@ public sealed class SetupRecoveryCoordinator
             errors.AddRange(rollbackErrors);
             if (errors.Count == 0 && journal.Phase == SetupTransactionPhase.RolledBack)
             {
-                await _store.DeleteAsync(journal, recoveryToken).ConfigureAwait(false);
-                return new SetupRecoveryResult(true, journal, errors);
+                await TryCleanupAsync(journal, recoveryToken, cleanupWarnings).ConfigureAwait(false);
+                return CreateSucceededResult(journal, cleanupWarnings);
             }
         }
         catch (Exception exception)
@@ -77,5 +99,30 @@ public sealed class SetupRecoveryCoordinator
         }
 
         return new SetupRecoveryResult(false, journal, errors);
+    }
+
+    private async Task TryCleanupAsync(
+        SetupTransactionJournal journal,
+        CancellationToken recoveryToken,
+        ICollection<string> cleanupWarnings)
+    {
+        try
+        {
+            await _store.DeleteAsync(journal, recoveryToken).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            cleanupWarnings.Add(exception.Message);
+        }
+    }
+
+    private static SetupRecoveryResult CreateSucceededResult(
+        SetupTransactionJournal journal,
+        IReadOnlyList<string> cleanupWarnings)
+    {
+        return new SetupRecoveryResult(true, journal, Array.Empty<string>())
+        {
+            CleanupWarnings = cleanupWarnings.ToArray()
+        };
     }
 }

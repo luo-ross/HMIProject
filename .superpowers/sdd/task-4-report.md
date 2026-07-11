@@ -30,3 +30,23 @@
 ## Concerns
 
 - No blocking concerns. Legacy ownership claiming remains its existing guarded/atomic pre-operation workflow; it is deliberately left outside this Task 4 recovery refactor and retained Task 1 zero-mutation safety coverage.
+
+## Review follow-up: terminal cleanup warning
+
+### RED
+
+- Added a terminal `DeleteAsync` fault scenario. The prior behavior turned successful compensation plus a durable `RolledBack` journal into `RecoveryFailed`, even though subsequent incomplete-journal scans would not find the terminal journal.
+- The new test initially failed to compile because recovery results did not expose separate cleanup warnings and the coordinator could not enumerate terminal journals for cleanup-only retries.
+
+### GREEN
+
+- Terminal journal deletion is now best-effort cleanup: it returns successful recovery with a separate `CleanupWarnings` collection and never adds the warning to recovery errors.
+- Startup scans terminal journals as cleanup-only work before incomplete recovery, logs any warning, and continues the requested operation. Terminal compensations are never replayed.
+- The retained terminal journal is discovered on a later cleanup pass and removed once deletion succeeds.
+
+### Follow-up verification
+
+- Focused required filter: 24 passed.
+- Full `RS.SetupApp.Tests`: 166 passed.
+- `dotnet build RS.SetupApp/RS.SetupApp.csproj`: 0 warnings, 0 errors.
+- `git diff --check`: passed (only repository line-ending notices).

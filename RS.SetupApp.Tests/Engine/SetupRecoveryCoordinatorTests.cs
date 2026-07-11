@@ -140,6 +140,68 @@ public sealed class SetupRecoveryCoordinatorTests
         Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
     }
 
+    [TestMethod]
+    public async Task RecoverAsync_ShouldTreatTerminalCleanupFailureAsWarning_AndRetryOnlyCleanupLater()
+    {
+        using TempDirectoryScope temp = new();
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        PhysicalFileSystem physical = new();
+        Guid operationId = Guid.NewGuid();
+        string recoveryDirectory = paths.GetRecoveryDirectory("demo-app", operationId, InstallScope.CurrentUser);
+        FaultInjectingFileSystem fileSystem = new(physical)
+        {
+            FailureFactory = (operation, path) => operation == nameof(IFileSystem.DeleteDirectory) &&
+                string.Equals(path, recoveryDirectory, StringComparison.OrdinalIgnoreCase)
+                    ? new IOException("Terminal cleanup is temporarily unavailable.")
+                    : null
+        };
+        JsonSetupTransactionStore store = new(fileSystem, new JsonManifestSerializer(), paths);
+        SetupTransactionJournal journal = CreateJournal(paths, SetupTransactionPhase.Applying, operationId: operationId);
+        string target = Path.Combine(temp.DirectoryPath, "cleanup-warning-target.txt");
+        File.WriteAllText(target, "mutated");
+        journal.Compensations.Add(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.DeleteFile,
+            Target = target,
+            Applied = true
+        });
+        await store.SaveAsync(journal, CancellationToken.None);
+
+        SetupRecoveryCoordinator coordinator = CreateCoordinator(store, fileSystem);
+        SetupRecoveryResult recovered = await coordinator.RecoverAsync(journal, CancellationToken.None);
+
+        Assert.IsTrue(recovered.Succeeded);
+        Assert.AreEqual(0, recovered.Errors.Count);
+        Assert.AreEqual(1, recovered.CleanupWarnings.Count);
+        Assert.AreEqual(SetupTransactionPhase.RolledBack, journal.Phase);
+        Assert.IsFalse(File.Exists(target));
+        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
+
+        File.WriteAllText(target, "must not replay");
+        IReadOnlyList<SetupTransactionJournal> terminals = await coordinator.FindTerminalAsync(
+            "demo-app",
+            [InstallScope.CurrentUser],
+            CancellationToken.None);
+        Assert.AreEqual(1, terminals.Count);
+        SetupRecoveryResult retryWarning = await coordinator.RecoverAsync(terminals[0], CancellationToken.None);
+        Assert.IsTrue(retryWarning.Succeeded);
+        Assert.AreEqual(0, retryWarning.Errors.Count);
+        Assert.IsTrue(File.Exists(target));
+
+        fileSystem.FailureFactory = null;
+        terminals = await coordinator.FindTerminalAsync(
+            "demo-app",
+            [InstallScope.CurrentUser],
+            CancellationToken.None);
+        SetupRecoveryResult cleaned = await coordinator.RecoverAsync(terminals[0], CancellationToken.None);
+
+        Assert.IsTrue(cleaned.Succeeded);
+        Assert.AreEqual(0, cleaned.CleanupWarnings.Count);
+        Assert.IsTrue(File.Exists(target));
+        Assert.IsFalse(Directory.Exists(journal.RecoveryDirectory));
+    }
+
     [DataTestMethod]
     [DataRow(SetupTransactionPhase.Committed)]
     [DataRow(SetupTransactionPhase.RolledBack)]
@@ -199,17 +261,18 @@ public sealed class SetupRecoveryCoordinatorTests
     private static SetupTransactionJournal CreateJournal(
         TestSystemPaths paths,
         SetupTransactionPhase phase,
-        InstallScope scope = InstallScope.CurrentUser)
+        InstallScope scope = InstallScope.CurrentUser,
+        Guid? operationId = null)
     {
-        Guid operationId = Guid.NewGuid();
+        Guid resolvedOperationId = operationId ?? Guid.NewGuid();
         return new SetupTransactionJournal
         {
-            OperationId = operationId,
+            OperationId = resolvedOperationId,
             ProductId = "demo-app",
             Scope = scope,
             Mode = SetupMode.Install,
             InstallDirectory = Path.Combine(paths.RootPath, "install", scope.ToString(), "demo-app"),
-            RecoveryDirectory = paths.GetRecoveryDirectory("demo-app", operationId, scope),
+            RecoveryDirectory = paths.GetRecoveryDirectory("demo-app", resolvedOperationId, scope),
             Phase = phase,
             StartedAtUtc = DateTimeOffset.UtcNow,
             UpdatedAtUtc = DateTimeOffset.UtcNow

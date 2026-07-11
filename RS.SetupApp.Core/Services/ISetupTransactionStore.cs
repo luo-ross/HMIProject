@@ -9,5 +9,10 @@ public interface ISetupTransactionStore
         InstallScope scope,
         CancellationToken token);
 
+    Task<IReadOnlyList<SetupTransactionJournal>> LoadTerminalAsync(
+        string productId,
+        InstallScope scope,
+        CancellationToken token);
+
     Task DeleteAsync(SetupTransactionJournal journal, CancellationToken token);
 }

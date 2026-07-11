@@ -347,6 +347,18 @@ public sealed class SetupEngine
             context.Services.Shortcuts);
 
         using CancellationTokenSource scanTimeout = new(TimeSpan.FromMinutes(5));
+        IReadOnlyList<SetupTransactionJournal> terminalJournals = await coordinator
+            .FindTerminalAsync(product.ProductId, scopes, scanTimeout.Token)
+            .ConfigureAwait(false);
+        foreach (SetupTransactionJournal journal in terminalJournals)
+        {
+            using CancellationTokenSource recoveryTimeout = new(TimeSpan.FromMinutes(5));
+            SetupRecoveryResult result = await coordinator
+                .RecoverAsync(journal, recoveryTimeout.Token)
+                .ConfigureAwait(false);
+            LogRecoveryCleanupWarnings(context, result);
+        }
+
         IReadOnlyList<SetupTransactionJournal> journals = await coordinator
             .FindIncompleteAsync(product.ProductId, scopes, scanTimeout.Token)
             .ConfigureAwait(false);
@@ -356,6 +368,7 @@ public sealed class SetupEngine
             SetupRecoveryResult result = await coordinator
                 .RecoverAsync(journal, recoveryTimeout.Token)
                 .ConfigureAwait(false);
+            LogRecoveryCleanupWarnings(context, result);
             if (!result.Succeeded)
             {
                 return result;
@@ -363,6 +376,14 @@ public sealed class SetupEngine
         }
 
         return null;
+    }
+
+    private static void LogRecoveryCleanupWarnings(SetupExecutionContext context, SetupRecoveryResult result)
+    {
+        foreach (string warning in result.CleanupWarnings)
+        {
+            context.Logger?.Warn($"Recovery cleanup warning: {warning}");
+        }
     }
 
     private static SetupOperationResult CreateSuccessResult(

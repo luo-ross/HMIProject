@@ -469,6 +469,86 @@ public sealed class SetupEngineTests
         Assert.IsTrue(File.Exists(recovered.InstalledState?.MainExecutablePath));
     }
 
+    [TestMethod]
+    public async Task ExecuteAsync_ShouldAllowWorkWhenOnlyTerminalRecoveryCleanupFails()
+    {
+        using TempDirectoryScope temp = new();
+        string productDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "product")).FullName;
+        SetupTestDataFactory.WriteProductSchema(productDirectory);
+        string manifestPath = SetupTestDataFactory.WriteProductManifest(productDirectory, "demo-app", "DemoApp.exe");
+        string publishDirectory = SetupTestDataFactory.CreatePublishDirectory(temp.DirectoryPath, "DemoApp.exe", "1.0.0");
+        string packageDirectory = await SetupTestDataFactory.CreatePackageAsync(
+            publishDirectory,
+            manifestPath,
+            Path.Combine(temp.DirectoryPath, "packages"),
+            packageVersion: "1.0.0");
+
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        Guid operationId = Guid.NewGuid();
+        string retainedRecoveryDirectory = paths.GetRecoveryDirectory("demo-app", operationId, InstallScope.CurrentUser);
+        PhysicalFileSystem physical = new();
+        FaultInjectingFileSystem fileSystem = new(physical)
+        {
+            FailureFactory = (operation, path) => operation == nameof(IFileSystem.DeleteDirectory) &&
+                string.Equals(path, retainedRecoveryDirectory, StringComparison.OrdinalIgnoreCase)
+                    ? new IOException("Terminal cleanup is temporarily unavailable.")
+                    : null
+        };
+        JsonManifestSerializer serializer = new();
+        ProductManifest product = serializer.Load<ProductManifest>(manifestPath);
+        SetupServices services = TestSetupServicesFactory.Create(
+            paths,
+            new FakeRegistryService(),
+            new FakeShortcutService(),
+            new FakeProcessService(),
+            new FakeDownloadService(),
+            fileSystem);
+        string recoveryTarget = Path.Combine(temp.DirectoryPath, "cleanup-warning-engine-target.txt");
+        File.WriteAllText(recoveryTarget, "mutated");
+        SetupTransactionJournal journal = CreateInterruptedJournal(paths, operationId, SetupTransactionPhase.Applying);
+        journal.Compensations.Add(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.DeleteFile,
+            Target = recoveryTarget,
+            Applied = true
+        });
+        await services.TransactionStore.SaveAsync(journal, CancellationToken.None);
+        PackageManifest package = serializer.Load<PackageManifest>(Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName));
+
+        SetupOperationResult result = await new SetupEngine(services).ExecuteAsync(new RuntimeOptions
+        {
+            Mode = SetupMode.Install,
+            Scope = InstallScope.CurrentUser,
+            ProductManifestPath = manifestPath,
+            PackageManifestPath = Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName),
+            PackagePath = Path.Combine(packageDirectory, package.ArchiveFileName),
+            InstallDirectory = paths.GetDefaultInstallDirectory(product, InstallScope.CurrentUser)
+        });
+
+        Assert.AreEqual(SetupOperationStatus.Succeeded, result.Status, result.Message);
+        Assert.IsFalse(File.Exists(recoveryTarget));
+        Assert.IsTrue(File.Exists(JsonSetupTransactionStore.GetJournalPath(journal)));
+
+        File.WriteAllText(recoveryTarget, "must not replay");
+        fileSystem.FailureFactory = null;
+        SetupRecoveryCoordinator coordinator = new(
+            services.TransactionStore,
+            fileSystem,
+            services.Registry,
+            services.Shortcuts);
+        IReadOnlyList<SetupTransactionJournal> terminals = await coordinator.FindTerminalAsync(
+            "demo-app",
+            [InstallScope.CurrentUser],
+            CancellationToken.None);
+        Assert.AreEqual(1, terminals.Count);
+        SetupRecoveryResult cleaned = await coordinator.RecoverAsync(terminals[0], CancellationToken.None);
+
+        Assert.IsTrue(cleaned.Succeeded);
+        Assert.IsTrue(File.Exists(recoveryTarget));
+        Assert.IsFalse(Directory.Exists(retainedRecoveryDirectory));
+    }
+
     private static SetupTransactionJournal CreateInterruptedJournal(
         TestSystemPaths paths,
         Guid operationId,
