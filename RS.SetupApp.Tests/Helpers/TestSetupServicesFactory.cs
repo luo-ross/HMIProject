@@ -10,7 +10,7 @@ public static class TestSetupServicesFactory
         FakeRegistryService registry,
         FakeShortcutService shortcuts,
         FakeProcessService processes,
-        FakeDownloadService downloads,
+        IDownloadService downloads,
         IFileSystem? fileSystem = null)
     {
         fileSystem ??= new PhysicalFileSystem();
@@ -26,6 +26,7 @@ public static class TestSetupServicesFactory
             Shortcuts = shortcuts,
             Processes = processes,
             Downloads = downloads,
+            SignatureVerifier = new RsaPssUpdateSignatureVerifier(),
             Hasher = new DefaultFileHasher(),
             Paths = paths,
             PathSafetyPolicy = pathSafetyPolicy,

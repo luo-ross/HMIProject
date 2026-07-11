@@ -80,6 +80,7 @@ public static class SetupPipelineHelper
         string destinationPath,
         CancellationToken cancellationToken)
     {
+        RemoteSourcePolicy.EnsureAllowed(source);
         if (Uri.TryCreate(source, UriKind.Absolute, out Uri? uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
         {
             await context.Services.Downloads.DownloadAsync(uri, destinationPath, cancellationToken).ConfigureAwait(false);
@@ -113,6 +114,60 @@ public static class SetupPipelineHelper
         }
 
         return Path.Combine(Path.GetDirectoryName(manifestSource) ?? AppContext.BaseDirectory, assetSource);
+    }
+
+    public static string GetAdjacentSignatureSource(string contentSource)
+    {
+        if (Uri.TryCreate(contentSource, UriKind.Absolute, out Uri? uri))
+        {
+            if (uri.IsFile)
+            {
+                return $"{uri.LocalPath}.sig";
+            }
+
+            UriBuilder builder = new(uri)
+            {
+                Path = $"{uri.AbsolutePath}.sig"
+            };
+            return builder.Uri.ToString();
+        }
+
+        return $"{contentSource}.sig";
+    }
+
+    public static string ResolveTrustedPublicKeyPath(SetupExecutionContext context)
+    {
+        ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
+        string relativePath = product.Update.TrustedPublicKeyPath
+            ?? throw new InvalidOperationException("Online updates require update.trustedPublicKeyPath.");
+        if (Path.IsPathRooted(relativePath) || SetupPathUtility.ContainsParentTraversal(relativePath))
+        {
+            throw new InvalidOperationException("update.trustedPublicKeyPath must be relative to the product manifest directory.");
+        }
+
+        string productDirectory = Path.GetDirectoryName(Path.GetFullPath(context.ProductManifestPath)) ?? AppContext.BaseDirectory;
+        string trustedKeyPath = SetupPathUtility.ResolveManifestRelativePath(context.ProductManifestPath, relativePath);
+        if (!SetupPathUtility.IsPathUnderRoot(trustedKeyPath, productDirectory))
+        {
+            throw new InvalidOperationException("update.trustedPublicKeyPath must stay under the product manifest directory.");
+        }
+
+        return trustedKeyPath;
+    }
+
+    public static void VerifyOnlineSignature(SetupExecutionContext context, string contentPath, string signaturePath)
+    {
+        ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
+        if (!product.Update.RequireSignature)
+        {
+            throw new InvalidOperationException("Online updates require signatures.");
+        }
+
+        string trustedKeyPath = ResolveTrustedPublicKeyPath(context);
+        if (!context.Services.SignatureVerifier.Verify(contentPath, signaturePath, trustedKeyPath))
+        {
+            throw new InvalidOperationException($"Update signature verification failed for '{Path.GetFileName(contentPath)}'.");
+        }
     }
 
     public static InstalledStateManifest CreateInstalledState(SetupExecutionContext context)

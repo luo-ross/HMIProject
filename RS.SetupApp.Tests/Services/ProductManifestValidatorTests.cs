@@ -50,4 +50,31 @@ public sealed class ProductManifestValidatorTests
         CollectionAssert.Contains(errors.ToList(), "dataDirectories contains duplicate keys.");
         CollectionAssert.Contains(errors.ToList(), "dataDirectories 'data' relativePath must stay within the configured data root.");
     }
+
+    [TestMethod]
+    public void Validate_ShouldRejectOnlineUpdatePublicKeyEscapeAndInsecureUrl()
+    {
+        using Helpers.TempDirectoryScope temp = new();
+        string productManifestPath = Path.Combine(temp.DirectoryPath, SetupRuntimeDefaults.ProductManifestFileName);
+        ProductManifest manifest = new()
+        {
+            ProductId = "demo-app",
+            DisplayName = "Demo App",
+            Publisher = "Contoso",
+            MainExecutable = "Demo.exe",
+            Update = new UpdateSettingsManifest
+            {
+                AllowOnlineUpdate = true,
+                ManifestUrl = "http://example.test/latest.json",
+                RequireHttps = true,
+                RequireSignature = true,
+                TrustedPublicKeyPath = "../escape.pem"
+            }
+        };
+
+        IReadOnlyList<string> errors = ProductManifestValidator.Validate(manifest, productManifestPath, File.Exists);
+
+        CollectionAssert.Contains(errors.ToList(), "update.manifestUrl must use HTTPS when allowOnlineUpdate is true.");
+        CollectionAssert.Contains(errors.ToList(), "update.trustedPublicKeyPath must be relative to the product manifest directory and cannot contain '..'.");
+    }
 }

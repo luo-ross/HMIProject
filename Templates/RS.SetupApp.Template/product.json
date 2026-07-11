@@ -41,6 +41,9 @@
   },
   "update": {
     "allowOnlineUpdate": false,
+    "requireHttps": true,
+    "requireSignature": true,
+    "trustedPublicKeyPath": "update.public.pem",
     "channel": "stable",
     "manifestUrl": "https://example.com/downloads/latest.json"
   },

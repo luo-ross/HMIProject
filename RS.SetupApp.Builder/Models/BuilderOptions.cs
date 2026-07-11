@@ -23,4 +23,6 @@ public sealed class BuilderOptions
     public string? BaseUrl { get; set; }
 
     public string? RuntimeProjectPath { get; set; }
+
+    public string? SigningKeyPath { get; set; }
 }

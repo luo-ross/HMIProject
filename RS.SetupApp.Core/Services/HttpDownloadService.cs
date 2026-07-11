@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace RS.SetupApp.Core;
 
 public sealed class HttpDownloadService : IDownloadService
@@ -6,22 +8,55 @@ public sealed class HttpDownloadService : IDownloadService
 
     public HttpDownloadService(HttpClient? httpClient = null)
     {
-        _httpClient = httpClient ?? new HttpClient();
+        _httpClient = httpClient ?? new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });
     }
 
     public async Task DownloadAsync(Uri uri, string destinationPath, CancellationToken cancellationToken)
     {
-        string? directory = Path.GetDirectoryName(destinationPath);
-        if (!string.IsNullOrWhiteSpace(directory))
+        RemoteSourcePolicy.EnsureAllowed(uri);
+        Uri currentUri = uri;
+        for (int redirectCount = 0; redirectCount < 10; redirectCount++)
         {
-            Directory.CreateDirectory(directory);
+            using HttpResponseMessage response = await _httpClient.GetAsync(
+                currentUri,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken).ConfigureAwait(false);
+            RemoteSourcePolicy.EnsureAllowed(response.RequestMessage?.RequestUri ?? currentUri);
+            if (IsRedirect(response.StatusCode))
+            {
+                Uri redirect = ResolveRedirect(currentUri, response.Headers.Location);
+                RemoteSourcePolicy.EnsureAllowed(redirect);
+                currentUri = redirect;
+                continue;
+            }
+
+            response.EnsureSuccessStatusCode();
+            string? directory = Path.GetDirectoryName(destinationPath);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            await using Stream remote = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            await using FileStream local = File.Create(destinationPath);
+            await remote.CopyToAsync(local, cancellationToken).ConfigureAwait(false);
+            return;
         }
 
-        using HttpResponseMessage response = await _httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+        throw new HttpRequestException("The update source exceeded the maximum number of HTTPS redirects.");
+    }
 
-        await using Stream remote = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await using FileStream local = File.Create(destinationPath);
-        await remote.CopyToAsync(local, cancellationToken).ConfigureAwait(false);
+    private static bool IsRedirect(HttpStatusCode statusCode)
+        => statusCode is HttpStatusCode.Moved or HttpStatusCode.Redirect or HttpStatusCode.RedirectMethod or
+            HttpStatusCode.TemporaryRedirect or HttpStatusCode.PermanentRedirect;
+
+    private static Uri ResolveRedirect(Uri currentUri, Uri? location)
+    {
+        if (location == null)
+        {
+            throw new HttpRequestException("The update source returned a redirect without a location.");
+        }
+
+        return location.IsAbsoluteUri ? location : new Uri(currentUri, location);
     }
 }

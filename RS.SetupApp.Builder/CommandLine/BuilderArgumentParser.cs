@@ -49,6 +49,9 @@ public static class BuilderArgumentParser
                 case "--runtime-project":
                     options.RuntimeProjectPath = GetNextValue(args, ref index, "--runtime-project");
                     break;
+                case "--signing-key":
+                    options.SigningKeyPath = GetNextValue(args, ref index, "--signing-key");
+                    break;
                 default:
                     throw new ArgumentException($"Unknown argument '{current}'.");
             }

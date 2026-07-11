@@ -19,6 +19,7 @@ public static class SetupServicesFactory
             Shortcuts = new ShellShortcutService(paths),
             Processes = new ProcessService(),
             Downloads = new HttpDownloadService(),
+            SignatureVerifier = new RsaPssUpdateSignatureVerifier(),
             Hasher = new DefaultFileHasher(),
             Paths = paths,
             PathSafetyPolicy = pathSafetyPolicy,

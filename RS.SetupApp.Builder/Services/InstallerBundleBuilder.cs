@@ -52,6 +52,10 @@ public sealed class InstallerBundleBuilder
         File.Copy(packageManifestPath, Path.Combine(payloadDirectory, SetupRuntimeDefaults.PackageManifestFileName), overwrite: true);
         File.Copy(archivePath, Path.Combine(payloadDirectory, package.ArchiveFileName), overwrite: true);
 
+        CopyIfPresent(
+            Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestSignatureFileName),
+            Path.Combine(payloadDirectory, SetupRuntimeDefaults.PackageManifestSignatureFileName));
+
         string schemaPath = Path.Combine(Path.GetDirectoryName(productManifestPath) ?? packageDirectory, SetupRuntimeDefaults.ProductSchemaFileName);
         if (File.Exists(schemaPath))
         {
@@ -62,6 +66,16 @@ public sealed class InstallerBundleBuilder
         if (File.Exists(updateFeedPath))
         {
             File.Copy(updateFeedPath, Path.Combine(payloadDirectory, SetupRuntimeDefaults.UpdateManifestFileName), overwrite: true);
+        }
+
+        CopyIfPresent(
+            Path.Combine(packageDirectory, SetupRuntimeDefaults.UpdateManifestSignatureFileName),
+            Path.Combine(payloadDirectory, SetupRuntimeDefaults.UpdateManifestSignatureFileName));
+
+        if (product.Update.AllowOnlineUpdate)
+        {
+            CopyOnlineUpdatePublicKey(productManifestPath, product, payloadDirectory);
+            EnsureOnlineUpdateArtifacts(payloadDirectory);
         }
 
         string checksumsPath = Path.Combine(packageDirectory, "checksums.txt");
@@ -127,5 +141,55 @@ public sealed class InstallerBundleBuilder
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .Select(path => SetupPathUtility.ResolveManifestRelativePath(productManifestPath, path))
             .Distinct(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static void CopyOnlineUpdatePublicKey(string productManifestPath, ProductManifest product, string payloadDirectory)
+    {
+        string relativePublicKeyPath = product.Update.TrustedPublicKeyPath
+            ?? throw new InvalidOperationException("Online installer bundles require update.trustedPublicKeyPath.");
+        if (Path.IsPathRooted(relativePublicKeyPath) || SetupPathUtility.ContainsParentTraversal(relativePublicKeyPath))
+        {
+            throw new InvalidOperationException("update.trustedPublicKeyPath must be relative to the product manifest directory.");
+        }
+
+        string sourcePath = SetupPathUtility.ResolveManifestRelativePath(productManifestPath, relativePublicKeyPath);
+        string productDirectory = Path.GetDirectoryName(productManifestPath) ?? AppContext.BaseDirectory;
+        if (!SetupPathUtility.IsPathUnderRoot(sourcePath, productDirectory) || !File.Exists(sourcePath))
+        {
+            throw new FileNotFoundException("The trusted update public key was not found.");
+        }
+
+        string destinationPath = Path.Combine(payloadDirectory, relativePublicKeyPath);
+        string? destinationDirectory = Path.GetDirectoryName(destinationPath);
+        if (!string.IsNullOrWhiteSpace(destinationDirectory))
+        {
+            Directory.CreateDirectory(destinationDirectory);
+        }
+
+        File.Copy(sourcePath, destinationPath, overwrite: true);
+    }
+
+    private static void EnsureOnlineUpdateArtifacts(string payloadDirectory)
+    {
+        foreach (string fileName in new[]
+        {
+            SetupRuntimeDefaults.PackageManifestSignatureFileName,
+            SetupRuntimeDefaults.UpdateManifestFileName,
+            SetupRuntimeDefaults.UpdateManifestSignatureFileName
+        })
+        {
+            if (!File.Exists(Path.Combine(payloadDirectory, fileName)))
+            {
+                throw new FileNotFoundException($"Online installer bundles require '{fileName}'.");
+            }
+        }
+    }
+
+    private static void CopyIfPresent(string sourcePath, string destinationPath)
+    {
+        if (File.Exists(sourcePath))
+        {
+            File.Copy(sourcePath, destinationPath, overwrite: true);
+        }
     }
 }

@@ -14,6 +14,8 @@ public sealed class SetupServices
 
     public required IDownloadService Downloads { get; init; }
 
+    public required IUpdateSignatureVerifier SignatureVerifier { get; init; }
+
     public required IFileHasher Hasher { get; init; }
 
     public required ISystemPaths Paths { get; init; }

@@ -141,6 +141,7 @@ public sealed class SetupEngine
         string tempDirectory = _services.Paths.GetTemporaryWorkingDirectory(product.ProductId);
         _services.FileSystem.CreateDirectory(tempDirectory);
         string updateManifestPath = Path.Combine(tempDirectory, SetupRuntimeDefaults.UpdateManifestFileName);
+        string updateManifestSignaturePath = Path.Combine(tempDirectory, SetupRuntimeDefaults.UpdateManifestSignatureFileName);
 
         try
         {
@@ -154,6 +155,12 @@ public sealed class SetupEngine
             };
 
             await SetupPipelineHelper.DownloadOrCopyAsync(context, product.Update.ManifestUrl!, updateManifestPath, cancellationToken).ConfigureAwait(false);
+            await SetupPipelineHelper.DownloadOrCopyAsync(
+                context,
+                SetupPipelineHelper.GetAdjacentSignatureSource(product.Update.ManifestUrl!),
+                updateManifestSignaturePath,
+                cancellationToken).ConfigureAwait(false);
+            SetupPipelineHelper.VerifyOnlineSignature(context, updateManifestPath, updateManifestSignaturePath);
             UpdateFeedManifest updateFeed = _services.Serializer.Load<UpdateFeedManifest>(updateManifestPath);
             if (!string.Equals(updateFeed.Channel, product.Update.Channel, StringComparison.OrdinalIgnoreCase))
             {

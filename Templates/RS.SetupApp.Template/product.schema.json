@@ -179,6 +179,15 @@
         "allowOnlineUpdate": {
           "type": "boolean"
         },
+        "requireHttps": {
+          "type": "boolean"
+        },
+        "requireSignature": {
+          "type": "boolean"
+        },
+        "trustedPublicKeyPath": {
+          "type": "string"
+        },
         "channel": {
           "type": "string"
         },

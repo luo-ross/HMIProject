@@ -23,4 +23,17 @@ public sealed class BuilderArgumentParserTests
         Assert.AreEqual("artifacts", options.OutputDirectory);
         Assert.AreEqual("win-x64", options.Runtime);
     }
+
+    [TestMethod]
+    public void Parse_ShouldReadSigningKeyWithoutExposingIt()
+    {
+        BuilderOptions options = BuilderArgumentParser.Parse(
+        [
+            "publish-update-feed",
+            "--package", "artifacts",
+            "--signing-key", "keys/release.private.pem"
+        ]);
+
+        Assert.AreEqual("keys/release.private.pem", options.SigningKeyPath);
+    }
 }

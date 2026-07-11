@@ -2,6 +2,7 @@ using RS.SetupApp.Builder;
 using RS.SetupApp.Core;
 using RS.SetupApp.Tests.Fakes;
 using RS.SetupApp.Tests.Helpers;
+using System.Security.Cryptography;
 
 namespace RS.SetupApp.Tests.Engine;
 
@@ -223,22 +224,35 @@ public sealed class SetupEngineTests
             Path.Combine(temp.DirectoryPath, "packages", "2.0.0"),
             packageVersion: "2.0.0").ConfigureAwait(false);
 
+        string signingKeyPath = Path.Combine(temp.DirectoryPath, "release.private.pem");
+        using (RSA rsa = RSA.Create(2048))
+        {
+            File.WriteAllText(signingKeyPath, rsa.ExportRSAPrivateKeyPem());
+        }
+        product.Update = new UpdateSettingsManifest
+        {
+            AllowOnlineUpdate = true,
+            RequireHttps = true,
+            RequireSignature = true,
+            TrustedPublicKeyPath = "keys/update.public.pem",
+            ManifestUrl = "https://updates.example.test/latest.json"
+        };
+        serializer.Save(manifestPath, product);
         string updateFeedPath = new UpdateFeedPublisher(serializer).Publish(new BuilderOptions
         {
             Command = BuilderCommand.PublishUpdateFeed,
             PackageDirectory = v2PackageDirectory,
-            BaseUrl = new Uri($"{v2PackageDirectory}{Path.DirectorySeparatorChar}", UriKind.Absolute).AbsoluteUri
+            ProductManifestPath = manifestPath,
+            BaseUrl = new Uri($"{v2PackageDirectory}{Path.DirectorySeparatorChar}", UriKind.Absolute).AbsoluteUri,
+            SigningKeyPath = signingKeyPath
         });
-
-        product.Update.AllowOnlineUpdate = true;
-        product.Update.ManifestUrl = updateFeedPath;
-        serializer.Save(manifestPath, product);
 
         SetupOperationResult updateResult = await engine.ExecuteAsync(new RuntimeOptions
         {
             Mode = SetupMode.Update,
             Scope = InstallScope.CurrentUser,
             ProductManifestPath = manifestPath,
+            UpdateManifestPath = updateFeedPath,
             InstallDirectory = installResult.InstalledState?.InstallDirectory
         }).ConfigureAwait(false);
 
@@ -295,6 +309,13 @@ public sealed class SetupEngineTests
         ProductManifest product = serializer.Load<ProductManifest>(manifestPath);
         product.Update.AllowOnlineUpdate = true;
         product.Update.ManifestUrl = "https://example.com/downloads/latest.json";
+        product.Update.RequireHttps = true;
+        product.Update.RequireSignature = true;
+        product.Update.TrustedPublicKeyPath = "update.public.pem";
+        using (RSA rsa = RSA.Create(2048))
+        {
+            File.WriteAllText(Path.Combine(productDirectory, product.Update.TrustedPublicKeyPath), rsa.ExportRSAPublicKeyPem());
+        }
         serializer.Save(manifestPath, product);
 
         TestSystemPaths paths = new(temp.DirectoryPath);

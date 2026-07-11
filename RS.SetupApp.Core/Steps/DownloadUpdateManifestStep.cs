@@ -64,7 +64,14 @@ public sealed class DownloadUpdateManifestStep : ISetupStep
             ?? product.Update.ManifestUrl
             ?? Path.Combine(context.PayloadDirectory, SetupRuntimeDefaults.UpdateManifestFileName);
 
+        string signaturePath = Path.Combine(context.WorkingDirectory, SetupRuntimeDefaults.UpdateManifestSignatureFileName);
         await SetupPipelineHelper.DownloadOrCopyAsync(context, manifestSource, context.UpdateManifestPath, cancellationToken).ConfigureAwait(false);
+        await SetupPipelineHelper.DownloadOrCopyAsync(
+            context,
+            SetupPipelineHelper.GetAdjacentSignatureSource(manifestSource),
+            signaturePath,
+            cancellationToken).ConfigureAwait(false);
+        SetupPipelineHelper.VerifyOnlineSignature(context, context.UpdateManifestPath, signaturePath);
         context.UpdateFeed = context.Services.Serializer.Load<UpdateFeedManifest>(context.UpdateManifestPath);
     }
 

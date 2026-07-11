@@ -116,6 +116,7 @@ public sealed class WriteInstalledStateStepTests
                 Shortcuts = new FakeShortcutService(),
                 Processes = new FakeProcessService(),
                 Downloads = new FakeDownloadService(),
+                SignatureVerifier = new RsaPssUpdateSignatureVerifier(),
                 Hasher = new DefaultFileHasher(),
                 Paths = paths,
                 PathSafetyPolicy = pathSafetyPolicy,

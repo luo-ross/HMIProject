@@ -33,10 +33,17 @@ public sealed class ResolvePackageStep : ISetupStep
                 updateFeed.PackageUrl);
 
             context.PackageManifestPath = Path.Combine(context.WorkingDirectory ?? throw new InvalidOperationException("Working directory is required."), SetupRuntimeDefaults.PackageManifestFileName);
+            string packageManifestSignaturePath = Path.Combine(context.WorkingDirectory, SetupRuntimeDefaults.PackageManifestSignatureFileName);
             string archiveName = Path.GetFileName(packageSource);
             context.PackagePath = Path.Combine(context.WorkingDirectory, string.IsNullOrWhiteSpace(archiveName) ? "package.zip" : archiveName);
 
             await SetupPipelineHelper.DownloadOrCopyAsync(context, manifestSource, context.PackageManifestPath, cancellationToken).ConfigureAwait(false);
+            await SetupPipelineHelper.DownloadOrCopyAsync(
+                context,
+                SetupPipelineHelper.GetAdjacentSignatureSource(manifestSource),
+                packageManifestSignaturePath,
+                cancellationToken).ConfigureAwait(false);
+            SetupPipelineHelper.VerifyOnlineSignature(context, context.PackageManifestPath, packageManifestSignaturePath);
             await SetupPipelineHelper.DownloadOrCopyAsync(context, packageSource, context.PackagePath, cancellationToken).ConfigureAwait(false);
             context.Package = context.Services.Serializer.Load<PackageManifest>(context.PackageManifestPath);
         }

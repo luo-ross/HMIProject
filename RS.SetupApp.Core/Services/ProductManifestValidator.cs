@@ -81,10 +81,7 @@ public static class ProductManifestValidator
             }
         }
 
-        if (manifest.Update.AllowOnlineUpdate && string.IsNullOrWhiteSpace(manifest.Update.ManifestUrl))
-        {
-            errors.Add("update.manifestUrl is required when allowOnlineUpdate is true.");
-        }
+        ValidateOnlineUpdateSettings(errors, manifest, productManifestPath, fileExists);
 
         if (!string.IsNullOrWhiteSpace(manifest.InstallDefaults.DefaultInstallDirectoryOverride) &&
             SetupPathUtility.ContainsParentTraversal(manifest.InstallDefaults.DefaultInstallDirectoryOverride))
@@ -151,6 +148,67 @@ public static class ProductManifestValidator
         if (!fileExists(resolvedPath))
         {
             errors.Add($"{label} file '{resolvedPath}' was not found.");
+        }
+    }
+
+    private static void ValidateOnlineUpdateSettings(
+        ICollection<string> errors,
+        ProductManifest manifest,
+        string? productManifestPath,
+        Func<string, bool>? fileExists)
+    {
+        if (!manifest.Update.AllowOnlineUpdate)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(manifest.Update.ManifestUrl))
+        {
+            errors.Add("update.manifestUrl is required when allowOnlineUpdate is true.");
+        }
+        else if (!Uri.TryCreate(manifest.Update.ManifestUrl, UriKind.Absolute, out Uri? manifestUri) ||
+                 !string.Equals(manifestUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("update.manifestUrl must use HTTPS when allowOnlineUpdate is true.");
+        }
+
+        if (!manifest.Update.RequireHttps)
+        {
+            errors.Add("update.requireHttps must be true when allowOnlineUpdate is true.");
+        }
+
+        if (!manifest.Update.RequireSignature)
+        {
+            errors.Add("update.requireSignature must be true when allowOnlineUpdate is true.");
+        }
+
+        string? publicKeyPath = manifest.Update.TrustedPublicKeyPath;
+        if (string.IsNullOrWhiteSpace(publicKeyPath))
+        {
+            errors.Add("update.trustedPublicKeyPath is required when allowOnlineUpdate is true.");
+            return;
+        }
+
+        if (Path.IsPathRooted(publicKeyPath) || SetupPathUtility.ContainsParentTraversal(publicKeyPath))
+        {
+            errors.Add("update.trustedPublicKeyPath must be relative to the product manifest directory and cannot contain '..'.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(productManifestPath))
+        {
+            return;
+        }
+
+        string productDirectory = Path.GetDirectoryName(Path.GetFullPath(productManifestPath)) ?? AppContext.BaseDirectory;
+        string resolvedPublicKeyPath = SetupPathUtility.ResolveManifestRelativePath(productManifestPath, publicKeyPath);
+        if (!SetupPathUtility.IsPathUnderRoot(resolvedPublicKeyPath, productDirectory))
+        {
+            errors.Add("update.trustedPublicKeyPath must stay under the product manifest directory.");
+        }
+        else if (fileExists != null && !fileExists(resolvedPublicKeyPath))
+        {
+            errors.Add($"update.trustedPublicKeyPath file '{resolvedPublicKeyPath}' was not found.");
         }
     }
 }
