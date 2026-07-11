@@ -100,11 +100,15 @@ public sealed class HttpDownloadServiceTests
     }
 
     [TestMethod]
-    public void Constructors_ShouldNotAcceptExternallyConfiguredHttpClient()
+    public void PublicConstructors_ShouldExposeOnlyTheControlledDefaultTransport()
     {
-        Assert.IsFalse(typeof(HttpDownloadService).GetConstructors()
-            .SelectMany(constructor => constructor.GetParameters())
-            .Any(parameter => parameter.ParameterType == typeof(HttpClient)));
+        System.Reflection.ConstructorInfo[] constructors = typeof(HttpDownloadService).GetConstructors();
+
+        Assert.AreEqual(1, constructors.Length);
+        Assert.AreEqual(0, constructors[0].GetParameters().Length);
+        Assert.IsFalse(constructors.SelectMany(constructor => constructor.GetParameters())
+            .Any(parameter => parameter.ParameterType is Type type &&
+                (type == typeof(HttpClient) || typeof(HttpMessageHandler).IsAssignableFrom(type))));
     }
 
     private sealed class StubHttpHandler(Func<HttpRequestMessage, HttpResponseMessage> responseFactory) : HttpMessageHandler

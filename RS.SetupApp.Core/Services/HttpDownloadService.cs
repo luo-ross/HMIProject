@@ -11,7 +11,11 @@ public sealed class HttpDownloadService : IDownloadService
     {
     }
 
-    public HttpDownloadService(HttpMessageHandler messageHandler)
+    /// <summary>
+    /// Test-only seam for handlers that return raw, un-followed HTTP responses.
+    /// Production callers must use the parameterless constructor.
+    /// </summary>
+    internal HttpDownloadService(HttpMessageHandler messageHandler)
     {
         ArgumentNullException.ThrowIfNull(messageHandler);
         if (messageHandler is HttpClientHandler httpClientHandler)
