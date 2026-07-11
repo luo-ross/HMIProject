@@ -123,6 +123,13 @@ public sealed class FaultingFileSystem(IFileSystem inner) : IFileSystem
         inner.WriteAllTextAtomic(path, contents);
     }
 
+    public bool TryWriteAllTextNew(string path, string contents)
+    {
+        ThrowIfRequested(nameof(TryWriteAllTextNew), path);
+        Mutations.Add((nameof(TryWriteAllTextNew), path));
+        return inner.TryWriteAllTextNew(path, contents);
+    }
+
     public string ReadAllText(string path)
     {
         ThrowIfRequested(nameof(ReadAllText), path);

@@ -32,6 +32,8 @@ public interface IFileSystem
 
     void WriteAllTextAtomic(string path, string contents);
 
+    bool TryWriteAllTextNew(string path, string contents);
+
     string ReadAllText(string path);
 
     long GetFileLength(string path);

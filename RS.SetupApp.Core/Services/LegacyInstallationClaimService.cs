@@ -168,16 +168,17 @@ public sealed class LegacyInstallationClaimService
         state.InstallationId = installationId;
         string serializedState;
         string serializedMarker;
+        InstallationOwnershipMarker marker = new()
+        {
+            ProductId = product.ProductId,
+            InstallationId = installationId,
+            InstallScope = state.InstallScope,
+            CreatedAtUtc = state.InstalledAtUtc
+        };
         try
         {
             serializedState = _serializer.Serialize(state);
-            serializedMarker = _serializer.Serialize(new InstallationOwnershipMarker
-            {
-                ProductId = product.ProductId,
-                InstallationId = installationId,
-                InstallScope = state.InstallScope,
-                CreatedAtUtc = state.InstalledAtUtc
-            });
+            serializedMarker = _serializer.Serialize(marker);
         }
         catch
         {
@@ -195,14 +196,32 @@ public sealed class LegacyInstallationClaimService
                     markerChangeFailure ?? "The ownership marker changed before the claim write began.");
             }
 
-            _fileSystem.WriteAllTextAtomic(statePath, serializedState);
-            if (!SnapshotStillMatches(markerPreimage, out markerChangeFailure))
+            bool markerCreated = _ownershipService.TryCreate(lockedInstallDirectory, marker);
+            if (!markerCreated)
             {
-                throw new OwnershipMarkerChangedException(
-                    markerChangeFailure ?? "The ownership marker changed before it could be written.");
+                state.InstallationId = previousInstallationId;
+                _ = TryLoadExistingMarker(
+                    markerPath,
+                    lockedInstallDirectory,
+                    out _,
+                    out string? competingMarkerFailure);
+                return Failure(
+                    "ownership-marker-conflict",
+                    competingMarkerFailure ?? "A competing ownership marker was created before this claim could commit.");
             }
 
-            _fileSystem.WriteAllTextAtomic(markerPath, serializedMarker);
+            if (!CurrentFileHasContents(markerPath, serializedMarker, out markerChangeFailure))
+            {
+                throw new OwnershipMarkerChangedException(
+                    markerChangeFailure ?? "The newly created ownership marker changed before state could be written.");
+            }
+
+            _fileSystem.WriteAllTextAtomic(statePath, serializedState);
+            if (!CurrentFileHasContents(markerPath, serializedMarker, out markerChangeFailure))
+            {
+                throw new OwnershipMarkerChangedException(
+                    markerChangeFailure ?? "The newly created ownership marker changed before the claim completed.");
+            }
 
             return new LegacyInstallationClaimResult(
                 true,
@@ -492,6 +511,26 @@ public sealed class LegacyInstallationClaimService
         if (!matches)
         {
             failure = $"The file '{expected.Path}' changed during the legacy claim.";
+        }
+
+        return matches;
+    }
+
+    private bool CurrentFileHasContents(
+        string path,
+        string expectedContents,
+        out string? failure)
+    {
+        if (!TryCaptureFile(path, out FileSnapshot current, out failure))
+        {
+            return false;
+        }
+
+        bool matches = current.Existed &&
+            string.Equals(current.Contents, expectedContents, StringComparison.Ordinal);
+        if (!matches)
+        {
+            failure = $"The file '{path}' no longer contains the content written by this claim.";
         }
 
         return matches;

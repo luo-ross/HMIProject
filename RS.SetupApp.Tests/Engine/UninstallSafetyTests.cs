@@ -86,8 +86,10 @@ public sealed class UninstallSafetyTests
 
         Assert.IsTrue(result.Succeeded, result.Message);
         Assert.AreEqual(1, fixture.Registry.RemoveCallCount);
-        Assert.IsTrue(fixture.FileSystem.Mutations.Count(mutation =>
-            mutation.Operation == nameof(IFileSystem.WriteAllTextAtomic)) >= 2);
+        Assert.IsTrue(fixture.FileSystem.Mutations.Any(mutation =>
+            mutation.Operation == nameof(IFileSystem.WriteAllTextAtomic)));
+        Assert.IsTrue(fixture.FileSystem.Mutations.Any(mutation =>
+            mutation.Operation == nameof(IFileSystem.TryWriteAllTextNew)));
         Assert.IsFalse(File.Exists(fixture.LoadedStatePath));
         Assert.IsFalse(Directory.Exists(fixture.InstallDirectory));
     }

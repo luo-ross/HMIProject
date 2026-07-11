@@ -35,6 +35,12 @@ public sealed class InstallationOwnershipService
         _fileSystem.WriteAllTextAtomic(markerPath, _serializer.Serialize(marker));
     }
 
+    public bool TryCreate(string installDirectory, InstallationOwnershipMarker marker)
+    {
+        string markerPath = GetMarkerPath(installDirectory);
+        return _fileSystem.TryWriteAllTextNew(markerPath, _serializer.Serialize(marker));
+    }
+
     public void Delete(string installDirectory)
     {
         _fileSystem.DeleteFile(GetMarkerPath(installDirectory));

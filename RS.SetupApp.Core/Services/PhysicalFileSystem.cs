@@ -140,6 +140,46 @@ public sealed class PhysicalFileSystem : IFileSystem
         }
     }
 
+    public bool TryWriteAllTextNew(string path, string contents)
+    {
+        string fullPath = Path.GetFullPath(path);
+        FileStream stream;
+        try
+        {
+            stream = new FileStream(
+                fullPath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 4096,
+                FileOptions.WriteThrough);
+        }
+        catch (IOException exception) when (IsAlreadyExists(exception))
+        {
+            return false;
+        }
+
+        using (stream)
+        using (StreamWriter writer = new(
+                   stream,
+                   new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+                   bufferSize: 1024,
+                   leaveOpen: true))
+        {
+            writer.Write(contents);
+            writer.Flush();
+            stream.Flush(flushToDisk: true);
+        }
+
+        return true;
+    }
+
+    private static bool IsAlreadyExists(IOException exception)
+    {
+        int nativeErrorCode = exception.HResult & 0xFFFF;
+        return nativeErrorCode is 80 or 183;
+    }
+
     public string ReadAllText(string path) => File.ReadAllText(path, Encoding.UTF8);
 
     public long GetFileLength(string path) => new FileInfo(path).Length;

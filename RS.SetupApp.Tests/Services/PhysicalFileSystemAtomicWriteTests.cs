@@ -52,6 +52,33 @@ public sealed class PhysicalFileSystemAtomicWriteTests
     }
 
     [TestMethod]
+    public void TryWriteAllTextNew_ShouldCreateNewFile()
+    {
+        using TempDirectoryScope temp = new();
+        string path = Path.Combine(temp.DirectoryPath, "owner.json");
+        PhysicalFileSystem fileSystem = new();
+
+        bool created = fileSystem.TryWriteAllTextNew(path, "new owner");
+
+        Assert.IsTrue(created);
+        Assert.AreEqual("new owner", File.ReadAllText(path));
+    }
+
+    [TestMethod]
+    public void TryWriteAllTextNew_ShouldNotOverwriteExistingFile()
+    {
+        using TempDirectoryScope temp = new();
+        string path = Path.Combine(temp.DirectoryPath, "owner.json");
+        File.WriteAllText(path, "foreign owner");
+        PhysicalFileSystem fileSystem = new();
+
+        bool created = fileSystem.TryWriteAllTextNew(path, "new owner");
+
+        Assert.IsFalse(created);
+        Assert.AreEqual("foreign owner", File.ReadAllText(path));
+    }
+
+    [TestMethod]
     public void MoveFile_ShouldOverwriteDestination_WhenRequested()
     {
         using TempDirectoryScope temp = new();

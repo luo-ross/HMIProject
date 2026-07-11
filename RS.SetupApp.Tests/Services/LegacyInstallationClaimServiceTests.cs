@@ -25,8 +25,10 @@ public sealed class LegacyInstallationClaimServiceTests
         Assert.AreEqual(result.InstallationId, marker.InstallationId);
         Assert.AreEqual(fixture.Product.ProductId, marker.ProductId);
         Assert.AreEqual(fixture.State.InstallScope, marker.InstallScope);
-        Assert.AreEqual(2, fixture.FileSystem.Mutations.Count(mutation =>
+        Assert.AreEqual(1, fixture.FileSystem.Mutations.Count(mutation =>
             mutation.Operation == nameof(IFileSystem.WriteAllTextAtomic)));
+        Assert.AreEqual(1, fixture.FileSystem.Mutations.Count(mutation =>
+            mutation.Operation == nameof(IFileSystem.TryWriteAllTextNew)));
     }
 
     [TestMethod]
@@ -152,7 +154,7 @@ public sealed class LegacyInstallationClaimServiceTests
             fixture.InstallDirectory,
             SetupRuntimeDefaults.OwnershipMarkerFileName);
         fixture.FileSystem.FailureFactory = (operation, path) =>
-            operation == nameof(IFileSystem.WriteAllTextAtomic) && PathsEqual(path, markerPath)
+            operation == nameof(IFileSystem.TryWriteAllTextNew) && PathsEqual(path, markerPath)
                 ? new IOException("marker write failed")
                 : null;
 
@@ -181,7 +183,7 @@ public sealed class LegacyInstallationClaimServiceTests
         };
         fixture.FileSystem.FailureFactory = (operation, path) =>
         {
-            if (operation != nameof(IFileSystem.WriteAllTextAtomic) || !PathsEqual(path, markerPath))
+            if (operation != nameof(IFileSystem.TryWriteAllTextNew) || !PathsEqual(path, markerPath))
             {
                 return null;
             }
@@ -247,6 +249,70 @@ public sealed class LegacyInstallationClaimServiceTests
         Assert.IsNotNull(persistedMarker);
         Assert.AreEqual(foreignMarker.ProductId, persistedMarker.ProductId);
         Assert.AreEqual(foreignMarker.InstallationId, persistedMarker.InstallationId);
+    }
+
+    [TestMethod]
+    public async Task ClaimAsync_ShouldNotClobberForeignMarker_WhenItAppearsImmediatelyBeforeCreation()
+    {
+        using ClaimFixture fixture = new();
+        string originalState = File.ReadAllText(fixture.StatePath);
+        string markerPath = Path.Combine(
+            fixture.InstallDirectory,
+            SetupRuntimeDefaults.OwnershipMarkerFileName);
+        InstallationOwnershipMarker foreignMarker = new()
+        {
+            ProductId = "foreign-product",
+            InstallationId = Guid.NewGuid(),
+            InstallScope = InstallScope.CurrentUser
+        };
+        bool injected = false;
+        fixture.FileSystem.FailureFactory = (operation, path) =>
+        {
+            bool isMarkerCreation = operation == nameof(IFileSystem.WriteAllTextAtomic) ||
+                operation == "TryWriteAllTextNew";
+            if (injected || !isMarkerCreation || !PathsEqual(path, markerPath))
+            {
+                return null;
+            }
+
+            injected = true;
+            fixture.Serializer.Save(markerPath, foreignMarker);
+            return null;
+        };
+
+        LegacyInstallationClaimResult result = await fixture.ClaimAsync();
+
+        Assert.IsFalse(result.Succeeded);
+        Assert.AreEqual("ownership-marker-conflict", result.FailureCode);
+        Assert.AreEqual(originalState, File.ReadAllText(fixture.StatePath));
+        InstallationOwnershipMarker? persistedMarker = fixture.OwnershipService.Load(fixture.InstallDirectory);
+        Assert.IsNotNull(persistedMarker);
+        Assert.AreEqual(foreignMarker.ProductId, persistedMarker.ProductId);
+        Assert.AreEqual(foreignMarker.InstallationId, persistedMarker.InstallationId);
+    }
+
+    [TestMethod]
+    public async Task ClaimAsync_ShouldDeleteOnlyOwnMarker_WhenStateWriteFailsAfterMarkerCreation()
+    {
+        using ClaimFixture fixture = new();
+        string originalState = File.ReadAllText(fixture.StatePath);
+        string markerPath = Path.Combine(
+            fixture.InstallDirectory,
+            SetupRuntimeDefaults.OwnershipMarkerFileName);
+        fixture.FileSystem.FailureFactory = (operation, path) =>
+            operation == nameof(IFileSystem.WriteAllTextAtomic) && PathsEqual(path, fixture.StatePath)
+                ? new IOException("state write failed")
+                : null;
+
+        LegacyInstallationClaimResult result = await fixture.ClaimAsync();
+
+        Assert.IsFalse(result.Succeeded);
+        Assert.AreEqual(originalState, File.ReadAllText(fixture.StatePath));
+        Assert.IsFalse(File.Exists(markerPath));
+        Assert.AreEqual(1, fixture.FileSystem.Mutations.Count(mutation =>
+            mutation.Operation == "TryWriteAllTextNew" && PathsEqual(mutation.Path, markerPath)));
+        Assert.AreEqual(1, fixture.FileSystem.Mutations.Count(mutation =>
+            mutation.Operation == nameof(IFileSystem.DeleteFile) && PathsEqual(mutation.Path, markerPath)));
     }
 
     private static bool PathsEqual(string left, string right)
