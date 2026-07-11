@@ -1,0 +1,14 @@
+<UserControl x:Class="RS.SetupApp.Views.WelcomePage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="{Binding Ui.WelcomeTitle}" FontSize="32" FontWeight="SemiBold" Foreground="{StaticResource TextStrongBrush}" />
+        <TextBlock Text="{Binding WelcomeText}" Margin="0,16,0,0" FontSize="15" Foreground="{StaticResource TextBodyBrush}" LineHeight="25" TextWrapping="Wrap" />
+        <Border Margin="0,30,0,0" Padding="22" Background="{StaticResource SurfaceSoftBrush}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="12">
+            <StackPanel><TextBlock Text="{Binding Ui.WelcomeChecklistTitle}" FontWeight="SemiBold" FontSize="16" />
+                <TextBlock Text="{Binding Ui.WelcomeChecklistStepOne}" Margin="0,14,0,0" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding Ui.WelcomeChecklistStepTwo}" Margin="0,10,0,0" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding Ui.WelcomeChecklistStepThree}" Margin="0,10,0,0" TextWrapping="Wrap" /></StackPanel>
+        </Border>
+        <Button Command="{Binding ContinueCommand}" Content="{Binding Ui.ContinueButtonText}" Style="{StaticResource PrimaryButtonStyle}" Background="{Binding AccentBrush}" Margin="0,30,0,0" HorizontalAlignment="Left"
+                AutomationProperties.AutomationId="WelcomeContinue" AutomationProperties.Name="{Binding Ui.ContinueButtonText}" />
+    </StackPanel>
+</UserControl>

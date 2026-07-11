@@ -1,0 +1,21 @@
+<UserControl x:Class="RS.SetupApp.Views.InstallOptionsPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+        <TextBlock Text="{Binding Ui.InstallOptionsTitle}" FontSize="32" FontWeight="SemiBold" Foreground="{StaticResource TextStrongBrush}" />
+        <TextBlock Text="{Binding Ui.InstallOptionsSubtitle}" Margin="0,12,0,0" Foreground="{StaticResource TextBodyBrush}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Ui.InstallScopeLabel}" Margin="0,24,0,10" FontWeight="SemiBold" />
+        <RadioButton Content="{Binding Ui.InstallScopeCurrentUserTitle}" IsChecked="{Binding InstallOptions.InstallForAllUsers, Converter={StaticResource InverseBooleanConverter}}" Style="{StaticResource OptionCardRadioButtonStyle}" Margin="0,0,0,10"
+                     AutomationProperties.AutomationId="ScopeCurrentUser" AutomationProperties.Name="{Binding Ui.InstallScopeCurrentUserTitle}" />
+        <RadioButton Content="{Binding Ui.InstallScopeAllUsersTitle}" IsChecked="{Binding InstallOptions.InstallForAllUsers}" IsEnabled="{Binding InstallOptions.AllowMachineInstall}" Style="{StaticResource OptionCardRadioButtonStyle}"
+                     AutomationProperties.AutomationId="ScopeAllUsers" AutomationProperties.Name="{Binding Ui.InstallScopeAllUsersTitle}" />
+        <TextBlock Text="{Binding Ui.InstallDirectoryLabel}" Margin="0,24,0,8" FontWeight="SemiBold" />
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <TextBox Text="{Binding InstallOptions.InstallDirectory, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding InstallOptions.IsLocked}" Style="{StaticResource ModernTextBoxStyle}" AutomationProperties.AutomationId="InstallDirectory" AutomationProperties.Name="{Binding Ui.InstallDirectoryLabel}" />
+            <Button Grid.Column="1" Command="{Binding BrowseInstallDirectoryCommand}" Content="{Binding Ui.BrowseButtonText}" Style="{StaticResource SecondaryButtonStyle}" Margin="10,0,0,0" AutomationProperties.AutomationId="BrowseInstallDirectory" AutomationProperties.Name="{Binding Ui.BrowseButtonText}" />
+            <Button Grid.Column="2" Command="{Binding ResetInstallDirectoryCommand}" Content="{Binding Ui.ResetButtonText}" Style="{StaticResource SecondaryButtonStyle}" Margin="10,0,0,0" AutomationProperties.AutomationId="ResetInstallDirectory" AutomationProperties.Name="{Binding Ui.ResetButtonText}" />
+        </Grid>
+        <CheckBox Content="{Binding Ui.CreateShortcutsText}" IsChecked="{Binding InstallOptions.CreateShortcuts}" Style="{StaticResource ModernCheckBoxStyle}" Margin="0,22,0,0" AutomationProperties.AutomationId="CreateShortcuts" AutomationProperties.Name="{Binding Ui.CreateShortcutsText}" />
+        <CheckBox Content="{Binding Ui.EnableAutoStartText}" IsChecked="{Binding InstallOptions.EnableAutoStart}" Style="{StaticResource ModernCheckBoxStyle}" Margin="0,12,0,0" AutomationProperties.AutomationId="EnableAutoStart" AutomationProperties.Name="{Binding Ui.EnableAutoStartText}" />
+        <StackPanel Orientation="Horizontal" Margin="0,30,0,0"><Button Command="{Binding BackCommand}" Content="{Binding Ui.BackButtonText}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,10,0" AutomationProperties.AutomationId="InstallOptionsBack" AutomationProperties.Name="{Binding Ui.BackButtonText}" />
+            <Button Command="{Binding ReviewCommand}" Content="{Binding Ui.ReviewButtonText}" Style="{StaticResource PrimaryButtonStyle}" Background="{Binding AccentBrush}" AutomationProperties.AutomationId="InstallOptionsReview" AutomationProperties.Name="{Binding Ui.ReviewButtonText}" /></StackPanel>
+    </StackPanel></ScrollViewer>
+</UserControl>

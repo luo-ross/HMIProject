@@ -1,6 +1,6 @@
-using System.IO;
+using System.ComponentModel;
 using System.Windows;
-using RS.SetupApp.Core;
+using System.Windows.Input;
 using RS.SetupApp.ViewModels;
 
 namespace RS.SetupApp;
@@ -8,6 +8,8 @@ namespace RS.SetupApp;
 public partial class MainWindow : Window
 {
     private readonly MainWindowViewModel _viewModel;
+    private bool _isClosingAuthorized;
+    private bool _isCloseCoordinatorRunning;
 
     public MainWindow(MainWindowViewModel viewModel)
     {
@@ -15,6 +17,10 @@ public partial class MainWindow : Window
         _viewModel = viewModel;
         DataContext = _viewModel;
         Loaded += MainWindow_Loaded;
+        Closing += MainWindow_Closing;
+        PreviewKeyDown += MainWindow_PreviewKeyDown;
+        _viewModel.RelaunchRequested += ViewModel_RelaunchRequested;
+        _viewModel.FinishRequested += ViewModel_FinishRequested;
     }
 
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -27,171 +33,69 @@ public partial class MainWindow : Window
                 await _viewModel.RunStartupOperationAsync().ConfigureAwait(true);
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Windows.MessageBox.Show(ex.Message, _viewModel.ErrorDialogTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            _viewModel.ReportUnexpectedError(exception);
         }
     }
 
-    private void WelcomeContinue_Click(object sender, RoutedEventArgs e)
+    private void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
-        _viewModel.ShowLicenseOrInstall();
-    }
-
-    private void LicenseBack_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.ShowWelcome();
-    }
-
-    private void LicenseContinue_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel.CanExecuteAction)
+        if (_isClosingAuthorized)
         {
-            _viewModel.ShowInstallOptions();
-        }
-    }
-
-    private void InstallBack_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel.IsInstalled)
-        {
-            _viewModel.ShowMaintenance();
             return;
         }
 
-        _viewModel.ShowWelcome();
+        e.Cancel = true;
+        BeginCloseRequest();
     }
 
-    private async void InstallStart_Click(object sender, RoutedEventArgs e)
+    private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        await ExecuteAsync(SetupMode.Install).ConfigureAwait(true);
-    }
-
-    private async void MaintenanceRepair_Click(object sender, RoutedEventArgs e)
-    {
-        await ExecuteAsync(SetupMode.Repair).ConfigureAwait(true);
-    }
-
-    private async void MaintenanceCheckUpdate_Click(object sender, RoutedEventArgs e)
-    {
-        await _viewModel.CheckForUpdatesAsync().ConfigureAwait(true);
-    }
-
-    private async void MaintenanceUpdate_Click(object sender, RoutedEventArgs e)
-    {
-        await _viewModel.ShowUpdateAsync().ConfigureAwait(true);
-    }
-
-    private void MaintenanceReinstall_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.ShowInstallOptions();
-    }
-
-    private void MaintenanceUninstall_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.ShowUninstallConfirmation();
-    }
-
-    private void UpdateBack_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.ShowMaintenance();
-    }
-
-    private async void UpdateStart_Click(object sender, RoutedEventArgs e)
-    {
-        await ExecuteAsync(SetupMode.Update).ConfigureAwait(true);
-    }
-
-    private void UninstallBack_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.ShowMaintenance();
-    }
-
-    private async void UninstallStart_Click(object sender, RoutedEventArgs e)
-    {
-        await ExecuteAsync(SetupMode.Uninstall).ConfigureAwait(true);
-    }
-
-    private void CompleteClose_Click(object sender, RoutedEventArgs e)
-    {
-        System.Windows.Application.Current.Shutdown();
-    }
-
-    private void LaunchInstalledApp_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.LaunchInstalledApplication();
-    }
-
-    private void Support_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.OpenSupportLink();
-    }
-
-    private void ReleaseNotes_Click(object sender, RoutedEventArgs e)
-    {
-        _viewModel.OpenUpdateLink();
-    }
-
-    private void BrowseInstallDirectory_Click(object sender, RoutedEventArgs e)
-    {
-        Microsoft.Win32.OpenFolderDialog dialog = new()
+        if (e.Key == Key.Escape)
         {
-            Title = _viewModel.SelectFolderDialogDescription,
-            Multiselect = false
-        };
-
-        if (!string.IsNullOrWhiteSpace(_viewModel.InstallDirectory) && Directory.Exists(_viewModel.InstallDirectory))
-        {
-            dialog.InitialDirectory = _viewModel.InstallDirectory;
-            dialog.FolderName = _viewModel.InstallDirectory;
-        }
-
-        if (dialog.ShowDialog(this) == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
-        {
-            _viewModel.SetInstallDirectory(dialog.FolderName);
+            e.Handled = true;
+            BeginCloseRequest();
         }
     }
 
-    private void ResetInstallDirectory_Click(object sender, RoutedEventArgs e)
+    private async void BeginCloseRequest()
     {
-        _viewModel.ResetInstallDirectory();
+        if (_isCloseCoordinatorRunning)
+        {
+            return;
+        }
+
+        _isCloseCoordinatorRunning = true;
+        try
+        {
+            if (await _viewModel.RequestCloseAsync().ConfigureAwait(true))
+            {
+                _isClosingAuthorized = true;
+                Close();
+            }
+        }
+        finally
+        {
+            _isCloseCoordinatorRunning = false;
+        }
     }
 
-    private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void CloseWindow_Click(object sender, RoutedEventArgs e) => BeginCloseRequest();
+
+    private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.ChangedButton == System.Windows.Input.MouseButton.Left)
+        if (e.ChangedButton == MouseButton.Left)
         {
             DragMove();
         }
     }
 
-    private void CloseWindow_Click(object sender, RoutedEventArgs e)
+    private void ViewModel_RelaunchRequested(object? sender, EventArgs e)
     {
-        Close();
+        _isClosingAuthorized = true;
+        Application.Current.Shutdown();
     }
 
-    private async Task ExecuteAsync(SetupMode mode)
-    {
-        if (!_viewModel.CanExecuteAction)
-        {
-            return;
-        }
-
-        RuntimeOptions options = _viewModel.CreateOptions(mode);
-        string[] args = _viewModel.BuildArguments(options);
-
-        if (await ElevationLauncher.TryRelaunchElevatedAsync(options, args, CancellationToken.None).ConfigureAwait(true))
-        {
-            System.Windows.Application.Current.Shutdown();
-            return;
-        }
-
-        if (await SelfWorkerLauncher.TryRelaunchAsync(options, args, CancellationToken.None).ConfigureAwait(true))
-        {
-            System.Windows.Application.Current.Shutdown();
-            return;
-        }
-
-        await _viewModel.ExecuteAsync(options).ConfigureAwait(true);
-    }
+    private void ViewModel_FinishRequested(object? sender, EventArgs e) => BeginCloseRequest();
 }

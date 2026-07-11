@@ -1,0 +1,11 @@
+<UserControl x:Class="RS.SetupApp.Views.LicensePage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <TextBlock Text="{Binding Ui.LicenseTitle}" FontSize="32" FontWeight="SemiBold" Foreground="{StaticResource TextStrongBrush}" />
+        <TextBox Grid.Row="1" Text="{Binding LicenseText}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,20" Style="{StaticResource ModernTextBoxStyle}"
+                 AutomationProperties.AutomationId="LicenseText" AutomationProperties.Name="{Binding Ui.LicenseTitle}" />
+        <StackPanel Grid.Row="2"><CheckBox Content="{Binding Ui.AcceptLicenseText}" IsChecked="{Binding AcceptLicense}" Style="{StaticResource ModernCheckBoxStyle}" Margin="0,0,0,20"
+                                      AutomationProperties.AutomationId="AcceptLicense" AutomationProperties.Name="{Binding Ui.AcceptLicenseText}" />
+            <StackPanel Orientation="Horizontal"><Button Command="{Binding BackCommand}" Content="{Binding Ui.BackButtonText}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,10,0" AutomationProperties.AutomationId="LicenseBack" AutomationProperties.Name="{Binding Ui.BackButtonText}" />
+                <Button Command="{Binding OpenInstallOptionsCommand}" Content="{Binding Ui.ContinueButtonText}" Style="{StaticResource PrimaryButtonStyle}" Background="{Binding AccentBrush}" AutomationProperties.AutomationId="LicenseContinue" AutomationProperties.Name="{Binding Ui.ContinueButtonText}" /></StackPanel></StackPanel>
+    </Grid>
+</UserControl>

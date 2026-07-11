@@ -140,6 +140,30 @@ public sealed class SetupLanguageResources
 
     public string UninstallVerb { get; init; } = string.Empty;
 
+    public string ReviewTitle { get; init; } = "Review";
+
+    public string ReviewDescription { get; init; } = "Review your deployment choices before the safe setup workflow starts.";
+
+    public string ReviewButtonText { get; init; } = "Review";
+
+    public string OpenLogButtonText { get; init; } = "Open log";
+
+    public string LogDetailsLabel { get; init; } = "Log details";
+
+    public string RecoveryTitle { get; init; } = "Recovery needs attention";
+
+    public string RecoveryRetryButtonText { get; init; } = "Retry recovery";
+
+    public string LegacyClaimDescription { get; init; } = "Existing installation detected without an ownership marker.";
+
+    public string LegacyClaimButtonText { get; init; } = "Claim legacy installation";
+
+    public string CloseWindowAccessibleName { get; init; } = "Close setup window";
+
+    public string ProgressTimelineAccessibleName { get; init; } = "Completed setup steps";
+
+    public string RecoveryErrorsAccessibleName { get; init; } = "Recovery errors";
+
     public string FormatUpdateStatus(string value)
     {
         return string.Format(UpdateStatusTemplate, value);

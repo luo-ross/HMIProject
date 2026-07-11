@@ -1,0 +1,10 @@
+<UserControl x:Class="RS.SetupApp.Views.ReviewPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel><TextBlock Text="{Binding Ui.ReviewTitle}" FontSize="32" FontWeight="SemiBold" Foreground="{StaticResource TextStrongBrush}" />
+        <TextBlock Text="{Binding Ui.ReviewDescription}" Margin="0,14,0,24" Foreground="{StaticResource TextBodyBrush}" TextWrapping="Wrap" />
+        <Border Padding="20" Background="{StaticResource SurfaceSoftBrush}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="12"><StackPanel>
+            <TextBlock Text="{Binding InstallOptions.InstallDirectory}" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding StatusMessage}" Margin="0,12,0,0" Foreground="{StaticResource TextBodyBrush}" TextWrapping="Wrap" /></StackPanel></Border>
+        <StackPanel Orientation="Horizontal" Margin="0,30,0,0"><Button Command="{Binding BackCommand}" Content="{Binding Ui.BackButtonText}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,10,0" AutomationProperties.AutomationId="ReviewBack" AutomationProperties.Name="{Binding Ui.BackButtonText}" />
+            <Button Command="{Binding InstallCommand}" Content="{Binding Ui.InstallButtonText}" Style="{StaticResource PrimaryButtonStyle}" Background="{Binding AccentBrush}" AutomationProperties.AutomationId="ReviewInstall" AutomationProperties.Name="{Binding Ui.InstallButtonText}" /></StackPanel>
+    </StackPanel>
+</UserControl>

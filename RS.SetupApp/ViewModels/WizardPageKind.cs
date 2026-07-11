@@ -5,9 +5,12 @@ public enum WizardPageKind
     Welcome,
     License,
     InstallOptions,
+    Review,
     Progress,
-    Complete,
+    Recovery,
+    Completion,
     Maintenance,
+    UninstallConfirm,
     Update,
-    UninstallConfirm
+    Complete = Completion
 }

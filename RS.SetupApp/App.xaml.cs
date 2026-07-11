@@ -70,7 +70,13 @@ public partial class App : System.Windows.Application
 
     private void ShowMainWindow(SetupServices services, SetupEngine engine, RuntimeOptions? startupOptions)
     {
-        MainWindowViewModel viewModel = new(services, engine, startupOptions);
+        MainWindowViewModel viewModel = new(
+            new SetupWorkflow(services, engine),
+            new SetupRelaunchService(),
+            new FolderPicker(),
+            new ExternalLauncher(),
+            new SetupDialogService(),
+            startupOptions);
         MainWindow window = new(viewModel);
         MainWindow = window;
         ShutdownMode = System.Windows.ShutdownMode.OnMainWindowClose;

@@ -53,6 +53,10 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="RootBorder" Property="Opacity" Value="0.85" />
                         </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource SelectionBrush}" />
+                            <Setter TargetName="RootBorder" Property="BorderThickness" Value="2" />
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="RootBorder" Property="Opacity" Value="0.45" />
                         </Trigger>

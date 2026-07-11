@@ -38,6 +38,28 @@ public sealed class LegacyInstallationClaimService
         return ClaimAsync(product, state, new RuntimeOptions(), cancellationToken);
     }
 
+    /// <summary>
+    /// Validates legacy installation evidence without acquiring a claim lock or changing ownership.
+    /// UI callers use this to offer an explicit claim action only when it is safe to do so.
+    /// </summary>
+    public Task<LegacyInstallationClaimResult> ValidateAsync(
+        ProductManifest product,
+        InstalledStateManifest state,
+        RuntimeOptions options,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        LegacyInstallationClaimResult requestedRootValidation = ValidateRequestedInstallDirectory(state, options);
+        if (!requestedRootValidation.Succeeded)
+        {
+            return Task.FromResult(requestedRootValidation);
+        }
+
+        LegacyInstallationClaimResult evidenceValidation = ValidateEvidence(product, state);
+        return Task.FromResult(evidenceValidation);
+    }
+
     public Task<LegacyInstallationClaimResult> ClaimAsync(
         ProductManifest product,
         InstalledStateManifest state,
