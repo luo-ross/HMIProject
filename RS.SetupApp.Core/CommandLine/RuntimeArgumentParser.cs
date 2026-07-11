@@ -2,6 +2,19 @@ namespace RS.SetupApp.Core;
 
 public static class RuntimeArgumentParser
 {
+    public static int GetSilentExitCode(SetupOperationResult result)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+        return result.Status switch
+        {
+            SetupOperationStatus.Succeeded => 0,
+            SetupOperationStatus.Cancelled => 2,
+            SetupOperationStatus.Failed => 3,
+            SetupOperationStatus.RecoveryFailed => 4,
+            _ => 3
+        };
+    }
+
     public static RuntimeOptions Parse(IReadOnlyList<string> args)
     {
         RuntimeOptions options = new();

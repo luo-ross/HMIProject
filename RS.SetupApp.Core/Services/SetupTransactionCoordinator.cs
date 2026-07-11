@@ -77,11 +77,23 @@ public sealed class SetupTransactionCoordinator : ISetupTransactionCoordinator
             }
         }
 
+        if (errors.Count == 0)
+        {
+            journal.Phase = SetupTransactionPhase.RolledBack;
+            try
+            {
+                await _store.SaveAsync(journal, recoveryToken).ConfigureAwait(false);
+                return errors;
+            }
+            catch (Exception exception)
+            {
+                errors.Add($"Journal save: {exception.Message}");
+            }
+        }
+
         journal.RecoveryErrors.Clear();
         journal.RecoveryErrors.AddRange(errors);
-        journal.Phase = errors.Count == 0
-            ? SetupTransactionPhase.RolledBack
-            : SetupTransactionPhase.RecoveryFailed;
+        journal.Phase = SetupTransactionPhase.RecoveryFailed;
         await TrySaveAsync(journal, recoveryToken, errors).ConfigureAwait(false);
         return errors;
     }

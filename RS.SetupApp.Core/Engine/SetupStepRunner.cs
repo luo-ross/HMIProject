@@ -14,17 +14,13 @@ public sealed class SetupStepRunner
 
         try
         {
-            if (context.Journal != null)
-            {
-                context.Journal.Phase = SetupTransactionPhase.Applying;
-                await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
-            }
-
             for (int index = 0; index < steps.Count; index++)
             {
                 ISetupStep step = steps[index];
+                await PersistPhaseBeforeStepAsync(context, step).ConfigureAwait(false);
                 progress?.Report(new SetupProgress
                 {
+                    OperationId = context.OperationId,
                     CurrentStep = index + 1,
                     TotalSteps = steps.Count,
                     Message = step.Name
@@ -37,14 +33,14 @@ public sealed class SetupStepRunner
                 }
 
                 await step.ExecuteAsync(context, operationToken).ConfigureAwait(false);
-                if (context.Journal != null)
+                if (context.Journal != null && !IsTerminal(context.Journal.Phase))
                 {
                     context.Journal.CompletedSteps.Add(step.Name);
                     await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
                 }
             }
 
-            if (context.Journal != null)
+            if (context.Journal != null && !IsTerminal(context.Journal.Phase))
             {
                 context.Journal.Phase = SetupTransactionPhase.Verifying;
                 await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
@@ -57,7 +53,8 @@ public sealed class SetupStepRunner
             using CancellationTokenSource recoveryCancellation = new(TimeSpan.FromMinutes(5));
             CancellationToken independentRecoveryToken = recoveryCancellation.Token;
             List<string> recoveryErrors = [];
-            while (rollbackSteps.Count > 0)
+            bool transactionIsTerminal = context.Journal != null && IsTerminal(context.Journal.Phase);
+            while (!transactionIsTerminal && rollbackSteps.Count > 0)
             {
                 IRollbackStep rollbackStep = rollbackSteps.Pop();
                 try
@@ -72,7 +69,7 @@ public sealed class SetupStepRunner
                 }
             }
 
-            if (context.Journal != null && context.TransactionCoordinator != null)
+            if (!transactionIsTerminal && context.Journal != null && context.TransactionCoordinator != null)
             {
                 context.Journal.PrimaryError = primaryError.ToString();
                 IReadOnlyList<string> compensationErrors = await context.TransactionCoordinator
@@ -109,5 +106,33 @@ public sealed class SetupStepRunner
                 RecoveryErrors = recoveryErrors
             };
         }
+    }
+
+    private static async Task PersistPhaseBeforeStepAsync(SetupExecutionContext context, ISetupStep step)
+    {
+        if (context.Journal == null || IsTerminal(context.Journal.Phase))
+        {
+            return;
+        }
+
+        SetupTransactionPhase? nextPhase = step switch
+        {
+            CommitTransactionStep => SetupTransactionPhase.Verifying,
+            _ when context.Journal.Phase == SetupTransactionPhase.Prepared && step is not BeginTransactionStep
+                => SetupTransactionPhase.Applying,
+            _ => null
+        };
+        if (!nextPhase.HasValue)
+        {
+            return;
+        }
+
+        context.Journal.Phase = nextPhase.Value;
+        await context.Services.TransactionStore.SaveAsync(context.Journal, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    private static bool IsTerminal(SetupTransactionPhase phase)
+    {
+        return phase is SetupTransactionPhase.Committed or SetupTransactionPhase.RolledBack;
     }
 }

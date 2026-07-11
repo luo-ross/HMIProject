@@ -16,7 +16,28 @@ public sealed class SetupEngine
         IProgress<SetupProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        string productManifestPath = ResolveProductManifestPath(options);
+        string productManifestPath;
+        try
+        {
+            productManifestPath = ResolveProductManifestPath(options);
+        }
+        catch (Exception exception)
+        {
+            return new SetupOperationResult
+            {
+                Status = exception is OperationCanceledException
+                    ? SetupOperationStatus.Cancelled
+                    : SetupOperationStatus.Failed,
+                FailureCode = exception is OperationCanceledException
+                    ? SetupFailureCodes.Cancelled
+                    : SetupFailureCodes.OperationFailed,
+                PrimaryError = exception,
+                Mode = options.Mode,
+                Message = exception.Message,
+                LogPath = options.LogPath
+            };
+        }
+
         SetupExecutionContext context = new()
         {
             Options = options,
@@ -26,62 +47,74 @@ public sealed class SetupEngine
             Logger = new NullSetupLogger()
         };
 
+        string? logPath = null;
         try
         {
-            await RunStepsAsync(context, CreateBootstrapSteps(), progress: null, cancellationToken).ConfigureAwait(false);
+            await RunStepsAsync(context, CreateManifestBootstrapSteps(), progress: null, cancellationToken).ConfigureAwait(false);
             ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
+            InstallScope logScope = options.Scope ?? product.InstallDefaults.DefaultScope;
+            logPath = options.LogPath ?? _services.Paths.GetLogFilePath(product.ProductId, logScope);
+            context.Logger = _services.LoggerFactory(logPath);
 
-            InstallScope effectiveScope = context.UninstallPlan?.InstallScope
-                ?? options.Scope
-                ?? product.InstallDefaults.DefaultScope;
-            string logPath = options.LogPath ?? _services.Paths.GetLogFilePath(product.ProductId, effectiveScope);
+            SetupRecoveryResult? recoveryFailure;
+            try
+            {
+                recoveryFailure = await RecoverIncompleteTransactionsAsync(context).ConfigureAwait(false);
+            }
+            catch (Exception recoveryException)
+            {
+                context.Logger.Error("Recovery scan failed.", recoveryException);
+                return CreateRecoveryFailureResult(context, options, recoveryException, [recoveryException.Message], logPath);
+            }
 
-            ISetupLogger logger = _services.LoggerFactory(logPath);
-            context.Logger = logger;
+            if (recoveryFailure != null)
+            {
+                Exception primaryError = CreateRecoveredPrimaryError(recoveryFailure);
+                context.Logger.Error("Recovery failed.", primaryError);
+                return CreateRecoveryFailureResult(
+                    context,
+                    options,
+                    primaryError,
+                    recoveryFailure.Errors,
+                    logPath,
+                    recoveryFailure.Journal);
+            }
+
+            await RunStepsAsync(context, CreateStateBootstrapSteps(), progress: null, cancellationToken).ConfigureAwait(false);
             if (context.InstalledStateValidation != null)
             {
                 foreach (string warning in context.InstalledStateValidation.Warnings)
                 {
-                    logger.Warn(warning);
+                    context.Logger.Warn(warning);
                 }
             }
 
-            context.Extensions.AddRange(ExtensionLoader.Load(product, productManifestPath, logger));
+            context.Extensions.AddRange(ExtensionLoader.Load(product, productManifestPath, context.Logger));
 
             if (options.Mode == SetupMode.Uninstall)
             {
                 return await ExecuteUninstallAsync(context, progress, cancellationToken).ConfigureAwait(false);
             }
 
-            await InitializeTransactionAsync(context, cancellationToken).ConfigureAwait(false);
             await RunStepsAsync(context, CreateInstallSteps(), progress, cancellationToken).ConfigureAwait(false);
-            await CompleteTransactionAsync(context, cancellationToken).ConfigureAwait(false);
             LaunchInstalledApplication(context);
 
-            return new SetupOperationResult
-            {
-                Succeeded = true,
-                Mode = context.ActualMode,
-                Message = context.ActualMode == SetupMode.Update
+            return CreateSuccessResult(
+                context,
+                context.ActualMode,
+                context.ActualMode == SetupMode.Update
                     ? "Update completed successfully."
                     : context.ActualMode == SetupMode.Repair
                         ? "Repair completed successfully."
                         : "Installation completed successfully.",
-                LogPath = logPath,
-                InstalledState = context.ResultState
-            };
+                logPath,
+                context.ResultState);
         }
         catch (Exception ex)
         {
             context.Logger?.Error("Setup operation failed.", ex);
-            return new SetupOperationResult
-            {
-                Succeeded = false,
-                Mode = context.ActualMode == SetupMode.Install ? options.Mode : context.ActualMode,
-                Message = ex.Message,
-                LogPath = context.Logger?.LogPath,
-                InstalledState = context.ResultState ?? context.ExistingState
-            };
+            await CleanupCompletedTransactionAsync(context).ConfigureAwait(false);
+            return CreateFailureResult(context, options, ex, logPath);
         }
         finally
         {
@@ -140,15 +173,23 @@ public sealed class SetupEngine
         }
     }
 
-    private static IReadOnlyList<ISetupStep> CreateBootstrapSteps()
+    private static IReadOnlyList<ISetupStep> CreateManifestBootstrapSteps()
     {
         return
         [
             new LoadProductManifestStep(),
             new ValidateProductSchemaStep(),
-            new ValidateProductManifestStep(),
+            new ValidateProductManifestStep()
+        ];
+    }
+
+    private static IReadOnlyList<ISetupStep> CreateStateBootstrapSteps()
+    {
+        return
+        [
             new LoadInstalledStateStep(),
-            new ValidateInstalledStateStep()
+            new ValidateInstalledStateStep(),
+            new BeginTransactionStep()
         ];
     }
 
@@ -172,6 +213,7 @@ public sealed class SetupEngine
             new ApplySystemIntegrationsStep(),
             new WriteInstalledStateStep(),
             new InvokeAfterInstallExtensionsStep(),
+            new CommitTransactionStep(),
             new CleanupWorkingDirectoryStep()
         ];
     }
@@ -186,7 +228,9 @@ public sealed class SetupEngine
             new RemoveInstalledFilesStep(),
             new RemoveDataDirectoriesStep(),
             new RemoveInstalledStateStep(),
-            new InvokeAfterUninstallExtensionsStep()
+            new InvokeAfterUninstallExtensionsStep(),
+            new CommitTransactionStep(),
+            new CleanupWorkingDirectoryStep()
         ];
     }
 
@@ -199,10 +243,12 @@ public sealed class SetupEngine
         {
             return new SetupOperationResult
             {
-                Succeeded = true,
+                Status = SetupOperationStatus.Succeeded,
                 Mode = SetupMode.Uninstall,
                 Message = "Product is not installed.",
-                LogPath = context.Logger?.LogPath
+                LogPath = context.Logger?.LogPath,
+                OperationId = context.OperationId,
+                RecoveryDirectory = context.RecoveryDirectory
             };
         }
 
@@ -211,16 +257,13 @@ public sealed class SetupEngine
             throw new InvalidOperationException("A validated uninstall plan is required before uninstall can continue.");
         }
 
-        await InitializeTransactionAsync(context, cancellationToken).ConfigureAwait(false);
         await RunStepsAsync(context, CreateUninstallSteps(), progress, cancellationToken).ConfigureAwait(false);
-        await CompleteTransactionAsync(context, cancellationToken).ConfigureAwait(false);
-        return new SetupOperationResult
-        {
-            Succeeded = true,
-            Mode = SetupMode.Uninstall,
-            Message = "Uninstall completed successfully.",
-            LogPath = context.Logger?.LogPath
-        };
+        return CreateSuccessResult(
+            context,
+            SetupMode.Uninstall,
+            "Uninstall completed successfully.",
+            context.Logger?.LogPath,
+            installedState: null);
     }
 
     private string ResolveProductManifestPath(RuntimeOptions options)
@@ -289,76 +332,127 @@ public sealed class SetupEngine
             .Throw();
     }
 
-    private async Task InitializeTransactionAsync(SetupExecutionContext context, CancellationToken token)
+    private async Task<SetupRecoveryResult?> RecoverIncompleteTransactionsAsync(SetupExecutionContext context)
     {
         ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
-        InstallScope scope = context.UninstallPlan?.InstallScope
-            ?? context.Options.Scope
-            ?? product.InstallDefaults.DefaultScope;
-        string installDirectory = context.UninstallPlan?.InstallDirectory
-            ?? (!string.IsNullOrWhiteSpace(context.Options.InstallDirectory)
-                ? Path.GetFullPath(context.Options.InstallDirectory)
-                : context.Services.Paths.GetDefaultInstallDirectory(product, scope));
-        Guid operationId = Guid.NewGuid();
-        string recoveryDirectory = context.Services.Paths.GetRecoveryDirectory(product.ProductId, operationId, scope);
-        SetupTransactionJournal journal = new()
-        {
-            OperationId = operationId,
-            ProductId = product.ProductId,
-            Scope = scope,
-            Mode = context.Options.Mode,
-            InstallDirectory = installDirectory,
-            RecoveryDirectory = recoveryDirectory,
-            Phase = SetupTransactionPhase.Prepared,
-            StartedAtUtc = DateTimeOffset.UtcNow,
-            UpdatedAtUtc = DateTimeOffset.UtcNow
-        };
-
-        context.OperationId = operationId;
-        context.Journal = journal;
-        context.RecoveryDirectory = recoveryDirectory;
-        context.CanonicalDeletionTargets.Clear();
-        if (context.UninstallPlan != null)
-        {
-            context.CanonicalDeletionTargets.AddRange(context.UninstallPlan.FileSystemTargets);
-        }
-
-        context.TransactionCoordinator = new SetupTransactionCoordinator(
-            journal,
+        IReadOnlyCollection<InstallScope> scopes = context.Options.Scope is { } requestedScope
+            ? [requestedScope]
+            : product.InstallDefaults.AllowMachineInstall
+                ? [InstallScope.CurrentUser, InstallScope.AllUsers]
+                : [InstallScope.CurrentUser];
+        SetupRecoveryCoordinator coordinator = new(
             context.Services.TransactionStore,
             context.Services.FileSystem,
             context.Services.Registry,
             context.Services.Shortcuts);
-        await context.Services.TransactionStore.SaveAsync(journal, token).ConfigureAwait(false);
+
+        using CancellationTokenSource scanTimeout = new(TimeSpan.FromMinutes(5));
+        IReadOnlyList<SetupTransactionJournal> journals = await coordinator
+            .FindIncompleteAsync(product.ProductId, scopes, scanTimeout.Token)
+            .ConfigureAwait(false);
+        foreach (SetupTransactionJournal journal in journals)
+        {
+            using CancellationTokenSource recoveryTimeout = new(TimeSpan.FromMinutes(5));
+            SetupRecoveryResult result = await coordinator
+                .RecoverAsync(journal, recoveryTimeout.Token)
+                .ConfigureAwait(false);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
-    private static async Task CompleteTransactionAsync(SetupExecutionContext context, CancellationToken token)
+    private static SetupOperationResult CreateSuccessResult(
+        SetupExecutionContext context,
+        SetupMode mode,
+        string message,
+        string? logPath,
+        InstalledStateManifest? installedState)
     {
-        if (context.Journal == null)
+        return new SetupOperationResult
+        {
+            Status = SetupOperationStatus.Succeeded,
+            Mode = mode,
+            Message = message,
+            LogPath = logPath,
+            InstalledState = installedState,
+            OperationId = context.OperationId,
+            RecoveryDirectory = context.RecoveryDirectory
+        };
+    }
+
+    private static SetupOperationResult CreateFailureResult(
+        SetupExecutionContext context,
+        RuntimeOptions options,
+        Exception exception,
+        string? logPath)
+    {
+        SetupOperationStatus status = context.RecoveryErrors.Count > 0
+            ? SetupOperationStatus.RecoveryFailed
+            : exception is OperationCanceledException
+                ? SetupOperationStatus.Cancelled
+                : SetupOperationStatus.Failed;
+        string failureCode = status switch
+        {
+            SetupOperationStatus.RecoveryFailed => SetupFailureCodes.RecoveryFailed,
+            SetupOperationStatus.Cancelled => SetupFailureCodes.Cancelled,
+            _ when exception is SetupSafetyException => SetupFailureCodes.SafetyFailed,
+            _ => SetupFailureCodes.OperationFailed
+        };
+        return new SetupOperationResult
+        {
+            Status = status,
+            FailureCode = failureCode,
+            PrimaryError = exception,
+            RecoveryErrors = context.RecoveryErrors.ToArray(),
+            OperationId = context.OperationId,
+            RecoveryDirectory = context.RecoveryDirectory,
+            Mode = context.ActualMode == SetupMode.Install ? options.Mode : context.ActualMode,
+            Message = exception.Message,
+            LogPath = context.Logger?.LogPath ?? logPath,
+            InstalledState = context.ResultState ?? context.ExistingState
+        };
+    }
+
+    private static SetupOperationResult CreateRecoveryFailureResult(
+        SetupExecutionContext context,
+        RuntimeOptions options,
+        Exception primaryError,
+        IReadOnlyList<string> recoveryErrors,
+        string? logPath,
+        SetupTransactionJournal? journal = null)
+    {
+        return new SetupOperationResult
+        {
+            Status = SetupOperationStatus.RecoveryFailed,
+            FailureCode = SetupFailureCodes.RecoveryFailed,
+            PrimaryError = primaryError,
+            RecoveryErrors = recoveryErrors.ToArray(),
+            OperationId = journal?.OperationId ?? context.OperationId,
+            RecoveryDirectory = journal?.RecoveryDirectory ?? context.RecoveryDirectory,
+            Mode = context.ActualMode == SetupMode.Install ? options.Mode : context.ActualMode,
+            Message = primaryError.Message,
+            LogPath = context.Logger?.LogPath ?? logPath,
+            InstalledState = context.ResultState ?? context.ExistingState
+        };
+    }
+
+    private static Exception CreateRecoveredPrimaryError(SetupRecoveryResult result)
+    {
+        return new InvalidOperationException(
+            result.Journal.PrimaryError ?? "An interrupted setup transaction could not be recovered.");
+    }
+
+    private static async Task CleanupCompletedTransactionAsync(SetupExecutionContext context)
+    {
+        if (context.Journal?.Phase is not (SetupTransactionPhase.Committed or SetupTransactionPhase.RolledBack))
         {
             return;
         }
 
-        using CancellationTokenSource recoveryTimeout = new(TimeSpan.FromMinutes(5));
-        try
-        {
-            context.Journal.Phase = SetupTransactionPhase.Committing;
-            await context.Services.TransactionStore.SaveAsync(context.Journal, recoveryTimeout.Token).ConfigureAwait(false);
-            context.Journal.Phase = SetupTransactionPhase.Committed;
-            await context.Services.TransactionStore.SaveAsync(context.Journal, recoveryTimeout.Token).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            context.Journal.PrimaryError = exception.ToString();
-            if (context.TransactionCoordinator != null)
-            {
-                IReadOnlyList<string> recoveryErrors = await context.TransactionCoordinator
-                    .RollbackAsync(context.Journal, recoveryTimeout.Token)
-                    .ConfigureAwait(false);
-                context.RecoveryErrors.AddRange(recoveryErrors);
-            }
-
-            throw;
-        }
+        await new CleanupWorkingDirectoryStep().ExecuteAsync(context, CancellationToken.None).ConfigureAwait(false);
     }
 }

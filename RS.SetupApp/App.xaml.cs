@@ -36,7 +36,7 @@ public partial class App : System.Windows.Application
                 if (options.Silent)
                 {
                     SetupOperationResult result = await engine.ExecuteAsync(options, cancellationToken: CancellationToken.None).ConfigureAwait(true);
-                    Environment.ExitCode = result.Succeeded ? 0 : 1;
+                    Environment.ExitCode = RuntimeArgumentParser.GetSilentExitCode(result);
                     Shutdown();
                     return;
                 }
@@ -48,7 +48,7 @@ public partial class App : System.Windows.Application
             {
                 if (options.Silent)
                 {
-                    Environment.ExitCode = 1;
+                    Environment.ExitCode = 3;
                     Shutdown();
                     return;
                 }

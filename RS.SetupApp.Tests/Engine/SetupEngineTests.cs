@@ -317,4 +317,174 @@ public sealed class SetupEngineTests
         StringAssert.Contains(result.Message, "template online update address");
         StringAssert.Contains(result.Message, "update.manifestUrl");
     }
+
+    [TestMethod]
+    public async Task ExecuteAsync_ShouldRecoverIncompleteTransactionBeforeLoadingState_ThenPermitInstall()
+    {
+        using TempDirectoryScope temp = new();
+        string productDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "product")).FullName;
+        SetupTestDataFactory.WriteProductSchema(productDirectory);
+        string manifestPath = SetupTestDataFactory.WriteProductManifest(productDirectory, "demo-app", "DemoApp.exe");
+        string publishDirectory = SetupTestDataFactory.CreatePublishDirectory(temp.DirectoryPath, "DemoApp.exe", "1.0.0");
+        string packageDirectory = await SetupTestDataFactory.CreatePackageAsync(
+            publishDirectory,
+            manifestPath,
+            Path.Combine(temp.DirectoryPath, "packages"),
+            packageVersion: "1.0.0");
+
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        JsonManifestSerializer serializer = new();
+        SetupServices services = TestSetupServicesFactory.Create(
+            paths,
+            new FakeRegistryService(),
+            new FakeShortcutService(),
+            new FakeProcessService(),
+            new FakeDownloadService());
+        Guid operationId = Guid.NewGuid();
+        string recoveredTarget = Path.Combine(temp.DirectoryPath, "interrupted-mutation.txt");
+        File.WriteAllText(recoveredTarget, "mutated");
+        SetupTransactionJournal journal = CreateInterruptedJournal(paths, operationId, SetupTransactionPhase.Applying);
+        journal.Compensations.Add(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.DeleteFile,
+            Target = recoveredTarget,
+            Applied = true
+        });
+        await services.TransactionStore.SaveAsync(journal, CancellationToken.None);
+
+        PackageManifest package = serializer.Load<PackageManifest>(Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName));
+        SetupOperationResult result = await new SetupEngine(services).ExecuteAsync(new RuntimeOptions
+        {
+            Mode = SetupMode.Install,
+            Scope = InstallScope.CurrentUser,
+            ProductManifestPath = manifestPath,
+            PackageManifestPath = Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName),
+            PackagePath = Path.Combine(packageDirectory, package.ArchiveFileName),
+            InstallDirectory = paths.GetDefaultInstallDirectory(serializer.Load<ProductManifest>(manifestPath), InstallScope.CurrentUser)
+        });
+
+        Assert.AreEqual(SetupOperationStatus.Succeeded, result.Status, result.Message);
+        Assert.IsFalse(File.Exists(recoveredTarget));
+        Assert.IsFalse(Directory.Exists(journal.RecoveryDirectory));
+        Assert.IsTrue(File.Exists(result.InstalledState?.MainExecutablePath));
+    }
+
+    [TestMethod]
+    public async Task ExecuteAsync_ShouldReturnStructuredFailureWhenProductManifestCannotBeFound()
+    {
+        using TempDirectoryScope temp = new();
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        SetupEngine engine = new(TestSetupServicesFactory.Create(
+            paths,
+            new FakeRegistryService(),
+            new FakeShortcutService(),
+            new FakeProcessService(),
+            new FakeDownloadService()));
+
+        SetupOperationResult result = await engine.ExecuteAsync(new RuntimeOptions
+        {
+            Mode = SetupMode.Install,
+            ProductManifestPath = Path.Combine(temp.DirectoryPath, "missing-product.json")
+        });
+
+        Assert.AreEqual(SetupOperationStatus.Failed, result.Status);
+        Assert.AreEqual(SetupFailureCodes.OperationFailed, result.FailureCode);
+        Assert.IsInstanceOfType<FileNotFoundException>(result.PrimaryError);
+        Assert.IsFalse(result.Succeeded);
+    }
+
+    [TestMethod]
+    public async Task ExecuteAsync_ShouldReturnRecoveryFailedAndBlockWorkUntilInterruptedTransactionRecovers()
+    {
+        using TempDirectoryScope temp = new();
+        string productDirectory = Directory.CreateDirectory(Path.Combine(temp.DirectoryPath, "product")).FullName;
+        SetupTestDataFactory.WriteProductSchema(productDirectory);
+        string manifestPath = SetupTestDataFactory.WriteProductManifest(productDirectory, "demo-app", "DemoApp.exe");
+        string publishDirectory = SetupTestDataFactory.CreatePublishDirectory(temp.DirectoryPath, "DemoApp.exe", "1.0.0");
+        string packageDirectory = await SetupTestDataFactory.CreatePackageAsync(
+            publishDirectory,
+            manifestPath,
+            Path.Combine(temp.DirectoryPath, "packages"),
+            packageVersion: "1.0.0");
+
+        TestSystemPaths paths = new(temp.DirectoryPath);
+        PhysicalFileSystem physical = new();
+        string recoveredTarget = Path.Combine(temp.DirectoryPath, "cannot-recover.txt");
+        FaultInjectingFileSystem fileSystem = new(physical)
+        {
+            FailureFactory = (operation, path) => operation == nameof(IFileSystem.DeleteFile) &&
+                string.Equals(path, recoveredTarget, StringComparison.OrdinalIgnoreCase)
+                    ? new IOException("Recovery compensation failed.")
+                    : null
+        };
+        JsonManifestSerializer serializer = new();
+        ProductManifest product = serializer.Load<ProductManifest>(manifestPath);
+        SetupServices services = TestSetupServicesFactory.Create(
+            paths,
+            new FakeRegistryService(),
+            new FakeShortcutService(),
+            new FakeProcessService(),
+            new FakeDownloadService(),
+            fileSystem);
+        Guid operationId = Guid.NewGuid();
+        File.WriteAllText(recoveredTarget, "evidence");
+        SetupTransactionJournal journal = CreateInterruptedJournal(paths, operationId, SetupTransactionPhase.Applying);
+        journal.Compensations.Add(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.DeleteFile,
+            Target = recoveredTarget,
+            Applied = true
+        });
+        await services.TransactionStore.SaveAsync(journal, CancellationToken.None);
+
+        PackageManifest package = serializer.Load<PackageManifest>(Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName));
+        RuntimeOptions options = new()
+        {
+            Mode = SetupMode.Install,
+            Scope = InstallScope.CurrentUser,
+            ProductManifestPath = manifestPath,
+            PackageManifestPath = Path.Combine(packageDirectory, SetupRuntimeDefaults.PackageManifestFileName),
+            PackagePath = Path.Combine(packageDirectory, package.ArchiveFileName),
+            InstallDirectory = paths.GetDefaultInstallDirectory(product, InstallScope.CurrentUser)
+        };
+        SetupEngine engine = new(services);
+
+        SetupOperationResult blocked = await engine.ExecuteAsync(options);
+
+        Assert.AreEqual(SetupOperationStatus.RecoveryFailed, blocked.Status);
+        Assert.AreEqual(SetupFailureCodes.RecoveryFailed, blocked.FailureCode);
+        Assert.AreEqual(operationId, blocked.OperationId);
+        Assert.AreEqual(journal.RecoveryDirectory, blocked.RecoveryDirectory);
+        Assert.IsTrue(blocked.RecoveryErrors.Count > 0);
+        Assert.IsTrue(File.Exists(recoveredTarget));
+        Assert.IsFalse(Directory.Exists(options.InstallDirectory!));
+
+        fileSystem.FailureFactory = null;
+        SetupOperationResult recovered = await engine.ExecuteAsync(options);
+
+        Assert.AreEqual(SetupOperationStatus.Succeeded, recovered.Status, recovered.Message);
+        Assert.IsFalse(File.Exists(recoveredTarget));
+        Assert.IsTrue(File.Exists(recovered.InstalledState?.MainExecutablePath));
+    }
+
+    private static SetupTransactionJournal CreateInterruptedJournal(
+        TestSystemPaths paths,
+        Guid operationId,
+        SetupTransactionPhase phase)
+    {
+        return new SetupTransactionJournal
+        {
+            OperationId = operationId,
+            ProductId = "demo-app",
+            Scope = InstallScope.CurrentUser,
+            Mode = SetupMode.Install,
+            InstallDirectory = Path.Combine(paths.RootPath, "install", InstallScope.CurrentUser.ToString(), "demo-app"),
+            RecoveryDirectory = paths.GetRecoveryDirectory("demo-app", operationId, InstallScope.CurrentUser),
+            Phase = phase,
+            StartedAtUtc = DateTimeOffset.UtcNow,
+            UpdatedAtUtc = DateTimeOffset.UtcNow
+        };
+    }
 }

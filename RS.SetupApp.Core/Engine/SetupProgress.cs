@@ -2,6 +2,8 @@ namespace RS.SetupApp.Core;
 
 public sealed class SetupProgress
 {
+    public Guid OperationId { get; init; }
+
     public int CurrentStep { get; init; }
 
     public int TotalSteps { get; init; }
