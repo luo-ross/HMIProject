@@ -134,6 +134,51 @@ public sealed class PhysicalFileSystemAtomicWriteTests
         }
     }
 
+    [TestMethod]
+    public void MoveDirectory_ShouldRejectAndPreservePreExistingDestination_WhenVolumesDiffer()
+    {
+        string destinationRoot = Path.GetPathRoot(Path.GetTempPath()) ?? throw new InvalidOperationException("Temp root is required.");
+        string? sourceRoot = Directory.GetLogicalDrives()
+            .FirstOrDefault(root => !string.Equals(root, destinationRoot, StringComparison.OrdinalIgnoreCase) && IsWritable(root));
+        if (sourceRoot == null)
+        {
+            Assert.Inconclusive("A second writable volume is required to exercise cross-volume directory moves.");
+        }
+
+        string id = Guid.NewGuid().ToString("N");
+        string sourceContainer = Path.Combine(sourceRoot, "RS.SetupApp-Tests", id);
+        string sourceDirectory = Path.Combine(sourceContainer, "source");
+        string destinationContainer = Path.Combine(Path.GetTempPath(), "RS.SetupApp-Tests", id);
+        string destinationDirectory = Path.Combine(destinationContainer, "destination");
+        try
+        {
+            Directory.CreateDirectory(sourceDirectory);
+            File.WriteAllText(Path.Combine(sourceDirectory, "payload.txt"), "source payload");
+            Directory.CreateDirectory(destinationDirectory);
+            string sentinelPath = Path.Combine(destinationDirectory, "sentinel.txt");
+            File.WriteAllText(sentinelPath, "pre-existing destination");
+
+            Assert.ThrowsException<IOException>(() => new PhysicalFileSystem().MoveDirectory(sourceDirectory, destinationDirectory));
+
+            Assert.IsTrue(Directory.Exists(sourceDirectory));
+            Assert.AreEqual("source payload", File.ReadAllText(Path.Combine(sourceDirectory, "payload.txt")));
+            Assert.AreEqual("pre-existing destination", File.ReadAllText(sentinelPath));
+            Assert.IsFalse(File.Exists(Path.Combine(destinationDirectory, "payload.txt")));
+        }
+        finally
+        {
+            if (Directory.Exists(sourceContainer))
+            {
+                Directory.Delete(sourceContainer, recursive: true);
+            }
+
+            if (Directory.Exists(destinationContainer))
+            {
+                Directory.Delete(destinationContainer, recursive: true);
+            }
+        }
+    }
+
     private static bool IsWritable(string root)
     {
         try

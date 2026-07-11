@@ -96,7 +96,7 @@ function New-SetupAppLifecycleFixture {
         $packageDirectory = Join-Path $packagesRoot $item.Name
         $bundleDirectory = Join-Path $bundlesRoot $item.Name
         Invoke-SetupAppDotnet -ArtifactRoot $ArtifactRoot -Name "publish-$($item.Name)" -Arguments @(
-            'publish', $payloadProject, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true',
+            'publish', $payloadProject, '--no-restore', '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true',
             "-p:Version=$($item.Version)", "-p:AssemblyVersion=$($item.Version).0", "-p:FileVersion=$($item.Version).0",
             '-o', $publishDirectory
         )
@@ -114,12 +114,12 @@ function New-SetupAppLifecycleFixture {
         }
 
         Invoke-SetupAppDotnet -ArtifactRoot $ArtifactRoot -Name "pack-$($item.Name)" -Arguments @(
-            'run', '--project', $builderProject, '-c', 'Release', '--', 'pack', '--from-dir', $publishDirectory,
+            'run', '--project', $builderProject, '-c', 'Release', '--no-restore', '--', 'pack', '--from-dir', $publishDirectory,
             '--product', $productManifestPath, '--output', $packageDirectory
         )
         Set-SetupAppPackageVersion -PackageDirectory $packageDirectory -Version $item.Version
         Invoke-SetupAppDotnet -ArtifactRoot $ArtifactRoot -Name "bundle-$($item.Name)" -Arguments @(
-            'run', '--project', $builderProject, '-c', 'Release', '--', 'build-installer', '--product', $productManifestPath,
+            'run', '--project', $builderProject, '-c', 'Release', '--no-restore', '--', 'build-installer', '--product', $productManifestPath,
             '--package', $packageDirectory, '--output', $bundleDirectory, '--runtime-project', $runtimeProject,
             '--configuration', 'Release', '--runtime', 'win-x64'
         )

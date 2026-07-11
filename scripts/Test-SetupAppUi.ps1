@@ -16,7 +16,7 @@ try {
         Remove-Item Env:RS_SETUPAPP_KEEP_ARTIFACTS -ErrorAction SilentlyContinue
     }
 
-    $testOutput = & dotnet test (Join-Path $repositoryRoot 'RS.SetupApp.AutomationTests\RS.SetupApp.AutomationTests.csproj') --filter 'FullyQualifiedName~SetupAppUiLifecycleTests' 2>&1
+    $testOutput = & dotnet test (Join-Path $repositoryRoot 'RS.SetupApp.AutomationTests\RS.SetupApp.AutomationTests.csproj') --no-restore --filter 'FullyQualifiedName~SetupAppUiLifecycleTests' 2>&1
     $testOutput | Write-Output
     if ($LASTEXITCODE -ne 0) {
         throw "FlaUI lifecycle tests failed with exit code $LASTEXITCODE. Generated screenshots and logs were retained under artifacts/setupapp-test."

@@ -30,6 +30,17 @@ public sealed class SetupLifecycleTests
     }
 
     [TestMethod]
+    public void LifecycleScripts_ShouldAvoidRestoreAfterTheCiRestoreStep()
+    {
+        string root = FindRepositoryRoot();
+        string fixtureScript = File.ReadAllText(Path.Combine(root, "scripts", "Setup-SetupAppFixture.ps1"));
+        string uiScript = File.ReadAllText(Path.Combine(root, "scripts", "Test-SetupAppUi.ps1"));
+
+        StringAssert.Contains(fixtureScript, "'--no-restore'");
+        StringAssert.Contains(uiScript, "--no-restore");
+    }
+
+    [TestMethod]
     public async Task InstallRepairCancelledUpdateUpdateHostileUninstallAndUninstall_ShouldKeepTheFixtureIsolated()
     {
         using TempDirectoryScope temp = new();

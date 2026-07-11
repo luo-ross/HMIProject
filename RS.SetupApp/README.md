@@ -44,6 +44,7 @@ dotnet run --project RS.SetupApp.Builder -- build-installer --product .\product.
 Build a release bundle from a published payload, then run the disposable regression gates:
 
 ```powershell
+dotnet restore MultiVerseKit.sln
 dotnet build RS.SetupApp.Core/RS.SetupApp.Core.csproj -c Release
 dotnet build RS.SetupApp.Builder/RS.SetupApp.Builder.csproj -c Release
 dotnet build RS.SetupApp/RS.SetupApp.csproj -c Release

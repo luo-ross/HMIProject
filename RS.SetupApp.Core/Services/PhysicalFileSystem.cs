@@ -30,6 +30,11 @@ public sealed class PhysicalFileSystem : IFileSystem
 
     public void MoveDirectory(string sourceDirectoryName, string destDirectoryName)
     {
+        if (Directory.Exists(destDirectoryName) || File.Exists(destDirectoryName))
+        {
+            throw new IOException($"The destination '{destDirectoryName}' already exists.");
+        }
+
         string sourceRoot = Path.GetPathRoot(Path.GetFullPath(sourceDirectoryName)) ?? string.Empty;
         string destinationRoot = Path.GetPathRoot(Path.GetFullPath(destDirectoryName)) ?? string.Empty;
         if (!string.Equals(sourceRoot, destinationRoot, StringComparison.OrdinalIgnoreCase))
@@ -194,15 +199,26 @@ public sealed class PhysicalFileSystem : IFileSystem
 
     private void MoveDirectoryAcrossVolumes(string sourceDirectoryName, string destDirectoryName)
     {
+        string destination = Path.GetFullPath(destDirectoryName);
+        string parent = Path.GetDirectoryName(destination)
+            ?? throw new ArgumentException("The destination must have a parent directory.", nameof(destDirectoryName));
+        string staging = Path.Combine(parent, $".{Path.GetFileName(destination)}.rs-setup-staging-{Guid.NewGuid():N}");
+
         try
         {
-            CopyDirectory(sourceDirectoryName, destDirectoryName, overwrite: false);
+            CopyDirectory(sourceDirectoryName, staging, overwrite: false);
+            if (Directory.Exists(destination) || File.Exists(destination))
+            {
+                throw new IOException($"The destination '{destination}' was created while the source was being staged.");
+            }
+
+            Directory.Move(staging, destination);
         }
         catch
         {
-            if (Directory.Exists(destDirectoryName))
+            if (Directory.Exists(staging))
             {
-                Directory.Delete(destDirectoryName, recursive: true);
+                Directory.Delete(staging, recursive: true);
             }
 
             throw;
@@ -214,9 +230,11 @@ public sealed class PhysicalFileSystem : IFileSystem
         }
         catch
         {
-            if (Directory.Exists(destDirectoryName))
+            // This invocation promoted the staging directory, so it may attempt to undo only that
+            // destination. A pre-existing or racing destination is never recursively deleted.
+            if (Directory.Exists(destination))
             {
-                Directory.Delete(destDirectoryName, recursive: true);
+                Directory.Delete(destination, recursive: true);
             }
 
             throw;
