@@ -26,5 +26,7 @@ public sealed class SetupServices
 
     public required LegacyInstallationClaimService LegacyInstallationClaimService { get; init; }
 
+    public required ISetupTransactionStore TransactionStore { get; init; }
+
     public required Func<string, ISetupLogger> LoggerFactory { get; init; }
 }

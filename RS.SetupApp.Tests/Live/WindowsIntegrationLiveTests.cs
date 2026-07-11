@@ -66,6 +66,7 @@ public sealed class WindowsIntegrationLiveTests
                 serializer,
                 ownershipService,
                 pathSafetyPolicy),
+            TransactionStore = new JsonSetupTransactionStore(fileSystem, serializer, paths),
             LoggerFactory = path => new FileSetupLogger(path)
         };
 

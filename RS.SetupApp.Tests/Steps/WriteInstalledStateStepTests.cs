@@ -131,6 +131,7 @@ public sealed class WriteInstalledStateStepTests
                     serializer,
                     ownershipService,
                     pathSafetyPolicy),
+                TransactionStore = new JsonSetupTransactionStore(fileSystem, serializer, paths),
                 LoggerFactory = _ => new NullSetupLogger()
             },
             ProductManifestPath = Path.Combine(temp.DirectoryPath, "product.json"),

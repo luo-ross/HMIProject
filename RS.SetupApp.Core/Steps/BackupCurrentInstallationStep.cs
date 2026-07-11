@@ -4,7 +4,7 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
 {
     public string Name => "Backup current installation";
 
-    public Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -14,40 +14,51 @@ public sealed class BackupCurrentInstallationStep : ISetupStep, IRollbackStep
               ?? throw new InvalidOperationException("A validated uninstall plan is required for an existing installation.");
         if (!context.Services.FileSystem.DirectoryExists(installDirectory))
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        foreach (string legacyBackup in context.UninstallPlan?.FileSystemTargets
-                     .Where(target => target.Purpose == SetupPathPurpose.BackupRoot)
-                     .Select(target => target.Path)
-                 ?? Enumerable.Empty<string>())
+        string recoveryDirectory = context.RecoveryDirectory
+            ?? throw new InvalidOperationException("The persistent recovery directory has not been initialized.");
+        context.BackupDirectory = Path.Combine(recoveryDirectory, "backup", "installation");
+        context.Services.FileSystem.CreateDirectory(Path.GetDirectoryName(context.BackupDirectory)
+            ?? throw new InvalidOperationException("The backup directory is invalid."));
+
+        if (context.TransactionCoordinator != null)
         {
-            if (context.Services.FileSystem.DirectoryExists(legacyBackup))
+            SetupCompensationRecord record = new()
             {
-                context.Services.FileSystem.DeleteDirectory(legacyBackup, recursive: true);
-            }
+                Id = Guid.NewGuid(),
+                Kind = SetupCompensationKind.RestoreDirectory,
+                Target = installDirectory,
+                Backup = context.BackupDirectory
+            };
+            context.Journal!.Phase = SetupTransactionPhase.SnapshotCreated;
+            Guid recordId = await context.TransactionCoordinator
+                .RegisterBeforeMutationAsync(record, cancellationToken)
+                .ConfigureAwait(false);
+            context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
+            await context.TransactionCoordinator.MarkAppliedAsync(recordId, cancellationToken).ConfigureAwait(false);
         }
-
-        context.BackupDirectory = Path.Combine(context.WorkingDirectory ?? throw new InvalidOperationException("Working directory is required."), "backup");
-        if (context.Services.FileSystem.DirectoryExists(context.BackupDirectory))
+        else
         {
-            context.Services.FileSystem.DeleteDirectory(context.BackupDirectory, recursive: true);
+            context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
         }
-
-        context.Services.FileSystem.MoveDirectory(installDirectory, context.BackupDirectory);
 
         if (context.ResultState != null)
         {
             context.ResultState.PendingBackupDirectory = context.BackupDirectory;
             context.ResultState.LastBackupDirectory = context.BackupDirectory;
         }
-
-        return Task.CompletedTask;
     }
 
     public Task RollbackAsync(SetupExecutionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        if (context.TransactionCoordinator != null)
+        {
+            return Task.CompletedTask;
+        }
 
         if (string.IsNullOrWhiteSpace(context.BackupDirectory) || !context.Services.FileSystem.DirectoryExists(context.BackupDirectory))
         {

@@ -34,6 +34,7 @@ public static class SetupServicesFactory
                 serializer,
                 ownershipService,
                 pathSafetyPolicy),
+            TransactionStore = new JsonSetupTransactionStore(fileSystem, serializer, paths),
             LoggerFactory = path => new FileSetupLogger(path)
         };
     }

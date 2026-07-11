@@ -28,7 +28,7 @@ public sealed class SetupEngine
 
         try
         {
-            await _stepRunner.RunAsync(context, CreateBootstrapSteps(), progress: null, cancellationToken).ConfigureAwait(false);
+            await RunStepsAsync(context, CreateBootstrapSteps(), progress: null, cancellationToken).ConfigureAwait(false);
             ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
 
             InstallScope effectiveScope = context.UninstallPlan?.InstallScope
@@ -53,7 +53,9 @@ public sealed class SetupEngine
                 return await ExecuteUninstallAsync(context, progress, cancellationToken).ConfigureAwait(false);
             }
 
-            await _stepRunner.RunAsync(context, CreateInstallSteps(), progress, cancellationToken).ConfigureAwait(false);
+            await InitializeTransactionAsync(context, cancellationToken).ConfigureAwait(false);
+            await RunStepsAsync(context, CreateInstallSteps(), progress, cancellationToken).ConfigureAwait(false);
+            await CompleteTransactionAsync(context, cancellationToken).ConfigureAwait(false);
             LaunchInstalledApplication(context);
 
             return new SetupOperationResult
@@ -209,7 +211,9 @@ public sealed class SetupEngine
             throw new InvalidOperationException("A validated uninstall plan is required before uninstall can continue.");
         }
 
-        await _stepRunner.RunAsync(context, CreateUninstallSteps(), progress, cancellationToken).ConfigureAwait(false);
+        await InitializeTransactionAsync(context, cancellationToken).ConfigureAwait(false);
+        await RunStepsAsync(context, CreateUninstallSteps(), progress, cancellationToken).ConfigureAwait(false);
+        await CompleteTransactionAsync(context, cancellationToken).ConfigureAwait(false);
         return new SetupOperationResult
         {
             Succeeded = true,
@@ -258,6 +262,103 @@ public sealed class SetupEngine
         if (!string.IsNullOrWhiteSpace(context.WorkingDirectory) && context.Services.FileSystem.DirectoryExists(context.WorkingDirectory))
         {
             context.Services.FileSystem.DeleteDirectory(context.WorkingDirectory, recursive: true);
+        }
+    }
+
+    private async Task RunStepsAsync(
+        SetupExecutionContext context,
+        IReadOnlyList<ISetupStep> steps,
+        IProgress<SetupProgress>? progress,
+        CancellationToken operationToken)
+    {
+        SetupStepRunResult result = await _stepRunner
+            .RunAsync(context, steps, progress, operationToken)
+            .ConfigureAwait(false);
+        if (result.Completed)
+        {
+            return;
+        }
+
+        foreach (string recoveryError in result.RecoveryErrors)
+        {
+            context.Logger?.Error($"Recovery failed: {recoveryError}");
+        }
+
+        System.Runtime.ExceptionServices.ExceptionDispatchInfo
+            .Capture(result.PrimaryError ?? new InvalidOperationException("Setup execution failed without a primary error."))
+            .Throw();
+    }
+
+    private async Task InitializeTransactionAsync(SetupExecutionContext context, CancellationToken token)
+    {
+        ProductManifest product = context.Product ?? throw new InvalidOperationException("Product manifest has not been loaded.");
+        InstallScope scope = context.UninstallPlan?.InstallScope
+            ?? context.Options.Scope
+            ?? product.InstallDefaults.DefaultScope;
+        string installDirectory = context.UninstallPlan?.InstallDirectory
+            ?? (!string.IsNullOrWhiteSpace(context.Options.InstallDirectory)
+                ? Path.GetFullPath(context.Options.InstallDirectory)
+                : context.Services.Paths.GetDefaultInstallDirectory(product, scope));
+        Guid operationId = Guid.NewGuid();
+        string recoveryDirectory = context.Services.Paths.GetRecoveryDirectory(product.ProductId, operationId, scope);
+        SetupTransactionJournal journal = new()
+        {
+            OperationId = operationId,
+            ProductId = product.ProductId,
+            Scope = scope,
+            Mode = context.Options.Mode,
+            InstallDirectory = installDirectory,
+            RecoveryDirectory = recoveryDirectory,
+            Phase = SetupTransactionPhase.Prepared,
+            StartedAtUtc = DateTimeOffset.UtcNow,
+            UpdatedAtUtc = DateTimeOffset.UtcNow
+        };
+
+        context.OperationId = operationId;
+        context.Journal = journal;
+        context.RecoveryDirectory = recoveryDirectory;
+        context.CanonicalDeletionTargets.Clear();
+        if (context.UninstallPlan != null)
+        {
+            context.CanonicalDeletionTargets.AddRange(context.UninstallPlan.FileSystemTargets);
+        }
+
+        context.TransactionCoordinator = new SetupTransactionCoordinator(
+            journal,
+            context.Services.TransactionStore,
+            context.Services.FileSystem,
+            context.Services.Registry,
+            context.Services.Shortcuts);
+        await context.Services.TransactionStore.SaveAsync(journal, token).ConfigureAwait(false);
+    }
+
+    private static async Task CompleteTransactionAsync(SetupExecutionContext context, CancellationToken token)
+    {
+        if (context.Journal == null)
+        {
+            return;
+        }
+
+        using CancellationTokenSource recoveryTimeout = new(TimeSpan.FromMinutes(5));
+        try
+        {
+            context.Journal.Phase = SetupTransactionPhase.Committing;
+            await context.Services.TransactionStore.SaveAsync(context.Journal, recoveryTimeout.Token).ConfigureAwait(false);
+            context.Journal.Phase = SetupTransactionPhase.Committed;
+            await context.Services.TransactionStore.SaveAsync(context.Journal, recoveryTimeout.Token).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            context.Journal.PrimaryError = exception.ToString();
+            if (context.TransactionCoordinator != null)
+            {
+                IReadOnlyList<string> recoveryErrors = await context.TransactionCoordinator
+                    .RollbackAsync(context.Journal, recoveryTimeout.Token)
+                    .ConfigureAwait(false);
+                context.RecoveryErrors.AddRange(recoveryErrors);
+            }
+
+            throw;
         }
     }
 }

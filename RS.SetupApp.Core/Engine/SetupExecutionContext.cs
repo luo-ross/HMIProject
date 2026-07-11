@@ -28,6 +28,18 @@ public sealed class SetupExecutionContext
 
     public UninstallPlan? UninstallPlan { get; set; }
 
+    public Guid OperationId { get; set; }
+
+    public SetupTransactionJournal? Journal { get; set; }
+
+    public ISetupTransactionCoordinator? TransactionCoordinator { get; set; }
+
+    public string? RecoveryDirectory { get; set; }
+
+    public List<string> RecoveryErrors { get; } = [];
+
+    public List<UninstallTarget> CanonicalDeletionTargets { get; } = [];
+
     public InstalledStateManifest? ResultState { get; set; }
 
     public ISetupLogger? Logger { get; set; }

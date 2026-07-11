@@ -1,4 +1,5 @@
 using System.Runtime.Versioning;
+using System.Text.Json;
 
 namespace RS.SetupApp.Core;
 
@@ -10,6 +11,56 @@ public sealed class ShellShortcutService : IShortcutService
     public ShellShortcutService(ISystemPaths paths)
     {
         _paths = paths;
+    }
+
+    public string CaptureSnapshot(IEnumerable<RegisteredShortcutState> shortcuts)
+    {
+        List<ShortcutSnapshot> snapshot = shortcuts
+            .Select(shortcut => new ShortcutSnapshot
+            {
+                Path = shortcut.Path,
+                Existed = File.Exists(shortcut.Path),
+                Contents = File.Exists(shortcut.Path)
+                    ? Convert.ToBase64String(File.ReadAllBytes(shortcut.Path))
+                    : null
+            })
+            .ToList();
+        return JsonSerializer.Serialize(snapshot);
+    }
+
+    public void RestoreSnapshot(string snapshot)
+    {
+        List<ShortcutSnapshot> entries = JsonSerializer.Deserialize<List<ShortcutSnapshot>>(snapshot)
+            ?? throw new InvalidOperationException("The shortcut snapshot is invalid.");
+        foreach (ShortcutSnapshot entry in entries)
+        {
+            if (File.Exists(entry.Path))
+            {
+                File.Delete(entry.Path);
+            }
+
+            if (!entry.Existed)
+            {
+                continue;
+            }
+
+            string? directory = Path.GetDirectoryName(entry.Path);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.WriteAllBytes(entry.Path, Convert.FromBase64String(entry.Contents
+                ?? throw new InvalidOperationException("The shortcut snapshot contents are missing.")));
+        }
+    }
+
+    public void DeleteShortcut(string path)
+    {
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
     }
 
     public IReadOnlyList<RegisteredShortcutState> CreateShortcuts(ProductManifest product, InstalledStateManifest state, bool enabled)
@@ -63,10 +114,16 @@ public sealed class ShellShortcutService : IShortcutService
     {
         foreach (RegisteredShortcutState shortcut in shortcuts)
         {
-            if (File.Exists(shortcut.Path))
-            {
-                File.Delete(shortcut.Path);
-            }
+            DeleteShortcut(shortcut.Path);
         }
+    }
+
+    private sealed class ShortcutSnapshot
+    {
+        public string Path { get; init; } = string.Empty;
+
+        public bool Existed { get; init; }
+
+        public string? Contents { get; init; }
     }
 }

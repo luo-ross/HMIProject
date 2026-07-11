@@ -4,16 +4,12 @@ public sealed class RemoveInstalledFilesStep : ISetupStep
 {
     public string Name => "Remove installed files";
 
-    public Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         UninstallPlan plan = context.UninstallPlan ?? throw new InvalidOperationException("A validated uninstall plan is required.");
-        if (context.Services.FileSystem.DirectoryExists(plan.InstallDirectory))
-        {
-            context.Services.FileSystem.DeleteDirectory(plan.InstallDirectory, recursive: true);
-        }
-
-        return Task.CompletedTask;
+        UninstallTarget target = plan.FileSystemTargets.Single(item => item.Purpose == SetupPathPurpose.InstallRoot);
+        await SetupPipelineHelper.QuarantineDirectoryAsync(context, target, "install", cancellationToken).ConfigureAwait(false);
     }
 }

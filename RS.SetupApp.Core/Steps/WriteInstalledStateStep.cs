@@ -7,12 +7,41 @@ public sealed class WriteInstalledStateStep : ISetupStep, IRollbackStep
 
     public string Name => "Write installed state";
 
-    public Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(SetupExecutionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         InstalledStateManifest state = context.ResultState ?? throw new InvalidOperationException("Installed state has not been prepared.");
         string markerPath = Path.Combine(state.InstallDirectory, SetupRuntimeDefaults.OwnershipMarkerFileName);
+        if (context.TransactionCoordinator != null)
+        {
+            Guid stateRecord = await RegisterSnapshotAsync(
+                context,
+                state.StateManifestPath,
+                "installed-state.json",
+                cancellationToken).ConfigureAwait(false);
+            state.LastSuccessfulInstallAtUtc = DateTimeOffset.UtcNow;
+            context.Services.FileSystem.WriteAllTextAtomic(
+                state.StateManifestPath,
+                context.Services.Serializer.Serialize(state));
+            await context.TransactionCoordinator.MarkAppliedAsync(stateRecord, cancellationToken).ConfigureAwait(false);
+
+            Guid markerRecord = await RegisterSnapshotAsync(
+                context,
+                markerPath,
+                SetupRuntimeDefaults.OwnershipMarkerFileName,
+                cancellationToken).ConfigureAwait(false);
+            context.Services.OwnershipService.Write(state.InstallDirectory, new InstallationOwnershipMarker
+            {
+                ProductId = state.ProductId,
+                InstallationId = state.InstallationId,
+                InstallScope = state.InstallScope,
+                CreatedAtUtc = state.InstalledAtUtc
+            });
+            await context.TransactionCoordinator.MarkAppliedAsync(markerRecord, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
         _previousState = Capture(context.Services.FileSystem, state.StateManifestPath);
         _previousMarker = Capture(context.Services.FileSystem, markerPath);
         state.LastSuccessfulInstallAtUtc = DateTimeOffset.UtcNow;
@@ -47,17 +76,47 @@ public sealed class WriteInstalledStateStep : ISetupStep, IRollbackStep
 
             throw;
         }
-
-        return Task.CompletedTask;
     }
 
     public Task RollbackAsync(SetupExecutionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        if (context.TransactionCoordinator != null)
+        {
+            return Task.CompletedTask;
+        }
 
         _ = context.ResultState ?? throw new InvalidOperationException("Installed state has not been prepared.");
         RestoreSnapshots(context.Services.FileSystem);
         return Task.CompletedTask;
+    }
+
+    private static async Task<Guid> RegisterSnapshotAsync(
+        SetupExecutionContext context,
+        string targetPath,
+        string snapshotName,
+        CancellationToken cancellationToken)
+    {
+        string recoveryDirectory = context.RecoveryDirectory
+            ?? throw new InvalidOperationException("The persistent recovery directory has not been initialized.");
+        bool exists = context.Services.FileSystem.FileExists(targetPath);
+        string? backup = null;
+        if (exists)
+        {
+            backup = Path.Combine(recoveryDirectory, "snapshots", snapshotName);
+            context.Services.FileSystem.CopyFile(targetPath, backup, overwrite: true);
+        }
+
+        SetupCompensationRecord record = new()
+        {
+            Id = Guid.NewGuid(),
+            Kind = exists ? SetupCompensationKind.RestoreFile : SetupCompensationKind.DeleteFile,
+            Target = targetPath,
+            Backup = backup
+        };
+        return await context.TransactionCoordinator!
+            .RegisterBeforeMutationAsync(record, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private static FileSnapshot Capture(IFileSystem fileSystem, string path)
@@ -69,7 +128,7 @@ public sealed class WriteInstalledStateStep : ISetupStep, IRollbackStep
 
     private void RestoreSnapshots(IFileSystem fileSystem)
     {
-        List<Exception> errors = new();
+        List<Exception> errors = [];
         Restore(fileSystem, _previousMarker, errors);
         Restore(fileSystem, _previousState, errors);
         if (errors.Count > 0)

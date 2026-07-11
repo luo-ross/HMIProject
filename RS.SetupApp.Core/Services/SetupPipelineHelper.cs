@@ -2,6 +2,78 @@ namespace RS.SetupApp.Core;
 
 public static class SetupPipelineHelper
 {
+    public static async Task QuarantineDirectoryAsync(
+        SetupExecutionContext context,
+        UninstallTarget target,
+        string quarantineName,
+        CancellationToken cancellationToken)
+    {
+        EnsureValidatedDeletionTarget(context, target);
+        if (!context.Services.FileSystem.DirectoryExists(target.Path))
+        {
+            return;
+        }
+
+        if (context.TransactionCoordinator == null)
+        {
+            context.Services.FileSystem.DeleteDirectory(target.Path, recursive: true);
+            return;
+        }
+
+        string quarantinePath = GetQuarantinePath(context, quarantineName);
+        context.Services.FileSystem.CreateDirectory(Path.GetDirectoryName(quarantinePath)
+            ?? throw new InvalidOperationException("The quarantine path is invalid."));
+        Guid recordId = await context.TransactionCoordinator.RegisterBeforeMutationAsync(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.RestoreDirectory,
+            Target = target.Path,
+            Backup = quarantinePath,
+            Metadata = new Dictionary<string, string>
+            {
+                ["purpose"] = target.Purpose.ToString()
+            }
+        }, cancellationToken).ConfigureAwait(false);
+        context.Services.FileSystem.MoveDirectory(target.Path, quarantinePath);
+        await context.TransactionCoordinator.MarkAppliedAsync(recordId, cancellationToken).ConfigureAwait(false);
+    }
+
+    public static async Task QuarantineFileAsync(
+        SetupExecutionContext context,
+        UninstallTarget target,
+        string quarantineName,
+        CancellationToken cancellationToken)
+    {
+        EnsureValidatedDeletionTarget(context, target);
+        if (!context.Services.FileSystem.FileExists(target.Path))
+        {
+            return;
+        }
+
+        if (context.TransactionCoordinator == null)
+        {
+            context.Services.FileSystem.DeleteFile(target.Path);
+            return;
+        }
+
+        string quarantinePath = GetQuarantinePath(context, quarantineName);
+        context.Services.FileSystem.CreateDirectory(Path.GetDirectoryName(quarantinePath)
+            ?? throw new InvalidOperationException("The quarantine path is invalid."));
+        Guid recordId = await context.TransactionCoordinator.RegisterBeforeMutationAsync(new SetupCompensationRecord
+        {
+            Id = Guid.NewGuid(),
+            Kind = SetupCompensationKind.RestoreFile,
+            Target = target.Path,
+            Backup = quarantinePath,
+            Metadata = new Dictionary<string, string>
+            {
+                ["purpose"] = target.Purpose.ToString()
+            }
+        }, cancellationToken).ConfigureAwait(false);
+        context.Services.FileSystem.MoveFile(target.Path, quarantinePath, overwrite: false);
+        await context.TransactionCoordinator.MarkAppliedAsync(recordId, cancellationToken).ConfigureAwait(false);
+    }
+
     public static async Task DownloadOrCopyAsync(
         SetupExecutionContext context,
         string source,
@@ -164,5 +236,31 @@ public static class SetupPipelineHelper
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .Select(path => SetupPathUtility.ResolveManifestRelativePath(productManifestPath, path))
             .Distinct(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string GetQuarantinePath(SetupExecutionContext context, string quarantineName)
+    {
+        if (string.IsNullOrWhiteSpace(context.RecoveryDirectory))
+        {
+            throw new InvalidOperationException("The persistent recovery directory has not been initialized.");
+        }
+
+        return Path.Combine(context.RecoveryDirectory, "quarantine", quarantineName);
+    }
+
+    private static void EnsureValidatedDeletionTarget(SetupExecutionContext context, UninstallTarget target)
+    {
+        UninstallPlan plan = context.UninstallPlan
+            ?? throw new InvalidOperationException("A validated uninstall plan is required.");
+        bool isValidated = plan.FileSystemTargets.Any(item =>
+            item.Purpose == target.Purpose &&
+            string.Equals(
+                Path.TrimEndingDirectorySeparator(item.Path),
+                Path.TrimEndingDirectorySeparator(target.Path),
+                StringComparison.OrdinalIgnoreCase));
+        if (!isValidated)
+        {
+            throw new InvalidOperationException("The deletion target is not part of the validated uninstall plan.");
+        }
     }
 }
